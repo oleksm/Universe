@@ -60,17 +60,25 @@ pub struct Terrain {
     craters: Vec<Crater>,
     /// Spaceport directions (body frame), where the ground is flattened.
     pads: Vec<DVec3>,
-    /// The ground as the planet simulation grew it, where the body has a bake (`worlds`):
-    /// these heights in place of the seed's.
-    baked: Option<std::sync::Arc<crate::worlds::Heights>>,
-    /// A world drawn from its vector lines: its ground from them (see `worlds::LineHeights`), in
-    /// place of its bake's heights.
-    lines: Option<std::sync::Arc<crate::worlds::LineHeights>>,
-    /// A world whose ground is a land package (see `worlds::land`): its ground from it, scaled to
-    /// this body's radius, in place of lines or a bake.
-    land: Option<std::sync::Arc<crate::worlds::land::LandHeights>>,
-    /// Canonical PGS1 surface, currently used by the explicit development preview.
-    graph: Option<std::sync::Arc<crate::worlds::pgs::Surface>>,
+    /// Where its heights come from (one source; see `Source`).
+    source: Source,
+}
+
+/// Where a world's heights come from: the seed's noise and craters, or one of the worlds store's
+/// grounds in their place. Every height query asks the source once (`Terrain::ground`).
+#[derive(Clone, Debug)]
+enum Source {
+    /// The seed's: noise, craters, ports' plains.
+    Procedural,
+    /// As the planet simulation grew it (a bake, `worlds::Heights`).
+    Baked(std::sync::Arc<crate::worlds::Heights>),
+    /// Drawn from its vector lines (`worlds::LineHeights`).
+    Lines(std::sync::Arc<crate::worlds::LineHeights>),
+    /// A land package (`worlds::land`), scaled to the body's radius.
+    Land(std::sync::Arc<crate::worlds::land::LandHeights>),
+    /// The canonical PGS1 surface, for the explicit development preview: used unchanged (no sea,
+    /// no ports' plains).
+    Graph(std::sync::Arc<crate::worlds::pgs::Surface>),
 }
 
 impl Terrain {
@@ -88,34 +96,29 @@ impl Terrain {
                 Crater { dir: rng.unit_vector(), radius, depth: (radius * body_radius * 0.1).min(amplitude * 0.8) }
             })
             .collect();
-        Self { kind, amplitude, seed, body_radius, craters, pads: Vec::new(), baked: None, lines: None, land: None, graph: None }
+        Self { kind, amplitude, seed, body_radius, craters, pads: Vec::new(), source: Source::Procedural }
     }
 
     /// The ground is the bake's `heights` from now (its craters and noise gone).
     pub fn bake(&mut self, heights: std::sync::Arc<crate::worlds::Heights>) {
-        self.graph = None;
         self.amplitude = heights.max / 1.3;
         self.craters.clear();
-        self.baked = Some(heights);
+        self.source = Source::Baked(heights);
     }
 
     /// The ground is `lines`' from now (a bake's heights and detail, if it has one, no longer used;
     /// its craters gone).
     pub fn from_lines(&mut self, lines: std::sync::Arc<crate::worlds::LineHeights>) {
-        self.graph = None;
         self.amplitude = lines.max() / 1.3;
         self.craters.clear();
-        self.lines = Some(lines);
+        self.source = Source::Lines(lines);
     }
 
     /// The ground is `land`'s from now (see `worlds::land`), scaled from its radius to the body's.
     pub fn from_land(&mut self, land: std::sync::Arc<crate::worlds::land::LandHeights>) {
-        self.graph = None;
-        self.baked = None;
-        self.lines = None;
         self.craters.clear();
         self.amplitude = land.max() * self.land_scale(&land) / 1.3;
-        self.land = Some(land);
+        self.source = Source::Land(land);
     }
 
     fn land_scale(&self, land: &crate::worlds::land::LandHeights) -> f64 {
@@ -124,7 +127,10 @@ impl Terrain {
 
     /// The land package and the scale from its radius to the body's, if the ground is one.
     pub fn land(&self) -> Option<(&std::sync::Arc<crate::worlds::land::LandHeights>, f64)> {
-        self.land.as_ref().map(|l| (l, self.land_scale(l)))
+        match &self.source {
+            Source::Land(l) => Some((l, self.land_scale(l))),
+            _ => None,
+        }
     }
 
     /// Attach a canonical surface for development and acceptance. The source field is
@@ -132,39 +138,50 @@ impl Terrain {
     /// Production package installation is deliberately separate from this operation.
     pub fn from_surface(&mut self, surface: std::sync::Arc<crate::worlds::pgs::Surface>) {
         self.amplitude = surface.max_height().max(1.0) / 1.3;
-        self.baked = None;
-        self.lines = None;
-        self.land = None;
         self.craters.clear();
         self.pads.clear();
-        self.graph = Some(surface);
+        self.source = Source::Graph(surface);
     }
 
     /// A canonical query, including unknown water/categories. None means this terrain
     /// uses the legacy generator, bake or contours. Directions must be finite/nonzero,
     /// as for the other Terrain query methods.
     pub fn surface_sample(&self, dir: DVec3) -> Option<crate::worlds::pgs::Sample> {
-        self.graph.as_ref().map(|s| s.query(dir).expect("valid terrain direction"))
+        self.graph_src().map(|s| s.query(dir).expect("valid terrain direction"))
     }
 
     /// Owner-face analytic terrain derivative, independent of rendering LOD.
     pub fn surface_differential(&self, dir: DVec3, radius_m: f64) -> Option<(crate::worlds::pgs::Sample, crate::worlds::pgs::Differential)> {
-        self.graph.as_ref().map(|s| s.query_differential(dir, radius_m).expect("valid terrain direction/radius"))
+        self.graph_src().map(|s| s.query_differential(dir, radius_m).expect("valid terrain direction/radius"))
     }
 
     /// Immutable canonical source shared with bounded visual workers.
-    pub fn surface_source(&self) -> Option<std::sync::Arc<crate::worlds::pgs::Surface>> { self.graph.clone() }
+    pub fn surface_source(&self) -> Option<std::sync::Arc<crate::worlds::pgs::Surface>> { self.graph_src().cloned() }
 
     /// Whether a canonical surface supplies the terrain (no inferred water or materials).
-    pub fn canonical_surface(&self) -> bool { self.graph.is_some() }
+    pub fn canonical_surface(&self) -> bool { self.graph_src().is_some() }
 
     /// Whether the canonical source supplies explicit water domains.
-    pub fn canonical_water(&self) -> bool { self.graph.as_ref().is_some_and(|s| s.capabilities & 2 != 0) }
+    pub fn canonical_water(&self) -> bool { self.graph_src().is_some_and(|s| s.capabilities & 2 != 0) }
 
     /// Namespaces for canonical category IDs; absent capability means unknown.
     pub fn category_vocabularies(&self) -> Option<(&str, &str)> {
-        let s = self.graph.as_ref().filter(|s| s.capabilities & 32 != 0)?;
+        let s = self.graph_src().filter(|s| s.capabilities & 32 != 0)?;
         Some((&s.provenance[5], &s.provenance[6]))
+    }
+
+    fn graph_src(&self) -> Option<&std::sync::Arc<crate::worlds::pgs::Surface>> {
+        match &self.source {
+            Source::Graph(s) => Some(s),
+            _ => None,
+        }
+    }
+
+    fn baked_src(&self) -> Option<&std::sync::Arc<crate::worlds::Heights>> {
+        match &self.source {
+            Source::Baked(h) => Some(h),
+            _ => None,
+        }
     }
 
     fn graph_surface(&self, dir: DVec3) -> Option<f64> {
@@ -176,55 +193,51 @@ impl Terrain {
 
     /// Whether its ground is drawn from its vector lines (see `from_lines`).
     pub fn drawn_from_lines(&self) -> bool {
-        self.lines.is_some()
+        matches!(self.source, Source::Lines(_))
     }
 
     /// The world's true colour, if its bake has one (read now; see `worlds::Heights::colour`).
     pub fn colour(&self) -> Option<crate::worlds::Equirect> {
-        self.baked.as_ref()?.colour()
+        self.baked_src()?.colour()
     }
 
     /// The clouds from the world's bake (see `worlds::Heights::clouds`).
     pub fn bake_clouds(&self) -> Option<crate::worlds::CloudsBake> {
-        self.baked.as_ref()?.clouds()
+        self.baked_src()?.clouds()
     }
 
     /// The air's tables from the world's bake (see `worlds::Heights::air_luts`).
     pub fn bake_air_luts(&self) -> Option<crate::worlds::AirLuts> {
-        self.baked.as_ref()?.air_luts()
+        self.baked_src()?.air_luts()
     }
 
     /// The world's air from its bake, packed for the engine (see `worlds::Heights::air`).
     pub fn bake_air(&self) -> Option<[f32; 16]> {
-        self.baked.as_ref()?.air()
+        self.baked_src()?.air()
     }
 
     /// Image `name` of the world's bake, as RGBA8 (see `worlds::Heights::image`).
     pub fn bake_image(&self, name: &str) -> Option<(usize, usize, Vec<u8>)> {
-        self.baked.as_ref()?.image(name)
+        self.baked_src()?.image(name)
     }
 
     /// Have the bake's fine tile under `dir` read in the background, if it isn't yet: for a ship
     /// coming low over it, so the physics finds it ready (the physics reads a tile it lacks on
     /// the spot, and waits for it).
     pub fn prefetch(&self, dir: DVec3) {
-        if let Some(h) = &self.baked {
+        if let Some(h) = self.baked_src() {
             let _ = h.at_detail(dir, crate::worlds::Detail::Loaded);
         }
     }
 
     /// Is the ground the planet simulation's?
     pub fn baked(&self) -> bool {
-        self.baked.is_some()
+        self.baked_src().is_some()
     }
 
-    /// The bake's height at `dir`, a port's plain levelled to the ground at the port (or the
-    /// sea, where the ground is under it) and blending back by `PAD_FLAT_OUTER`.
-    fn baked_height(&self, h: &std::sync::Arc<crate::worlds::Heights>, dir: DVec3, detail: crate::worlds::Detail) -> (f64, bool) {
-        self.baked_height_to(h, dir, detail, crate::detail::PHYSICS_CELL_M)
-    }
-
-    /// As `baked_height`, with the runtime detail to the band `cell` (m; see `detail`).
+    /// The bake's height at `dir`, a port's plain levelled to the ground at the port (or the sea, where
+    /// the ground is under it) and blending back by `PAD_FLAT_OUTER`; its runtime detail to the band `cell`
+    /// (m; see `detail`).
     fn baked_height_to(&self, h: &std::sync::Arc<crate::worlds::Heights>, dir: DVec3, detail: crate::worlds::Detail, cell: f64) -> (f64, bool) {
         let (mut out, mut whole) = h.at_detail(dir, detail);
         let (fine, w) = h.detail_at(dir, detail, cell, self.body_radius);
@@ -248,14 +261,15 @@ impl Terrain {
     /// port's plain levelled to the ground at the port as a bake's is. None: not such a world.
     fn lines_height(&self, dir: DVec3) -> Option<f64> {
         // (A land package's ground the same way, scaled to the body.)
-        let at = |d: DVec3| match &self.land {
-            Some(l) => Some(l.at(d) * self.land_scale(l)),
-            None => self.lines.as_ref().map(|l| l.at(d)),
+        let at = |d: DVec3| match &self.source {
+            Source::Land(l) => Some(l.at(d) * self.land_scale(l)),
+            Source::Lines(l) => Some(l.at(d)),
+            _ => None,
         };
         let mut out = at(dir)?;
         // (A land package's ground is drawn as it is: its ports stand on it, unlevelled, so contact meets
         // the drawn ground.)
-        let pads: &[DVec3] = if self.land.is_some() { &[] } else { &self.pads };
+        let pads: &[DVec3] = if matches!(self.source, Source::Land(_)) { &[] } else { &self.pads };
         for p in pads {
             let ground = dir.distance(*p) * self.body_radius;
             let t = ((ground - PAD_FLAT_INNER) / (PAD_FLAT_OUTER - PAD_FLAT_INNER)).clamp(0.0, 1.0);
@@ -266,6 +280,17 @@ impl Terrain {
             }
         }
         Some(out)
+    }
+
+    /// The source's ground at `dir` (m, the sea not over it; ports' plains as the source levels them) and
+    /// whether all of it was read: a bake's at `detail`, its runtime detail to the band `cell`. None: the
+    /// seed's (or the development graph, asked apart).
+    fn ground(&self, dir: DVec3, detail: crate::worlds::Detail, cell: f64) -> Option<(f64, bool)> {
+        match &self.source {
+            Source::Lines(_) | Source::Land(_) => self.lines_height(dir).map(|h| (h, true)),
+            Source::Baked(h) => Some(self.baked_height_to(h, dir, detail, cell)),
+            Source::Procedural | Source::Graph(_) => None,
+        }
     }
 
     /// `h` as the surface: the sea over anything below 0 on an Earth-like world.
@@ -282,14 +307,8 @@ impl Terrain {
     /// As `surface_view`, the runtime detail to the band `cell` (m): a patch's cells.
     pub fn surface_view_to(&self, dir: DVec3, cell: f64) -> (f64, bool) {
         if let Some(h) = self.graph_surface(dir) { return (h, true); }
-        if let Some(h) = self.lines_height(dir) {
-            return (self.sea_over(h), true);
-        }
-        match &self.baked {
-            Some(h) => {
-                let (v, whole) = self.baked_height_to(h, dir, crate::worlds::Detail::Loaded, cell);
-                (if self.kind == TerrainKind::Terran { v.max(0.0) } else { v }, whole)
-            }
+        match self.ground(dir, crate::worlds::Detail::Loaded, cell) {
+            Some((h, whole)) => (self.sea_over(h), whole),
             None => (self.surface(dir), true),
         }
     }
@@ -297,26 +316,18 @@ impl Terrain {
     /// The surface height (as `surface`) from a bake's 5 km heights alone (a whole globe's).
     pub fn surface_coarse(&self, dir: DVec3) -> f64 {
         if let Some(h) = self.graph_surface(dir) { return h; }
-        if let Some(h) = self.lines_height(dir) {
-            return self.sea_over(h);
-        }
-        match &self.baked {
-            Some(h) => {
-                let v = self.baked_height(h, dir, crate::worlds::Detail::Coarse).0;
-                if self.kind == TerrainKind::Terran { v.max(0.0) } else { v }
-            }
+        match self.ground(dir, crate::worlds::Detail::Coarse, crate::detail::PHYSICS_CELL_M) {
+            Some((h, _)) => self.sea_over(h),
             None => self.surface(dir),
         }
     }
+
 
     /// The bake's surface fields at `dir` for drawing (wetness, scree, bare rock: see
     /// `worlds::Heights::surface_at`), as far as they're read; and whether that's all of it.
     /// None: no bake, or none there (the sea).
     pub fn surface_fields_view(&self, dir: DVec3) -> (Option<[f32; 3]>, bool) {
-        if self.lines.is_some() || self.land.is_some() || self.graph.is_some() {
-            return (None, true);
-        }
-        match &self.baked {
+        match self.baked_src() {
             Some(h) => h.surface_at(dir, crate::worlds::Detail::Loaded),
             None => (None, true),
         }
@@ -325,11 +336,8 @@ impl Terrain {
     /// `height_and_crater` for a whole globe's map: a bake's 5 km heights alone.
     pub fn height_and_crater_coarse(&self, dir: DVec3) -> (f64, f64) {
         if let Some(s) = self.surface_sample(dir) { return (s.height_m, 0.0); }
-        if let Some(h) = self.lines_height(dir) {
-            return (h, 0.0);
-        }
-        match &self.baked {
-            Some(h) => (self.baked_height(h, dir, crate::worlds::Detail::Coarse).0, 0.0),
+        match self.ground(dir, crate::worlds::Detail::Coarse, crate::detail::PHYSICS_CELL_M) {
+            Some((h, _)) => (h, 0.0),
             None => self.height_and_crater(dir),
         }
     }
@@ -345,16 +353,12 @@ impl Terrain {
 
     /// Upper bound on the surface height (m).
     pub fn max_height(&self) -> f64 {
-        if let Some(s) = &self.graph { return s.max_height(); }
-        if let Some(l) = &self.land {
-            return l.max() * self.land_scale(l);
-        }
-        if let Some(l) = &self.lines {
-            return l.max();
-        }
-        match &self.baked {
-            Some(h) => h.max,
-            None => self.amplitude * 1.3 + self.relief_max(),
+        match &self.source {
+            Source::Graph(s) => s.max_height(),
+            Source::Land(l) => l.max() * self.land_scale(l),
+            Source::Lines(l) => l.max(),
+            Source::Baked(h) => h.max,
+            Source::Procedural => self.amplitude * 1.3 + self.relief_max(),
         }
     }
 
@@ -442,23 +446,17 @@ impl Terrain {
     /// Ground height (m), ignoring oceans. Flattened to 0 around spaceports.
     pub fn raw_height(&self, dir: DVec3) -> f64 {
         if let Some(s) = self.surface_sample(dir) { return s.height_m; }
-        if let Some(h) = self.lines_height(dir) {
-            return h;
+        match self.ground(dir, crate::worlds::Detail::Full, crate::detail::PHYSICS_CELL_M) {
+            Some((h, _)) => h,
+            None => self.natural(dir).0 * self.pad_flat(dir),
         }
-        if let Some(h) = &self.baked {
-            return self.baked_height(h, dir, crate::worlds::Detail::Full).0;
-        }
-        self.natural(dir).0 * self.pad_flat(dir)
     }
 
     /// Ground height (as `raw_height`) and how far inside a crater (0..1), together.
     pub fn height_and_crater(&self, dir: DVec3) -> (f64, f64) {
         if let Some(s) = self.surface_sample(dir) { return (s.height_m, 0.0); }
-        if let Some(h) = self.lines_height(dir) {
+        if let Some((h, _)) = self.ground(dir, crate::worlds::Detail::Full, crate::detail::PHYSICS_CELL_M) {
             return (h, 0.0);
-        }
-        if let Some(h) = &self.baked {
-            return (self.baked_height(h, dir, crate::worlds::Detail::Full).0, 0.0);
         }
         let (h, inside) = self.natural(dir);
         (h * self.pad_flat(dir), inside)
@@ -512,7 +510,8 @@ impl Terrain {
         if self.kind == TerrainKind::Terran && h < 0.0 {
             return (Ground::Ocean, 0.0);
         }
-        let inside = if self.baked.is_some() { 0.0 } else { self.natural(dir).1 };
+        // (Craters are the seed's: a world from the store has none to be inside.)
+        let inside = if matches!(self.source, Source::Procedural) { self.natural(dir).1 } else { 0.0 };
         let kind = if inside > 0.25 {
             Ground::Crater
         } else if h > 0.7 * self.amplitude {

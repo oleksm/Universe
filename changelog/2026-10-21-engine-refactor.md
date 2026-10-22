@@ -41,3 +41,9 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
     the same order); the pool's releases checked against the frame's mesh index, not a scan. Left as they are,
     measured small in the busy scene: the pilots' copies of awake ships (0.15 ms: sharing them would put every
     ship behind an Arc), the crash log's `remove(0)` (a short list), ship shape pairs (already culled by spheres).
+6. A world's heights come from one `Source` (procedural, a bake, lines, a land package, the development graph)
+   in place of four optional fields that every query sorted out for itself (56 references). Lines, land and
+   bake answer through one `Terrain::ground(dir, detail, cell)`; the sea and the ports' plains are put over it
+   as before. Two slips the fields allowed go: a lines world also kept a bake (`baked()` true, the ground-ahead
+   prefetch reading its tiles for nothing), and a world from the store still worked out the seed's crater
+   noise for `classify` (always 0 there). Captures of a baked world, a moon and Hoar E match before/after.
