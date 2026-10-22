@@ -110,6 +110,9 @@ pub struct Level {
     pub z: String,
     pub rgb: String,
     pub mask: String,
+    /// Its tiles' feature-aware meshes (`TileMesh`), if it has them.
+    #[serde(default)]
+    pub mesh: Option<String>,
 }
 
 impl Level {
@@ -127,6 +130,13 @@ pub struct Tile {
     pub error_m: f64,
     pub zmin: f64,
     pub zmax: f64,
+    /// Its mesh in the level's mesh file: where (u16s in), vertices, triangles (none: the full grid).
+    #[serde(default)]
+    pub mesh_off: u64,
+    #[serde(default)]
+    pub mesh_nv: usize,
+    #[serde(default)]
+    pub mesh_nt: usize,
 }
 
 #[derive(Clone, Deserialize)]
@@ -213,6 +223,105 @@ pub fn read_rect(path: &Path, level: &Level, i0: usize, j0: usize, width: usize,
     Ok(bytes)
 }
 
+/// A tile's feature-aware mesh (the planet lab's `tile_mesh`): its vertices, samples of the level within the
+/// tile ((i, j): column and row, 0 to `tile`), and its triangles. Heights and the rest are the rasters' at the
+/// vertices; drawn and touched alike (`height`).
+pub struct TileMesh {
+    pub verts: Vec<[u16; 2]>,
+    pub tris: Vec<[u16; 3]>,
+    /// The triangles over each BUCKET-cell square of the tile, row by row (`find`).
+    buckets: Vec<Vec<u32>>,
+    side: usize,
+}
+
+/// A bucket's side (cells).
+const BUCKET: usize = 8;
+
+impl TileMesh {
+    /// Tile `t`'s mesh from the pyramid in `dir`, if its level has meshes and it has one.
+    pub fn read(dir: &Path, m: &Meta, t: &Tile) -> Result<Option<Self>, String> {
+        let Some(name) = &m.levels[t.k].mesh else { return Ok(None) };
+        if t.mesh_nv == 0 {
+            return Ok(None);
+        }
+        let path = dir.join(name);
+        let mut file = File::open(&path).map_err(|e| format!("{}: {e}", path.display()))?;
+        let mut bytes = vec![0u8; (2 * t.mesh_nv + 3 * t.mesh_nt) * 2];
+        file.seek(SeekFrom::Start(t.mesh_off * 2)).map_err(|e| e.to_string())?;
+        file.read_exact(&mut bytes).map_err(|e| format!("{}: {e}", path.display()))?;
+        let w: Vec<u16> = bytes.chunks_exact(2).map(|c| u16::from_le_bytes([c[0], c[1]])).collect();
+        // (Stored row, column: kept column, row, as the rasters' (i, j).)
+        let verts: Vec<[u16; 2]> = w[..2 * t.mesh_nv].chunks_exact(2).map(|p| [p[1], p[0]]).collect();
+        let tris: Vec<[u16; 3]> = w[2 * t.mesh_nv..].chunks_exact(3).map(|p| [p[0], p[1], p[2]]).collect();
+        if verts.iter().any(|v| v[0] as usize > m.tile || v[1] as usize > m.tile) || tris.iter().flatten().any(|&i| i as usize >= t.mesh_nv) {
+            return Err(format!("{}: tile ({}, {}, {}): a vertex outside the tile or a triangle's past them", path.display(), t.k, t.row, t.col));
+        }
+        Ok(Some(Self::new(verts, tris, m.tile)))
+    }
+
+    pub fn new(verts: Vec<[u16; 2]>, tris: Vec<[u16; 3]>, tile: usize) -> Self {
+        let side = tile.div_ceil(BUCKET);
+        let mut buckets = vec![Vec::new(); side * side];
+        for (n, t) in tris.iter().enumerate() {
+            let p = t.map(|i| verts[i as usize]);
+            let lo = |c: usize| (p.iter().map(|v| v[c] as usize).min().unwrap() / BUCKET).min(side - 1);
+            let hi = |c: usize| (p.iter().map(|v| v[c] as usize).max().unwrap() / BUCKET).min(side - 1);
+            for bj in lo(1)..=hi(1) {
+                for bi in lo(0)..=hi(0) {
+                    buckets[bj * side + bi].push(n as u32);
+                }
+            }
+        }
+        Self { verts, tris, buckets, side }
+    }
+
+    /// The triangles that may hold (u, v) (cells within the tile, fractional).
+    pub fn near(&self, u: f64, v: f64) -> &[u32] {
+        let b = |x: f64| ((x.max(0.0) as usize) / BUCKET).min(self.side - 1);
+        &self.buckets[b(v) * self.side + b(u)]
+    }
+
+    /// The triangle holding (u, v) (cells within the tile) and its weights at its corners, if any.
+    pub fn find(&self, u: f64, v: f64) -> Option<(usize, [f64; 3])> {
+        const EDGE: f64 = -1e-9;
+        self.near(u, v).iter().find_map(|&n| {
+            let [a, b, c] = self.tris[n as usize].map(|i| self.verts[i as usize].map(|x| x as f64));
+            let d = (b[1] - c[1]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[1] - c[1]);
+            if d == 0.0 {
+                return None;
+            }
+            let wa = ((b[1] - c[1]) * (u - c[0]) + (c[0] - b[0]) * (v - c[1])) / d;
+            let wb = ((c[1] - a[1]) * (u - c[0]) + (a[0] - c[0]) * (v - c[1])) / d;
+            let wc = 1.0 - wa - wb;
+            (wa >= EDGE && wb >= EDGE && wc >= EDGE).then_some((n as usize, [wa, wb, wc]))
+        })
+    }
+}
+
+/// The ground's height in tile `t` of level `t.k` at (u, v) (that level's samples, fractional), as the
+/// renderer draws it: on the tile's mesh if it has one (None off its triangles), else on its grid (cells cut
+/// corner to opposite corner; None in a cell with no ground or with a hole's). `d` holds the tile's samples.
+pub fn tile_height(m: &Meta, t: &Tile, d: &Raster, mesh: Option<&TileMesh>, u: f64, v: f64) -> Option<f64> {
+    let (i0, j0) = (t.col * m.tile, t.row * m.tile);
+    if let Some(mesh) = mesh {
+        let (n, w) = mesh.find(u - i0 as f64, v - j0 as f64)?;
+        let z = mesh.tris[n].map(|k| {
+            let [i, j] = mesh.verts[k as usize];
+            d.z(i0 + i as usize, j0 + j as usize)
+        });
+        return Some(z[0] * w[0] + z[1] * w[1] + z[2] * w[2]);
+    }
+    let (i, j) = (u.floor() as usize, v.floor() as usize);
+    let indices = [d.at(i, j), d.at(i + 1, j), d.at(i, j + 1), d.at(i + 1, j + 1)];
+    let masks = indices.map(|i| d.mask[i]);
+    if masks.contains(&2) || !masks.contains(&1) {
+        return None;
+    }
+    let [a, b, c, d] = indices.map(|i| d.z[i] as f64);
+    let (u, v) = (u - i as f64, v - j as f64);
+    Some(if u >= v { a * (1.0 - u) + b * (u - v) + d * v } else { a * (1.0 - v) + d * u + c * (v - u) })
+}
+
 /// Level `k`'s rectangle from the pyramid in `dir`; its colours too if `rgb`.
 pub fn raster(dir: &Path, m: &Meta, k: usize, i0: usize, j0: usize, width: usize, height: usize, rgb: bool) -> Result<Raster, String> {
     let l = &m.levels[k];
@@ -244,7 +353,7 @@ struct Pyramid {
     dir: PathBuf,
     m: Meta,
     index: HashMap<(usize, usize, usize), usize>,
-    cache: [Mutex<(u64, HashMap<usize, (u64, Arc<Raster>)>)>; SHARDS],
+    cache: [Mutex<(u64, HashMap<usize, (u64, Arc<(Raster, Option<TileMesh>)>)>)>; SHARDS],
 }
 
 impl Pyramid {
@@ -260,7 +369,7 @@ impl Pyramid {
         Ok(Some(Self { dir, m, index, cache: std::array::from_fn(|_| Mutex::new((0, HashMap::new()))) }))
     }
 
-    fn tile(&self, id: usize) -> Option<Arc<Raster>> {
+    fn tile(&self, id: usize) -> Option<Arc<(Raster, Option<TileMesh>)>> {
         let shard = &self.cache[id % SHARDS];
         {
             let mut c = shard.lock().unwrap_or_else(|e| e.into_inner());
@@ -276,7 +385,8 @@ impl Pyramid {
         let r = raster(&self.dir, &self.m, t.k, t.col * self.m.tile, t.row * self.m.tile, self.m.tile + 1, self.m.tile + 1, false)
             .map_err(|e| log::warn!("land pyramid tile {id}: {e}"))
             .ok()?;
-        let r = Arc::new(r);
+        let mesh = TileMesh::read(&self.dir, &self.m, &t).map_err(|e| log::warn!("land pyramid tile {id}: {e}")).ok()?;
+        let r = Arc::new((r, mesh));
         let mut c = shard.lock().unwrap_or_else(|e| e.into_inner());
         c.0 += 1;
         let tick = c.0;
@@ -305,14 +415,7 @@ impl Pyramid {
             let (i, j) = (u.floor() as usize, v.floor() as usize);
             let Some(&id) = self.index.get(&(k, j / m.tile, i / m.tile)) else { continue };
             let d = self.tile(id)?;
-            let indices = [d.at(i, j), d.at(i + 1, j), d.at(i, j + 1), d.at(i + 1, j + 1)];
-            let masks = indices.map(|i| d.mask[i]);
-            if masks.contains(&2) || !masks.contains(&1) {
-                return None;
-            }
-            let [a, b, c, d] = indices.map(|i| d.z[i] as f64);
-            let (u, v) = (u - i as f64, v - j as f64);
-            return Some(if u >= v { a * (1.0 - u) + b * (u - v) + d * v } else { a * (1.0 - v) + d * u + c * (v - u) });
+            return tile_height(m, &m.tiles[id], &d.0, d.1.as_ref(), u, v);
         }
         None
     }

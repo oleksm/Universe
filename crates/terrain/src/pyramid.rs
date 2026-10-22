@@ -13,7 +13,7 @@ fn min_cell_px() -> f64 {
 }
 const CACHE_BYTES: usize = 8 * 1024 * 1024 * 1024;
 const UPLOAD_BYTES: usize = 32 * 1024 * 1024;
-use universe_world::worlds::land::{Meta, Raster, Tile};
+use universe_world::worlds::land::{tile_height, Meta, Raster, Tile, TileMesh};
 struct Source {
     dir: PathBuf,
     m: Meta,
@@ -243,6 +243,8 @@ struct Built {
     mesh: PooledMesh,
     origin: DVec3,
     ground: Raster,
+    /// The tile's feature-aware mesh, if it has one (its vertices are the model's first).
+    tri: Option<TileMesh>,
 }
 impl Built {
     fn bytes(&self) -> usize {
@@ -250,6 +252,7 @@ impl Built {
             + self.ground.z.len() * 4
             + self.ground.rgb.len() * 3
             + self.ground.mask.len()
+            + self.tri.as_ref().map_or(0, |m| m.verts.len() * 4 + m.tris.len() * 10)
     }
 }
 fn build_model(
@@ -257,8 +260,9 @@ fn build_model(
     id: usize,
     ex: f64,
     real: bool,
-) -> Result<(PoolModel, DVec3, Raster), String> {
+) -> Result<(PoolModel, DVec3, Raster, Option<TileMesh>), String> {
     let t = source.m.tiles[id];
+    let mesh = TileMesh::read(&source.dir, &source.m, &t)?;
     let tile = source.m.tile;
     let side = tile + 1;
     let i0 = t.col * tile;
@@ -301,8 +305,13 @@ fn build_model(
         smooth: true,
         ..Default::default()
     };
-    for j in 0..side {
-        for i in 0..side {
+    // The vertices: the tile's mesh's, else every sample of the tile (row by row).
+    let verts: Vec<(usize, usize)> = match &mesh {
+        Some(mesh) => mesh.verts.iter().map(|v| (v[0] as usize, v[1] as usize)).collect(),
+        None => (0..side).flat_map(|j| (0..side).map(move |i| (i, j))).collect(),
+    };
+    for &(i, j) in &verts {
+        {
             let gi = (i0 + i).min(data.n - 1);
             let gj = (j0 + j).min(data.n - 1);
             let at = data.at(gi, gj);
@@ -360,85 +369,91 @@ fn build_model(
             });
         }
     }
-    let mut quads = vec![false; tile * tile];
-    for j in 0..tile {
-        for i in 0..tile {
-            let a = (j * side + i) as u32;
-            let b = a + 1;
-            let c = a + side as u32;
-            let d = c + 1;
-            let masks = [
-                data.mask[data.at(i0 + i, j0 + j)],
-                data.mask[data.at(i0 + i + 1, j0 + j)],
-                data.mask[data.at(i0 + i, j0 + j + 1)],
-                data.mask[data.at(i0 + i + 1, j0 + j + 1)],
-            ];
-            let (x0, y0) = source.xy(t, i as f64, j as f64);
-            let (x1, y1) = source.xy(t, (i + 1) as f64, (j + 1) as f64);
-            // Guard a hole smaller than a coarse cell even if none of its coarse samples falls in it.
-            if !masks.contains(&1)
-                || masks.contains(&2)
-                || (t.k > 0 && source.hole_rect(x0, y0, x1, y1))
-            {
+    let hole = |(x0, y0): (f64, f64), (x1, y1): (f64, f64)| t.k > 0 && source.hole_rect(x0, y0, x1, y1);
+    if let Some(mesh) = &mesh {
+        // (Stored only where all three corners are ground; a coarse level's guard against a hole smaller
+        // than its cells, as the grid's.)
+        let mut seen = HashSet::new();
+        for tri in &mesh.tris {
+            let p = tri.map(|k| mesh.verts[k as usize].map(|x| x as f64));
+            let lo = (p.iter().map(|v| v[0]).fold(f64::MAX, f64::min), p.iter().map(|v| v[1]).fold(f64::MAX, f64::min));
+            let hi = (p.iter().map(|v| v[0]).fold(f64::MIN, f64::max), p.iter().map(|v| v[1]).fold(f64::MIN, f64::max));
+            if hole(source.xy(t, lo.0, lo.1), source.xy(t, hi.0, hi.1)) {
                 continue;
             }
-            quads[j * tile + i] = true;
-            model.faces.extend([[a, b, d], [a, d, c]]);
-            model.edges.extend([[a, b], [a, c]]);
+            let [a, b, c] = tri.map(|k| k as u32);
+            model.faces.push([a, b, c]);
+            for (u, v) in [(a, b), (b, c), (c, a)] {
+                if seen.insert((u.min(v), u.max(v))) {
+                    model.edges.push([u, v]);
+                }
+            }
+        }
+    } else {
+        for j in 0..tile {
+            for i in 0..tile {
+                let a = (j * side + i) as u32;
+                let b = a + 1;
+                let c = a + side as u32;
+                let d = c + 1;
+                let masks = [
+                    data.mask[data.at(i0 + i, j0 + j)],
+                    data.mask[data.at(i0 + i + 1, j0 + j)],
+                    data.mask[data.at(i0 + i, j0 + j + 1)],
+                    data.mask[data.at(i0 + i + 1, j0 + j + 1)],
+                ];
+                // Guard a hole smaller than a coarse cell even if none of its coarse samples falls in it.
+                if !masks.contains(&1)
+                    || masks.contains(&2)
+                    || hole(source.xy(t, i as f64, j as f64), source.xy(t, (i + 1) as f64, (j + 1) as f64))
+                {
+                    continue;
+                }
+                model.faces.extend([[a, b, d], [a, d, c]]);
+                model.edges.extend([[a, b], [a, c]]);
+            }
         }
     }
-    // Skirts on all exposed tile/mask edges also cover unequal morphs on same-level neighbours.
+    // Skirts on every edge only one triangle has (the tile's sides, the ground's, a hole's): they also cover
+    // unequal morphs on same-level neighbours and the step to another level.
     let parent_error = source
         .parent(id)
         .map_or(t.error_m, |p| source.m.tiles[p].error_m);
     let depth = 2.0 * parent_error.max(t.error_m).max(1.0) * ex;
-    for j in 0..tile {
-        for i in 0..tile {
-            if !quads[j * tile + i] {
-                continue;
-            }
-            let a = (j * side + i) as u32;
-            let b = a + 1;
-            let c = a + side as u32;
-            let d = c + 1;
-            for (exposed, u, v) in [
-                (j == 0 || !quads[(j.saturating_sub(1)) * tile + i], a, b),
-                (
-                    i + 1 == tile || !quads[j * tile + (i + 1).min(tile - 1)],
-                    b,
-                    d,
-                ),
-                (
-                    j + 1 == tile || !quads[(j + 1).min(tile - 1) * tile + i],
-                    d,
-                    c,
-                ),
-                (i == 0 || !quads[j * tile + i.saturating_sub(1)], c, a),
-            ] {
-                if !exposed {
-                    continue;
-                }
-                let k = model.positions.len() as u32;
-                for w in [u, v] {
-                    let p = model.positions[w as usize];
-                    let down = (origin + p.as_dvec3()).normalize() * depth;
-                    model.positions.push(p - down.as_vec3());
-                    model.colors.push(model.colors[w as usize]);
-                    model.normals.push(model.normals[w as usize]);
-                    model.morph.push(model.morph[w as usize]);
-                }
-                model.faces.extend([[u, k, k + 1], [u, k + 1, v]]);
-            }
+    let mut used: HashMap<(u32, u32), u32> = HashMap::new();
+    for f in &model.faces {
+        for (u, v) in [(f[0], f[1]), (f[1], f[2]), (f[2], f[0])] {
+            *used.entry((u.min(v), u.max(v))).or_default() += 1;
         }
     }
-    Ok((model, origin, data))
+    let faces = model.faces.len();
+    for n in 0..faces {
+        let f = model.faces[n];
+        for (u, v) in [(f[0], f[1]), (f[1], f[2]), (f[2], f[0])] {
+            if used[&(u.min(v), u.max(v))] != 1 {
+                continue;
+            }
+            let k = model.positions.len() as u32;
+            for w in [u, v] {
+                let p = model.positions[w as usize];
+                let down = (origin + p.as_dvec3()).normalize() * depth;
+                model.positions.push(p - down.as_vec3());
+                model.colors.push(model.colors[w as usize]);
+                model.normals.push(model.normals[w as usize]);
+                model.morph.push(model.morph[w as usize]);
+            }
+            model.faces.extend([[u, k, k + 1], [u, k + 1, v]]);
+        }
+    }
+    Ok((model, origin, data, mesh))
 }
 fn build(source: &Source, id: usize, ex: f64, real: bool) -> Result<Built, String> {
-    let (model, origin, ground) = build_model(source, id, ex, real)?;
+    let (model, origin, ground, tri) = build_model(source, id, ex, real)?;
     Ok(Built {
         mesh: PooledMesh::new(&model),
         origin,
         ground,
+        tri,
     })
 }
 
@@ -713,6 +728,23 @@ impl Pyramid {
             };
             let t = m.tiles[id];
             let data = &c.tile.ground;
+            if let Some(mesh) = &c.tile.tri {
+                // (The triangles drawn near: the morph can shift a point a cell or so.)
+                let (lu, lv) = (u - (t.col * m.tile) as f64, v - (t.row * m.tile) as f64);
+                let mut near: Vec<u32> = [(-1.0, -1.0), (1.0, -1.0), (-1.0, 1.0), (1.0, 1.0)]
+                    .iter()
+                    .flat_map(|(du, dv)| mesh.near(lu + du, lv + dv).iter().copied())
+                    .collect();
+                near.sort_unstable();
+                near.dedup();
+                for n in near {
+                    let points = mesh.tris[n as usize].map(|vi| c.tile.origin + c.tile.mesh.morphed_position(vi as usize, weight).unwrap().as_dvec3());
+                    if let Some(h) = super::flight::triangle_height(dir, points, m.projection.radius_m) {
+                        return Some(h);
+                    }
+                }
+                continue;
+            }
             // The morph can shift the projected cell slightly; test its immediate neighbours too.
             for dj in -1isize..=1 {
                 for di in -1isize..=1 {
@@ -778,24 +810,7 @@ impl Pyramid {
             let Some(c) = self.cache.get(&id) else {
                 continue;
             };
-            let d = &c.tile.ground;
-            let indices = [
-                d.at(i, j),
-                d.at(i + 1, j),
-                d.at(i, j + 1),
-                d.at(i + 1, j + 1),
-            ];
-            let masks = indices.map(|i| d.mask[i]);
-            if masks.contains(&2) || !masks.contains(&1) {
-                return None;
-            }
-            let [a, b, c, d] = indices.map(|i| d.z[i] as f64);
-            let (u, v) = (u - i as f64, v - j as f64);
-            return Some(if u >= v {
-                a * (1.0 - u) + b * (u - v) + d * v
-            } else {
-                a * (1.0 - v) + d * u + c * (v - u)
-            });
+            return tile_height(m, &m.tiles[id], &c.tile.ground, c.tile.tri.as_ref(), u, v);
         }
         None
     }
@@ -1292,6 +1307,40 @@ mod tests {
             "fully morphed fine surface meets the parent"
         );
     }
+    /// A tile with a feature-aware mesh is drawn and touched on its triangles (skirts on its outer edges);
+    /// its neighbours without one keep the grid. (Heights here are a plane: the mesh and the grid agree.)
+    #[test]
+    fn pyramid_tile_mesh_drawn_and_touched_on_its_triangles() {
+        let f = fixture_branch(2, 4);
+        let path = f.0.join("pyramid");
+        // Tile (0, 0, 0): its four corners and its middle, four triangles round the middle.
+        let words: [u16; 22] = [0, 0, 0, 4, 4, 0, 4, 4, 2, 2, 0, 1, 4, 1, 3, 4, 3, 2, 4, 2, 0, 4];
+        std::fs::write(path.join("mesh_0.u16"), words.iter().flat_map(|w| w.to_le_bytes()).collect::<Vec<u8>>()).unwrap();
+        let mut meta: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(path.join("pyramid.json")).unwrap()).unwrap();
+        meta["levels"][0]["mesh"] = "mesh_0.u16".into();
+        let t0 = meta["tiles"].as_array_mut().unwrap().iter_mut().find(|t| t["k"] == 0 && t["row"] == 0 && t["col"] == 0).unwrap();
+        (t0["mesh_off"], t0["mesh_nv"], t0["mesh_nt"]) = (0.into(), 5.into(), 4.into());
+        std::fs::write(path.join("pyramid.json"), meta.to_string()).unwrap();
+        let mut p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
+        let (meshed, plain) = (p.source.index[&(0, 0, 0)], p.source.index[&(0, 0, 1)]);
+        let (model, ..) = build_model(&p.source, meshed, 1., true).unwrap();
+        assert_eq!(model.faces.len(), 4 + 4 * 2, "its triangles and a skirt under each outer edge");
+        assert_eq!(model.positions.len(), 5 + 4 * 2);
+        let (grid, ..) = build_model(&p.source, plain, 1., true).unwrap();
+        assert_eq!(grid.faces.len(), 4 * 4 * 2 + 4 * 4 * 2, "the grid's cells, and skirts round it");
+        for id in [meshed, plain] {
+            p.cache.insert(id, Cached { tile: build(&p.source, id, 1., true).unwrap(), last: 0 });
+            p.drawn.insert(id, 0.);
+        }
+        // Inside the meshed tile, off its vertices: the plane's height, the same drawn and touched.
+        let dir = p.source.inverse(-20. + 0.5 * 10. + 1.3 * 10., -20. + 0.5 * 10. + 2.6 * 10.);
+        let (touched, drawn) = (p.ground_at(dir).unwrap(), p.drawn_ground_at_world(dir).unwrap());
+        let plane = (2.6 * 8. + 1.3) * 3.;
+        assert!((touched - plane).abs() < 1e-6, "{touched} vs {plane}");
+        // (Drawn, a flat triangle's chord under this 1 km sphere: a 40 m tile's sags 40² / 8 R = 0.2 m, its
+        // corners to its middle more; on a world's radius, millimetres.)
+        assert!(drawn < plane && plane - drawn < 1.0, "{drawn} vs {plane}");
+    }
     #[test]
     fn pyramid_windowed_rows_mask_and_boundary_cover() {
         let f = fixture_branch(4, 12);
@@ -1328,7 +1377,7 @@ mod tests {
             !s.can_split(root),
             "partial fine window retains coarse ground outside it"
         );
-        let (tile, _, _) = build_model(s, s.index[&(0, 0, 0)], 1., true).unwrap();
+        let (tile, _, _, _) = build_model(s, s.index[&(0, 0, 0)], 1., true).unwrap();
         assert!(!tile.faces.is_empty());
         assert!(tile.normals.iter().all(|n| n.is_finite()));
         assert!(
@@ -1366,8 +1415,8 @@ mod tests {
         for id in s.children(root) {
             assert_eq!(s.parent(id), Some(root));
         }
-        let (model, origin, _) = build_model(s, fine, 1., true).unwrap();
-        let (parent, po, _) = build_model(s, root, 1., true).unwrap();
+        let (model, origin, _, _) = build_model(s, fine, 1., true).unwrap();
+        let (parent, po, _, _) = build_model(s, root, 1., true).unwrap();
         // A quarter across and three quarters up: all four corners contribute.
         let (u, v) = (0.25, 0.75);
         let target = po
@@ -1428,9 +1477,9 @@ mod tests {
         let a = s.index[&(0, 0, 0)];
         let b = s.index[&(0, 0, 1)];
         let root = s.index[&(1, 0, 0)];
-        let (fine, origin, _) = build_model(s, a, 1.0, true).unwrap();
-        let (neighbour, no, _) = build_model(s, b, 1.0, true).unwrap();
-        let (coarse, co, _) = build_model(s, root, 1.0, true).unwrap();
+        let (fine, origin, _, _) = build_model(s, a, 1.0, true).unwrap();
+        let (neighbour, no, _, _) = build_model(s, b, 1.0, true).unwrap();
+        let (coarse, co, _, _) = build_model(s, root, 1.0, true).unwrap();
         for j in 0..3 {
             let a = origin + fine.positions[j * 3 + 2].as_dvec3();
             let b = no + neighbour.positions[j * 3].as_dvec3();
@@ -1458,7 +1507,7 @@ mod tests {
         let mut mask = vec![1u8; 16];
         mask[0] = 2;
         std::fs::write(f.0.join("pyramid/mask_0.u8"), mask).unwrap();
-        let (hole, _, _) = build_model(s, a, 1.0, true).unwrap();
+        let (hole, _, _, _) = build_model(s, a, 1.0, true).unwrap();
         assert!(!hole.faces.contains(&[0, 1, 4]));
     }
     #[test]
@@ -1475,8 +1524,8 @@ mod tests {
         std::fs::write(f.0.join("pyramid/rgb_0.u8"), rgb).unwrap();
         let p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
         let s = &p.source;
-        let (a, _, _) = build_model(s, s.index[&(0, 0, 0)], 1.0, true).unwrap();
-        let (b, _, _) = build_model(s, s.index[&(0, 0, 1)], 1.0, true).unwrap();
+        let (a, _, _, _) = build_model(s, s.index[&(0, 0, 0)], 1.0, true).unwrap();
+        let (b, _, _, _) = build_model(s, s.index[&(0, 0, 1)], 1.0, true).unwrap();
         assert!(a.smooth && b.smooth);
         assert!(a.face_colors.is_empty() && b.face_colors.is_empty());
         assert_eq!(a.normals.len(), a.positions.len());
