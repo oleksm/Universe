@@ -34,6 +34,8 @@ use crate::system::{Body, BodyKind, StarSystem};
 use crate::units::*;
 
 /// A swarm reaches at most this far from its remnant (m)...
+/// Belt patches' bodies kept for ships to look at (see `StarSystem::field_bodies`).
+const PATCHES: usize = 1024;
 const SWARM_MAX: f64 = 60_000.0;
 /// ...and no farther than this share of the remnant's Hill radius (orbits
 /// out there are stable against the star's tides).
@@ -445,19 +447,29 @@ impl StarSystem {
     /// it moves among (the swarm's bodies are generated on first look).
     pub fn field_bodies(&self, f: usize) -> Arc<Vec<Body>> {
         if let Some(patch) = crate::belts::field_patch(f) {
-            let mut cache = self.patches.lock().unwrap_or_else(|e| e.into_inner());
-            if let Some(b) = cache.get(&f) {
-                return b.clone();
+            {
+                let mut cache = self.patches.lock().unwrap_or_else(|e| e.into_inner());
+                cache.0 += 1;
+                let tick = cache.0;
+                if let Some(b) = cache.1.get_mut(&f) {
+                    b.0 = tick;
+                    return b.1.clone();
+                }
             }
-            // (Kept a while: the nearest few hundred patches looked at.)
-            if cache.len() > 256 {
-                cache.clear();
-            }
+            // (Made with the cache let go: ships stepping side by side ask it. Kept while looked at: the
+            // longest unasked let go past PATCHES, not all of them at once.)
             let mut bodies = self.bodies.clone();
             bodies.extend(crate::belts::patch_rocks(self, &self.belts, patch, self.belt_seed).iter().enumerate().map(|(k, r)| crate::belts::rock_body(self, patch, k, r)));
             let bodies = Arc::new(bodies);
-            cache.insert(f, bodies.clone());
-            return bodies;
+            let mut cache = self.patches.lock().unwrap_or_else(|e| e.into_inner());
+            cache.0 += 1;
+            let tick = cache.0;
+            if cache.1.len() >= PATCHES
+                && let Some(old) = cache.1.iter().min_by_key(|e| e.1 .0).map(|e| *e.0)
+            {
+                cache.1.remove(&old);
+            }
+            return cache.1.entry(f).or_insert((tick, bodies)).1.clone();
         }
         let field = &self.fields[f];
         field

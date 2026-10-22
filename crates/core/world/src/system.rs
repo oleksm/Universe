@@ -210,7 +210,8 @@ pub struct StarSystem {
     pub belts: Vec<crate::belts::Belt>,
     pub belt_seed: u64,
     /// Belt patches looked at: their bodies (the system's, then the patch's rocks), kept a while.
-    pub patches: std::sync::Mutex<std::collections::HashMap<usize, std::sync::Arc<Vec<Body>>>>,
+    /// Belt patches' bodies made so far, each with when it was last asked (see `field_bodies`).
+    pub patches: std::sync::Mutex<(u64, std::collections::HashMap<usize, (u64, std::sync::Arc<Vec<Body>>)>)>,
 }
 
 const ROCKY_COLORS: [[f32; 3]; 4] = [[0.8, 0.5, 0.3], [0.65, 0.65, 0.65], [0.85, 0.75, 0.5], [0.75, 0.4, 0.35]];

@@ -304,7 +304,7 @@ impl World {
     /// a field's swarm, else the belt patch of the nearest belt rock close by.
     pub fn field_at(&self, sys: &StarSystem, system: usize, p: DVec3, t: f64) -> Option<usize> {
         if !sys.fields.is_empty()
-            && let Some(f) = sys.field_near(p, &self.rails_at(system, t))
+            && let Some(f) = universe_prof::time("sim/crafts/tick/world step/flight (physics)/field/swarms", || sys.field_near(p, &self.rails_at(system, t)))
         {
             return Some(f);
         }
@@ -317,13 +317,28 @@ impl World {
         if !sys.belts.iter().any(|b| r + close >= b.inner * (1.0 - crate::belts::rocks().most_eccentric) && r - close <= b.outer * (1.0 + crate::belts::rocks().most_eccentric)) {
             return None;
         }
-        let n = sys.bodies.len();
-        crate::belts::patches_near(&sys.belts, p, t, close, 0.0)
+        let patches = universe_prof::time("sim/crafts/tick/world step/flight (physics)/field/patches", || crate::belts::patches_near(&sys.belts, p, t, close, 0.0));
+        let _rocks = universe_prof::scope("sim/crafts/tick/world step/flight (physics)/field/rocks");
+        patches
             .into_iter()
             .filter_map(|patch| {
                 let f = crate::belts::patch_field(patch);
                 let bodies = sys.field_bodies(f);
-                (n..bodies.len()).filter_map(|i| Some(bodies[i].rail.orbit.as_ref()?.position(t).distance(p) - bodies[i].rail.radius)).filter(|&gap| gap < close).map(|gap| (f, gap)).min_by(|a, b| a.1.total_cmp(&b.1))
+                bodies[sys.bodies.len()..]
+                    .iter()
+                    .filter_map(|b| {
+                        let o = b.rail.orbit.as_ref()?;
+                        // (Its distance from the star stays between its periapsis and apoapsis: most rocks of a
+                        // patch never come within reach, known without solving where they are.)
+                        let reach = close + b.rail.radius;
+                        if r + reach < o.periapsis() || r - reach > o.apoapsis() {
+                            return None;
+                        }
+                        Some(o.position(t).distance(p) - b.rail.radius)
+                    })
+                    .filter(|&gap| gap < close)
+                    .map(|gap| (f, gap))
+                    .min_by(|a, b| a.1.total_cmp(&b.1))
             })
             .min_by(|a, b| a.1.total_cmp(&b.1))
             .map(|(f, _)| f)
@@ -774,7 +789,7 @@ impl World {
     #[allow(clippy::too_many_arguments)]
     fn flight_step(&self, clock: &mut f64, sys: &StarSystem, ship: &mut Ship, system: usize, dt: f64, events: &mut Vec<ShipEvent>) -> StepResult {
         // Among an asteroid field, its swarm's bodies too.
-        let field = self.field_at(sys, system, ship.position, *clock);
+        let field = universe_prof::time("sim/crafts/tick/world step/flight (physics)/field", || self.field_at(sys, system, ship.position, *clock));
         let local = field.map(|f| self.field_bodies_now(sys, f));
         let bodies = local.as_deref().map_or(&sys.bodies[..], |b| &b[..]);
         // For short frames, snapshot the bodies once and extrapolate for each
@@ -807,7 +822,7 @@ impl World {
             devices = devices.on_ground(g);
         }
         let mut positions = Vec::with_capacity(bodies.len());
-        let out = integrate(bodies, ephemeris.as_deref(), &mut positions, &mut rigid, span, &mut devices);
+        let out = universe_prof::time("sim/crafts/tick/world step/flight (physics)/integrate", || integrate(bodies, ephemeris.as_deref(), &mut positions, &mut rigid, span, &mut devices));
         let step = devices.into_ground();
         ship.set_rigid(&rigid);
         *clock = out.time;

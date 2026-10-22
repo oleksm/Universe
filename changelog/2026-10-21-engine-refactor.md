@@ -30,3 +30,9 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
     packs them where they are made (the planet LOD build worker, its tile groups, the game's patch pool); the upload
     takes the packed copy (not kept twice). Upload 1.48 -> 0.33 ms, the render step 1.93 -> 1.32 ms. Profiler
     scopes for the upload's parts (new meshes, batching, casters).
+5c. Ships near a belt (Hoar E's traffic) spent 4 ms a frame asking which asteroid field they are among: the belt
+    patches' bodies were cached 256 at a time and the whole cache cleared when full (patches made again, under
+    one lock, spikes to 31 ms), and every rock of every patch near was solved for where it is. The patch cache
+    now lets go its longest-unasked past 1,024 and makes patches unlocked; a rock whose distance from the star
+    (between its periapsis and apoapsis) can't come within reach is passed over unsolved. Field look 4.1 ->
+    2.3 ms (no spikes), the world step 9.1 -> 7.5 ms. Profiler scopes for the flight step's parts.

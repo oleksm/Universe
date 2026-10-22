@@ -489,6 +489,7 @@ impl Step {
     pub fn apply(&mut self, bodies: &[Body], t: f64, positions: &[DVec3], rigid: &mut RigidBody, ship: &mut Ship, events: &mut Vec<ShipEvent>) -> DVec3 {
         let h = CONTACT_STEP;
         let i = self.body;
+        let _scope = universe_prof::scope("sim/crafts/tick/world step/flight (physics)/integrate/contact");
         let ground = GroundFrame::new(bodies, i, t, positions);
         let c = contact::forces(&|p| Some(ground.at(p)), rigid, &self.mass, &self.profile.struts, &self.profile.hull, ship.broken_legs, h);
         // Legs pushed past what they hold give way: the ship comes down on that corner.
