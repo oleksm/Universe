@@ -84,13 +84,10 @@ struct Globes {
     /// Their own colours (sRGB; alpha 0 where a world has none), layer for layer.
     colors: wgpu::Texture,
     layers: Vec<Option<GlobeLayer>>,
-    upload_frame: u64,
-    upload_remaining: usize,
 }
 
 #[derive(Clone, Copy)]
 struct GlobeLayer { id: u64, used: u64, next: usize, ready: bool }
-const GLOBE_UPLOAD_PER_FRAME: usize = 2 * 1024 * 1024;
 impl GlobeLayer {
     fn take(&mut self, map: &crate::model::GlobeMap, budget: &mut usize) -> std::ops::Range<usize> {
         let begin = self.next;
@@ -137,7 +134,7 @@ impl Globes {
             mipmap_filter: wgpu::MipmapFilterMode::Linear,
             ..Default::default()
         });
-        (Globes { texture: globe_texture, colors: globe_colors, layers: vec![None; GLOBE_LAYERS as usize], upload_frame: 0, upload_remaining: 0 }, globe_view, globe_colors_view, globe_sampler)
+        (Globes { texture: globe_texture, colors: globe_colors, layers: vec![None; GLOBE_LAYERS as usize] }, globe_view, globe_colors_view, globe_sampler)
     }
 }
 
@@ -145,15 +142,19 @@ impl Globes {
     fn resident(&self, map: &crate::model::GlobeMap) -> bool {
         self.layers.iter().flatten().any(|l| l.id == map.id() && l.ready)
     }
+    /// What the layers' two textures hold on the GPU (bytes, all of them: they are made whole).
+    fn bytes(&self) -> u64 {
+        let face = (GLOBE_SIZE as u64).pow(2);
+        // (Two textures, half and full precision both 4 bytes a texel; mips a third more.)
+        face * 6 * GLOBE_LAYERS as u64 * 8 * 4 / 3
+    }
+
     /// Pending layers are never sampled. Upload a bounded number of prepared
     /// bytes across all worlds per frame; plain base geometry remains drawable.
-    fn layer(&mut self, gpu: &Gpu, map: &crate::model::GlobeMap, now: u64) -> Option<u32> {
+    /// `budget`: the bytes the frame may still upload of globes (spent from).
+    fn layer(&mut self, gpu: &Gpu, map: &crate::model::GlobeMap, now: u64, budget: &mut usize) -> Option<u32> {
         let _scope = universe_prof::scope("render/upload globe chunks");
         assert_eq!(map.size, GLOBE_SIZE);
-        if self.upload_frame != now {
-            self.upload_frame = now;
-            self.upload_remaining = GLOBE_UPLOAD_PER_FRAME;
-        }
         let k = match self.layers.iter().position(|l| l.is_some_and(|l| l.id == map.id())) {
             Some(k) => k,
             None => {
@@ -165,7 +166,7 @@ impl Globes {
         };
         let layer = self.layers[k].as_mut().unwrap();
         layer.used = now;
-        for upload in &map.uploads[layer.take(map, &mut self.upload_remaining)] {
+        for upload in &map.uploads[layer.take(map, budget)] {
             gpu.queue.write_texture(
                 wgpu::TexelCopyTextureInfo { texture: if upload.color { &self.colors } else { &self.texture }, mip_level: upload.mip,
                     origin: wgpu::Origin3d { x: 0, y: 0, z: k as u32*6 + upload.face }, aspect: wgpu::TextureAspect::All },
@@ -541,7 +542,8 @@ pub(crate) struct Renderer {
     /// The same for the front layer's meshes.
     front_face_runs: Vec<(u64, u32, u32)>,
     front_edge_runs: Vec<(u64, u32, u32)>,
-    frames: u64,
+    /// The frame counter, the uploads' allowances, what each kind holds (see `residency`).
+    residency: crate::residency::Residency,
     solids: DynBuffer,
     lines: DynBuffer,
     front_lines: DynBuffer,
@@ -920,7 +922,7 @@ impl Renderer {
             shadows,
             globes,
             world: world_bind,
-            frames: 0,
+            residency: crate::residency::Residency::new(),
             solids: DynBuffer::new(device, "solids"),
             lines: DynBuffer::new(device, "lines"),
             front_lines: DynBuffer::new(device, "front lines"),
@@ -1056,18 +1058,23 @@ impl Renderer {
             asset_hits: self.pbr.hits(),
             asset_unloads: self.pbr.evictions(),
             asset_gpu_bytes: self.pbr.resident_bytes(),
-            mesh_gpu_bytes: self.meshes.values().map(|m|(m.faces.size()+m.edges.size()) as usize).sum(),
+            mesh_gpu_bytes: self.residency.held(crate::residency::Kind::Meshes) as usize,
+            globe_gpu_bytes: self.residency.held(crate::residency::Kind::Globes),
+            world_map_gpu_bytes: self.residency.held(crate::residency::Kind::WorldMaps),
+            gpu_bytes: self.residency.total(),
             asset_preparing: self.pbr.preparing(),
             globe_layers: self.globes.layers.iter().filter(|l| l.is_some()).count(),
             globe_capacity: self.globes.layers.len(),
             pool_meshes: self.pool.usage().2,
-            pool_bytes: self.pool.usage().0,
+            pool_bytes: self.residency.held(crate::residency::Kind::Pool),
             pool_used_bytes: self.pool.usage().1,
         }
     }
 
     /// Render `frame`; if `capture` is set, also save the composited image (at HUD resolution) as PNG.
     pub fn render(&mut self, gpu: &mut Gpu, frame: &Frame, capture: Option<&Path>) {
+        // (One frame, its views and all: one count, one allowance.)
+        self.residency.begin_frame();
         self.pbr.begin_frame();
         // Gather union demand before any child upload/eviction decision.
         self.pbr.view_demand = frame.pbr.iter().chain(frame.views.iter().flat_map(|(_,_,f,_)| f.pbr.iter()))
@@ -1086,6 +1093,18 @@ impl Renderer {
             self.view_targets.insert(*id, target);
         }
         self.render_frame(gpu, frame, capture, true);
+        use crate::residency::Kind;
+        let (pool, ..) = self.pool.usage();
+        let held = [
+            (Kind::Meshes, self.meshes.values().map(|m| m.faces.size() + m.edges.size()).sum::<u64>()),
+            (Kind::Pool, pool),
+            (Kind::Pbr, self.pbr.resident_bytes() as u64),
+            (Kind::Globes, self.globes.bytes()),
+            (Kind::WorldMaps, self.world.bytes()),
+        ];
+        for (k, b) in held {
+            self.residency.hold(k, b);
+        }
     }
 
     fn render_frame(&mut self, gpu: &mut Gpu, frame: &Frame, capture: Option<&Path>, present: bool) {
@@ -1125,8 +1144,17 @@ impl Renderer {
         let (gr, on) = (frame.graphics, |b: bool| if b { 1.0f32 } else { 0.0 });
         // A world's full-resolution maps, bound; the globe layer they're for (+ 1; 0: none
         // this frame: its globe map isn't up yet).
+        // (Uploaded for the frame itself; a view shows the set bound if it's the same, else its globes' maps:
+        // two worlds in turn would each take the one bound set from the other, again and again.)
         let world_ready = frame.world_maps.as_ref().is_some_and(|(maps, ..)| {
-            universe_prof::time("render/upload world map chunks", || self.world.bind(&gpu.device, &gpu.queue, maps))
+            if !present {
+                return self.world.ready_for(maps);
+            }
+            let mut budget = self.residency.left(crate::residency::Kind::WorldMaps);
+            let before = budget;
+            let ready = universe_prof::time("render/upload world map chunks", || self.world.bind(&gpu.device, &gpu.queue, maps, &mut budget));
+            self.residency.spend(crate::residency::Kind::WorldMaps, before - budget);
+            ready
         });
         let world_at = frame.world_maps.as_ref().filter(|_| world_ready).map_or([0.0; 4], |(_, _, c, r)| {
             let d = (*c - frame.camera.position).as_vec3();
@@ -1189,7 +1217,12 @@ impl Renderer {
         self.hud_tris.upload_bytes(gpu, bytemuck::cast_slice(&frame.hud_tris), frame.hud_tris.len() as u32);
         self.hud.upload(gpu, &frame.hud);
         universe_prof::time("render/upload meshes", || self.upload_meshes(gpu, frame));
-        universe_prof::time("render/upload PBR", || self.pbr.upload(&gpu.device, &gpu.queue, &frame.pbr, frame.shadow_reach as f32 * 1.5, frame.camera.forward()));
+        {
+            let mut budget = self.residency.left(crate::residency::Kind::Pbr);
+            let before = budget;
+            universe_prof::time("render/upload PBR", || self.pbr.upload(&gpu.device, &gpu.queue, &frame.pbr, frame.shadow_reach as f32 * 1.5, frame.camera.forward(), &mut budget));
+            self.residency.spend(crate::residency::Kind::Pbr, before - budget);
+        }
         drop(upload);
 
         let acquire = std::time::Instant::now();
@@ -1455,8 +1488,7 @@ impl Renderer {
     /// Meshes for this frame: new ones uploaded, unused ones dropped; the
     /// instances grouped by mesh (faces, then edges) into one buffer.
     fn upload_meshes(&mut self, gpu: &Gpu, frame: &Frame) {
-        self.frames += 1;
-        let now = self.frames;
+        let now = self.residency.frame();
         let made = universe_prof::scope("render/upload meshes/new");
         for d in frame.meshes.iter().chain(&frame.front).chain(&frame.overlays) {
             self.meshes.entry(d.mesh.id()).or_insert_with(|| universe_prof::time("render/upload meshes/new/mesh", || GpuMesh::new(gpu, &d.mesh))).used = now;
@@ -1490,7 +1522,10 @@ impl Renderer {
         order.sort_by_key(|&i| (!self.globes.resident(&frame.globe_maps[i]), std::cmp::Reverse(uses[i])));
         let mut layers: Vec<Option<u32>> = vec![None; frame.globe_maps.len()];
         for i in order {
-            layers[i] = self.globes.layer(gpu, &frame.globe_maps[i], now);
+            let mut budget = self.residency.left(crate::residency::Kind::Globes);
+            let before = budget;
+            layers[i] = self.globes.layer(gpu, &frame.globe_maps[i], now, &mut budget);
+            self.residency.spend(crate::residency::Kind::Globes, before - budget);
         }
         for inst in &mut data {
             if inst.globe[0] > 0.5 {
@@ -1506,7 +1541,7 @@ impl Renderer {
         let ground: Vec<&crate::frame::MeshDraw> = frame.meshes.iter().filter(|d| d.ground && glam::Vec3::from_slice(&d.instance.t[..3]).length() - d.reach < (GROUND_HALF * 1.5) as f32).collect();
         self.shadows.ground_runs = casters(&ground, &mut data);
         self.instances.upload_bytes(gpu, bytemuck::cast_slice(&data), data.len() as u32);
-        universe_prof::time("render/upload meshes/pool", || self.pool.frame(gpu, &frame.pool));
+        universe_prof::time("render/upload meshes/pool", || self.pool.frame(gpu, &frame.pool, now));
     }
 
     /// The pooled meshes' faces (or edges) of a layer (0 the scene, 1 the front): one draw.

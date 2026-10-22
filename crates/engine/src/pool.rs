@@ -446,8 +446,9 @@ impl PoolStore {
     }
 
     /// This frame's pool: meshes let go, new ones copied in, the draws laid out for the GPU.
-    pub fn frame(&mut self, gpu: &crate::gpu::Gpu, pf: &PoolFrame) {
-        self.tick+=1;
+    /// `now`: the renderer's frame (one for a frame and its views).
+    pub fn frame(&mut self, gpu: &crate::gpu::Gpu, pf: &PoolFrame, now: u64) {
+        self.tick = now;
         // Protect the whole required cover, including prepared children not yet drawn and fallback ancestors.
         let protected: HashSet<_> = pf.keep.iter().copied().chain(pf.meshes.iter().chain(&pf.uploads).map(PooledMesh::id)).collect();
         for id in &protected { if let Some(e)=self.live.get_mut(id) { e.3=self.tick; } }

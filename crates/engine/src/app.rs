@@ -87,6 +87,10 @@ pub struct Resources {
     pub pool_meshes: usize,
     pub pool_bytes: u64,
     pub pool_used_bytes: u64,
+    /// The globe maps' layers and the near world's full maps on the GPU (bytes); all kinds together.
+    pub globe_gpu_bytes: u64,
+    pub world_map_gpu_bytes: u64,
+    pub gpu_bytes: u64,
 }
 
 /// Frames kept in `Perf::history`.

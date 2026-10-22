@@ -523,7 +523,6 @@ pub(crate) struct PbrRenderer {
     blended: Vec<(u64, u32, usize, f32)>,
     frames: u64,
     upload_spent: std::time::Duration,
-    upload_bytes_frame: usize,
     pub(crate) view_demand: std::collections::HashSet<u64>,
 }
 
@@ -808,14 +807,12 @@ impl PbrRenderer {
             blended: Vec::new(),
             frames: 0,
             upload_spent: std::time::Duration::ZERO,
-            upload_bytes_frame: 0,
             view_demand: Default::default(),
         }
     }
 
     pub(crate) fn begin_frame(&mut self) {
         self.upload_spent = std::time::Duration::ZERO;
-        self.upload_bytes_frame = 0;
     }
 
     /// This frame's models up (new ones uploaded, old ones dropped), their
@@ -827,11 +824,12 @@ impl PbrRenderer {
         draws: &[crate::frame::PbrDraw],
         reach: f32,
         forward: Vec3,
+        budget: &mut usize,
     ) {
         self.frames += 1;
         let now = std::time::Instant::now();
         let frame_start = now;
-        let mut upload_bytes = self.upload_bytes_frame;
+        let mut upload_bytes = 0;
 
         // Visible resources cannot be retired under pressure while this frame uses them.
         let visible: std::collections::HashSet<_> = draws.iter().map(|d| d.model.id()).chain(self.view_demand.iter().copied()).collect();
@@ -886,11 +884,11 @@ impl PbrRenderer {
         keyed.sort_by(|a, b| a.0.cmp(&b.0).then(a.1.cmp(&b.1)).then(a.2.total_cmp(&b.2)).then(a.3.cmp(&b.3)));
         for id in keyed.into_iter().map(|k| k.3) {
             let job = self.pending.get_mut(&id).unwrap();
-            while upload_bytes < 8 * 1024 * 1024
+            while upload_bytes < *budget
                 && self.upload_spent + frame_start.elapsed() < std::time::Duration::from_millis(2)
                 && !job.tasks.is_empty()
             {
-                let sent = job.transfer(queue, (8 * 1024 * 1024 - upload_bytes).min(1024 * 1024));
+                let sent = job.transfer(queue, (*budget - upload_bytes).min(1024 * 1024));
                 if sent == 0 {
                     break;
                 }
@@ -1006,7 +1004,7 @@ impl PbrRenderer {
         }
         self.prepared.maintain();
         self.upload_spent += frame_start.elapsed();
-        self.upload_bytes_frame = upload_bytes;
+        *budget = budget.saturating_sub(upload_bytes);
         let data: Vec<crate::frame::Instance> = draws.iter().map(|d| d.instance).collect();
         if data.len() as u64 > self.capacity {
             self.capacity = (data.len() as u64).next_power_of_two();

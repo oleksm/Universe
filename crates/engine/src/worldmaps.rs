@@ -4,7 +4,7 @@
 //! They are encoded where they're made (block-compressed, on the caller's threads: a world's
 //! colour is 8192 × 4096) and handed to the renderer whole; one world's set is bound at a time
 //! (group 2 of the mesh shaders), the one whose globe layer `Frame::world_maps` names. The
-//! renderer uploads a new set a slice a frame (`UPLOAD_BYTES`), keeping the set bound before it
+//! renderer uploads a new set a slice a frame (its residency allowance), keeping the set bound before it
 //! until every map is up, then swaps to it in one frame.
 
 use crate::pbr::Image;
@@ -21,10 +21,6 @@ const BINDINGS: [u32; SLOTS] = [0, 1, 2, 3, 4, 8];
 
 /// Frames a world's maps take to fade in once bound.
 const FADE_FRAMES: f32 = 60.0;
-
-/// Bytes of maps uploaded a frame, at most (a slice of a level is whole rows: one row more
-/// than this, at worst; a world's set, ~150 MiB, takes about 75 frames).
-const UPLOAD_BYTES: usize = 2 << 20;
 
 /// Views in group 2 that hold textures: the maps by slot, the air's two tables, the clouds' three.
 const VIEWS: usize = SLOTS + 5;
@@ -168,6 +164,8 @@ struct Pending {
     maps: std::sync::Arc<WorldMaps>,
     textures: Vec<Option<wgpu::Texture>>,
     at: (usize, usize, u32),
+    /// Its textures' bytes, all levels.
+    bytes: u64,
 }
 
 /// The renderer's side: the bound set (group 2) and what it holds.
@@ -193,6 +191,8 @@ pub(crate) struct WorldBind {
     blank: wgpu::TextureView,
     /// The set being uploaded, if any (the bound one stays until it's all up).
     pending: Option<Pending>,
+    /// The bound set's bytes.
+    bound_bytes: u64,
 }
 
 impl WorldBind {
@@ -233,7 +233,7 @@ impl WorldBind {
         let blank = Self::blank(device, queue);
         let views: Vec<wgpu::TextureView> = (0..VIEWS).map(|_| blank.clone()).collect();
         let bind = Self::group(device, &layout, &views, &linear, &nearest, &air, &clamped, &clouds, &cache);
-        WorldBind { layout, bind, linear, nearest, air, clamped, clouds, current: None, cloud_maps: None, cache, since: 0, blank, pending: None }
+        WorldBind { layout, bind, linear, nearest, air, clamped, clouds, current: None, cloud_maps: None, cache, since: 0, blank, pending: None, bound_bytes: 0 }
     }
 
     /// A texel of nothing (alpha 0: no map).
@@ -285,12 +285,12 @@ impl WorldBind {
         (self.since as f32 / FADE_FRAMES).min(1.0)
     }
 
-    /// Bind `maps`: upload the next slice of them (`UPLOAD_BYTES`), and once they're all up, bind
+    /// Bind `maps`: upload the next slice of them (`budget` bytes, spent from it), and once they're all up, bind
     /// them in place of the set bound before. True when `maps` are the ones bound (until then the
     /// set bound before, or none, stays). A set half up when another is asked for is finished
     /// first, then the newest asked for is begun: a stream of sets (a world's history played)
     /// still shows each one it finishes.
-    pub fn bind(&mut self, device: &wgpu::Device, queue: &wgpu::Queue, maps: &std::sync::Arc<WorldMaps>) -> bool {
+    pub fn bind(&mut self, device: &wgpu::Device, queue: &wgpu::Queue, maps: &std::sync::Arc<WorldMaps>, budget: &mut usize) -> bool {
         if self.current == Some(maps.id) {
             self.pending = None;
             return true;
@@ -300,8 +300,9 @@ impl WorldBind {
             maps: maps.clone(),
             textures: (0..VIEWS).map(|k| maps.source(k, bc).map(|s| Self::texture(device, &s))).collect(),
             at: (0, 0, 0),
+            bytes: (0..VIEWS).filter_map(|k| maps.source(k, bc)).flat_map(|s| s.levels.into_iter().map(|l| l.2.len() as u64)).sum(),
         });
-        if Self::upload(queue, p, bc, UPLOAD_BYTES) {
+        if Self::upload(queue, p, bc, budget) {
             let p = self.pending.take().expect("pending");
             self.swap(device, queue, p);
         }
@@ -328,8 +329,15 @@ impl WorldBind {
     }
 
     /// Fill `p` on, `budget` bytes at most (whole rows, at least one); true when it's all up.
-    fn upload(queue: &wgpu::Queue, p: &mut Pending, bc: bool, budget: usize) -> bool {
+    fn upload(queue: &wgpu::Queue, p: &mut Pending, bc: bool, left: &mut usize) -> bool {
+        let budget = *left;
         let mut spent = 0;
+        let done = Self::fill(queue, p, bc, budget, &mut spent);
+        *left = left.saturating_sub(spent);
+        done
+    }
+
+    fn fill(queue: &wgpu::Queue, p: &mut Pending, bc: bool, budget: usize, spent: &mut usize) -> bool {
         while p.at.0 < VIEWS {
             let (k, level, row0) = p.at;
             let (Some(t), Some(s)) = (&p.textures[k], p.maps.source(k, bc)) else {
@@ -340,10 +348,10 @@ impl WorldBind {
                 p.at = (k + 1, 0, 0);
                 continue;
             };
-            if spent >= budget {
+            if *spent >= budget {
                 return false;
             }
-            let n = (((budget - spent) / row.max(1) as usize).max(1) as u32).min(rows - row0);
+            let n = (((budget - *spent) / row.max(1) as usize).max(1) as u32).min(rows - row0);
             // (A compressed level is whole blocks: one smaller than a block is its block's size.)
             let (w, h) = if block > 1 { (w.div_ceil(block) * block, h.div_ceil(block) * block) } else { (w, h) };
             let a = (row0 * row) as usize;
@@ -353,7 +361,7 @@ impl WorldBind {
                 wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(row), rows_per_image: Some(n) },
                 wgpu::Extent3d { width: w, height: (n * block).min(h - row0 * block), depth_or_array_layers: 1 },
             );
-            spent += (n * row) as usize;
+            *spent += (n * row) as usize;
             p.at = if row0 + n < rows { (k, level, row0 + n) } else { (k, level + 1, 0) };
         }
         true
@@ -366,6 +374,12 @@ impl WorldBind {
         self.cloud_maps = p.maps.clouds.as_ref().map(|_| [views[SLOTS + 2].clone(), views[SLOTS + 3].clone(), views[SLOTS + 4].clone()]);
         self.bind = Self::group(device, &self.layout, &views, &self.linear, &self.nearest, &self.air, &self.clamped, &self.clouds, &self.cache);
         self.current = Some(p.maps.id);
+        self.bound_bytes = p.bytes;
         self.since = 0;
+    }
+
+    /// Bytes on the GPU: the set bound and the one on its way up.
+    pub fn bytes(&self) -> u64 {
+        self.bound_bytes + self.pending.as_ref().map_or(0, |p| p.bytes)
     }
 }

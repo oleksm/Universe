@@ -19,6 +19,7 @@ pub mod model;
 pub mod pbr;
 mod render_thread;
 mod renderer;
+mod residency;
 mod sunprobe;
 pub mod shaders;
 pub mod devflags;
