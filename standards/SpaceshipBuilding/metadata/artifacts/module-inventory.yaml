@@ -26,6 +26,11 @@ contents:
   new-module authorization.
 - Declaration adversarial checks plus separately scoped actual mesh, fit, mounting/service, export and runtime
   evidence.
+- Complete source object/collection/build-output ownership roster, including inherited pilot station geometry;
+  active substitutes retired and dependent previews/exports invalidated.
+- 'Per-instance clearance matrix: occupied, mount/holder/fastener/tool, installation/removal, user/egress,
+  motion and service access; each requirement/allowance has sourced, derived or provisional authority and explicit
+  missing-data status.'
 boundary: Project authoring evidence using existing equipment references; not a new runtime schema, module
   approval database or implicit installation.
 consumers:
@@ -41,3 +46,4 @@ rules:
 checks:
 - ship-check.assembly
 - ship-check.inhabitation
+- ship-check.module-clearance

@@ -50,7 +50,34 @@ statement: 'Before G3 aisle, cabin or cockpit sizing, discover reusable modules 
   schema success does not prove catalogue lookup, physical installation or load transfer. Test rejection of
   unsearched inventory, duplicate baked mesh/BOM ownership, a reservation promoted to installed equipment and
   a missing-module gap used to justify fabrication. Label declaration tests separately from actual geometry,
-  placement and runtime checks.'
+  placement and runtime checks.
+
+
+  Apply the reuse audit to inherited geometry as well as new builds. Before continuing a resumed candidate,
+  inventory every source object, linked asset, collection and build-script output by semantic owner: hull construction,
+  referenced product instance or non-exported helper/reservation. Include the inherited pilot seat/console,
+  hidden objects and disabled export collections; a name-prefix check is not a complete ownership audit. Retire
+  custom substitutes from the active source and build path, prevent regeneration, and mark their renders/exports
+  withdrawn. Preserve history, but invalidate dependent previews, exports, mass/BOM, arrangement and clearance
+  evidence until regenerated from the corrected inputs.
+
+
+  For every selected module, including the command station, QC uses the actual referenced model and record
+  in the supported consumer frame, without scale-to-fit. Assess occupied volume and interference; mount, holder
+  and fastener/tool space; installation and removal paths; user approach, reach and emergency egress; full
+  required motion and combined states; and maintenance/service access, connectors and flexible runs. Envelope
+  boxes alone do not prove containment, clearance or a usable path. Test actual geometry and relevant swept
+  volumes, and retain worst-case pose/region witnesses and sampling limits.
+
+
+  Each clearance requirement and allowance records its source and authority: a published record/consumer requirement,
+  a derived value with method or an explicitly provisional project assumption. Do not invent universal clearance
+  distances or promote a provisional figure into a certified requirement. Missing model, frame, holder, fastener,
+  human/suit fixture, motion or service data remains unresolved and blocks the dependent claim; it is not zero
+  clearance, not applicable or pass by default. A reasoned not-applicable disposition needs evidence. Recheck
+  affected clearances after placement, source/model, mount, route, ownership or export changes. Declaration
+  counterexamples include an inherited pilot substitute, an unknown required clearance marked pass and scaled
+  reference geometry presented as unchanged equipment.'
 applies_to:
 - G3 arrangement, cockpit and interior fit-out, and material revisions affecting module allocation.
 verification:
@@ -58,6 +85,10 @@ verification:
 - Reconcile selected instance IDs, geometry ownership, transforms and single-count BOM against export and runtime
   layout.
 - Exercise the four declaration failure cases, then verify actual mesh and consumer evidence separately.
+- Audit all inherited/source/build/export object ownership, including cockpit products; do not rely only on
+  new-object names.
+- Bind each clearance and allowance to its provenance, actual model/frame, witness and dependent claim; unknowns
+  cannot pass.
 limitations:
 - A definition or declaration check does not allocate a module, prove geometric fit or implement an unsupported
   placement/holder layer.
@@ -66,3 +97,4 @@ related:
 - ship-artifact.spatial-layout
 - ship-check.assembly
 - ship-stage.architecture
+- ship-check.module-clearance

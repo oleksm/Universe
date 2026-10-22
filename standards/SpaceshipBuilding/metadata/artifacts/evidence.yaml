@@ -16,8 +16,10 @@ contents:
 - Command/arguments, timestamp, reviewer, method, tolerance authority and measured result.
 - Worst-case witness, images, coverage/exclusions and pending/pass/fail/blocked/stale/not-applicable reason.
 - Separate geometry/package/placement/runtime/engineering claim states; explicit waiver owner and invalidation.
-- For G0-G2, frozen actual-answer baseline and exact brief/confirmation/prompt/candidate/review hashes;
-  record real-design versus rehearsal-only authority and independent semantic/visual review.
+- For G0-G2, frozen actual-answer baseline and exact brief/confirmation/prompt/candidate/review hashes; record
+  real-design versus rehearsal-only authority and independent semantic/visual review.
+- Module-clearance requirement/allowance provenance, actual product/frame/pose inputs, fixture/motion/path
+  samples and worst-case witnesses; inherited-substitute retirement invalidates dependent outputs.
 boundary: The existing delivery workflow owns acceptance state. This artifact definition is not an evidence
   instance.
 consumers:
@@ -46,3 +48,4 @@ checks:
 - ship-check.pilot-14
 - ship-check.pilot-15
 - ship-check.pilot-16
+- ship-check.module-clearance

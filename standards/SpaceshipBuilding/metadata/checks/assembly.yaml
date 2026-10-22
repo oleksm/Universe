@@ -24,6 +24,8 @@ method:
   and BOM ownership; reject baked substitutes, scale-to-fit, duplicate instances and exported proxies.
 - Exercise unsearched inventory, duplicate mesh/BOM ownership, promoted reservation and missing-module fabrication
   failures; declaration checks cannot pass actual geometry or consumer evidence.
+- Audit inherited pilot/module meshes and all source/build/export owners, not just new fixtures; use ship-check.module-clearance
+  for required geometry, attachment/tool, path, user, motion and service evidence.
 evidence:
 - Validator output, ID/placement comparison and lock/reference report.
 failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair

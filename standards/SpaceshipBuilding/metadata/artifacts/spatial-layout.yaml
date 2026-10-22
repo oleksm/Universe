@@ -49,6 +49,8 @@ contents:
   seat approach or modify one profile. Each alternative reports silhouette impact, useful-space change and
   access consequences. Global enlargement is a major design decision because it changes mass assumptions, equipment
   fit, mechanisms and the selected visual proportions.'
+- Actual selected module clearance/access matrix and inherited geometry ownership; boxes alone do not prove
+  containment, traversal, assembly or serviceability.
 boundary: Provisional fixtures do not certify population coverage or safety; actual gameplay routes need consumer
   checks.
 consumers:
@@ -60,5 +62,6 @@ rules:
 - ship-rule.module-reuse
 checks:
 - ship-check.inhabitation
+- ship-check.module-clearance
 depends_on:
 - ship-artifact.module-inventory

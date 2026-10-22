@@ -21,6 +21,8 @@ exit:
 - Sections, task routes, pilot space and equipment allocation satisfy the declared scope.
 - Actual reusable module allocations, supported poses, mounts/services and access paths are validated; no custom
   fit-out substitute or exported reservation proxy fills a gap.
+- Inherited product substitutes are retired and all required module occupied, attachment/tool, install/removal,
+  user, motion and service clearances have current scoped evidence; missing data remains unresolved.
 failure:
 - Reopen the affected shape/arrangement only; keep approved unrelated regions.
 - Missing inventory, product, model or consumer support blocks dependent arrangement/release; record the gap
@@ -38,6 +40,7 @@ checks:
 - ship-check.hull-geometry
 - ship-check.inhabitation
 - ship-check.assembly
+- ship-check.module-clearance
 rules:
 - ship-rule.lifecycle
 - ship-rule.authority
