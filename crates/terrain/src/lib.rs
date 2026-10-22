@@ -10,6 +10,8 @@
 
 pub mod flight;
 mod pyramid;
+mod tri_index;
+use tri_index::TriIndex;
 pub use pyramid::Pyramid;
 
 use std::path::{Path, PathBuf};
@@ -85,6 +87,10 @@ pub struct Chunk {
     pub surface: Option<(Arc<Vec<u8>>, Arc<BuildData>)>,
     pub stale: bool,
     pub tri_count: usize,
+    /// Its finest triangles' index (`ground_at`), and its drawn surface's (`drawn_ground_at_world`: its
+    /// triangles as drawn, made again with each new surface), each made when first asked.
+    pub fine_hits: std::sync::OnceLock<TriIndex>,
+    pub drawn_hits: std::sync::OnceLock<(TriIndex, Vec<[DVec3; 3]>)>,
 }
 
 pub struct Cell {
@@ -124,6 +130,8 @@ pub struct TileGroup {
     pub edges: Vec<[u32; 2]>,
     pub sea: bool,
     pub mesh: Option<(View, Mesh)>,
+    /// Its triangles' index, made when first asked (by direction alone: right for any height x).
+    pub hits: std::sync::OnceLock<TriIndex>,
 }
 
 #[derive(Default)]
@@ -745,7 +753,7 @@ impl Ground {
         let grid = Grid { p0, east, north, min: lo, n: gn, size: chunk };
         let cn = ((hi - lo) / CELL).ceil() as i32 + 1;
         let cell_grid = Grid { p0, east, north, min: lo, n: cn, size: CELL };
-        let mut chunks: Vec<Chunk> = (0..gn * gn).map(|_| Chunk { origin: DVec3::ZERO, radius: 0.0, tris: vec![], edges: vec![], mesh: None, mesh_view: None, surface: None, stale: true, tri_count: 0 }).collect();
+        let mut chunks: Vec<Chunk> = (0..gn * gn).map(|_| Chunk { origin: DVec3::ZERO, radius: 0.0, tris: vec![], edges: vec![], mesh: None, mesh_view: None, surface: None, stale: true, tri_count: 0, fine_hits: Default::default(), drawn_hits: Default::default() }).collect();
         let mut cells: Vec<Cell> = (0..cn * cn).map(|_| Cell { verts: vec![], eye_at: DVec3::splat(f64::INFINITY), margin: 0.0 }).collect();
         for (k, t) in d.ft.iter().enumerate() {
             chunks[grid.id(d.pos[t[0] as usize] + d.pos[t[1] as usize] + d.pos[t[2] as usize]) as usize].tris.push(k as u32);
@@ -966,7 +974,7 @@ impl Ground {
                 cos_a = cos_a.min(d.pos[v as usize].normalize().dot(dir));
                 zmax = zmax.max(d.z[v as usize] as f64);
             }
-            out.push(TileGroup { origin: dir * d.r, dir, cos_a: cos_a - 1e-6, zmax, tris, edges, sea: sea == 1, mesh: None });
+            out.push(TileGroup { origin: dir * d.r, dir, cos_a: cos_a - 1e-6, zmax, tris, edges, sea: sea == 1, mesh: None, hits: Default::default() });
         }
         Ok(out)
     }
@@ -1010,9 +1018,17 @@ impl Ground {
                 if x < 0 || y < 0 || x >= self.grid.n || y >= self.grid.n {
                     continue;
                 }
-                for &t in &self.chunks[(x * self.grid.n + y) as usize].tris {
+                let ch = &self.chunks[(x * self.grid.n + y) as usize];
+                if ch.tris.is_empty() {
+                    continue;
+                }
+                let index = ch.fine_hits.get_or_init(|| {
+                    let tris = ch.tris.iter().map(|&t| d.ft[t as usize].map(|v| d.dirs[v as usize]));
+                    TriIndex::new(ch.origin.try_normalize().unwrap_or(u), tris)
+                });
+                for &k in index.candidates(u) {
                     // (The finest surface, not the drawn: a change of detail must not move the eye.)
-                    if let Some(h) = hit(d.ft[t as usize]) {
+                    if let Some(h) = hit(d.ft[ch.tris[k as usize] as usize]) {
                         return Some(h);
                     }
                 }
@@ -1020,14 +1036,20 @@ impl Ground {
         }
         for g in &self.tiles {
             if u.dot(g.dir) >= g.cos_a {
-                for &t in &g.tris {
-                    if let Some(h) = hit(t) {
+                for &k in self.group_hits(g).candidates(u) {
+                    if let Some(h) = hit(g.tris[k as usize]) {
                         return Some(h);
                     }
                 }
             }
         }
         None
+    }
+
+    /// Tile group `g`'s triangles' index (by their corners' directions: the same for its drawn triangles
+    /// at any height x).
+    fn group_hits<'a>(&self, g: &'a TileGroup) -> &'a TriIndex {
+        g.hits.get_or_init(|| TriIndex::new(g.dir, g.tris.iter().map(|t| t.map(|v| self.d.dirs[v as usize]))))
     }
 
     /// The published pyramid/chunk surface, in world metres, rather than prefetched or desired detail.
@@ -1041,18 +1063,24 @@ impl Ground {
             if x<0 || y<0 || x>=self.grid.n || y>=self.grid.n { continue; }
             let ch=&self.chunks[(x*self.grid.n+y) as usize];
             let Some((on,bd))=&ch.surface else { continue; };
-            let resolve=|mut v:u32| { while on[v as usize]==0 { v=bd.stand_in[v as usize]; } v };
-            for &t in &ch.tris {
-                let tri=bd.ft[t as usize].map(resolve);
+            let (index, points) = ch.drawn_hits.get_or_init(|| {
+                let resolve=|mut v:u32| { while on[v as usize]==0 { v=bd.stand_in[v as usize]; } v };
+                // (The fine triangles as drawn: many fold into one coarse triangle, or none.)
+                let mut seen = std::collections::HashSet::new();
+                let tris: Vec<[u32; 3]> = ch.tris.iter().map(|&t| bd.ft[t as usize].map(resolve))
+                    .filter(|t| t[0] != t[1] && t[1] != t[2] && t[0] != t[2] && seen.insert(*t)).collect();
                 // Meshes retain f32 local positions relative to this origin.
-                let points=tri.map(|v|ch.origin+(bd.pos[v as usize]-ch.origin).as_vec3().as_dvec3());
-                if let Some(h)=flight::triangle_height(u,points,self.d.r) { return Some(h); }
+                let points: Vec<[DVec3; 3]> = tris.iter().map(|t| t.map(|v| ch.origin+(bd.pos[v as usize]-ch.origin).as_vec3().as_dvec3())).collect();
+                (TriIndex::new(ch.origin.try_normalize().unwrap_or(u), points.iter().copied()), points)
+            });
+            for &k in index.candidates(u) {
+                if let Some(h)=flight::triangle_height(u,points[k as usize],self.d.r) { return Some(h); }
             }
         }}
         for g in &self.tiles {
             if g.mesh.is_none() || u.dot(g.dir)<g.cos_a { continue; }
-            for &tri in &g.tris {
-                let points=tri.map(|v|g.origin+(self.d.pos[v as usize]-g.origin).as_vec3().as_dvec3());
+            for &k in self.group_hits(g).candidates(u) {
+                let points=g.tris[k as usize].map(|v|g.origin+(self.d.pos[v as usize]-g.origin).as_vec3().as_dvec3());
                 if let Some(h)=flight::triangle_height(u,points,self.d.r) { return Some(h); }
             }
         }
@@ -1311,6 +1339,7 @@ impl Ground {
                     ch.mesh_view = Some(b.view);
                     ch.tri_count = tris;
                     ch.surface = Some(b.surface.clone());
+                    ch.drawn_hits = Default::default();
                     rebuilt += 1;
                 }
             }
