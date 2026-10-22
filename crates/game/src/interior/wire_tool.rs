@@ -2,6 +2,7 @@
 use super::*;
 use serde_json::Value;
 use universe_ship_design::{Wire, WireEnd, WirePin};
+mod nets;
 
 #[derive(Default)]
 pub(super) struct Editor {
@@ -763,8 +764,8 @@ fn draw_line(frame: &mut Frame, cam: &Camera, a: Vec3, b: Vec3, col: Color) {
 
 /// Explicit wires replace the inferred harness, including its mass accounting.
 /// Each is checked for its ends (ports, connectors, contacts) and its hold (the
-/// clips its cable calls for, which nothing places yet; its bends); what it
-/// carries is not yet.
+/// clips its cable calls for, which nothing places yet; its bends), current
+/// rating and drop. Static contact nets do not yet establish runtime power.
 pub(super) fn harness(plan: &Plan, fit: &[Fitted]) -> wiring::Harness {
     let mut h = wiring::Harness::default();
     let all = ports_for(plan, fit);
@@ -841,9 +842,35 @@ pub(super) fn harness(plan: &Plan, fit: &[Fitted]) -> wiring::Harness {
             drop,
         });
     }
-    h.faults.push(
-        "AUTHORED WIRING: RATED IN VACUUM, UNBUNDLED; RUNTIME NETS NOT YET VALIDATED".into(),
-    );
+    let mut records = std::collections::BTreeMap::new();
+    for b in &plan.blocks {
+        let name = ship_code::named(plan, "module", b.uid);
+        match fit
+            .iter()
+            .find(|f| f.id == kind(&b.id))
+            .and_then(|f| reg.equipment(&f.key))
+            .and_then(|e| serde_json::to_value(e).ok())
+        {
+            Some(record) => {
+                records.insert(name, record);
+            }
+            None => h.faults.push(format!("MODULE {name}: EQUIPMENT RECORD UNRESOLVED")),
+        }
+    }
+    let empty = std::collections::BTreeMap::new();
+    let topology = match nets::compile(&records, plan.wiring.as_ref().unwrap_or(&empty)) {
+        Ok(topology) => {
+            h.faults.extend(topology.pending());
+            format!("{} CONTACT NETS", topology.nets.len())
+        }
+        Err(faults) => {
+            h.faults.extend(faults);
+            "CONTACT TOPOLOGY INVALID".into()
+        }
+    };
+    h.faults.push(format!(
+        "AUTHORED WIRING: {topology}; RATED IN VACUUM, UNBUNDLED; RUNTIME POWER NOT YET VALIDATED"
+    ));
     h
 }
 
@@ -899,10 +926,11 @@ mod tests {
         assert_eq!(h.runs.len(), 1);
         assert!(h.runs[0].mass > 0. && h.runs[0].length > 0.);
         // (Its unplaced clips; the way's 15 A breaker above the 1 mm2 cable's
-        // 6 A in vacuum; and what the studio does not yet validate.)
-        assert_eq!(h.faults.len(), 3, "{:?}", h.faults);
+        // 6 A in vacuum; its unresolved breaker group; and runtime power.)
+        assert_eq!(h.faults.len(), 4, "{:?}", h.faults);
         assert!(h.faults[0].starts_with("WIRE wire_1: NEEDS ") && h.faults[0].contains("run-clip-d10 EVERY 0.6 M"), "{:?}", h.faults);
         assert!(h.faults[1].contains("need 15.0 A, cable carries 6 A in vacuum (11 A in air)"), "{:?}", h.faults);
+        assert!(h.faults[2].starts_with("SWITCH ") && h.faults[3].contains("CONTACT NETS"), "{:?}", h.faults);
         assert_eq!((h.runs[0].watts, h.runs[0].drop), (0.0, 0.0), "a refused wire carries nothing on the sheet");
         // (The registry's 2.5 mm2 three-core, the one sized to the shell: 12 A in
         // vacuum, still under the way's breaker; its way is said as much.)
