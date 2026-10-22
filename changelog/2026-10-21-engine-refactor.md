@@ -91,3 +91,7 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
     (the action grid and mode bar), `hud/feeds.rs` (news, trades, performance, help); `hud.rs` keeps `draw` and
     the status strip (378 lines). Moved as they were; captures match. `interior.rs` and `devkit/dev.rs` are the
     ships session's to split.
+19. A bake's heights (the home world's physics and ground): a tile's file name was made with `format!` for every
+    query, kept or not (`tile` takes it lazily now: a kept tile's query allocates nothing); keeping a tile summed
+    every kept tile's bytes again for each one let go, under the write lock the readers wait on (summed once now).
+    Captures match.

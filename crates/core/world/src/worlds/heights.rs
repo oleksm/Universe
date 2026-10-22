@@ -214,10 +214,13 @@ impl Heights {
         let mut fine = self.fine.write().unwrap_or_else(|e| e.into_inner());
         let now = self.clock.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
         fine.insert(slot, (tile, std::sync::atomic::AtomicU64::new(now)));
-        let bytes = |f: &HashMap<usize, (std::sync::Arc<Tile>, std::sync::atomic::AtomicU64)>| f.values().map(|(t, _)| t.bytes()).sum::<usize>();
-        while bytes(&fine) > tile_budget() && fine.len() > 1 {
+        // (Summed once, less each let go: not summed again for every one, under the lock the readers wait on.)
+        let mut bytes: usize = fine.values().map(|(t, _)| t.bytes()).sum();
+        while bytes > tile_budget() && fine.len() > 1 {
             let Some(oldest) = fine.iter().filter(|(k, _)| **k != slot).min_by_key(|(_, (_, u))| u.load(std::sync::atomic::Ordering::Relaxed)).map(|(k, _)| *k) else { break };
-            fine.remove(&oldest);
+            if let Some((t, _)) = fine.remove(&oldest) {
+                bytes -= t.bytes();
+            }
             self.asked[oldest].store(false, std::sync::atomic::Ordering::Relaxed);
         }
     }
@@ -254,7 +257,7 @@ impl Heights {
         }
         let d = d.normalize();
         let (face, x, y, slot, fu, fv) = self.locate(d);
-        let (t, whole) = self.tile(slot + self.asked.len() / 2, format!("rv_{face}_{x}_{y}.png"), detail, |b, n| {
+        let (t, whole) = self.tile(slot + self.asked.len() / 2, || format!("rv_{face}_{x}_{y}.png"), detail, |b, n| {
             let (w, h, rgb) = png_rgb(b)?;
             let m = n / 2 + 1;
             (w > m && h >= n + 1 + m).then(|| Tile::Surface((0..m * m).map(|i| rgb[(n + 1 + i / m) * w + i % m]).collect()))
@@ -282,7 +285,7 @@ impl Heights {
         let (face, x, y, slot, fu, fv) = locate(d, level);
         // (Its slots after the 600 m tiles' and the river tiles'.)
         let base = 2 * 6 * (1usize << self.level).pow(2);
-        let (t, whole) = self.tile(base + slot, format!("fz150_{face}_{x}_{y}.png"), detail, |b, _| png_rg(b).ok().map(|t| Tile::Heights(t.2)));
+        let (t, whole) = self.tile(base + slot, || format!("fz150_{face}_{x}_{y}.png"), detail, |b, _| png_rg(b).ok().map(|t| Tile::Heights(t.2)));
         let Some(t) = t else { return (0.0, whole) };
         let Tile::Heights(t) = &*t else { return (0.0, true) };
         if t.len() < (n + 1) * (n + 1) {
@@ -337,10 +340,12 @@ pub(super) fn locate(d: glam::DVec3, level: u32) -> (usize, usize, usize, usize,
 impl Heights {
     /// Tile `slot` (its file `name`) to `detail`: kept, read now (`Full`), or asked for in the
     /// background (`Loaded`: None and false meanwhile). Some(None): the bake has no such tile.
-    fn tile(self: &std::sync::Arc<Self>, slot: usize, name: String, detail: Detail, read: fn(&[u8], usize) -> Option<Tile>) -> (Option<std::sync::Arc<Tile>>, bool) {
+    fn tile(self: &std::sync::Arc<Self>, slot: usize, name: impl FnOnce() -> String, detail: Detail, read: fn(&[u8], usize) -> Option<Tile>) -> (Option<std::sync::Arc<Tile>>, bool) {
         if let Some(t) = self.kept(slot) {
             return (Some(t), true);
         }
+        // (Its file's name made only now, on a miss: a query that finds its tile kept allocates nothing.)
+        let name = name();
         if !self.bake.has(&name) {
             return (None, true);
         }
@@ -377,7 +382,7 @@ impl Heights {
         let (face, x, y, slot, fu, fv) = self.locate(d);
         let name = || format!("fz_{face}_{x}_{y}.png");
         // (Where the bake has no tile (the sea's), the 5 km heights alone.)
-        let (t, whole) = self.tile(slot, name(), detail, |b, _| png_rg(b).ok().map(|t| Tile::Heights(t.2)));
+        let (t, whole) = self.tile(slot, name, detail, |b, _| png_rg(b).ok().map(|t| Tile::Heights(t.2)));
         let Some(t) = t else { return (0.0, whole) };
         let Tile::Heights(t) = &*t else { return (0.0, true) };
         let n = self.n;
@@ -488,9 +493,9 @@ impl Heights {
             }
             let slot = (face * k + tx as usize) * k + ty as usize;
             let (t, w) = if fields {
-                self.tile(base + tiles150 + slot, format!("fd150_{face}_{tx}_{ty}.png"), detail, |b, _| decode("fd150.png", b).map(|(_, _, px)| Tile::Fields(px.chunks(4).map(|c| [c[0], c[1], c[2], c[3]]).collect())))
+                self.tile(base + tiles150 + slot, || format!("fd150_{face}_{tx}_{ty}.png"), detail, |b, _| decode("fd150.png", b).map(|(_, _, px)| Tile::Fields(px.chunks(4).map(|c| [c[0], c[1], c[2], c[3]]).collect())))
             } else {
-                self.tile(base + slot, format!("fz150_{face}_{tx}_{ty}.png"), detail, |b, _| png_rg(b).ok().map(|t| Tile::Heights(t.2)))
+                self.tile(base + slot, || format!("fz150_{face}_{tx}_{ty}.png"), detail, |b, _| png_rg(b).ok().map(|t| Tile::Heights(t.2)))
             };
             whole.set(whole.get() && w);
             t
