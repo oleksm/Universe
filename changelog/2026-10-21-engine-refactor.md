@@ -13,3 +13,7 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
    sharing tile reads between the renderer and physics (they read different rectangles; the OS page cache
    already shares the file reads), nor one copy of the anchor mesh (the renderer's f64 vertices would need
    rewriting for about 0.5 GB).
+3. The pair grid's walk took every cell in a mover's reach: by the cube of its sweep (at warp or high speed,
+   millions of empty cells a mover). It now takes the group's occupied cells in that box when they are fewer,
+   in the walk's order so the contacts are the same. Collisions take the world's cached body positions
+   (`rails_at`) instead of solving them again. (Rebuilding the grid each tick stays: everything moved.)

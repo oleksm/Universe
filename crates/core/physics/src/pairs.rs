@@ -120,18 +120,34 @@ impl<'a> Grid<'a> {
                 continue;
             }
             let (lo, hi) = (cell(a.position - reach), cell(a.position + reach));
-            for x in lo.0..=hi.0 {
-                for y in lo.1..=hi.1 {
-                    for z in lo.2..=hi.2 {
-                        let Some(members) = h.cells.get(&(x, y, z)) else { continue };
-                        for &j in members {
-                            let b = &self.movers[j];
-                            // (A free pair: the one sweeping more looks.)
-                            if j == i || (b.mass.is_finite() && (self.sweep[j] > q || (self.sweep[j] == q && j < i))) {
-                                continue;
-                            }
-                            if let Some(c) = touch(a, b, self.dt) {
-                                out.push(if i < j { PairContact { a: i, b: j, ..c } } else { PairContact { a: j, b: i, ..flip(c) } });
+            let mut look = |members: &Vec<usize>| {
+                for &j in members {
+                    let b = &self.movers[j];
+                    // (A free pair: the one sweeping more looks.)
+                    if j == i || (b.mass.is_finite() && (self.sweep[j] > q || (self.sweep[j] == q && j < i))) {
+                        continue;
+                    }
+                    if let Some(c) = touch(a, b, self.dt) {
+                        out.push(if i < j { PairContact { a: i, b: j, ..c } } else { PairContact { a: j, b: i, ..flip(c) } });
+                    }
+                }
+            };
+            // (The cells in reach, or the group's own cells when there are fewer of them: a fast mover's reach
+            // spans cells by the cube of its sweep, nearly all empty.)
+            let span = |a: i64, b: i64| (b - a + 1).max(0) as u128;
+            if span(lo.0, hi.0) * span(lo.1, hi.1) * span(lo.2, hi.2) > h.cells.len() as u128 {
+                let mut cells: Vec<_> = h.cells.iter().filter(|(c, _)| (lo.0..=hi.0).contains(&c.0) && (lo.1..=hi.1).contains(&c.1) && (lo.2..=hi.2).contains(&c.2)).collect();
+                // (In the order the walk takes them, so the contacts come out the same.)
+                cells.sort_unstable_by_key(|(c, _)| **c);
+                for (_, members) in cells {
+                    look(members);
+                }
+            } else {
+                for x in lo.0..=hi.0 {
+                    for y in lo.1..=hi.1 {
+                        for z in lo.2..=hi.2 {
+                            if let Some(members) = h.cells.get(&(x, y, z)) {
+                                look(members);
                             }
                         }
                     }
@@ -255,6 +271,20 @@ mod tests {
         assert!((va * 90_000.0 + vb * 90_000.0).length() < 1e-6, "momentum conserved");
         assert!((va.x - (-60.0)).abs() < 1e-6 && (vb.x - 60.0).abs() < 1e-6, "e = 0.3");
         assert!(lost > 0.0);
+    }
+
+    /// A mover sweeping 100 km a step (from -50 km to 50 km: 800 cells a side in reach) looks only at the occupied
+    /// cells, quickly, and finds what the walk would.
+    #[test]
+    fn a_fast_sweep_looks_only_at_occupied_cells() {
+        let movers = [m(0, 50_000.0, 100_000.0), m(1, 0.0, 0.0), m(2, 20_000.0, 0.0), m(3, 0.0, 0.0)];
+        let mut movers = movers.to_vec();
+        movers[3].position.y = 80_000.0;
+        let t0 = std::time::Instant::now();
+        let c = contacts(&movers, 1.0);
+        assert!(t0.elapsed().as_secs_f64() < 0.5, "{:?}", t0.elapsed());
+        let met: Vec<_> = c.iter().map(|p| (p.a, p.b)).collect();
+        assert_eq!(met, vec![(0, 1), (0, 2)]);
     }
 
 }

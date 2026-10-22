@@ -184,8 +184,7 @@ impl World {
             .iter()
             .map(|(system, members)| {
                 let sys = self.system(*system);
-                let mut positions = Vec::new();
-                sys.positions(now, &mut positions);
+                let positions = self.rails_at(*system, now);
                 // (Each world's velocity worked out once.)
                 let mut frames: HashMap<usize, DVec3, universe_physics::pairs::CellHash> = HashMap::default();
                 members
