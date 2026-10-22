@@ -25,3 +25,8 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
     every step: 1,577 landed ships took 7.8 ms a frame in a busy port scene. The world keeps body velocities as it
     keeps positions (`velocities_at`, frozen with the rails while ships step side by side; one two-moment cache
     for both), and `Weld::place_moving` takes it: 2.0 ms. The world step went from 14.8 to 9.1 ms.
+5b. Meshes were packed for the GPU (face and edge vertices, normals, edge normals through hash maps) on the render
+    thread when first drawn: 6.6 new terrain meshes a frame took 1.4 ms of it in the busy port scene. `Mesh::pack`
+    packs them where they are made (the planet LOD build worker, its tile groups, the game's patch pool); the upload
+    takes the packed copy (not kept twice). Upload 1.48 -> 0.33 ms, the render step 1.93 -> 1.32 ms. Profiler
+    scopes for the upload's parts (new meshes, batching, casters).

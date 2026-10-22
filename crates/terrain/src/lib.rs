@@ -869,6 +869,8 @@ impl Ground {
             while let Ok(job) = inbox.recv() {
                 let meshes: Vec<(usize, Mesh, usize)> = job.chunks.par_iter().map(|&c| {
                     let (m, n) = build_mesh(&job.bd, &job.on, c, job.view);
+                    // (Packed on the worker, off the render thread.)
+                    m.pack();
                     (c, m, n)
                 }).collect();
                 if outbox.send(Built { generation: job.generation, view: job.view, meshes, prepared: 0, surface: (job.on.clone(), job.bd.clone()) }).is_err() {
@@ -1162,7 +1164,10 @@ impl Ground {
 
     pub fn build_tiles(&self, g: &TileGroup) -> Mesh {
         let edges: &[[u32; 2]] = if self.view == View::Mesh { &g.edges } else { &[] };
-        self.model(g.origin, &g.tris, edges)
+        let m = self.model(g.origin, &g.tris, edges);
+        // (Built in parallel off the render thread: packed there too.)
+        m.pack();
+        m
     }
 
     /// A mesh of planet vertices about `origin`. Mesh view: the corners shared, the edges indexing

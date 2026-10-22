@@ -112,6 +112,8 @@ pub struct Mesh {
     /// Its last copy gone (the owner's, every frame's): the renderer lets its GPU copy go then,
     /// not after `MESH_KEEP` frames unused (a client replacing many meshes would pile them up).
     _gone: std::sync::Arc<Gone>,
+    /// Its GPU vertices, packed ahead by whoever made it (`pack`, off the render thread), taken by the upload.
+    pub(crate) packed: std::sync::Arc<std::sync::Mutex<Option<std::sync::Arc<crate::renderer::PackedMesh>>>>,
 }
 
 /// Dropped with a mesh's last copy: its id queued for the renderer to let go.
@@ -134,7 +136,16 @@ impl Mesh {
         static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
         let radius = model.positions.iter().map(|p| p.length()).fold(0.0, f32::max);
         let id = NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-        Mesh { gpu_residents: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)), reservation: None, id, model: std::sync::Arc::new(model), radius, _gone: std::sync::Arc::new(Gone(id)) }
+        Mesh { gpu_residents: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)), reservation: None, id, model: std::sync::Arc::new(model), radius, _gone: std::sync::Arc::new(Gone(id)), packed: Default::default() }
+    }
+
+    /// Pack its GPU vertices now (normals, edge normals), on this thread: a mesh made on a worker and packed
+    /// there is only copied up by the render thread. Unpacked, the render thread packs it when it first draws it.
+    pub fn pack(&self) {
+        let mut p = self.packed.lock().unwrap_or_else(|e| e.into_inner());
+        if p.is_none() {
+            *p = Some(std::sync::Arc::new(crate::renderer::pack_mesh(self)));
+        }
     }
 
     /// True while at least one renderer cache has completed upload of this exact mesh ID.

@@ -311,45 +311,66 @@ struct GpuMesh {
 struct MeshFence { resident:std::sync::Arc<std::sync::atomic::AtomicUsize>, queue: wgpu::Queue, reservation: Option<std::sync::Arc<crate::mesh_budget::Reservation>> }
 impl Drop for MeshFence { fn drop(&mut self) { self.resident.fetch_sub(1,std::sync::atomic::Ordering::Release);if let Some(r)=self.reservation.take(){self.queue.on_submitted_work_done(move||drop(r));}} }
 
+/// A mesh's GPU vertices: its faces (three each) and edges (two each), as bytes (see `Mesh::pack`).
+pub(crate) struct PackedMesh {
+    faces: Vec<MeshVertex>,
+    edges: Vec<MeshVertex>,
+}
+
+impl std::fmt::Debug for PackedMesh {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "PackedMesh({} face, {} edge vertices)", self.faces.len(), self.edges.len())
+    }
+}
+
+/// Pack `mesh`'s vertices for the GPU (on any thread).
+pub(crate) fn pack_mesh(mesh: &Mesh) -> PackedMesh {
+    let color = |i: u32| mesh.colors.get(i as usize).copied().unwrap_or([1.0; 4]);
+    let data = |i: u32| mesh.data.get(i as usize).copied().unwrap_or([0.0; 4]);
+    let mut faces = Vec::with_capacity(mesh.faces.len() * 3);
+    // (Smooth: each corner's normal the faces' meeting there, weighted by their size.)
+    let corner_normals: Vec<Vec3> = if mesh.smooth {
+        let mut sum = vec![Vec3::ZERO; mesh.positions.len()];
+        for f in &mesh.faces {
+            let [a, b, c] = f.map(|i| mesh.positions[i as usize]);
+            let n = (b - a).cross(c - a);
+            for &i in f {
+                sum[i as usize] += n;
+            }
+        }
+        sum.into_iter().map(|n| n.normalize_or_zero()).collect()
+    } else {
+        Vec::new()
+    };
+    for f in &mesh.faces {
+        let [a, b, c] = f.map(|i| mesh.positions[i as usize]);
+        // Faces are wound counter-clockwise seen from outside: that's their normal.
+        // (Not "away from the centre": a station or a winged hull isn't convex about it.)
+        let n = (b - a).cross(c - a).normalize_or_zero();
+        for &i in f {
+            let n = corner_normals.get(i as usize).copied().unwrap_or(n);
+            faces.push(MeshVertex { pos: mesh.positions[i as usize].to_array(), normal: n.to_array(), color: color(i), data: data(i) });
+        }
+    }
+    let mut edges = Vec::with_capacity(mesh.edges.len() * 2);
+    let normals = edge_normals(mesh);
+    for (e, n) in mesh.edges.iter().zip(normals) {
+        for &i in e {
+            let p = mesh.positions[i as usize];
+            edges.push(MeshVertex { pos: p.to_array(), normal: n.to_array(), color: color(i), data: data(i) });
+        }
+    }
+    PackedMesh { faces, edges }
+}
+
 impl GpuMesh {
     fn new(gpu: &Gpu, mesh: &Mesh) -> Self {
         let device=&gpu.device;
         use wgpu::util::DeviceExt;
-        let color = |i: u32| mesh.colors.get(i as usize).copied().unwrap_or([1.0; 4]);
-        let data = |i: u32| mesh.data.get(i as usize).copied().unwrap_or([0.0; 4]);
-        let mut faces = Vec::with_capacity(mesh.faces.len() * 3);
-        // (Smooth: each corner's normal the faces' meeting there, weighted by their size.)
-        let corner_normals: Vec<Vec3> = if mesh.smooth {
-            let mut sum = vec![Vec3::ZERO; mesh.positions.len()];
-            for f in &mesh.faces {
-                let [a, b, c] = f.map(|i| mesh.positions[i as usize]);
-                let n = (b - a).cross(c - a);
-                for &i in f {
-                    sum[i as usize] += n;
-                }
-            }
-            sum.into_iter().map(|n| n.normalize_or_zero()).collect()
-        } else {
-            Vec::new()
-        };
-        for f in &mesh.faces {
-            let [a, b, c] = f.map(|i| mesh.positions[i as usize]);
-            // Faces are wound counter-clockwise seen from outside: that's their normal.
-            // (Not "away from the centre": a station or a winged hull isn't convex about it.)
-            let n = (b - a).cross(c - a).normalize_or_zero();
-            for &i in f {
-                let n = corner_normals.get(i as usize).copied().unwrap_or(n);
-                faces.push(MeshVertex { pos: mesh.positions[i as usize].to_array(), normal: n.to_array(), color: color(i), data: data(i) });
-            }
-        }
-        let mut edges = Vec::with_capacity(mesh.edges.len() * 2);
-        let normals = edge_normals(mesh);
-        for (e, n) in mesh.edges.iter().zip(normals) {
-            for &i in e {
-                let p = mesh.positions[i as usize];
-                edges.push(MeshVertex { pos: p.to_array(), normal: n.to_array(), color: color(i), data: data(i) });
-            }
-        }
+        // (Packed ahead by its maker if it was; taken, so it isn't kept twice.)
+        let packed = mesh.packed.lock().unwrap_or_else(|e| e.into_inner()).take();
+        let packed = packed.unwrap_or_else(|| std::sync::Arc::new(pack_mesh(mesh)));
+        let (faces, edges) = (&packed.faces, &packed.edges);
         let buffer = |label, data: &[MeshVertex]| {
             device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
                 label: Some(label),
@@ -358,8 +379,8 @@ impl GpuMesh {
                 usage: wgpu::BufferUsages::VERTEX,
             })
         };
-        let face_buffer = buffer("mesh faces", &faces);
-        let edge_buffer = buffer("mesh edges", &edges);
+        let face_buffer = buffer("mesh faces", faces);
+        let edge_buffer = buffer("mesh edges", edges);
         // Publish the receipt only after both buffers exist.
         mesh.gpu_residents.fetch_add(1, std::sync::atomic::Ordering::Release);
         GpuMesh {
@@ -1436,10 +1457,12 @@ impl Renderer {
     fn upload_meshes(&mut self, gpu: &Gpu, frame: &Frame) {
         self.frames += 1;
         let now = self.frames;
+        let made = universe_prof::scope("render/upload meshes/new");
         for d in frame.meshes.iter().chain(&frame.front).chain(&frame.overlays) {
-            self.meshes.entry(d.mesh.id()).or_insert_with(|| GpuMesh::new(gpu, &d.mesh)).used = now;
+            self.meshes.entry(d.mesh.id()).or_insert_with(|| universe_prof::time("render/upload meshes/new/mesh", || GpuMesh::new(gpu, &d.mesh))).used = now;
         }
-        for mesh in &frame.mesh_uploads {self.meshes.entry(mesh.id()).or_insert_with(||GpuMesh::new(gpu,mesh)).used=now;}
+        for mesh in &frame.mesh_uploads {self.meshes.entry(mesh.id()).or_insert_with(||universe_prof::time("render/upload meshes/new/mesh", || GpuMesh::new(gpu,mesh))).used=now;}
+        drop(made);
         // Released by their owner: gone now unless drawn this frame (their fence still waits
         // for submitted work before any reservation is let go).
         for id in &frame.mesh_releases { if self.meshes.get(id).is_some_and(|m| m.used != now) { self.meshes.remove(id); } }
@@ -1447,6 +1470,7 @@ impl Renderer {
         let gone = std::mem::take(&mut *crate::model::GONE.lock().unwrap_or_else(|e| e.into_inner()));
         for id in gone { self.meshes.remove(&id); }
         self.meshes.retain(|_,m|now-m.used<MESH_KEEP);
+        let batching = universe_prof::scope("render/upload meshes/batch");
         let mut data: Vec<Instance> = Vec::with_capacity((frame.meshes.len() + frame.front.len()) * 2 + frame.overlays.len());
         (self.face_runs, self.edge_runs) = batch(&frame.meshes, &mut data);
         (self.front_face_runs, self.front_edge_runs) = batch(&frame.front, &mut data);
@@ -1473,6 +1497,8 @@ impl Renderer {
                 inst.globe[0] = layers.get(inst.globe[0] as usize - 1).copied().flatten().map_or(0.0, |l| l as f32 + 1.0);
             }
         }
+        drop(batching);
+        let _casters = universe_prof::scope("render/upload meshes/casters");
         // The casters: those within reach of the shadow boxes.
         let reach = frame.shadow_reach as f32 * 1.5;
         let casting: Vec<&crate::frame::MeshDraw> = frame.meshes.iter().chain(&frame.front).filter(|d| d.casts && glam::Vec3::from_slice(&d.instance.t[..3]).length() - d.reach < reach).collect();

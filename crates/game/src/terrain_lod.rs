@@ -390,8 +390,11 @@ impl Lod {
             pool.spawn(move || {
                 let _scope = universe_prof::scope("assets/terrain/patch");
                 let (m, origin, partial) = make(&sys.bodies[body_index], k);
+                // (Packed here, off the render thread.)
+                let mesh: universe_engine::Mesh = m.into();
+                mesh.pack();
                 if let Ok(mut d) = done.lock() {
-                    d.push((k, m.into(), origin, partial));
+                    d.push((k, mesh, origin, partial));
                 }
             });
         }
