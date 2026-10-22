@@ -459,8 +459,6 @@ fn distance_to_triangle(p: Vec3, a: Vec3, b: Vec3, c: Vec3) -> f32 {
     seg(a, b).min(seg(b, c)).min(seg(c, a))
 }
 
-/// Frames a mesh may go undrawn before it's dropped from the GPU.
-const MESH_KEEP: u64 = 600;
 
 /// Offscreen targets: the low-res scene, the HUD layer at `hud_scale` times that
 /// resolution, and a composite of both (used for screenshots).
@@ -1105,6 +1103,15 @@ impl Renderer {
         for (k, b) in held {
             self.residency.hold(k, b);
         }
+        // Over the budget: the PBR models not drawn go, the coldest first, down to what's left them (meshes go
+        // sooner by themselves: `mesh_keep`). The pool and the globe layers are made whole and stay.
+        if self.residency.over() {
+            self.pbr.trim(&gpu.queue, self.residency.pbr_limit());
+            self.residency.hold(Kind::Pbr, self.pbr.resident_bytes() as u64);
+            if self.residency.over() && self.residency.frame().is_multiple_of(600) {
+                log::warn!("GPU memory {} MiB held, over its budget of {} MiB: the mesh pool and globe layers can't give way", self.residency.total() >> 20, self.residency.budget_mib());
+            }
+        }
     }
 
     fn render_frame(&mut self, gpu: &mut Gpu, frame: &Frame, capture: Option<&Path>, present: bool) {
@@ -1220,7 +1227,8 @@ impl Renderer {
         {
             let mut budget = self.residency.left(crate::residency::Kind::Pbr);
             let before = budget;
-            universe_prof::time("render/upload PBR", || self.pbr.upload(&gpu.device, &gpu.queue, &frame.pbr, frame.shadow_reach as f32 * 1.5, frame.camera.forward(), &mut budget));
+            let limit = self.residency.pbr_limit();
+            universe_prof::time("render/upload PBR", || self.pbr.upload(&gpu.device, &gpu.queue, &frame.pbr, frame.shadow_reach as f32 * 1.5, frame.camera.forward(), &mut budget, limit));
             self.residency.spend(crate::residency::Kind::Pbr, before - budget);
         }
         drop(upload);
@@ -1501,7 +1509,8 @@ impl Renderer {
         // Meshes whose every copy is gone: let go now (none can be drawn again).
         let gone = std::mem::take(&mut *crate::model::GONE.lock().unwrap_or_else(|e| e.into_inner()));
         for id in gone { self.meshes.remove(&id); }
-        self.meshes.retain(|_,m|now-m.used<MESH_KEEP);
+        let keep = self.residency.mesh_keep();
+        self.meshes.retain(|_,m|now-m.used<keep);
         let batching = universe_prof::scope("render/upload meshes/batch");
         let mut data: Vec<Instance> = Vec::with_capacity((frame.meshes.len() + frame.front.len()) * 2 + frame.overlays.len());
         (self.face_runs, self.edge_runs) = batch(&frame.meshes, &mut data);

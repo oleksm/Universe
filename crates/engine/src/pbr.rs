@@ -580,6 +580,19 @@ fn pipe_for(blend: bool, double_sided: bool) -> usize {
 const SEE_THROUGH: usize = 2;
 
 impl PbrRenderer {
+    /// Down to `limit` bytes: the models not drawn this frame (its views' too) let go, the longest unused first.
+    pub(crate) fn trim(&mut self, queue: &wgpu::Queue, limit: usize) {
+        let mut cold: Vec<_> = self.models.iter().filter(|(id, _)| !self.view_demand.contains(id)).map(|(id, m)| (*id, m.used)).collect();
+        cold.sort_by_key(|c| c.1);
+        for (id, _) in cold {
+            if self.resident_bytes() <= limit {
+                break;
+            }
+            let old = self.models.remove(&id).unwrap();
+            self.retire(queue, old);
+        }
+    }
+
     fn retire(&mut self, queue: &wgpu::Queue, model: GpuModel) {
         let done = Arc::new(std::sync::atomic::AtomicBool::new(false));
         let flag = done.clone();
@@ -825,6 +838,7 @@ impl PbrRenderer {
         reach: f32,
         forward: Vec3,
         budget: &mut usize,
+        limit: usize,
     ) {
         self.frames += 1;
         let now = std::time::Instant::now();
@@ -976,7 +990,7 @@ impl PbrRenderer {
                 continue;
             }
             let resident = self.resident_bytes();
-            if resident.saturating_add(bytes) > 512 * 1024 * 1024 {
+            if resident.saturating_add(bytes) > limit {
                 let mut cold: Vec<_> = self
                     .models
                     .iter()
@@ -986,14 +1000,14 @@ impl PbrRenderer {
                 cold.sort_by_key(|c| c.1);
                 let mut used = resident;
                 for (id, _, n) in cold {
-                    if used.saturating_add(bytes) <= 512 * 1024 * 1024 {
+                    if used.saturating_add(bytes) <= limit {
                         break;
                     }
                     let old = self.models.remove(&id).unwrap();
                     self.retire(queue, old);
                     used -= n;
                 }
-                if self.resident_bytes().saturating_add(bytes) > 512 * 1024 * 1024 {
+                if self.resident_bytes().saturating_add(bytes) > limit {
                     continue;
                 }
             }

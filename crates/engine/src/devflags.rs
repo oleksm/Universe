@@ -13,6 +13,9 @@ pub struct DevFlags {
     pub max_fps: Option<f32>,
     /// `UNIVERSE_SHADOW_DEBUG`: what's in shadow tinted red.
     pub shadow_debug: bool,
+    /// `UNIVERSE_GPU_MEMORY_MB`: the most the renderer keeps on the GPU, all kinds together (bytes; none:
+    /// no cap, each kind its own limit). See `residency`.
+    pub gpu_memory: Option<u64>,
 }
 
 /// The settings (read the first time asked).
@@ -26,6 +29,7 @@ pub fn get() -> &'static DevFlags {
             screenshot_frames: num("UNIVERSE_SCREENSHOT_FRAMES").map_or(0, |v| v as u64),
             max_fps: num("UNIVERSE_MAX_FPS").map(|v| v as f32),
             shadow_debug: std::env::var_os("UNIVERSE_SHADOW_DEBUG").is_some(),
+            gpu_memory: num("UNIVERSE_GPU_MEMORY_MB").map(|mb| (mb * 1048576.0) as u64),
         }
     })
 }

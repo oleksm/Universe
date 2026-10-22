@@ -16,3 +16,11 @@ globe maps, the near world's full maps):
   meshes 11).
 
 Captures match (the planet app compared at the same moment); engine tests and the residency's own pass.
+
+## One budget (`UNIVERSE_GPU_MEMORY_MB`)
+
+Off by default (each kind its own limit, as before). Set, the residency holds all kinds to it: over it, meshes
+undrawn half a second go (600 frames otherwise), and PBR models not drawn this frame go, the longest unused
+first, down to what the budget leaves after the other kinds (never under 64 MiB; 512 otherwise). The mesh pool
+and the globe layers are made whole and stay: still over, a warning every 600 frames says so. Checked: the plant
+app at 100 MiB (269 held) runs, warns, draws the same; at no budget, captures match.
