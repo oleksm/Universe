@@ -60,3 +60,7 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
    seven `in_front`, `in_scene`, `with_surface`, `with_globe`, `with_air`, `no_shadow`, `ground_shadow` are one line
    each over `with_state` (the whole state put back, nothing forgotten). Captures of a baked world, a moon and
    Hoar E match before/after.
+10. Mesh drawing: the renderer's three instance batchers (by mesh, casters, overlays back to front) share one
+    `runs` (each only picks its order); the overlay and PBR axis scalings share `Instance::scale_axes`. The six
+    `model_*` calls stay: each is already one line over the frame's one `mesh()` (a style struct would change 37
+    callers for no gain).

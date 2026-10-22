@@ -257,6 +257,17 @@ pub(crate) struct Instance {
     /// that origin, and 1 / radius, its vertices in metres).
     pub globe_at: [f32; 4],
 }
+
+impl Instance {
+    /// Its model scaled along its own axes by `axes` (each column of its turn and scale).
+    pub(crate) fn scale_axes(&mut self, axes: Vec3) {
+        for (c, k) in [(&mut self.c0, axes.x), (&mut self.c1, axes.y), (&mut self.c2, axes.z)] {
+            c[0] *= k;
+            c[1] *= k;
+            c[2] *= k;
+        }
+    }
+}
 // (A patch's place for its fine grain rides in the columns' spare w: its
 // origin (m, the world's own frame) wrapped to `MICRO_PERIOD`, its vertices
 // added in the shader — exact to the millimetre, and the same across patches.
@@ -763,11 +774,7 @@ impl Frame {
     /// instances, blends far to near after opaque terrain/models, tests depth and never writes it.
     pub fn model_overlay_scaled(&mut self, mesh: &Mesh, t: &Transform, axes: Vec3, color: Color) {
         let mut instance = self.instance(t, [0.; 4], color.0, false);
-        for i in 0..3 {
-            instance.c0[i] *= axes.x;
-            instance.c1[i] *= axes.y;
-            instance.c2[i] *= axes.z;
-        }
+        instance.scale_axes(axes);
         self.overlays.push(MeshDraw { mesh: mesh.clone(), instance, edges: false, casts: false,
             reach: mesh.radius() * axes.abs().max_element() * t.scale.abs() as f32, ground: false });
     }
@@ -847,11 +854,7 @@ impl Frame {
     /// near enough for stretches of a few times.)
     pub fn model_pbr_scaled(&mut self, model: &crate::pbr::PbrModel, t: &Transform, axes: Vec3, part: u8) {
         let mut inst = self.instance(t, [1.0; 4], [1.0; 4], true);
-        for (c, k) in [(&mut inst.c0, axes.x), (&mut inst.c1, axes.y), (&mut inst.c2, axes.z)] {
-            c[0] *= k;
-            c[1] *= k;
-            c[2] *= k;
-        }
+        inst.scale_axes(axes);
         let reach = model.radius() * t.scale as f32 * axes.max_element();
         self.pbr.push(PbrDraw { model: model.clone(), instance: inst, casts: self.state.casts, reach, part });
     }

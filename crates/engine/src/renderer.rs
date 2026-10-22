@@ -1630,57 +1630,37 @@ impl Renderer {
 /// (mesh, first instance, count) for their faces, and for their edges.
 type Runs = Vec<(u64, u32, u32)>;
 /// The casters' instances, grouped by mesh into runs.
-fn casters(draws: &[&crate::frame::MeshDraw], data: &mut Vec<Instance>) -> Runs {
-    let mut order: Vec<usize> = (0..draws.len()).collect();
-    order.sort_by_key(|&i| draws[i].mesh.id());
+/// Draws in the order given, their instances into `data`: a run per stretch of the same mesh.
+fn runs<'a>(draws: impl Iterator<Item = &'a crate::frame::MeshDraw>, data: &mut Vec<Instance>) -> Runs {
     let mut runs: Runs = Vec::new();
-    for i in order {
-        let id = draws[i].mesh.id();
+    for d in draws {
+        let id = d.mesh.id();
         match runs.last_mut() {
             Some(r) if r.0 == id => r.2 += 1,
             _ => runs.push((id, data.len() as u32, 1)),
         }
-        data.push(draws[i].instance);
+        data.push(d.instance);
     }
     runs
 }
-
+fn casters(draws: &[&crate::frame::MeshDraw], data: &mut Vec<Instance>) -> Runs {
+    let mut order = draws.to_vec();
+    order.sort_by_key(|d| d.mesh.id());
+    runs(order.into_iter(), data)
+}
 fn batch(draws: &[crate::frame::MeshDraw], data: &mut Vec<Instance>) -> (Runs, Runs) {
-    let mut order: Vec<usize> = (0..draws.len()).collect();
-    order.sort_by_key(|&i| draws[i].mesh.id());
-    let mut runs = |pick: &dyn Fn(usize) -> bool| {
-        let mut runs: Runs = Vec::new();
-        for &i in order.iter().filter(|&&i| pick(i)) {
-            let id = draws[i].mesh.id();
-            match runs.last_mut() {
-                Some(r) if r.0 == id => r.2 += 1,
-                _ => runs.push((id, data.len() as u32, 1)),
-            }
-            data.push(draws[i].instance);
-        }
-        runs
-    };
-    let faces = runs(&|_| true);
-    let edges = runs(&|i| draws[i].edges);
+    let mut order: Vec<&crate::frame::MeshDraw> = draws.iter().collect();
+    order.sort_by_key(|d| d.mesh.id());
+    let faces = runs(order.iter().copied(), data);
+    let edges = runs(order.iter().copied().filter(|d| d.edges), data);
     (faces, edges)
 }
-
-/// Preserve transparency order across meshes; consecutive instances of the same
-/// mesh share one GPU draw (all boxes using one cube stay one instanced run).
 fn overlay_batch(draws: &[crate::frame::MeshDraw], data: &mut Vec<Instance>) -> Runs {
-    let mut order: Vec<_> = (0..draws.len()).collect();
-    let distance = |i: usize| glam::Vec3::from_slice(&draws[i].instance.t[..3]).length_squared();
-    order.sort_by(|&a, &b| distance(b).total_cmp(&distance(a)));
-    let mut runs: Runs = Vec::new();
-    for i in order {
-        let id = draws[i].mesh.id();
-        match runs.last_mut() {
-            Some(r) if r.0 == id => r.2 += 1,
-            _ => runs.push((id, data.len() as u32, 1)),
-        }
-        data.push(draws[i].instance);
-    }
-    runs
+    // (Back to front: they blend over what's behind.)
+    let distance = |d: &crate::frame::MeshDraw| glam::Vec3::from_slice(&d.instance.t[..3]).length_squared();
+    let mut order: Vec<&crate::frame::MeshDraw> = draws.iter().collect();
+    order.sort_by(|a, b| distance(b).total_cmp(&distance(a)));
+    runs(order.into_iter(), data)
 }
 
 /// Captures still being compressed and written (see `save_png`).
