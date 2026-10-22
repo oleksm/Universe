@@ -17,3 +17,7 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
    millions of empty cells a mover). It now takes the group's occupied cells in that box when they are fewer,
    in the walk's order so the contacts are the same. Collisions take the world's cached body positions
    (`rails_at`) instead of solving them again. (Rebuilding the grid each tick stays: everything moved.)
+4. The world's shared caches no longer do their work holding the lock the parallel ship steps ask: a system is
+   made (its worlds read from disk) with the systems cache let go, the first made kept; ephemerides and field
+   ephemerides are worked out unlocked; a field's dug rocks are only gathered when its total has changed (a
+   flight step asked it, allocating, every time). The 64-system trim runs on insertion only.

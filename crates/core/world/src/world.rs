@@ -190,20 +190,21 @@ impl World {
         if let Some(s) = self.frozen.as_ref().and_then(|f| f.systems.get(&i)) {
             return s.clone();
         }
+        if let Some(sys) = lock(&self.systems).get(&i) {
+            return sys.clone();
+        }
+        assert!(!self.isolated, "system {i} is not in this isolated world");
+        // (Made with the cache let go: making one reads its worlds from disk, and other ships' steps ask the
+        // cache meanwhile. Two made at once: the first kept.)
+        let mut sys = crate::charts::generate(&self.galaxy, &self.gate_links, i);
+        crate::worlds::pgs::apply_sources(&mut sys, &self.surfaces);
+        let sys = Arc::new(sys);
         let mut systems = lock(&self.systems);
         if systems.len() > 64 {
             // Keep the gate network's systems, where the traffic is.
             systems.retain(|&k, _| self.gate_links.iter().any(|&(a, b)| a == k || b == k));
         }
-        if let Some(sys) = systems.get(&i) {
-            return sys.clone();
-        }
-        assert!(!self.isolated, "system {i} is not in this isolated world");
-        let mut sys = crate::charts::generate(&self.galaxy, &self.gate_links, i);
-        crate::worlds::pgs::apply_sources(&mut sys, &self.surfaces);
-        let sys = Arc::new(sys);
-        systems.insert(i, sys.clone());
-        sys
+        systems.entry(i).or_insert(sys).clone()
     }
 
     /// The charts of this galaxy, to share (with the client).
@@ -233,15 +234,15 @@ impl World {
         if let Some(e) = self.frozen.as_ref().and_then(|f| f.ephemerides.get(&(sys.index, t.to_bits()))) {
             return e.clone();
         }
-        let mut cache = lock(&self.ephemerides);
-        match cache.get(&sys.index) {
-            Some((at, e)) if *at == t => e.clone(),
-            _ => {
-                let e = Arc::new(sys.ephemeris(t));
-                cache.insert(sys.index, (t, e.clone()));
-                e
-            }
+        if let Some((at, e)) = lock(&self.ephemerides).get(&sys.index)
+            && *at == t
+        {
+            return e.clone();
         }
+        // (Worked out with the cache let go.)
+        let e = Arc::new(sys.ephemeris(t));
+        lock(&self.ephemerides).insert(sys.index, (t, e.clone()));
+        e
     }
 
     /// What's been dug out of rock `rock` among field `field`'s bodies in `system` (kg).
@@ -256,33 +257,33 @@ impl World {
 
     /// `ephemeris` for field `f`'s bodies (see `StarSystem::field_bodies`).
     fn field_ephemeris(&self, sys: &StarSystem, f: usize, t: f64) -> Arc<Ephemeris> {
-        let mut cache = lock(&self.field_ephemerides);
-        match cache.get(&(sys.index, f)) {
-            Some((at, e)) if *at == t => e.clone(),
-            _ => {
-                let e = Arc::new(Ephemeris::new(&sys.field_bodies(f)[..], t));
-                cache.insert((sys.index, f), (t, e.clone()));
-                e
-            }
+        if let Some((at, e)) = lock(&self.field_ephemerides).get(&(sys.index, f))
+            && *at == t
+        {
+            return e.clone();
         }
+        let e = Arc::new(Ephemeris::new(&sys.field_bodies(f)[..], t));
+        lock(&self.field_ephemerides).insert((sys.index, f), (t, e.clone()));
+        e
     }
 
     /// Field `f`'s bodies as they are now: rocks dug into are the smaller
     /// for it (what's seen is what's touched).
     pub fn field_bodies_now(&self, sys: &StarSystem, f: usize) -> Arc<Vec<crate::system::Body>> {
         let bodies = sys.field_bodies(f);
-        let dug: Vec<(usize, f64)> = self.mined.iter().filter(|((s, field, _), _)| *s == sys.index && *field == f).map(|(&(_, _, b), &kg)| (b, kg)).collect();
-        if dug.is_empty() {
+        let here = |((s, field, _), _): &(&(usize, usize, usize), &f64)| *s == sys.index && *field == f;
+        // (Digging only ever adds: the total says whether it's changed. Asked every flight step: nothing
+        // gathered unless it has.)
+        let total: f64 = self.mined.iter().filter(here).map(|(_, &kg)| kg).sum();
+        if total == 0.0 {
             return bodies;
         }
-        // (Digging only ever adds: the total says whether it's changed.)
-        let total: f64 = dug.iter().map(|d| d.1).sum();
-        let mut cache = lock(&self.depleted);
-        if let Some((at, b)) = cache.get(&(sys.index, f))
+        if let Some((at, b)) = lock(&self.depleted).get(&(sys.index, f))
             && *at == total
         {
             return b.clone();
         }
+        let dug: Vec<(usize, f64)> = self.mined.iter().filter(here).map(|(&(_, _, b), &kg)| (b, kg)).collect();
         let mut now = (*bodies).clone();
         for (i, kg) in dug {
             if let Some(b) = now.get_mut(i) {
@@ -291,7 +292,7 @@ impl World {
         }
         crate::system::settle_bodies(&mut now);
         let now = Arc::new(now);
-        cache.insert((sys.index, f), (total, now.clone()));
+        lock(&self.depleted).insert((sys.index, f), (total, now.clone()));
         now
     }
 
