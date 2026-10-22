@@ -16,9 +16,9 @@ contents:
 - 'Independent required origin/destination, task, actor/envelope and state roster: cockpit, cabin and exterior/exit;
   nominal, suited, carrying and emergency/recovery tasks only as required by the confirmed brief. Separate
   adjacency from actual traversability.'
-- Continuous supported path geometry, floor/landing transitions and slopes/steps, turning and staging space, headroom, handholds
-  where required, door/ramp thresholds and cockpit ingress. Identify any path surface owned by a moving mechanism
-  and what remains usable when it moves.
+- Continuous supported path geometry, floor/landing transitions and slopes/steps, turning and staging space,
+  headroom, handholds where required, door/ramp thresholds and cockpit ingress. Identify any path surface owned
+  by a moving mechanism and what remains usable when it moves.
 - Closed, open, intermediate and combined ramp/gear/door states; route availability in each state and an operable
   transition sequence from both sides. A closed exit need not be traversable if opening is a reachable validated
   operation; do not silently omit required states.
@@ -34,6 +34,8 @@ contents:
 - Expected versus actual route/state/task rows with current source, fixture, module, mechanism and export hashes;
   measured bottleneck/pose, evidence, exclusions and result. Separate geometric measurement, requirement comparison,
   human/task review and runtime walking/operation status.
+- When required route space conflicts with hull shape, retain a region-bound G2/G3 reshape action, protected
+  intent, unchanged envelope and stale downstream claims; unresolved criteria remain unknown.
 boundary: Planning may retain unknowns; no numerical compliance, population coverage, continuous motion or
   runtime route acceptance follows from this definition. Required unknowns block dependent acceptance.
 consumers:

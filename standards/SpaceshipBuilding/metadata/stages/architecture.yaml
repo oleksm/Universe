@@ -30,10 +30,15 @@ exit:
 - Required cockpit/cabin/exit routes, support/landing/turn/headroom and operating/recovery sequences have current
   state-bound evidence and applicable fixture/criterion provenance; missing or provisional criteria cannot
   become compliance.
+- After a route/module-driven reshape, dependent form, fit, mechanisms, detail and export evidence is regenerated
+  for current hashes; preserved history or unchanged module packages do not pass changed hull geometry.
 failure:
 - Reopen the affected shape/arrangement only; keep approved unrelated regions.
 - Missing inventory, product, model or consumer support blocks dependent arrangement/release; record the gap
   with Registry/Ships rather than fabricate a module.
+- Required route/module envelope conflict with hull space returns affected G2/G3 shape and arrangement; preserve
+  design intent and applicable envelopes, escalate incompatible constraints, and invalidate dependent detail/export
+  evidence before resuming.
 inputs:
 - ship-artifact.silhouette-study
 - ship-artifact.requirements

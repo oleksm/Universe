@@ -1,0 +1,55 @@
+scope: Workflow shape-feedback correction; no explorer reshape, human fit qualification or production acceptance.
+trigger: Owner confirms B headroom finding directs QC to redo hull shape.
+visual_witness:
+  file: external blender/ships/explorer-study/option-b-blockout/review/option-b-open.png
+  sha256: fd967cfbace6003c424cc41bda43e3c1518ce9c83d42a9db320cd4e93eae5c65
+  review: 'Viewed actual open blockout: forward red provisional route/headroom reservations visibly extend
+    outside wireframe skin. Green route and orange ramp are studies, not occupied-space acceptance.'
+  limits: Single concept view does not establish actual human/module dimensions, full containment or numerical
+    compliance.
+workflow_correction:
+  feedback: Failure classification -> affected G2/G3 shaping/arrangement -> current fit/route/mechanism checks
+    -> dependent detail/export review.
+  preserve:
+  - Required narrow-passage/hawk-cockpit/forward-opening-ramp intent, with exact failed contours open to change.
+  - Applicable crew/suit/carry and actual module envelope; no shrink-to-fit.
+  - Unchanged module packages, unrelated valid evidence and prior candidates as history.
+  escalate: Material incompatible intent/envelope/mechanism constraints to owner; product/consumer gaps to
+    Registry/Ships. Routine authorized intent-preserving shape work continues.
+  invalidate: Changed region dependent form/architecture/lock decisions, detail, interfaces, mechanism/route/module
+    checks, previews, collision/mass inputs, exports and release/integration claims.
+limits:
+- Existing provisional headroom reservation can guide comparative shape rework, not certify human access.
+- No fixture or numerical passage requirement selected; unresolved data cannot become pass.
+- Rework return does not change stage prerequisite DAG or create an automated generic shape optimizer.
+validation:
+  registry_regressions:
+    count: 47
+    result: pass
+  full_registry_checks: pass
+  page_checks:
+    x:ship-checks:crew-routes: 11
+    x:ship-checks:module-clearance: 9
+    x:ship-rules:lifecycle: 10
+    x:ship-rules:evidence-invalidation: 1
+    x:ship-stages:architecture: 22
+    x:ship-stages:mechanisms: 17
+  schemas_and_runtime: unchanged
+  workflow_definitions: 99
+  final_source_hash_and_DAG_regressions:
+    count: 6
+    result: pass
+  page_visually_inspected: x:ship-rules:lifecycle
+  existing_report_gaps: unchanged
+manual_contract_review:
+  classification: Definition semantics reviewed, not executed geometry/rework automation.
+  cases:
+  - Hull cannot contain required route/module -> owning region returns to G2/G3; detail polish alone cannot
+    resolve.
+  - Crew/product shrunk or access allowance omitted -> prohibited; relevant envelope/authority must remain
+    intact.
+  - Criterion or fixture unknown -> incomplete, not numerical pass or automatic new dimension.
+  - Changed hull with old preview/export -> dependent evidence stale until regenerated/rechecked.
+  - Required narrow-neck/forward-ramp intent incompatible with envelope -> explicit material tradeoff escalation,
+    not silent intent deletion.
+  - Unchanged module model/source -> retained; hull placement and route fit still rechecked.

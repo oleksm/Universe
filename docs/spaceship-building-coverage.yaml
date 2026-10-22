@@ -228,7 +228,7 @@ refinements:
 source_document_in_registry: docs/spaceship-building-workflow-proposal.md
 source_sha256_basis: Original research proposal before normalization and subsequent owner refinements; normalized_document_sha256
   identifies the current archived proposal.
-normalized_document_sha256: b3ab224d9d76065b32d1231d7b7003320dfba7439f7356fedb8786d6130495bd
+normalized_document_sha256: ba2f9efc63aa0dd72fc15ef8524908c687167fb6851f39749505e93a53ffb876
 owner_refinements:
 - Feature-first intake; confirmed consolidated brief; derived prompt before whole-ship sketch.
 - Rehearsal provenance, exact prompt witnesses, hidden-feature limits and stale-input negative cases.
@@ -239,3 +239,5 @@ owner_refinements:
   part/state/pair/view evidence at G4/G6 and reject subset-to-whole promotion.
 - Plan continuous state-bound crew routes and operable/recovery sequences before G2/G3 acceptance; G4/G6 require
   exact fixture/criterion provenance and row-level current evidence without invented numerical compliance.
+- Route/module-envelope conflicts with hull space return QC to affected G2/G3 shaping; preserve required intent/envelopes,
+  escalate incompatibilities and invalidate dependent detail/export without discarding unchanged reusable sources.

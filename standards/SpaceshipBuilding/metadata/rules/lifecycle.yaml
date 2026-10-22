@@ -11,58 +11,58 @@ sources:
 - document: docs/spaceship-building-workflow-proposal.md
   section: 5.1 Use the existing release state machine
   note: Owner-authorized workflow definition; project values and results are not instantiated.
-statement: 'Use design gates inside the existing delivery progression, with blocked as an overlay and integration
-  separate from installation.
-
-
-  Retain the existing outer progression: **Proposed → Approved → Building → Optimizing → QC passed → Accepted
-  → Installed**. Inside it, the ship has design gates and region/check states. `blocked` is an overlay with
-  a reason, owner and recovery action; it does not erase the last good candidate. Installation is distinct
-  from consumer validation. (Asset-delivery workflow (external installed workflow reference: `freefall-asset-delivery/SKILL.md`;
-  not bundled))
-
-
-  | Gate | Entry condition | Exit evidence and decision | Failure/rollback |
-
-  |---|---|---|---|
-
-  | G0 brief | Authorized design study | Role, identity, scope, unknowns and success tests recorded | Resolve
-  missing essential input; no detailed build |
-
-  | G1 references | Brief accepted or delegated | Annotated atlas; conflicts and inferred views declared |
-  Return disputed feature to owner interpretation |
-
-  | G2 silhouette | Coherent reference interpretation | Comparable blockouts; selected candidate and landmarks
-  | Retain alternatives; discard no source |
-
-  | G3 architecture | Selected silhouette | Sections, cockpit fixtures, task routes, equipment allocations
-  | Reopen affected shape/arrangement only |
-
-  | G4 mechanisms | Openings and interfaces defined | State storyboard, supports, pose checks and limitations
-  | Roll back mechanism candidate; preserve shell baseline |
-
-  | G5 design lock | Functional blockout accepted | Primary/secondary form reviewed in full context | Reopen
-  visual gate if identity changes |
-
-  | G6 production | Stable form and component ownership | Evaluated geometry, materials, budgets, collision
-  and export | Repair the owning region; invalidate dependents |
-
-  | G7 release | Current source/export evidence | Exact-candidate acceptance and immutable package | New candidate
-  required after content changes |
-
-  | G8 integration | Installed package and compatible consumer | Actual placement, walking, playback and GPU
-  evidence | Keep package status separate from runtime failure |
-
-
-  The owner normally chooses identity, silhouette and significant arrangement/mechanism trade-offs. Explicit
-  delegation can cover other gates or predefine acceptable outcomes. Routine repairs proceed autonomously inside
-  approved constraints. A gate is not an excuse to ask permission for every bevel, nor to continue through
-  a newly discovered fundamental design fork.'
+statement: "Use design gates inside the existing delivery progression, with blocked as an overlay and integration\
+  \ separate from installation.\n\nRetain the existing outer progression: **Proposed \u2192 Approved \u2192\
+  \ Building \u2192 Optimizing \u2192 QC passed \u2192 Accepted \u2192 Installed**. Inside it, the ship has\
+  \ design gates and region/check states. `blocked` is an overlay with a reason, owner and recovery action;\
+  \ it does not erase the last good candidate. Installation is distinct from consumer validation. (Asset-delivery\
+  \ workflow (external installed workflow reference: `freefall-asset-delivery/SKILL.md`; not bundled))\n\n\
+  | Gate | Entry condition | Exit evidence and decision | Failure/rollback |\n|---|---|---|---|\n| G0 brief\
+  \ | Authorized design study | Role, identity, scope, unknowns and success tests recorded | Resolve missing\
+  \ essential input; no detailed build |\n| G1 references | Brief accepted or delegated | Annotated atlas;\
+  \ conflicts and inferred views declared | Return disputed feature to owner interpretation |\n| G2 silhouette\
+  \ | Coherent reference interpretation | Comparable blockouts; selected candidate and landmarks | Retain alternatives;\
+  \ discard no source |\n| G3 architecture | Selected silhouette | Sections, cockpit fixtures, task routes,\
+  \ equipment allocations | Reopen affected shape/arrangement only |\n| G4 mechanisms | Openings and interfaces\
+  \ defined | State storyboard, supports, pose checks and limitations | Roll back mechanism candidate; preserve\
+  \ shell baseline |\n| G5 design lock | Functional blockout accepted | Primary/secondary form reviewed in\
+  \ full context | Reopen visual gate if identity changes |\n| G6 production | Stable form and component ownership\
+  \ | Evaluated geometry, materials, budgets, collision and export | Repair the owning region; invalidate dependents\
+  \ |\n| G7 release | Current source/export evidence | Exact-candidate acceptance and immutable package | New\
+  \ candidate required after content changes |\n| G8 integration | Installed package and compatible consumer\
+  \ | Actual placement, walking, playback and GPU evidence | Keep package status separate from runtime failure\
+  \ |\n\nThe owner normally chooses identity, silhouette and significant arrangement/mechanism trade-offs.\
+  \ Explicit delegation can cover other gates or predefine acceptable outcomes. Routine repairs proceed autonomously\
+  \ inside approved constraints. A gate is not an excuse to ask permission for every bevel, nor to continue\
+  \ through a newly discovered fundamental design fork.\n\nWhen a required crew route or actual reusable-module\
+  \ envelope does not fit the hull, QC returns the affected region to G2 silhouette/G3 architecture shaping\
+  \ and arrangement. Retain the failure witness and identify whether the cause is shell/profile, floor/route,\
+  \ placement or mechanism; do not keep detailing an incompatible shell or treat every failure as a local mesh-polish\
+  \ task. Revise owned hull stations, sections, openings or arrangement against the unchanged applicable envelope,\
+  \ then repeat route, module and combined-state checks before dependent gates resume.\n\nKeep the project's\
+  \ required visual and functional intent as constraints during this return, such as a relatively narrow cockpit\
+  \ passage, hawk-like cockpit and forward-opening belly ramp when required by its brief. Required intent is\
+  \ not permission to preserve a failed exact contour. Do not shrink crew/suit/carry fixtures, scale products,\
+  \ omit their access space, silently relax a requirement or declare clearance pass. A provisional reservation\
+  \ can direct a labelled shape study but cannot establish compliance; missing criteria or fixtures remain\
+  \ unknown.\n\nRecord changed region IDs, protected landmarks and alternatives with visual and functional\
+  \ consequences. If the required intent, applicable envelopes and supported mechanism cannot coexist, record\
+  \ the incompatible constraints and affected gates and escalate the material design tradeoff to the owner,\
+  \ with Registry/Ships resolving product or consumer gaps. Existing authorization covers routine intent-preserving\
+  \ reshaping; escalate actual incompatible scope/identity choices, not every repair.\n\nReopen dependent form/architecture/lock\
+  \ decisions whose premises changed. Mark affected detail, interfaces, mechanism/route/module checks, previews,\
+  \ collision, mass inputs, exports and release/integration evidence stale or withdrawn until regenerated and\
+  \ rechecked for exact new hashes. Preserve prior candidates as history and unchanged reusable module sources\
+  \ and unrelated valid evidence. Do not overwrite an accepted package or reuse its stale export as evidence\
+  \ for the new shape. This is a rework transition, not a cycle in prerequisite dependencies."
 applies_to:
 - Use the existing release state machine
 verification:
 - Prerequisite graph is acyclic; named rework returns do not redefine dependency edges.
 - Acceptance binds exact candidate evidence and does not imply runtime qualification.
+- A route/module containment failure returns to affected G2/G3 shape/arrangement; shrinking fixtures/products,
+  silent intent relaxation and stale dependent export/detail cannot resolve it. Unchanged module packages remain
+  valid.
 limitations:
 - This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
 related:

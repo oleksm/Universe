@@ -28,6 +28,9 @@ exit:
   shape selection; unresolved human/suit/carry fixtures and recovery scope remain explicit.
 failure:
 - Keep alternatives; do not erase prior source or mix incompatible features silently.
+- Required route/module envelope conflict with hull space returns affected G2/G3 shape and arrangement; preserve
+  design intent and applicable envelopes, escalate incompatible constraints, and invalidate dependent detail/export
+  evidence before resuming.
 inputs:
 - ship-artifact.reference-atlas
 - ship-artifact.requirements

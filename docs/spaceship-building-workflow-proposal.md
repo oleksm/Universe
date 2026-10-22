@@ -373,6 +373,14 @@ A mechanism packet similarly names pivots, anchors, allowed states, required sou
 
 ### 5.4 Invalidate only evidence that depends on the change
 
+When a required crew route or actual reusable-module envelope does not fit the hull, QC returns the affected region to G2 silhouette/G3 architecture shaping and arrangement. Retain the failure witness and identify whether the cause is shell/profile, floor/route, placement or mechanism; do not keep detailing an incompatible shell or treat every failure as a local mesh-polish task. Revise owned hull stations, sections, openings or arrangement against the unchanged applicable envelope, then repeat route, module and combined-state checks before dependent gates resume.
+
+Keep the project's required visual and functional intent as constraints during this return, such as a relatively narrow cockpit passage, hawk-like cockpit and forward-opening belly ramp when required by its brief. Required intent is not permission to preserve a failed exact contour. Do not shrink crew/suit/carry fixtures, scale products, omit their access space, silently relax a requirement or declare clearance pass. A provisional reservation can direct a labelled shape study but cannot establish compliance; missing criteria or fixtures remain unknown.
+
+Record changed region IDs, protected landmarks and alternatives with visual and functional consequences. If the required intent, applicable envelopes and supported mechanism cannot coexist, record the incompatible constraints and affected gates and escalate the material design tradeoff to the owner, with Registry/Ships resolving product or consumer gaps. Existing authorization covers routine intent-preserving reshaping; escalate actual incompatible scope/identity choices, not every repair.
+
+Reopen dependent form/architecture/lock decisions whose premises changed. Mark affected detail, interfaces, mechanism/route/module checks, previews, collision, mass inputs, exports and release/integration evidence stale or withdrawn until regenerated and rechecked for exact new hashes. Preserve prior candidates as history and unchanged reusable module sources and unrelated valid evidence. Do not overwrite an accepted package or reuse its stale export as evidence for the new shape. This is a rework transition, not a cycle in prerequisite dependencies.
+
 | Change | Invalidate | Normally retain |
 |---|---|---|
 | Hull profile or global scale | Affected form, space, interfaces, collision, mass inputs, export | Unchanged reusable component sources |

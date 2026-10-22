@@ -23,8 +23,13 @@ exit:
   cockpit and interior witnesses; no partial sweep substitutes for required rows.
 - Required crew routes and reachable controls, staging and recovery remain usable through declared mechanism
   states; zero mechanism collisions alone cannot establish operation or escape.
+- After a route/module-driven reshape, dependent form, fit, mechanisms, detail and export evidence is regenerated
+  for current hashes; preserved history or unchanged module packages do not pass changed hull geometry.
 failure:
 - Repair only the owning region and invalidate downstream evidence by dependency.
+- Required route/module envelope conflict with hull space returns affected G2/G3 shape and arrangement; preserve
+  design intent and applicable envelopes, escalate incompatible constraints, and invalidate dependent detail/export
+  evidence before resuming.
 inputs:
 - ship-artifact.region-spec
 - ship-artifact.build-inputs

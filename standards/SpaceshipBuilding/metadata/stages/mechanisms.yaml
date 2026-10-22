@@ -23,6 +23,9 @@ exit:
   states; zero mechanism collisions alone cannot establish operation or escape.
 failure:
 - Rollback the mechanism candidate while retaining shell baseline and witnesses.
+- Required route/module envelope conflict with hull space returns affected G2/G3 shape and arrangement; preserve
+  design intent and applicable envelopes, escalate incompatible constraints, and invalidate dependent detail/export
+  evidence before resuming.
 inputs:
 - ship-artifact.interfaces
 - ship-artifact.spatial-layout

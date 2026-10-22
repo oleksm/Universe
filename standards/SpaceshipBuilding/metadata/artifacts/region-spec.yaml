@@ -19,6 +19,8 @@ contents:
 - Semantic stations, profile correspondence, guide curves, protected landmarks and permitted ranges.
 - Shared boundary owners, read-only neighbors, interfaces and keep-in/out volumes.
 - Requirements, material roles, cost/accounting ownership and acceptance views/checks.
+- 'Route/module failure feedback: owning hull/arrangement region, immutable applicable envelopes, protected
+  intent/landmarks, alternatives, conflict owner and downstream invalidation/recheck list.'
 boundary: A generator may mutate only its owned output. A topology transition requires explicit design treatment.
 consumers:
 - blender
