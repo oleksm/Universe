@@ -102,13 +102,7 @@ pub enum Reach {
     Vending(usize),
 }
 
-/// The local north and east on a body at `up` (its frame): north toward the
-/// body's +Y pole.
-fn tangent(up: DVec3) -> (DVec3, DVec3) {
-    let north = (DVec3::Y - up * up.y).try_normalize().unwrap_or_else(|| (DVec3::Z - up * up.z).normalize());
-    let east = north.cross(up);
-    (north, east)
-}
+use crate::spaceport::tangent;
 
 /// Can the ship's hatch be opened (resting on a body's surface)? The body, if so.
 pub fn hatch_body(sys: &StarSystem, ship: &Ship) -> Result<usize, String> {

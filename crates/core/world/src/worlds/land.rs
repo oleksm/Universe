@@ -30,6 +30,19 @@ pub fn to_body() -> DQuat {
     DQuat::from_rotation_y(std::f64::consts::FRAC_PI_2)
 }
 
+/// The planet lab's direction for a longitude and latitude (degrees): its packages' and the planet LOD
+/// app's frame, (cos lat sin lon, sin lat, cos lat cos lon). The game's own is `super::direction`;
+/// `to_body` turns the one into the other.
+pub fn lab_direction(lon: f64, lat: f64) -> DVec3 {
+    let (lo, la) = (lon.to_radians(), lat.to_radians());
+    DVec3::new(la.cos() * lo.sin(), la.sin(), la.cos() * lo.cos())
+}
+
+/// Latitude and longitude (degrees) of a direction in the lab's frame (as `lab_direction`).
+pub fn lab_lat_lon(d: DVec3) -> (f64, f64) {
+    (d.y.clamp(-1.0, 1.0).asin().to_degrees(), d.x.atan2(d.z).to_degrees())
+}
+
 /// Body `key`'s land package: its folder (manifest hash and every file's size checked) and its radius
 /// (m). None: its ground is not a land package.
 pub fn ground(key: &str) -> Option<Result<(PathBuf, f64), String>> {
@@ -362,10 +375,6 @@ fn face_cell(c: DVec3) -> (u8, u8, u8) {
     ((2 * ax + (m < 0.0) as usize) as u8, cell(o1), cell(o2))
 }
 
-fn lat_lon(d: DVec3) -> (f64, f64) {
-    (d.y.clamp(-1.0, 1.0).asin().to_degrees(), d.x.atan2(d.z).to_degrees())
-}
-
 fn read<T: bytemuck::Pod + bytemuck::Zeroable>(dir: &Path, name: &str) -> Result<Vec<T>, String> {
     let bytes = std::fs::read(dir.join(name)).map_err(|e| format!("{name}: {e}"))?;
     if bytes.len() % std::mem::size_of::<T>() != 0 {
@@ -422,7 +431,7 @@ impl LandHeights {
         let pattern: Vec<[u32; 3]> = ft.chunks_exact(3).map(|c| [c[0], c[1], c[2]]).filter(|t| t.iter().all(|&v| (v as usize) < z.len())).collect();
         let mut pattern_cells: HashMap<(i32, i32), Vec<u32>> = HashMap::new();
         for (i, t) in pattern.iter().enumerate() {
-            let ll = t.map(|v| lat_lon(DVec3::from_array(dirs[v as usize].map(|x| x as f64))));
+            let ll = t.map(|v| lab_lat_lon(DVec3::from_array(dirs[v as usize].map(|x| x as f64))));
             let (la0, la1) = (ll.iter().map(|p| p.0).fold(f64::MAX, f64::min), ll.iter().map(|p| p.0).fold(f64::MIN, f64::max));
             let (lo0, lo1) = (ll.iter().map(|p| p.1).fold(f64::MAX, f64::min), ll.iter().map(|p| p.1).fold(f64::MIN, f64::max));
             if lo1 - lo0 > 180.0 {
@@ -526,7 +535,7 @@ impl LandHeights {
         if let Some(h) = self.pyramid.as_ref().and_then(|p| p.at(u)) {
             return h;
         }
-        let (la, lo) = lat_lon(u);
+        let (la, lo) = lab_lat_lon(u);
         if let Some(ts) = self.pattern_cells.get(&((la / PATTERN_CELL).floor() as i32, (lo / PATTERN_CELL).floor() as i32)) {
             for &t in ts {
                 if let Some(h) = self.hit(u, self.pattern[t as usize]) {
@@ -571,10 +580,7 @@ impl LandHeights {
 mod tests {
     use super::*;
 
-    fn unit(lon: f64, lat: f64) -> DVec3 {
-        let (lo, la) = (lon.to_radians(), lat.to_radians());
-        DVec3::new(la.cos() * lo.sin(), la.sin(), la.cos() * lo.cos())
-    }
+    use super::lab_direction as unit;
 
     /// The installed e104 package (UNIVERSE_LAND_PACKAGE): the belt from the pyramid, Shasta from the
     /// pattern, the rest from the anchor mesh; the package's frame turned to the body's.

@@ -497,10 +497,8 @@ pub fn json(dir: &Path, name: &str) -> Result<serde_json::Value, String> {
     serde_json::from_slice(&std::fs::read(dir.join(name)).map_err(|e| format!("{name}: {e}"))?).map_err(|e| format!("{name}: {e}"))
 }
 
-pub fn unit(lon: f64, lat: f64) -> DVec3 {
-    let (lo, la) = (lon.to_radians(), lat.to_radians());
-    DVec3::new(la.cos() * lo.sin(), la.sin(), la.cos() * lo.cos())
-}
+/// The lab's direction for a longitude and latitude (see `land::lab_direction`).
+pub use universe_world::worlds::land::lab_direction as unit;
 
 /// One landform layer over the land (views' `layers/`, tools/layer_meshes.py): a class for every land triangle.
 pub struct Layer {

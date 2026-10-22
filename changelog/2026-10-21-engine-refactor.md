@@ -47,3 +47,7 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
    as before. Two slips the fields allowed go: a lines world also kept a bake (`baked()` true, the ground-ahead
    prefetch reading its tiles for nothing), and a world from the store still worked out the seed's crater
    noise for `classify` (always 0 there). Captures of a baked world, a moon and Hoar E match before/after.
+7. One home for the planet lab's latitude-longitude frame: `land::lab_direction` and `lab_lat_lon` (the terrain
+   crate's `unit` re-exports it; land's own copy and its test's go), beside `to_body` and the game's
+   `worlds::direction`. The crew's north-east tangent is the spaceport's (they were the same code). The ATC
+   presence check over a pad stays its own: a column at any height, where `pad_at` is resting on it.
