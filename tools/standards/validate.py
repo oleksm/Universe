@@ -42,6 +42,25 @@ def is_type(v, t):
     return isinstance(v, TYPES[t])
 
 
+def pattern_preferences(rec):
+    """Conditional band fields and ordering, beyond the supported schema subset."""
+    if not (rec.get("identity") or {}).get("key", "").startswith("planet-pattern."):
+        return []
+    errors = []
+    for i, factor in enumerate(rec.get("factors", [])):
+        bounds = ("from", "to", "soft")
+        if factor.get("want") == "band":
+            for name in bounds:
+                if name not in factor:
+                    errors.append(f"factors[{i}]: band requires {name}")
+            lo, hi = factor.get("from"), factor.get("to")
+            if isinstance(lo, (int, float)) and isinstance(hi, (int, float)) and lo >= hi:
+                errors.append(f"factors[{i}]: band from must be less than to")
+        elif any(name in factor for name in bounds):
+            errors.append(f"factors[{i}]: from/to/soft are only valid for band")
+    return errors
+
+
 def validate(v, sch, here, at=""):
     """What of `v` does not fit `sch` (from the schema file `here`): a list of plain sentences."""
     if not isinstance(sch, dict):
@@ -373,6 +392,7 @@ def check_all():
                 found.extend((full, e) for e in motion_interlocks(rec))
                 found.extend((full, e) for e in size_ranges(rec))
                 found.extend((full, e) for e in example_sources(rec))
+                found.extend((full, e) for e in pattern_preferences(rec))
             # (Its key: there, of its kind, as its file says, and no other record's.)
             key, want = key_in(rec), key_of(rel, rec)
             if not isinstance(key, str) or not KEY.match(key):

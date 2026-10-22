@@ -8,24 +8,31 @@ factors:
 - factor: planet-factor.water-discharge
   weight: 3
   why: Meandering river discharge drives bend migration
+  want: high
 - factor: planet-factor.clim-storm
   weight: 3
   why: Floods trigger chute or neck cutoffs
+  want: high
 - factor: planet-factor.regolith
   weight: 1
   why: Cohesive alluvium sustains meanders
+  want: high
 - factor: planet-factor.sed-supply
   weight: 1
   why: Plugs seal cutoff ends; fills over years-decades
+  want: high
 - factor: planet-factor.slope-relief
   weight: 3
   why: Low-gradient floodplains
+  want: low
 - factor: planet-factor.bio-veg
   weight: 1
   why: Bank vegetation cohesion sustains sinuosity
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: Infill over years to decades
+  want: high
 vocabulary_id: 100
 sources:
 - https://en.wikipedia.org/wiki/Oxbow_lake
@@ -39,10 +46,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: playa

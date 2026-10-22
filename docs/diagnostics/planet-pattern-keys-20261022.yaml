@@ -1,0 +1,1232 @@
+source_commit: 3c40281
+source_hashes:
+  docs/catalogue/kinds.py: c33c962ee4a2890881858f9430cb0aed7cb803879bd95e9a4fa9270ad55a5ef0
+  crates/viewer/src/rings/formations.rs: d781fc47d59f9751ddeb017842368442003e2de1edc551fb9865a4c4fda7d042
+  crates/viewer/src/layers/features.rs: c2a5a8d04bc863b51d4e60fb107452b8b78b691fb107c1fcd984b68c2e0be50e
+patterns: 185
+factor_preferences: &id001
+  high: 1362
+  low: 148
+new_feature_keys:
+- planet-feature.continent
+- planet-feature.ocean-basin
+- planet-feature.marginal-sea
+- planet-feature.microcontinent
+- planet-feature.island
+- planet-feature.archipelago
+- planet-feature.island-arc
+- planet-feature.orogen-belt
+- planet-feature.continental-rift-zone
+- planet-feature.passive-margin
+- planet-feature.active-margin
+- planet-feature.coastal-plain
+- planet-feature.alluvial-plain
+- planet-feature.back-arc-basin
+- planet-feature.abyssal-plain
+- planet-feature.oceanic-plateau
+- planet-feature.mid-ocean-ridge
+- planet-feature.accretionary-prism
+- planet-feature.forearc-basin
+- planet-feature.oceanic-trench
+- planet-feature.ridge-axis-valley
+- planet-feature.fracture-zone
+- planet-feature.abyssal-hills
+- planet-feature.seamount
+- planet-feature.guyot
+- planet-feature.continental-slope
+- planet-feature.continental-rise
+- planet-feature.submarine-canyon
+- planet-feature.submarine-fan
+- planet-feature.lava-dome
+- planet-feature.geothermal-field
+- planet-feature.peak
+- planet-feature.mountain-pass
+- planet-feature.waterfall
+- planet-feature.oasis
+- planet-feature.ocean
+- planet-feature.sea
+- planet-feature.lake
+- planet-feature.river
+- planet-feature.wetland
+- planet-feature.spring
+- planet-feature.ice-sheet
+- planet-feature.ice-cap
+- planet-feature.valley-glacier
+- planet-feature.ice-shelf
+- planet-feature.sea-ice
+- planet-feature.tropical-rainforest
+- planet-feature.tropical-seasonal-forest
+- planet-feature.savanna
+- planet-feature.hot-desert
+- planet-feature.cold-desert
+- planet-feature.steppe-grassland
+- planet-feature.mediterranean-shrubland
+- planet-feature.temperate-broadleaf-forest
+- planet-feature.temperate-rainforest
+- planet-feature.boreal-forest-taiga
+- planet-feature.tundra
+- planet-feature.alpine-zone
+- planet-feature.perennial-snow-and-ice
+- planet-feature.bare-rock
+- planet-feature.tree-line
+- planet-feature.snow-line
+- planet-feature.permafrost-limit
+- planet-feature.desert-margin
+- planet-feature.forest-edge
+- planet-feature.sea-ice-edge
+status: draft catalogue and matcher update; no simulator qualification
+field_contract:
+  want:
+  - high
+  - low
+  - band
+  band: Normalized from<to in [0,1]; soft in (0,1]; full score in band, outside ramp width=soft*(to-from).
+    Missing signal scores zero.
+  look: Explicit 17-value render archetype enum, not an inferred pattern-key prefix.
+catalogue:
+  before: 175
+  after: 241
+  gap_report_before: 937
+  gap_report_after: 1009
+  new_gaps: 66 missing shapes plus six landmark example gaps; retained as explicit migration work. No invented
+    shape/examples/trigger or built claim.
+  sizes: Transcribed rough draft ranges; invented tier, review required.
+validation:
+  tests: 53 tests passed, including six preference/generated-module tests
+  registry: Final full reg check passed after direction corrections; zero schema misfits; generated module
+    up to date; all three page checks passed.
+  pages: Three correct registered URLs passed after correcting two invalid test URLs; pattern page visually
+    inspected.
+  source_parity: Initial migration exactly matched Rust:185 looks and1510 preferences; subsequent whole-word
+    and semantic corrections are enumerated below, intentionally differing from that heuristic.
+runtime_snapshot:
+  path: /home/alexm/planet-data/registry_e3/standards
+  owner_instruction: Apply additions in place; preserve all process parameters; no e4 copy.
+  audit: /home/alexm/.agents/reviews/registry/20261022-pattern-e3-overlay.json
+  process_files_byte_identical: 114
+  unrelated_files_byte_identical: 4628
+  schema_errors_before: 0
+  schema_errors_after: 0
+  compatibility: Retained legacy level fields/keys; added eight numeric bands; regenerated Python module from
+    e3 records only.
+direction_review:
+  lexical_corrections:
+  - pattern: planet-pattern.aeolian.dune.barchan
+    factor: planet-factor.regolith
+    before: low
+    after: high
+    why: hard, deflated, non-sandy substrate between dunes
+  - pattern: planet-pattern.aeolian.erosion.deflation-hollow
+    factor: planet-factor.relief-inherited
+    before: low
+    after: high
+    why: pre-incised fluvial lows initiate hollows
+  - pattern: planet-pattern.arid.slope.alluvial-fan
+    factor: planet-factor.tect-fault
+    before: low
+    after: high
+    why: Active range-front normal faults create relief and accommodation at the apex
+  - pattern: planet-pattern.arid.slope.alluvial-fan
+    factor: planet-factor.rock-type
+    before: low
+    after: high
+    why: Mudstone or clay-rich saprolite source favours debris-flow fans; coarse permeable regolith gives fluvial
+      fans
+  - pattern: planet-pattern.arid.landscape.desert-margin
+    factor: planet-factor.bio-veg
+    before: low
+    after: high
+    why: Grass/shrub cover (steppe) stabilises dunes and slows runoff; cover threshold controls erosion
+  - pattern: planet-pattern.arid.residual.inselberg
+    factor: planet-factor.rock-type
+    before: low
+    after: high
+    why: Massive resistant granite, gneiss, gabbro, arkose amid weaker or more weathered rock
+  - pattern: planet-pattern.arid.slope.pediment
+    factor: planet-factor.rock-type
+    before: low
+    after: high
+    why: Granite and grus-forming crystalline rock most common, though lithology not essential
+  - pattern: planet-pattern.arid.slope.pediment
+    factor: planet-factor.sed-supply
+    before: low
+    after: high
+    why: Supply balanced by transport keeps thin veneer, not aggrading fan
+  - pattern: planet-pattern.arid.slope.pediment
+    factor: planet-factor.regolith
+    before: low
+    after: high
+    why: Weathering front lowering beneath thin mantle; high-infiltration ground
+  - pattern: planet-pattern.arid.basin.playa
+    factor: planet-factor.clim-arid
+    before: low
+    after: high
+    why: Evaporation exceeds inflow (potential evaporation several times precipitation)
+  - pattern: planet-pattern.arid.basin.playa
+    factor: planet-factor.groundwater
+    before: low
+    after: high
+    why: Shallow water table gives wet (discharge) playa with salt crust; deep gives dry clay playa
+  - pattern: planet-pattern.arid.basin.playa
+    factor: planet-factor.other-solute-chemistry
+    before: low
+    after: high
+    why: Inflow brine chemistry sets crust minerals (halite, gypsum, carbonates) and crust thickness
+  - pattern: planet-pattern.arid.basin.playa
+    factor: planet-factor.clim-storm
+    before: low
+    after: high
+    why: Occasional floods form shallow ephemeral lakes that re-level the surface
+  - pattern: planet-pattern.arid.channel.wadi
+    factor: planet-factor.clim-storm
+    before: low
+    after: high
+    why: Rare flash floods carry most work; few flow days per year
+  - pattern: planet-pattern.coastal.reef.atoll
+    factor: planet-factor.tect-setting
+    before: low
+    after: high
+    why: intraplate hotspot volcano on oceanic plate moving away from ridge/hotspot
+  - pattern: planet-pattern.coastal.reef.atoll
+    factor: planet-factor.sea-level
+    before: low
+    after: high
+    why: glacial lowstands karstify rim (antecedent saucer); highstands regrow reef
+  - pattern: planet-pattern.coastal.reef.atoll
+    factor: planet-factor.rock-soluble
+    before: low
+    after: high
+    why: lowstand dissolution of carbonate cap deepens lagoon
+  - pattern: planet-pattern.coastal.reef.barrier
+    factor: planet-factor.tect-uplift
+    before: low
+    after: high
+    why: subsidence of shelf or volcano (Darwin) separates reef from shore
+  - pattern: planet-pattern.coastal.drowned.estuary
+    factor: planet-factor.waves-tides
+    before: low
+    after: high
+    why: microtidal <2 m wave-dominated barrier/lagoon; macrotidal >4 m funnel with sand bars, flats
+  - pattern: planet-pattern.coastal.drowned.estuary
+    factor: planet-factor.relief-inherited
+    before: low
+    after: high
+    why: incised valley at coast from lowstand incision
+  - pattern: planet-pattern.coastal.drowned.estuary
+    factor: planet-factor.base-level
+    before: low
+    after: high
+    why: lowstand base-level fall cut the valley first
+  - pattern: planet-pattern.coastal.reef.fringing
+    factor: planet-factor.slope-relief
+    before: low
+    after: high
+    why: hard substrate at shallow depth near shore (light to ~60 m)
+  - pattern: planet-pattern.coastal.reef.fringing
+    factor: planet-factor.time
+    before: low
+    after: high
+    why: 1-10 kyr for Holocene reef flats
+  - pattern: planet-pattern.coastal.tidal.mangrove
+    factor: planet-factor.water-discharge
+    before: low
+    after: high
+    why: river inflow (deltas, estuaries) gives largest forests
+  - pattern: planet-pattern.coastal.carbonate.platform
+    factor: planet-factor.sea-level
+    before: low
+    after: high
+    why: lowstands expose and karstify top; fast rise drowns platform
+  - pattern: planet-pattern.coastal.tidal.salt-marsh
+    factor: planet-factor.clim-arid
+    before: low
+    after: high
+    why: not hypersaline; arid coasts give sabkha instead
+  - pattern: planet-pattern.coastal.rocky.sea-cliff
+    factor: planet-factor.rock-fracture
+    before: low
+    after: high
+    why: joints and faults set block size, collapse style and notch depth
+  - pattern: planet-pattern.coastal.rocky.sea-cliff
+    factor: planet-factor.waves-tides
+    before: low
+    after: high
+    why: wave attack at toe cuts notch; tidal range sets notch height band
+  - pattern: planet-pattern.coastal.rocky.sea-cliff
+    factor: planet-factor.sed-supply
+    before: low
+    after: high
+    why: protective beach at toe slows erosion; thin beach supplies abrasive tools
+  - pattern: planet-pattern.coastal.rocky.sea-cliff
+    factor: planet-factor.tect-uplift
+    before: low
+    after: high
+    why: uplift raises cliff and abandons notches
+  - pattern: planet-pattern.coastal.rocky.shore-platform
+    factor: planet-factor.clim-temp
+    before: low
+    after: high
+    why: 'warm climates: wetting-drying and salt weathering lower platform to near high-water level'
+  - pattern: planet-pattern.coastal.depositional.spit
+    factor: planet-factor.waves-tides
+    before: low
+    after: high
+    why: oblique waves drive longshore drift; refraction recurves tip; tidal/river flow at mouth limits length
+  - pattern: planet-pattern.coastal.depositional.spit
+    factor: planet-factor.slope-relief
+    before: low
+    after: high
+    why: shallow water at departure point; deep water halts growth
+  - pattern: planet-pattern.coastal.depositional.spit
+    factor: planet-factor.water-discharge
+    before: low
+    after: high
+    why: river or tidal outflow at mouth caps spit growth and keeps channel open
+  - pattern: planet-pattern.coastal.tidal.tidal-flat
+    factor: planet-factor.waves-tides
+    before: low
+    after: high
+    why: meso-macrotidal; flats where relative tidal range (spring range / wave height) >15
+  - pattern: planet-pattern.coastal.depositional.tombolo
+    factor: planet-factor.slope-relief
+    before: low
+    after: high
+    why: shallow gap between island and mainland
+  - pattern: planet-pattern.fluvial.fan.alluvial-fan
+    factor: planet-factor.sed-supply
+    before: low
+    after: high
+    why: abundant weathered debris; fine regolith favours debris-flow fans
+  - pattern: planet-pattern.fluvial.channel.bedrock-long-profile
+    factor: planet-factor.clim-storm
+    before: low
+    after: high
+    why: flood variability and incision thresholds set rate-steepness nonlinearity
+  - pattern: planet-pattern.fluvial.channel.braided
+    factor: planet-factor.regolith
+    before: low
+    after: high
+    why: non-cohesive gravel banks give wide shallow channels
+  - pattern: planet-pattern.fluvial.network.drainage-basin
+    factor: planet-factor.bio-veg
+    before: low
+    after: high
+    why: cover raises erosion threshold, sparser network; bare ground gives dense dissection
+  - pattern: planet-pattern.fluvial.estuary.fluvial-reach
+    factor: planet-factor.relief-inherited
+    before: low
+    after: high
+    why: lowstand incised valley (or glacial trough) sets shape
+  - pattern: planet-pattern.fluvial.valley.incised
+    factor: planet-factor.sea-level
+    before: low
+    after: high
+    why: glacio-eustatic lowstand when shelf exposed
+  - pattern: planet-pattern.fluvial.valley.incised
+    factor: planet-factor.time
+    before: low
+    after: high
+    why: one lowstand, ~10-100 kyr
+  - pattern: planet-pattern.fluvial.channel.meandering
+    factor: planet-factor.slope-relief
+    before: low
+    after: high
+    why: slope below braiding threshold (S < 0.06 Q^-0.44)
+  - pattern: planet-pattern.fluvial.network.parallel
+    factor: planet-factor.clim-arid
+    before: low
+    after: high
+    why: arid surface-flow channelization gives acute junctions
+  - pattern: planet-pattern.fluvial.network.radial
+    factor: planet-factor.relief-inherited
+    before: low
+    after: high
+    why: central conical or domal high; streams flow outward down initial slope
+  - pattern: planet-pattern.fluvial.network.rectangular
+    factor: planet-factor.rock-fracture
+    before: low
+    after: high
+    why: orthogonal joints/faults at ~90 deg; channels follow them, right-angle bends
+  - pattern: planet-pattern.fluvial.delta.river-dominated
+    factor: planet-factor.slope-relief
+    before: low
+    after: high
+    why: shallow receiving basin; deep water gives birdfoot
+  - pattern: planet-pattern.fluvial.valley.slot-canyon
+    factor: planet-factor.base-level
+    before: low
+    after: high
+    why: incision driven by trunk canyon lowering
+  - pattern: planet-pattern.fluvial.channel.subsequent-stream
+    factor: planet-factor.rock-layers
+    before: low
+    after: high
+    why: follows outcrop belt of the weakest bed along strike
+  - pattern: planet-pattern.fluvial.delta.tide-dominated
+    factor: planet-factor.slope-relief
+    before: low
+    after: high
+    why: shallow broad shelf amplifies tides
+  - pattern: planet-pattern.fluvial.delta.tide-dominated
+    factor: planet-factor.bio-veg
+    before: low
+    after: high
+    why: mangroves/marsh stabilize tidal flats
+  - pattern: planet-pattern.fluvial.network.trellis
+    factor: planet-factor.rock-layers
+    before: low
+    after: high
+    why: alternating hard/soft beds; subsequents follow soft beds, ridges on hard
+  - pattern: planet-pattern.fluvial.valley.v-shaped
+    factor: planet-factor.rock-fracture
+    before: low
+    after: high
+    why: fracturing lowers threshold slope, landslide-dominated walls
+  - pattern: planet-pattern.fluvial.delta.wave-dominated
+    factor: planet-factor.sed-supply
+    before: low
+    after: high
+    why: sand-rich load; supply below wave reworking
+  - pattern: planet-pattern.fluvial.gap.wind-gap
+    factor: planet-factor.base-level
+    before: low
+    after: high
+    why: lower base level of the capturing stream
+  - pattern: planet-pattern.glacial.landscape.alpine
+    factor: planet-factor.clim-precip
+    before: low
+    after: high
+    why: snowfall sets ELA height and glacier size; wet ranges glaciate lower
+  - pattern: planet-pattern.glacial.erosion.col
+    factor: planet-factor.ice-flow
+    before: low
+    after: high
+    why: transfluence through divide breaches lowers col
+  - pattern: planet-pattern.glacial.erosion.col
+    factor: planet-factor.rock-type
+    before: low
+    after: high
+    why: weaker rock bands erode into saddles
+  - pattern: planet-pattern.glacial.erosion.col
+    factor: planet-factor.time
+    before: low
+    after: high
+    why: deepens with cycles; 20-300 m below ridge
+  - pattern: planet-pattern.glacial.bedform.drumlin-field
+    factor: planet-factor.ice-flow
+    before: low
+    after: high
+    why: flow aligns long axis; faster ice gives elongation 1.7-4.1 and toward MSGL
+  - pattern: planet-pattern.glacial.bedform.drumlin-field
+    factor: planet-factor.ice-thermal
+    before: low
+    after: high
+    why: warm-based but not meltwater-flooded; abundant meltwater destroys bedforms
+  - pattern: planet-pattern.glacial.bedform.drumlin-field
+    factor: planet-factor.clim-history
+    before: low
+    after: high
+    why: later flow phases overprint/cross-cut fields
+  - pattern: planet-pattern.glacial.erosion.fjord
+    factor: planet-factor.ice-flow
+    before: low
+    after: high
+    why: outlet glaciers/ice streams concentrate flow; selective linear erosion below sea level
+  - pattern: planet-pattern.glacial.erosion.fjord
+    factor: planet-factor.ice-extent
+    before: low
+    after: high
+    why: ice must reach the coast at lowered glacial sea level; repeated cycles
+  - pattern: planet-pattern.glacial.valley.hanging-valley
+    factor: planet-factor.time
+    before: low
+    after: high
+    why: post-glacial fluvial incision slowly cuts gorge into lip
+  - pattern: planet-pattern.glacial.valley.hanging-valley
+    factor: planet-factor.sea-level
+    before: low
+    after: high
+    why: in fjords, tributary hangs below or above sea level
+  - pattern: planet-pattern.glacial.landscape.ice-sheet-bed
+    factor: planet-factor.rock-type
+    before: low
+    after: high
+    why: hard crystalline shield gives scoured rock; soft sedimentary lowland gives till bed
+  - pattern: planet-pattern.glacial.bedform.mega-scale-lineation
+    factor: planet-factor.ice-flow
+    before: low
+    after: high
+    why: ice stream fast flow (>~1000 m/yr); elongation >10:1
+  - pattern: planet-pattern.glacial.bedform.mega-scale-lineation
+    factor: planet-factor.sea-level
+    before: low
+    after: high
+    why: lowstand exposes continental shelf troughs to grounded ice
+  - pattern: planet-pattern.glacial.deposit.moraine-terminal
+    factor: planet-factor.slope-relief
+    before: low
+    after: high
+    why: valley mouths confine; lowlands give broad lobate arcs
+  - pattern: planet-pattern.glacial.deposit.outwash-plain
+    factor: planet-factor.slope-relief
+    before: low
+    after: high
+    why: unconfined lowland gives fan sandur; valleys give valley train
+  - pattern: planet-pattern.glacial.valley.overdeepening
+    factor: planet-factor.ice-flow
+    before: low
+    after: high
+    why: convergence at confluences, below icefalls, at narrowings raises erosion; depths 10-100s m
+  - pattern: planet-pattern.glacial.valley.overdeepening
+    factor: planet-factor.sea-level
+    before: low
+    after: high
+    why: tidewater termini allow basins far below sea level
+  - pattern: planet-pattern.glacial.landscape.periglacial-plain
+    factor: planet-factor.clim-temp
+    before: low
+    after: high
+    why: MAAT below 0 C with frequent freeze-thaw; ice wedges need much colder (approx -6 C)
+  - pattern: planet-pattern.glacial.lake.proglacial
+    factor: planet-factor.sed-supply
+    before: low
+    after: high
+    why: moraine dam height and stability; inflow sediment infills via deltas
+  - pattern: planet-pattern.glacial.deposit.till-plain
+    factor: planet-factor.slope-relief
+    before: low
+    after: high
+    why: lowland plains, relief <10-20 m
+  - pattern: planet-pattern.glacial.deposit.till-plain
+    factor: planet-factor.time
+    before: low
+    after: high
+    why: post-glacial drainage integration slowly dissects plain
+  - pattern: planet-pattern.glacial.valley.trough
+    factor: planet-factor.ice-extent
+    before: low
+    after: high
+    why: ELA below valley heads; duration and cycle count set U-shape maturity (b 1.5-2)
+  - pattern: planet-pattern.glacial.valley.trough
+    factor: planet-factor.sed-supply
+    before: low
+    after: high
+    why: post-glacial fill (0-300 m) flattens floor
+  - pattern: planet-pattern.hillslope.hollow.colluvial
+    factor: planet-factor.regolith
+    before: low
+    after: high
+    why: Thick creep-supplied colluvium (1-5 m) fills the bedrock hollow between failures
+  - pattern: planet-pattern.hillslope.hollow.colluvial
+    factor: planet-factor.clim-storm
+    before: low
+    after: high
+    why: Intense rainstorms saturate fill, trigger shallow landslide/debris flow that empties hollow
+  - pattern: planet-pattern.hillslope.hollow.colluvial
+    factor: planet-factor.groundwater
+    before: low
+    after: high
+    why: Convergent subsurface flow builds pore pressure in the fill axis
+  - pattern: planet-pattern.hillslope.hollow.colluvial
+    factor: planet-factor.rock-type
+    before: low
+    after: high
+    why: Bedrock below must be stronger than fill to keep the scoured hollow form
+  - pattern: planet-pattern.hillslope.fan.debris-flow
+    factor: planet-factor.bio-veg
+    before: low
+    after: high
+    why: Wildfire removing cover sharply raises debris-flow frequency
+  - pattern: planet-pattern.hillslope.flatiron
+    factor: planet-factor.time
+    before: low
+    after: high
+    why: Facets degrade as streams lower base; age of exposure sets height
+  - pattern: planet-pattern.hillslope.ridge.interfluve
+    factor: planet-factor.time
+    before: low
+    after: high
+    why: 10 kyr-10 Myr; divides migrate toward the slower-eroding side over time
+  - pattern: planet-pattern.hillslope.landslide.translational
+    factor: planet-factor.clim-storm
+    before: low
+    after: high
+    why: Intense rain or snowmelt raises pore pressure; triggers shallow slips
+  - pattern: planet-pattern.hillslope.landslide.translational
+    factor: planet-factor.groundwater
+    before: low
+    after: high
+    why: Perched water at the contact lowers effective stress
+  - pattern: planet-pattern.karst.landscape.cockpit
+    factor: planet-factor.tect-uplift
+    before: low
+    after: high
+    why: Steady uplift keeps deep vadose zone; slower uplift lets cockpits evolve to towers
+  - pattern: planet-pattern.karst.landscape.cockpit
+    factor: planet-factor.groundwater
+    before: low
+    after: high
+    why: Deep water table (fengcong) versus shallow (fenglin); depressions drain vertically
+  - pattern: planet-pattern.karst.depression.doline
+    factor: planet-factor.rock-soluble
+    before: low
+    after: high
+    why: Limestone, dolomite, gypsum or salt at or below surface; required
+  - pattern: planet-pattern.karst.depression.doline
+    factor: planet-factor.clim-precip
+    before: low
+    after: high
+    why: Humid recharge drives solution; high groundwater flow allows giant dolines
+  - pattern: planet-pattern.karst.collapse.gorge
+    factor: planet-factor.rock-fracture
+    before: low
+    after: high
+    why: Vertical fractures give collapse weakness; stress release opens new fractures
+  - pattern: planet-pattern.karst.depression.polje
+    factor: planet-factor.sed-supply
+    before: low
+    after: high
+    why: Alluvium/terra rossa fill flattens floor and seals it; inflow from non-karst catchments
+  - pattern: planet-pattern.karst.depression.polje
+    factor: planet-factor.base-level
+    before: low
+    after: high
+    why: Regional karst base level sets floor height; lowered base level converts to dry poljes
+  - pattern: planet-pattern.karst.landscape.tower
+    factor: planet-factor.groundwater
+    before: low
+    after: high
+    why: Shallow water table at plain level undercuts tower feet (foot caves, notches)
+  - pattern: planet-pattern.karst.landscape.tropical
+    factor: planet-factor.sed-supply
+    before: low
+    after: high
+    why: Allogenic sediment from non-karst rocks aggrades plains between towers
+  - pattern: planet-pattern.lacustrine.lake.dammed-lake
+    factor: planet-factor.water-discharge
+    before: low
+    after: high
+    why: Inflow rate sets overtopping time
+  - pattern: planet-pattern.lacustrine.basin.glacial
+    factor: planet-factor.ice-flow
+    before: low
+    after: high
+    why: Fast flow overdeepens troughs
+  - pattern: planet-pattern.lacustrine.basin.seasonal-karst-lake
+    factor: planet-factor.rock-perm
+    before: low
+    after: high
+    why: Conduits and swallow holes drain basin
+  - pattern: planet-pattern.lacustrine.basin.seasonal-karst-lake
+    factor: planet-factor.ice-extent
+    before: low
+    after: high
+    why: Glacially scoured lowland karst (Ireland)
+  - pattern: planet-pattern.lacustrine.basin.volcanic
+    factor: planet-factor.groundwater
+    before: low
+    after: high
+    why: 'Shallow water table: magma-water explosions make maars'
+  - pattern: planet-pattern.periglacial.mound.palsa
+    factor: planet-factor.clim-temp
+    before: low
+    after: high
+    why: MAAT just below 0 C; 0.8 C warming collapsed palsas in Norway
+  - pattern: planet-pattern.periglacial.mound.pingo
+    factor: planet-factor.clim-temp
+    before: low
+    after: high
+    why: Ground below 0 C; warming melts core and collapses pingo to a rampart lake
+  - pattern: planet-pattern.periglacial.slope.protalus-rampart
+    factor: planet-factor.clim-wind
+    before: low
+    after: high
+    why: Lee-side drifting builds snowbed below cliff
+  - pattern: planet-pattern.periglacial.slope.protalus-rampart
+    factor: planet-factor.clim-history
+    before: low
+    after: high
+    why: Mostly Younger Dryas/Holocene cold phases; now relict
+  - pattern: planet-pattern.periglacial.creep.rock-glacier
+    factor: planet-factor.slope-relief
+    before: low
+    after: high
+    why: Below cirque headwalls and talus; moderate slope for creep
+  - pattern: planet-pattern.structural.homocline.hogback
+    factor: planet-factor.tect-fold
+    before: low
+    after: high
+    why: Steep dip > ~30-40 deg; near-symmetric ridge stays almost fixed as land lowers
+  - pattern: planet-pattern.structural.flat.mesa-butte
+    factor: planet-factor.volc-vent
+    before: low
+    after: high
+    why: Lava flow caps (flood basalts) can form caprock and inverted relief
+  - pattern: planet-pattern.tectonic.fold.anticlinal-ridge
+    factor: planet-factor.rock-fracture
+    before: low
+    after: high
+    why: extension fractures at hinge weaken crest, promote breaching
+  - pattern: planet-pattern.tectonic.fold.breached-anticline
+    factor: planet-factor.tect-uplift
+    before: low
+    after: high
+    why: uplift slowing/stopping lets erosion outrun fold growth
+  - pattern: planet-pattern.tectonic.province.extensional-province
+    factor: planet-factor.tect-fault
+    before: low
+    after: high
+    why: normal fault spacing ~25-30 km, block tilts, core complexes
+  - pattern: planet-pattern.tectonic.fault.fault-scarp
+    factor: planet-factor.bio-veg
+    before: low
+    after: high
+    why: vegetation cover slows wash, alters diffusivity
+  - pattern: planet-pattern.tectonic.extension.horst-graben
+    factor: planet-factor.tect-setting
+    before: low
+    after: high
+    why: extension of thickened/thermally weakened continental lithosphere (crust 30-35 km)
+  - pattern: planet-pattern.tectonic.extension.horst-graben
+    factor: planet-factor.tect-fault
+    before: low
+    after: high
+    why: normal fault spacing ~24-32 km set by brittle layer thickness; tilt gives half-grabens
+  - pattern: planet-pattern.tectonic.basin.intermontane
+    factor: planet-factor.base-level
+    before: low
+    after: high
+    why: '(the library writes HYDRO_BASIN, which its vocabulary lacks: mapped here by the registry, to confirm)
+      an axial river gathers the fans'' streams; closed or poorly drained floors hold lakes in wet periods
+      (Tulare, Corcoran)'
+  - pattern: planet-pattern.tectonic.basin.intermontane
+    factor: planet-factor.clim-arid
+    before: low
+    after: high
+    why: '(the library writes CLIM, which its vocabulary lacks: mapped here by the registry, to confirm) rain
+      shadow of the seaward range sets fan size and lake persistence'
+  - pattern: planet-pattern.tectonic.province.orogen
+    factor: planet-factor.clim-precip
+    before: low
+    after: high
+    why: erosional efficiency narrows and lowers orogen, increases uplift
+  - pattern: planet-pattern.tectonic.margin.passive
+    factor: planet-factor.time
+    before: low
+    after: high
+    why: heat flow and subsidence decline with age since breakup (10-200 Myr)
+  - pattern: planet-pattern.tectonic.fault.range-front
+    factor: planet-factor.tect-fault
+    before: low
+    after: high
+    why: bounding normal/reverse fault; segment length sets front segments
+  - pattern: planet-pattern.tectonic.fault.range-front
+    factor: planet-factor.time
+    before: low
+    after: high
+    why: time since uplift slowed raises sinuosity and valley width (Vf)
+  - pattern: planet-pattern.tectonic.craton.shield
+    factor: planet-factor.ice-extent
+    before: low
+    after: high
+    why: 'Quaternary ice scoured northern shields: knob-and-lake terrain, tens of m erosion'
+  - pattern: planet-pattern.tectonic.fault.triangular-facet
+    factor: planet-factor.tect-fault
+    before: low
+    after: high
+    why: normal fault footwall truncates spurs; facet slope near fault dip when fresh
+  - pattern: planet-pattern.tectonic.fault.triangular-facet
+    factor: planet-factor.time
+    before: low
+    after: high
+    why: 0.1-3 Myr; facets lower and round with age once slip stops
+  - pattern: planet-pattern.volcanic.edifice.cinder-cone
+    factor: planet-factor.events
+    before: low
+    after: high
+    why: 'waning lava flow from base rafts away cone sector: horseshoe breach'
+  - pattern: planet-pattern.volcanic.edifice.cinder-cone
+    factor: planet-factor.time
+    before: low
+    after: high
+    why: age lowers H/W from 0.18 and slope 26 to 20 deg over ~0.7 Myr
+  - pattern: planet-pattern.volcanic.edifice.cinder-cone
+    factor: planet-factor.other-gravity-atmosphere
+    before: low
+    after: high
+    why: 'lower gravity/air pressure widens ballistic range: wider, lower cones (Mars)'
+  - pattern: planet-pattern.volcanic.material.columnar-jointing
+    factor: planet-factor.other-cooling-rate
+    before: low
+    after: high
+    why: column width ~1/cooling rate (0.03-3 m); needs thick ponded flow or sill
+  - pattern: planet-pattern.volcanic.material.columnar-jointing
+    factor: planet-factor.groundwater
+    before: low
+    after: high
+    why: 'water flooding flow top cools fast: thin chaotic entablature'
+  - pattern: planet-pattern.volcanic.province.hotspot
+    factor: planet-factor.other-plate-kinematics
+    before: low
+    after: high
+    why: plate velocity and direction set chain line, volcano spacing and age progression
+  - pattern: planet-pattern.volcanic.province.ignimbrite-plateau
+    factor: planet-factor.relief-inherited
+    before: low
+    after: high
+    why: flows fill valleys and level landscape; thick ponding in lows
+  - pattern: planet-pattern.volcanic.deposit.lahar-fan
+    factor: planet-factor.slope-relief
+    before: low
+    after: high
+    why: steep valleys accelerate; flattening lowland slows and spreads fan
+  - pattern: planet-pattern.volcanic.flow.lava-flow-field
+    factor: planet-factor.sea-level
+    before: low
+    after: high
+    why: ocean entry builds lava deltas and pillow fronts
+  - pattern: planet-pattern.volcanic.flow.lava-flow-field
+    factor: planet-factor.bio-veg
+    before: low
+    after: high
+    why: vegetation colonisation rate marks flow age, tree moulds in forest
+  - pattern: planet-pattern.volcanic.flow.pressure-ridge
+    factor: planet-factor.relief-inherited
+    before: low
+    after: high
+    why: confinement by topography or flow margins restricts flow, focusing ridges
+  - pattern: planet-pattern.volcanic.rift-zone
+    factor: planet-factor.tect-fault
+    before: low
+    after: high
+    why: normal faults, grabens and pit craters along rift
+  - pattern: planet-pattern.volcanic.edifice.stratovolcano
+    factor: planet-factor.rock-type
+    before: low
+    after: high
+    why: interbedded lavas, breccias, tephra; hydrothermal alteration weakens edifice toward collapse
+  - pattern: planet-pattern.volcanic.edifice.tuff-ring
+    factor: planet-factor.groundwater
+    before: low
+    after: high
+    why: abundant shallow groundwater, marsh, coast or lake at vent drives explosions
+  - pattern: planet-pattern.volcanic.edifice.tuff-ring
+    factor: planet-factor.sea-level
+    before: low
+    after: high
+    why: shallow sea or coastal vents produce rings and tuff cones (Diamond Head)
+  - pattern: planet-pattern.volcanic.intrusion.volcanic-neck
+    factor: planet-factor.ice-flow
+    before: low
+    after: high
+    why: glacial flow over plug makes crag-and-tail
+  semantic_corrections:
+  - pattern: planet-pattern.aeolian.dune.barchan
+    factor: planet-factor.clim-arid
+    whole_word_draft: low
+    want: high
+    reason: The why text favors arid conditions; sparse vegetation, low rain/relief or weak soil are effects
+      or other quantities.
+  - pattern: planet-pattern.aeolian.dune.carbonate-eolianite
+    factor: planet-factor.clim-temp
+    whole_word_draft: high
+    want: low
+    reason: The record asks for warmth; existing clim-temp strength rises toward cold (283.15 to 263.15 K).
+  - pattern: planet-pattern.aeolian.dune.coastal-foredune
+    factor: planet-factor.sed-supply
+    whole_word_draft: low
+    want: high
+    reason: Sand supply supports growth; stable describes the coast, not low sediment supply.
+  - pattern: planet-pattern.aeolian.erosion.deflation-hollow
+    factor: planet-factor.clim-arid
+    whole_word_draft: low
+    want: high
+    reason: The why text favors arid conditions; sparse vegetation, low rain/relief or weak soil are effects
+      or other quantities.
+  - pattern: planet-pattern.aeolian.surface.desert-pavement
+    factor: planet-factor.clim-arid
+    whole_word_draft: low
+    want: high
+    reason: The why text favors arid conditions; sparse vegetation, low rain/relief or weak soil are effects
+      or other quantities.
+  - pattern: planet-pattern.aeolian.dune.star
+    factor: planet-factor.clim-wind
+    whole_word_draft: low
+    want: high
+    reason: Strong multidirectional winds shape dunes; little describes net migration.
+  - pattern: planet-pattern.aeolian.dune.transverse
+    factor: planet-factor.clim-arid
+    whole_word_draft: low
+    want: high
+    reason: The why text favors arid conditions; sparse vegetation, low rain/relief or weak soil are effects
+      or other quantities.
+  - pattern: planet-pattern.aeolian.erosion.yardang
+    factor: planet-factor.clim-arid
+    whole_word_draft: low
+    want: high
+    reason: The why text favors arid conditions; sparse vegetation, low rain/relief or weak soil are effects
+      or other quantities.
+  - pattern: planet-pattern.arid.slope.alluvial-fan
+    factor: planet-factor.clim-arid
+    whole_word_draft: low
+    want: high
+    reason: The why text favors arid conditions; sparse vegetation, low rain/relief or weak soil are effects
+      or other quantities.
+  - pattern: planet-pattern.arid.plateau.layered-tableland
+    factor: planet-factor.rock-layers
+    whole_word_draft: low
+    want: high
+    reason: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence
+      of layering.
+  - pattern: planet-pattern.arid.plateau.layered-tableland
+    factor: planet-factor.clim-arid
+    whole_word_draft: low
+    want: high
+    reason: The why text favors arid conditions; sparse vegetation, low rain/relief or weak soil are effects
+      or other quantities.
+  - pattern: planet-pattern.arid.plateau.mesa-butte
+    factor: planet-factor.rock-layers
+    whole_word_draft: low
+    want: high
+    reason: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence
+      of layering.
+  - pattern: planet-pattern.arid.plateau.mesa-butte
+    factor: planet-factor.clim-arid
+    whole_word_draft: low
+    want: high
+    reason: The why text favors arid conditions; sparse vegetation, low rain/relief or weak soil are effects
+      or other quantities.
+  - pattern: planet-pattern.arid.plateau.mesa-butte
+    factor: planet-factor.clim-storm
+    whole_word_draft: low
+    want: high
+    reason: Flash floods remove talus; weak describes the slopes.
+  - pattern: planet-pattern.arid.slope.pediment
+    factor: planet-factor.clim-arid
+    whole_word_draft: low
+    want: high
+    reason: The why text favors arid conditions; sparse vegetation, low rain/relief or weak soil are effects
+      or other quantities.
+  - pattern: planet-pattern.arid.channel.wadi
+    factor: planet-factor.sed-supply
+    whole_word_draft: low
+    want: high
+    reason: The text explicitly says abundant coarse sediment; flat describes the floor.
+  - pattern: planet-pattern.coastal.reef.atoll
+    factor: planet-factor.clim-temp
+    whole_word_draft: high
+    want: low
+    reason: The record asks for warmth; existing clim-temp strength rises toward cold (283.15 to 263.15 K).
+  - pattern: planet-pattern.coastal.barrier.barrier-island
+    factor: planet-factor.clim-temp
+    whole_word_draft: high
+    want: low
+    reason: The why text says sea ice/cold limits wave activity; low cold-strength favors that activity.
+  - pattern: planet-pattern.coastal.reef.barrier
+    factor: planet-factor.clim-temp
+    whole_word_draft: high
+    want: low
+    reason: The record asks for warmth; existing clim-temp strength rises toward cold (283.15 to 263.15 K).
+  - pattern: planet-pattern.coastal.reef.fringing
+    factor: planet-factor.clim-temp
+    whole_word_draft: high
+    want: low
+    reason: The record asks for warmth; existing clim-temp strength rises toward cold (283.15 to 263.15 K).
+  - pattern: planet-pattern.coastal.tidal.salt-marsh
+    factor: planet-factor.clim-arid
+    whole_word_draft: high
+    want: low
+    reason: The why text says aridity causes replacement, sand wedges, or lake drying; lower aridity supports
+      the named wet feature.
+  - pattern: planet-pattern.coastal.beach.sandy-shoreface
+    factor: planet-factor.clim-temp
+    whole_word_draft: high
+    want: low
+    reason: The why text says sea ice/cold limits wave activity; low cold-strength favors that activity.
+  - pattern: planet-pattern.coastal.rocky.sea-cliff
+    factor: planet-factor.rock-layers
+    whole_word_draft: low
+    want: high
+    reason: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence
+      of layering.
+  - pattern: planet-pattern.coastal.rocky.shore-platform
+    factor: planet-factor.clim-temp
+    whole_word_draft: high
+    want: low
+    reason: The record asks for warmth; existing clim-temp strength rises toward cold (283.15 to 263.15 K).
+  - pattern: planet-pattern.coastal.tidal.tidal-flat
+    factor: planet-factor.clim-storm
+    whole_word_draft: low
+    want: high
+    reason: Storm reworking is the driver; flat describes the surface.
+  - pattern: planet-pattern.fluvial.fan.alluvial-fan
+    factor: planet-factor.tect-uplift
+    whole_word_draft: low
+    want: high
+    reason: Range uplift supplies relief; slow uplift describes fan-head trenching rather than the primary
+      driver.
+  - pattern: planet-pattern.fluvial.fan.alluvial-fan
+    factor: planet-factor.clim-arid
+    whole_word_draft: low
+    want: high
+    reason: The why text favors arid conditions; sparse vegetation, low rain/relief or weak soil are effects
+      or other quantities.
+  - pattern: planet-pattern.fluvial.channel.anastomosing
+    factor: planet-factor.bio-veg
+    whole_word_draft: low
+    want: high
+    reason: Dense vegetation stabilizes banks; stable describes channels.
+  - pattern: planet-pattern.fluvial.channel.knickpoint-waterfall
+    factor: planet-factor.rock-layers
+    whole_word_draft: low
+    want: high
+    reason: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence
+      of layering.
+  - pattern: planet-pattern.fluvial.channel.oxbow-lake
+    factor: planet-factor.clim-arid
+    whole_word_draft: high
+    want: low
+    reason: The why text says aridity causes replacement, sand wedges, or lake drying; lower aridity supports
+      the named wet feature.
+  - pattern: planet-pattern.fluvial.piedmont.pediment
+    factor: planet-factor.clim-arid
+    whole_word_draft: low
+    want: high
+    reason: The why text favors arid conditions; sparse vegetation, low rain/relief or weak soil are effects
+      or other quantities.
+  - pattern: planet-pattern.fluvial.network.rectangular
+    factor: planet-factor.tect-fault
+    whole_word_draft: low
+    want: high
+    reason: 'Fault sets supply weak zones: high fault presence, not low faulting.'
+  - pattern: planet-pattern.fluvial.valley.slot-canyon
+    factor: planet-factor.clim-arid
+    whole_word_draft: low
+    want: high
+    reason: The why text favors arid conditions; sparse vegetation, low rain/relief or weak soil are effects
+      or other quantities.
+  - pattern: planet-pattern.fluvial.gap.water-gap
+    factor: planet-factor.rock-layers
+    whole_word_draft: low
+    want: high
+    reason: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence
+      of layering.
+  - pattern: planet-pattern.fluvial.gap.wind-gap
+    factor: planet-factor.rock-layers
+    whole_word_draft: low
+    want: high
+    reason: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence
+      of layering.
+  - pattern: planet-pattern.glacial.erosion.col
+    factor: planet-factor.rock-fracture
+    whole_word_draft: low
+    want: high
+    reason: 'Fractures and weak zones localize the col: high fracture signal.'
+  - pattern: planet-pattern.glacial.lake.ice-dammed-shorelines
+    factor: planet-factor.lake-level
+    whole_word_draft: low
+    want: high
+    reason: Stable lake levels make shorelines; lake-mark signal is presence, not rate of change.
+  - pattern: planet-pattern.glacial.lake.ice-dammed-shorelines
+    factor: planet-factor.time
+    whole_word_draft: low
+    want: high
+    reason: Centuries of stability require duration; stable does not mean short time.
+  - pattern: planet-pattern.glacial.landscape.ice-sheet-bed
+    factor: planet-factor.ice-flow
+    whole_word_draft: low
+    want: high
+    reason: Ice cover drives bedforms; slow/fast flow distinguishes their subtypes.
+  - pattern: planet-pattern.glacial.deposit.moraine-lateral
+    factor: planet-factor.ice-extent
+    whole_word_draft: low
+    want: high
+    reason: Repeated glacier advances/thickness drive the ridge; stable does not mean absent ice.
+  - pattern: planet-pattern.glacial.deposit.moraine-medial
+    factor: planet-factor.clim-temp
+    whole_word_draft: high
+    want: low
+    reason: The why text calls for ablation or warming/thaw; low cold-strength represents warmer conditions.
+  - pattern: planet-pattern.glacial.deposit.moraine-terminal
+    factor: planet-factor.time
+    whole_word_draft: low
+    want: high
+    reason: Decades to centuries at a stable margin require duration.
+  - pattern: planet-pattern.glacial.valley.overdeepening
+    factor: planet-factor.rock-fracture
+    whole_word_draft: low
+    want: high
+    reason: 'Fractured/weak zones become basins: high fracture presence.'
+  - pattern: planet-pattern.glacial.erosion.whaleback
+    factor: planet-factor.ice-flow
+    whole_word_draft: low
+    want: high
+    reason: The text asks for thick ice/high overburden; no cavity is the effect.
+  - pattern: planet-pattern.glacial.erosion.whaleback
+    factor: planet-factor.time
+    whole_word_draft: low
+    want: high
+    reason: Slow abrasion requires long duration, not low time.
+  - pattern: planet-pattern.hillslope.flatiron
+    factor: planet-factor.rock-layers
+    whole_word_draft: low
+    want: high
+    reason: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence
+      of layering.
+  - pattern: planet-pattern.hillslope.ridge.interfluve
+    factor: planet-factor.tect-uplift
+    whole_word_draft: low
+    want: high
+    reason: Uplift/incision drives relief; slow describes a contrasting rounded form.
+  - pattern: planet-pattern.karst.landscape.cockpit
+    factor: planet-factor.clim-temp
+    whole_word_draft: high
+    want: low
+    reason: The record asks for warmth; existing clim-temp strength rises toward cold (283.15 to 263.15 K).
+  - pattern: planet-pattern.karst.landscape.tower
+    factor: planet-factor.clim-temp
+    whole_word_draft: high
+    want: low
+    reason: The record asks for warmth; existing clim-temp strength rises toward cold (283.15 to 263.15 K).
+  - pattern: planet-pattern.karst.landscape.tropical
+    factor: planet-factor.clim-temp
+    whole_word_draft: high
+    want: low
+    reason: The record asks for warmth; existing clim-temp strength rises toward cold (283.15 to 263.15 K).
+  - pattern: planet-pattern.periglacial.ground.ice-wedge-polygons
+    factor: planet-factor.clim-arid
+    whole_word_draft: high
+    want: low
+    reason: The why text says aridity causes replacement, sand wedges, or lake drying; lower aridity supports
+      the named wet feature.
+  - pattern: planet-pattern.periglacial.slope.protalus-rampart
+    factor: planet-factor.clim-temp
+    whole_word_draft: low
+    want: high
+    reason: Perennial snowbed/nival setting favors cold strength; no glacier is not a request for low cold
+      strength.
+  - pattern: planet-pattern.periglacial.lake.thermokarst
+    factor: planet-factor.clim-temp
+    whole_word_draft: high
+    want: low
+    reason: The why text calls for ablation or warming/thaw; low cold-strength represents warmer conditions.
+  - pattern: planet-pattern.structural.homocline.cuesta
+    factor: planet-factor.rock-layers
+    whole_word_draft: low
+    want: high
+    reason: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence
+      of layering.
+  - pattern: planet-pattern.structural.homocline.cuesta
+    factor: planet-factor.tect-uplift
+    whole_word_draft: low
+    want: high
+    reason: Uplift drives stripping; weak describes beds.
+  - pattern: planet-pattern.structural.homocline.hogback
+    factor: planet-factor.rock-layers
+    whole_word_draft: low
+    want: high
+    reason: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence
+      of layering.
+  - pattern: planet-pattern.structural.homocline.homoclinal-ridge
+    factor: planet-factor.rock-layers
+    whole_word_draft: low
+    want: high
+    reason: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence
+      of layering.
+  - pattern: planet-pattern.structural.homocline.homoclinal-ridge
+    factor: planet-factor.tect-uplift
+    whole_word_draft: low
+    want: high
+    reason: Uplift drives erosion; weak describes beds.
+  - pattern: planet-pattern.structural.flat.mesa-butte
+    factor: planet-factor.rock-layers
+    whole_word_draft: low
+    want: high
+    reason: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence
+      of layering.
+  - pattern: planet-pattern.structural.flat.pinnacle
+    factor: planet-factor.clim-arid
+    whole_word_draft: low
+    want: high
+    reason: The why text favors arid conditions; sparse vegetation, low rain/relief or weak soil are effects
+      or other quantities.
+  - pattern: planet-pattern.tectonic.fold.anticlinal-ridge
+    factor: planet-factor.rock-layers
+    whole_word_draft: low
+    want: high
+    reason: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence
+      of layering.
+  - pattern: planet-pattern.tectonic.fold.anticlinal-ridge
+    factor: planet-factor.water-discharge
+    whole_word_draft: low
+    want: high
+    reason: Antecedent rivers cut gaps; weak streams are the contrasting diverted case.
+  - pattern: planet-pattern.tectonic.fold.breached-anticline
+    factor: planet-factor.rock-layers
+    whole_word_draft: low
+    want: high
+    reason: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence
+      of layering.
+  - pattern: planet-pattern.tectonic.margin.convergent
+    factor: planet-factor.tect-fault
+    whole_word_draft: low
+    want: high
+    reason: Subduction/fault geometry drives the pattern; flat slabs describe a limiting case.
+  - pattern: planet-pattern.tectonic.province.extensional-province
+    factor: planet-factor.other-extension-amount
+    whole_word_draft: low
+    want: high
+    reason: Large strain gives broad extension; low strain is a narrow-rift contrast.
+  - pattern: planet-pattern.tectonic.province.fold-thrust-belt
+    factor: planet-factor.rock-layers
+    whole_word_draft: low
+    want: high
+    reason: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence
+      of layering.
+  - pattern: planet-pattern.tectonic.margin.great-escarpment
+    factor: planet-factor.rock-layers
+    whole_word_draft: low
+    want: high
+    reason: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence
+      of layering.
+  - pattern: planet-pattern.tectonic.uplift.plateau
+    factor: planet-factor.tect-uplift
+    whole_word_draft: low
+    want: high
+    reason: Broad uplift drives the plateau; little refers to internal deformation.
+  - pattern: planet-pattern.tectonic.uplift.plateau
+    factor: planet-factor.rock-layers
+    whole_word_draft: low
+    want: high
+    reason: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence
+      of layering.
+  - pattern: planet-pattern.tectonic.uplift.plateau
+    factor: planet-factor.clim-arid
+    whole_word_draft: low
+    want: high
+    reason: The why text favors arid conditions; sparse vegetation, low rain/relief or weak soil are effects
+      or other quantities.
+  - pattern: planet-pattern.tectonic.fault.range-front
+    factor: planet-factor.tect-uplift
+    whole_word_draft: low
+    want: high
+    reason: Uplift relative to erosion defines the active front; weak/inactive are contrasting cases.
+  - pattern: planet-pattern.volcanic.province.ignimbrite-plateau
+    factor: planet-factor.clim-arid
+    whole_word_draft: low
+    want: high
+    reason: The why text favors arid conditions; sparse vegetation, low rain/relief or weak soil are effects
+      or other quantities.
+  - pattern: planet-pattern.volcanic.depression.maar
+    factor: planet-factor.permafrost
+    whole_word_draft: low
+    want: high
+    reason: Ground ice supplies water; low describes the water/magma ratio, not permafrost.
+  - pattern: planet-pattern.volcanic.edifice.tuff-ring
+    factor: planet-factor.time
+    whole_word_draft: low
+    want: high
+    reason: Weak tephra describes erodibility, not a request for low duration.
+  final_counts: *id001
+  limitations: Reviewed remaining whole-word lows and all climate preference entries; no full geological qualification.
+    Composite/categorical signals and undefined bands remain explicit review work.

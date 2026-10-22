@@ -7,25 +7,33 @@ family: coastal
 factors:
 - factor: planet-factor.waves-tides
   weight: 3
-  why: tidal prism scales ebb-delta volume; wave energy pushes ebb delta onshore; mixed-energy coasts give largest
+  why: tidal prism scales ebb-delta volume; wave energy pushes ebb delta onshore; mixed-energy coasts give
+    largest
+  want: high
 - factor: planet-factor.other-tidal-prism
   weight: 3
   why: back-barrier basin area x tidal range sets inlet size and delta volume
+  want: high
 - factor: planet-factor.sed-supply
   weight: 3
   why: longshore drift into inlet feeds deltas; Wadden ebb deltas ~ lagoon volume
+  want: high
 - factor: planet-factor.relief-inherited
   weight: 1
   why: needs barrier inlet with back-barrier lagoon or estuary
+  want: high
 - factor: planet-factor.clim-storm
   weight: 1
   why: storms open inlets and build flood deltas
+  want: high
 - factor: planet-factor.sea-level
   weight: 1
   why: rising sea level enlarges prism and flood deltas
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: decades to kyr
+  want: high
 vocabulary_id: 151
 sources:
 - https://www.coastalwiki.org/wiki/Morphology_of_estuaries
@@ -41,10 +49,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: coastal

@@ -8,33 +8,43 @@ factors:
 - factor: planet-factor.sed-supply
   weight: 3
   why: high fine suspended supply exceeds marine reworking
+  want: high
 - factor: planet-factor.waves-tides
   weight: 3
   why: low wave energy and small tidal range
+  want: low
 - factor: planet-factor.water-discharge
   weight: 3
   why: large discharge builds levee-bound distributaries
+  want: high
 - factor: planet-factor.tect-setting
   weight: 1
   why: passive margin, broad shelf
+  want: high
 - factor: planet-factor.slope-relief
   weight: 1
   why: shallow receiving basin; deep water gives birdfoot
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 1
   why: subsidence of mud load sets lobe abandonment
+  want: high
 - factor: planet-factor.sea-level
   weight: 1
   why: stable post-glacial sea level allows progradation
+  want: low
 - factor: planet-factor.events
   weight: 1
   why: avulsions switch lobes (~1 kyr)
+  want: high
 - factor: planet-factor.bio-veg
   weight: 1
   why: marsh vegetation stabilizes levees
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 1-10 kyr per delta complex
+  want: high
 vocabulary_id: 41
 sources:
 - https://geo.libretexts.org/Bookshelves/Oceanography/Coastal_Dynamics_(Bosboom_and_Stive)/02%3A_Large-scale_geographical_variation_of_coasts/2.07%3A_Process-based_classification/2.7.3%3A_Classification_of_deltas
@@ -49,10 +59,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: floodplain

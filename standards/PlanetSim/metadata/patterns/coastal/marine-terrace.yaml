@@ -7,31 +7,41 @@ family: coastal
 factors:
 - factor: planet-factor.tect-uplift
   weight: 3
-  why: tectonic uplift (e.g. 3.3 mm/yr Huon) or glacio-isostatic rebound (to ~10 mm/yr) lifts shorelines; >1 mm/yr separates terraces
+  why: tectonic uplift (e.g. 3.3 mm/yr Huon) or glacio-isostatic rebound (to ~10 mm/yr) lifts shorelines; >1
+    mm/yr separates terraces
+  want: high
 - factor: planet-factor.sea-level
   weight: 3
   why: each interglacial highstand (MIS 5e ~+3 m) cuts one terrace; staircase records cycles
+  want: high
 - factor: planet-factor.ice-extent
   weight: 1
   why: former ice-sheet loading drives rebound beaches
+  want: high
 - factor: planet-factor.tect-setting
   weight: 1
   why: convergent margins, fault-bounded coasts, formerly glaciated shields
+  want: high
 - factor: planet-factor.rock-type
   weight: 3
   why: rock resistance sets platform width and preservation
+  want: high
 - factor: planet-factor.waves-tides
   weight: 1
   why: wave energy cuts platform; tidal range sets its gradient
+  want: high
 - factor: planet-factor.slope-relief
   weight: 1
   why: steeper hinterland gives narrower, more distinct terraces
+  want: high
 - factor: planet-factor.bio-veg
   weight: 1
   why: tropical reefs build reef-tract terraces instead of cut platforms
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 5-1000 kyr; older terraces degraded by weathering and erosion
+  want: high
 vocabulary_id: 23
 sources:
 - https://en.wikipedia.org/wiki/Raised_beach
@@ -47,10 +57,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: coastal

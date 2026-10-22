@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.continental-rift-zone
+  name: Continental rift zone
+  about: 'The area of a continental rift: floors, shoulders, faults and volcanoes together.'
+register: province
+family: tectonic
+trigger: Not yet specified for the simulator; catalogue definition only.
+built: false
+status: draft
+description: 'The area of a continental rift: floors, shoulders, faults and volcanoes together.'
+size:
+  across_m:
+  - 50000.0
+  - 3000000.0
+  basis:
+  - of:
+    - across_m
+    tier: invented
+    review: true
+    source: planet-forge 3c40281 docs/catalogue/kinds.py
+    note: Supplied rough Earth size range in the catalogue draft; not a measured or validated range.
+ladder:
+- planet-level.10000-km
+- planet-level.100-km
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - description
+  tier: sourced
+  source: planet-forge 3c40281 docs/catalogue/kinds.py
+  note: Transcribed proposed catalogue definition; not a claim of simulator implementation.
+- of:
+  - ladder
+  tier: derived
+  source: planet-forge 3c40281 docs/catalogue/kinds.py
+  note: Derived from the proposed size range using the eight numeric bands; inherits size review.

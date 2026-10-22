@@ -8,30 +8,39 @@ factors:
 - factor: planet-factor.volc-magma
   weight: 3
   why: silicic explosive gives large calderas with ignimbrite; basaltic drainage gives summit pit calderas
+  want: high
 - factor: planet-factor.other-chamber-depth-roof
   weight: 3
   why: chamber depth and roof aspect ratio pick piston, piecemeal, trapdoor or downsag
+  want: high
 - factor: planet-factor.tect-setting
   weight: 1
   why: arcs and continental extension for large silicic; hotspot shields for basaltic
+  want: high
 - factor: planet-factor.tect-fault
   weight: 1
   why: regional stress and faults make calderas elliptical and steer ring faults
+  want: high
 - factor: planet-factor.events
   weight: 1
   why: single climactic eruption forms it in hours-days; later post-caldera vents
+  want: high
 - factor: planet-factor.clim-precip
   weight: 1
   why: humid climate fills caldera with lake (Crater Lake); arid stays dry
+  want: high
 - factor: planet-factor.other-magma-recharge
   weight: 1
   why: renewed magma uplifts floor into resurgent dome
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: wall retreat and infill (ignimbrite, lake sediment) with age
+  want: high
 - factor: planet-factor.other-magma-supply
   weight: 3
   why: rapid withdrawal of large chamber volume (km3-1000s km3) sets collapse diameter and depth
+  want: high
 vocabulary_id: 132
 sources:
 - https://en.wikipedia.org/wiki/Caldera
@@ -46,10 +55,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: volcanic

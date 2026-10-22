@@ -8,21 +8,27 @@ factors:
 - factor: planet-factor.tect-setting
   weight: 3
   why: 'subduction: oceanic under oceanic gives island arc, under continent gives continental arc'
+  want: high
 - factor: planet-factor.volc-magma
   weight: 3
   why: 'slab water flux melting: calc-alkaline andesite-dacite, explosive stratovolcanoes'
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 1
   why: crustal thickening raises continental arcs into high plateaus
+  want: high
 - factor: planet-factor.tect-fault
   weight: 1
   why: arc-parallel and strike-slip faults segment arc and align vents
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: arc age decides edifice density and caldera/ignimbrite development
+  want: high
 - factor: planet-factor.other-plate-kinematics
   weight: 3
   why: slab reaching ~100-120 km depth under arc; dip, convergence rate and obliquity set arc-trench gap, flux
+  want: high
 vocabulary_id: 184
 sources:
 - https://en.wikipedia.org/wiki/Volcanic_arc
@@ -37,10 +43,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: volcanic

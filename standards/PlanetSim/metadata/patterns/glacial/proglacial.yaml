@@ -8,24 +8,31 @@ factors:
 - factor: planet-factor.ice-extent
   weight: 3
   why: glacier retreat exposes basin
+  want: high
 - factor: planet-factor.relief-inherited
   weight: 3
   why: overdeepening or cirque basin; depth 1-300 m
+  want: high
 - factor: planet-factor.sed-supply
   weight: 3
   why: moraine dam height and stability; inflow sediment infills via deltas
+  want: high
 - factor: planet-factor.water-discharge
   weight: 1
   why: meltwater fills lake
+  want: high
 - factor: planet-factor.events
   weight: 1
   why: moraine dam failure (GLOF) drains lake
+  want: high
 - factor: planet-factor.lake-level
   weight: 1
   why: outlet over dam/rock bar sets level
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 0.01-15 kyr before infill
+  want: high
 vocabulary_id: 80
 sources:
 - https://en.wikipedia.org/wiki/Cirque
@@ -40,10 +47,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: glacial

@@ -8,30 +8,39 @@ factors:
 - factor: planet-factor.volc-magma
   weight: 3
   why: 'gas-rich basalt/basaltic andesite, Strombolian: ballistic scoria piles at repose 30-40 deg'
+  want: high
 - factor: planet-factor.volc-vent
   weight: 3
   why: single short eruption (days-years); fissure vents give elongate cones or chains
+  want: high
 - factor: planet-factor.clim-wind
   weight: 1
   why: prevailing wind during eruption skews cone and tephra blanket downwind
+  want: high
 - factor: planet-factor.slope-relief
   weight: 1
   why: cone on slope is elongated and breached downslope
+  want: high
 - factor: planet-factor.events
   weight: 1
   why: 'waning lava flow from base rafts away cone sector: horseshoe breach'
+  want: high
 - factor: planet-factor.groundwater
   weight: 1
   why: 'abundant water turns eruption phreatomagmatic: maar/tuff ring instead of cone'
+  want: high
 - factor: planet-factor.time
   weight: 3
   why: age lowers H/W from 0.18 and slope 26 to 20 deg over ~0.7 Myr
+  want: high
 - factor: planet-factor.clim-precip
   weight: 1
   why: wetter climate degrades cone faster and gullies flanks; arid preserves form
+  want: high
 - factor: planet-factor.other-gravity-atmosphere
   weight: 1
   why: 'lower gravity/air pressure widens ballistic range: wider, lower cones (Mars)'
+  want: high
 vocabulary_id: 134
 sources:
 - https://en.wikipedia.org/wiki/Cinder_cone
@@ -46,10 +55,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: volcanic

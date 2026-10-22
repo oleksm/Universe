@@ -4,7 +4,7 @@ x-kind: [planet-pattern]
 description: "standards/PlanetSim/metadata/patterns/<family>/<name>.yaml: a landform pattern of the library (planet-trees docs/landforms): its family, its deciding factors with their weights (the matching rules), any hard conditions, its id in the ground's pattern vocabulary, and its sources. tools/standards/planet_lod_match.py ranks patterns for a place's signature by these."
 type: object
 additionalProperties: false
-required: [identity, family, factors]
+required: [identity, family, look, factors]
 allOf:
   - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
 properties:
@@ -17,15 +17,22 @@ properties:
       name: { type: string }
       about: { type: string }
   family: { enum: [aeolian, arid, coastal, fluvial, glacial, hillslope, karst, lacustrine, periglacial, structural, tectonic, volcanic] }
+  look:
+    enum: [dendritic, trellis, tableland, canyon, floodplain, fan, dunes, playa, glacial, periglacial, karst, volcanic, basin-range, coastal, shield, inselberg, badlands]
+    description: "Render archetype, explicitly selected by the record. Consumers dispatch on this value, never infer it from a pattern key prefix. A draft mapping is not a measured terrain classification."
   factors:
     type: array
     items:
       type: object
       additionalProperties: false
-      required: [factor, weight]
+      required: [factor, weight, want]
       properties:
         factor: { type: string, x-ref: [planet-factor] }
         weight: { type: number, minimum: 0, x-unit: "1", description: "Its share of the match: the library's top three 3, the rest 1, until tuned." }
+        want: { enum: [high, low, band], description: "Preference over normalized factor strength s: high=s; low=1-s; band uses from/to/soft. A missing signal does not satisfy a low preference." }
+        from: { type: number, minimum: 0, maximum: 1, x-unit: "1", description: "Band only: lower full-score bound in normalized factor strength; strictly less than to." }
+        to: { type: number, minimum: 0, maximum: 1, x-unit: "1", description: "Band only: upper full-score bound in normalized factor strength." }
+        soft: { type: number, exclusiveMinimum: 0, maximum: 1, x-unit: "1", description: "Band only, required: each outside ramp has width soft*(to-from). Score is 1 within [from,to], falls linearly to 0 at from-width and to+width, and remains 0 beyond. No inferred width." }
         why: { type: string, description: "The library's own words: how the factor makes or shapes it." }
   when: { type: array, items: { $ref: "planet-layer.schema.yaml#/definitions/condition" }, description: "Hard conditions: a place that fails one does not match at all (no glacier below the snowline)." }
   vocabulary_id: { type: integer, minimum: 1, maximum: 65535, x-unit: "1", description: "Its id in ground-vocabulary.pattern." }

@@ -8,24 +8,31 @@ factors:
 - factor: planet-factor.waves-tides
   weight: 3
   why: high wave energy reworks mouth into beach ridges, spits
+  want: high
 - factor: planet-factor.sed-supply
   weight: 3
   why: sand-rich load; supply below wave reworking
+  want: high
 - factor: planet-factor.slope-relief
   weight: 1
   why: steep shoreface, open coast
+  want: high
 - factor: planet-factor.clim-wind
   weight: 3
   why: wave approach angle sets symmetry/deflection
+  want: high
 - factor: planet-factor.tect-setting
   weight: 1
   why: passive or active margin open coast
+  want: high
 - factor: planet-factor.sea-level
   weight: 1
   why: stable sea level
+  want: low
 - factor: planet-factor.time
   weight: 1
   why: 1-10 kyr
+  want: high
 vocabulary_id: 43
 sources:
 - https://geo.libretexts.org/Bookshelves/Oceanography/Coastal_Dynamics_(Bosboom_and_Stive)/02%3A_Large-scale_geographical_variation_of_coasts/2.07%3A_Process-based_classification/2.7.3%3A_Classification_of_deltas
@@ -40,10 +47,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: floodplain

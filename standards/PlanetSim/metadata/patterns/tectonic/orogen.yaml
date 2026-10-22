@@ -8,27 +8,35 @@ factors:
 - factor: planet-factor.tect-setting
   weight: 3
   why: subduction (Andean) or continental collision (Himalayan)
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 3
   why: crustal thickening and isostasy; convergence/accretion flux sets size
+  want: high
 - factor: planet-factor.tect-fault
   weight: 1
   why: thrusts, decollements; critical taper geometry
+  want: high
 - factor: planet-factor.clim-precip
   weight: 3
   why: erosional efficiency narrows and lowers orogen, increases uplift
+  want: high
 - factor: planet-factor.clim-wind
   weight: 1
   why: windward rain vs rain-shadow plateau asymmetry
+  want: high
 - factor: planet-factor.ice-extent
   weight: 1
   why: glacial buzzsaw caps peaks near snowline
+  want: high
 - factor: planet-factor.other-gravitational-collapse
   weight: 1
   why: thick hot crust collapses into extension/plateau
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: active orogens high, steep; dead orogens decay over 100s Myr
+  want: high
 vocabulary_id: 174
 sources:
 - https://en.wikipedia.org/wiki/Orogeny
@@ -45,10 +53,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: dendritic

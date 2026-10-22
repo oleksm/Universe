@@ -8,21 +8,27 @@ factors:
 - factor: planet-factor.relief-inherited
   weight: 3
   why: follows initial slope of new surface (emerged seafloor, plateau, glacial plain)
+  want: high
 - factor: planet-factor.tect-fold
   weight: 3
   why: dip direction of strata; dip streams
+  want: high
 - factor: planet-factor.volc-vent
   weight: 1
   why: new lava plateaus and cones
+  want: high
 - factor: planet-factor.sea-level
   weight: 1
   why: emergent coastal plains
+  want: high
 - factor: planet-factor.slope-relief
   weight: 3
   why: gradient sets incision rate
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: youngest drainage; later modified by subsequents
+  want: high
 vocabulary_id: 155
 sources:
 - https://ebooks.inflibnet.ac.in/geop11/chapter/drainage-pattern
@@ -37,10 +43,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: floodplain

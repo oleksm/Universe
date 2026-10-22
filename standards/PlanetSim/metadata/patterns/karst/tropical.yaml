@@ -8,36 +8,47 @@ factors:
 - factor: planet-factor.clim-temp
   weight: 3
   why: Warm tropical/subtropical; cone and tower karst exist only there
+  want: low
 - factor: planet-factor.clim-precip
   weight: 1
   why: High rainfall (>~1500 mm/yr) and runoff
+  want: high
 - factor: planet-factor.clim-season
   weight: 1
   why: Monsoon floods drive allogenic rivers and lateral corrosion
+  want: high
 - factor: planet-factor.bio-veg
   weight: 1
   why: Rainforest soils high in CO2; organic acids
+  want: high
 - factor: planet-factor.rock-soluble
   weight: 1
   why: Thick, massive, pure limestone
+  want: high
 - factor: planet-factor.rock-fracture
   weight: 1
   why: Joint spacing sets cone/tower spacing
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 3
   why: Uplift rate picks fengcong (deep water table) vs fenglin (shallow)
+  want: high
 - factor: planet-factor.groundwater
   weight: 3
   why: Water-table depth selects cockpit vs tower subtype
+  want: high
 - factor: planet-factor.sed-supply
   weight: 1
   why: Allogenic sediment from non-karst rocks aggrades plains between towers
+  want: high
 - factor: planet-factor.sea-level
   weight: 1
   why: Drowned tower karst (Ha Long Bay) after sea-level rise
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: Myr; long continuous tropical exposure
+  want: high
 vocabulary_id: 162
 sources:
 - https://showcaves.com/english/explain/Karst/TowerKarst.html
@@ -53,10 +64,30 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
+- of:
+  - factors.want
+  tier: derived
+  review: true
+  source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
+  note: 'planet-factor.clim-temp: The record asks for warmth; existing clim-temp strength rises toward cold
+    (283.15 to 263.15 K).'
 status: draft
+look: karst

@@ -8,24 +8,31 @@ factors:
 - factor: planet-factor.rock-type
   weight: 1
   why: Resistant jointed rock (granite, quartzite, basalt)
+  want: high
 - factor: planet-factor.rock-fracture
   weight: 3
   why: Joint spacing sets block size
+  want: high
 - factor: planet-factor.clim-temp
   weight: 1
   why: Frost wedging in periglacial climate
+  want: high
 - factor: planet-factor.slope-relief
   weight: 3
   why: Plateaus and slopes <25 deg; steeper becomes talus
+  want: high
 - factor: planet-factor.ice-thermal
   weight: 3
   why: Survives under cold-based ice or on nunataks
+  want: high
 - factor: planet-factor.clim-history
   weight: 1
   why: Neogene chemical weathering preconditions some fields
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 10 kyr to millions of years
+  want: high
 vocabulary_id: 110
 sources:
 - https://en.wikipedia.org/wiki/Blockfield
@@ -40,10 +47,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: periglacial

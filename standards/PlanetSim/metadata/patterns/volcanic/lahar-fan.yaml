@@ -8,27 +8,35 @@ factors:
 - factor: planet-factor.events
   weight: 3
   why: 'trigger: eruption melting snow/ice, crater-lake ejection, flank collapse, dam breakout'
+  want: high
 - factor: planet-factor.ice-extent
   weight: 1
   why: summit snow and glaciers supply water for eruption-triggered lahars
+  want: high
 - factor: planet-factor.clim-storm
   weight: 1
   why: heavy or long rain on loose tephra triggers rain lahars
+  want: high
 - factor: planet-factor.sed-supply
   weight: 3
   why: fresh loose tephra on steep slopes sets lahar volume and frequency
+  want: high
 - factor: planet-factor.rock-type
   weight: 1
   why: hydrothermally altered clay-rich edifice gives cohesive, long-runout lahars
+  want: high
 - factor: planet-factor.slope-relief
   weight: 3
   why: steep valleys accelerate; flattening lowland slows and spreads fan
+  want: high
 - factor: planet-factor.relief-inherited
   weight: 1
   why: valley network confines flows, fan where valleys exit
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: recurrence builds ring plain; rivers rework into braided plain
+  want: high
 vocabulary_id: 131
 sources:
 - https://www.usgs.gov/programs/VHP/lahars-move-rapidly-down-valleys-rivers-concrete
@@ -43,10 +51,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: volcanic

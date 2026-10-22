@@ -8,30 +8,39 @@ factors:
 - factor: planet-factor.tect-fault
   weight: 3
   why: fault type and dip set initial face; per-event slip 1-10 m, recurrence builds cumulative height
+  want: high
 - factor: planet-factor.events
   weight: 3
   why: surface-rupturing earthquakes (roughly M>6) create and reset free face
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 1
   why: slip rate vs degradation rate decides scarp height and steepness
+  want: high
 - factor: planet-factor.rock-type
   weight: 1
   why: alluvial scarps diffuse (kappa ~1 m2/kyr); bedrock scarps persist, form facets
+  want: high
 - factor: planet-factor.regolith
   weight: 1
   why: loose cohesionless cover degrades to angle of repose then rounds
+  want: high
 - factor: planet-factor.clim-arid
   weight: 1
   why: arid preserves scarps longest; free face lasts 0.1-3 kyr
+  want: high
 - factor: planet-factor.clim-precip
   weight: 1
   why: wetter climate raises diffusivity, faster rounding
+  want: high
 - factor: planet-factor.bio-veg
   weight: 1
   why: vegetation cover slows wash, alters diffusivity
+  want: high
 - factor: planet-factor.time
   weight: 3
   why: 'time since rupture sets profile: free face, debris slope, then erf rounding'
+  want: high
 vocabulary_id: 121
 sources:
 - https://WWW.ISPRS.org/proceedings/2011/ISRSE-34/211104015Final00629.pdf
@@ -45,10 +54,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: basin-range

@@ -8,21 +8,27 @@ factors:
 - factor: planet-factor.relief-inherited
   weight: 3
   why: central conical or domal high; streams flow outward down initial slope
+  want: high
 - factor: planet-factor.volc-vent
   weight: 3
   why: volcanic cone edifices are the main source; young cones least dissected
+  want: high
 - factor: planet-factor.tect-fold
   weight: 3
   why: structural domes (intrusive, salt) give radial plus annular on eroded rings
+  want: high
 - factor: planet-factor.rock-perm
   weight: 1
   why: permeable fresh lavas/tephra delay channel incision on cones
+  want: high
 - factor: planet-factor.rock-layers
   weight: 1
   why: eroded dome strata give annular subsequents around the radial set
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: dissection deepens with cone/dome age, 1 kyr-10 Myr
+  want: high
 vocabulary_id: 53
 sources:
 - https://ebooks.inflibnet.ac.in/geop11/chapter/drainage-pattern
@@ -37,10 +43,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: volcanic

@@ -8,27 +8,35 @@ factors:
 - factor: planet-factor.ice-thermal
   weight: 3
   why: warm-based ice with active meltwater at bed
+  want: high
 - factor: planet-factor.ice-flow
   weight: 3
   why: 'thin, fast ice: low overburden lets lee cavities open; sets stoss/lee orientation'
+  want: low
 - factor: planet-factor.rock-fracture
   weight: 3
   why: joint spacing sets lee step size and shape (e.g. 3-5 joints/m)
+  want: high
 - factor: planet-factor.rock-type
   weight: 1
   why: hard bedrock knob
+  want: high
 - factor: planet-factor.relief-inherited
   weight: 1
   why: pre-existing hills/knobs and preglacial weathering shape the form
+  want: high
 - factor: planet-factor.ice-extent
   weight: 1
   why: common near margins and during thinning deglaciation
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 10-1000 kyr
+  want: high
 - factor: planet-factor.other-basal-water-pressure
   weight: 1
   why: fluctuating basal water pressure in lee cavities drives quarrying
+  want: high
 vocabulary_id: 77
 sources:
 - https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-erosional-landforms/roches-moutonnees/
@@ -42,10 +50,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: glacial

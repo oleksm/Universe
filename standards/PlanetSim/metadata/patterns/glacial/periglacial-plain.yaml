@@ -8,36 +8,47 @@ factors:
 - factor: planet-factor.clim-temp
   weight: 3
   why: MAAT below 0 C with frequent freeze-thaw; ice wedges need much colder (approx -6 C)
+  want: high
 - factor: planet-factor.permafrost
   weight: 3
   why: permafrost (>=2 yr <=0 C) and ground ice >30% drive polygons, pingos, thermokarst
+  want: high
 - factor: planet-factor.regolith
   weight: 3
   why: fine frost-susceptible sediment (silt) for heave and ice segregation
+  want: high
 - factor: planet-factor.clim-precip
   weight: 1
   why: snow cover insulates ground; low snow favours permafrost
+  want: low
 - factor: planet-factor.bio-veg
   weight: 1
   why: vegetation/peat insulates; removal triggers thermokarst
+  want: high
 - factor: planet-factor.groundwater
   weight: 1
   why: water supply feeds ice lenses and pingos
+  want: high
 - factor: planet-factor.slope-relief
   weight: 1
   why: low-gradient plains; slopes switch to solifluction
+  want: low
 - factor: planet-factor.clim-history
   weight: 1
   why: warming phases make thermokarst lakes; cold phases rebuild ice wedges
+  want: high
 - factor: planet-factor.ice-extent
   weight: 1
   why: unglaciated or deglaciated ground beyond ice margins
+  want: high
 - factor: planet-factor.clim-wind
   weight: 1
   why: loess/sand deposition and continentality
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: kyr for ice-wedge networks
+  want: high
 vocabulary_id: 159
 sources:
 - https://en.wikipedia.org/wiki/Periglaciation
@@ -52,10 +63,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: glacial

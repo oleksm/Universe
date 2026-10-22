@@ -8,27 +8,35 @@ factors:
 - factor: planet-factor.tect-uplift
   weight: 3
   why: tectonically quiescent front; fault activity favours fans instead
+  want: high
 - factor: planet-factor.rock-type
   weight: 3
   why: granitic, grus-forming rock most common
+  want: high
 - factor: planet-factor.clim-arid
   weight: 3
   why: arid, sparse vegetation, low bank cohesion
+  want: high
 - factor: planet-factor.clim-storm
   weight: 1
   why: episodic floods and sheetwash plane the surface
+  want: high
 - factor: planet-factor.rock-perm
   weight: 1
   why: high infiltration of grus favours planation
+  want: high
 - factor: planet-factor.base-level
   weight: 1
   why: stable basin base level; slope 0.5-7 deg
+  want: low
 - factor: planet-factor.regolith
   weight: 1
   why: thin transient alluvial veneer 0-5 m
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 100 kyr-10 Myr
+  want: high
 vocabulary_id: 56
 sources:
 - https://en.wikipedia.org/wiki/Pediment_(geology)
@@ -42,10 +50,30 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
+- of:
+  - factors.want
+  tier: derived
+  review: true
+  source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
+  note: 'planet-factor.clim-arid: The why text favors arid conditions; sparse vegetation, low rain/relief or
+    weak soil are effects or other quantities.'
 status: draft
+look: dendritic

@@ -21,7 +21,8 @@ def load(tree):
     import yaml
     out = {k: {} for k in ORDER}
     for f in sorted(glob.glob(os.path.join(tree, "PlanetSim", "metadata", "**", "*.yaml"), recursive=True) + glob.glob(os.path.join(tree, "PlanetLOD", "metadata", "**", "*.yaml"), recursive=True)):      # (the meshing models are Planet LOD's)
-        d = yaml.safe_load(open(f, encoding="utf-8")) or {}
+        with open(f, encoding="utf-8") as stream:
+            d = yaml.safe_load(stream) or {}
         k = (d.get("identity") or {}).get("key", "")
         if k.split(".")[0] in out:
             out[k.split(".")[0]][k] = d
@@ -71,9 +72,9 @@ def classify(R, layer, sig):
     return next((i for i, c in sorted(classes.items()) if ok(c)), None)
 
 
-def strength(R, factor, sig):
+def strength(R, factor, sig, missing=0.0):
     """A deciding factor's strength (0 to 1) at a place: given outright, else by its signal (a field ramped, a class
-    among some, a landmark nearby), else 0."""
+    among some, a landmark nearby), else missing (0 by default)."""
     d = R["planet-factor"][factor]
     given = sig.get("factors") or {}
     if d.get("source") in given:
@@ -87,10 +88,26 @@ def strength(R, factor, sig):
         c = _class(sig, s["layer"])
         if c is not None:
             return 1.0 if c in s.get("classes", []) else 0.0
-    if s.get("landmarks"):
+    if s.get("landmarks") and "landmarks" in sig:
         near = {_key("planet-landmark", m) for m in sig.get("landmarks") or []}
         return 1.0 if near & set(s["landmarks"]) else 0.0
-    return 0.0
+    return missing
+
+
+def preference(factor, value):
+    """Match a known normalized strength to explicit high/low/soft-band intent."""
+    if value is None:
+        return 0.0
+    want = factor["want"]
+    if want == "high":
+        return value
+    if want == "low":
+        return 1.0 - value
+    if want == "band":
+        lo, hi = factor["from"], factor["to"]
+        width = factor["soft"] * (hi - lo)
+        return max(0.0, min(1.0, (value - lo + width) / width, (hi + width - value) / width))
+    raise ValueError("unknown factor preference: " + str(want))
 
 
 def match(R, sig, top=10, family=None):
@@ -104,7 +121,8 @@ def match(R, sig, top=10, family=None):
         if failed:
             continue
         tw = sum(f["weight"] for f in p["factors"]) or 1.0
-        fired = [(R["planet-factor"][f["factor"]]["source"], f["weight"], round(strength(R, f["factor"], sig), 3)) for f in p["factors"]]
+        fired = [(R["planet-factor"][f["factor"]]["source"], f["weight"],
+                  round(preference(f, strength(R, f["factor"], sig, missing=None)), 3)) for f in p["factors"]]
         score = sum(w * s for _, w, s in fired) / tw
         out.append({"key": k, "name": p["identity"]["name"], "family": p["family"], "score": round(score, 4),
                     "fired": sorted([x for x in fired if x[2] > 0], key=lambda x: -x[1] * x[2])})

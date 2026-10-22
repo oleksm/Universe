@@ -8,27 +8,35 @@ factors:
 - factor: planet-factor.tect-setting
   weight: 3
   why: mantle plume head under continent, often at incipient rifting/breakup
+  want: high
 - factor: planet-factor.other-magma-supply
   weight: 3
   why: huge pulses, >75% of 10^5-10^6 km3 in 1-5 Myr
+  want: high
 - factor: planet-factor.volc-vent
   weight: 1
   why: fissure eruptions fed by giant dike swarms >300 km
+  want: high
 - factor: planet-factor.volc-magma
   weight: 1
   why: 'tholeiitic basalt, very fluid: flows 10-100 m thick spread hundreds of km'
+  want: high
 - factor: planet-factor.rock-layers
   weight: 3
   why: stacked flows with interbeds/boles give stepped trap topography on erosion
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 1
   why: plume uplift and later rift-flank uplift tilt plateau, make great escarpment
+  want: high
 - factor: planet-factor.clim-precip
   weight: 1
   why: humid tropical weathering gives laterite caps and deep dissection
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: post-eruption erosion turns plateau into mesas, buttes and escarpments over Myr
+  want: high
 vocabulary_id: 142
 sources:
 - https://en.wikipedia.org/wiki/Large_igneous_province
@@ -43,10 +51,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: volcanic

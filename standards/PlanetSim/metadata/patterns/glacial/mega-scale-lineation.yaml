@@ -8,24 +8,31 @@ factors:
 - factor: planet-factor.ice-flow
   weight: 3
   why: ice stream fast flow (>~1000 m/yr); elongation >10:1
+  want: high
 - factor: planet-factor.regolith
   weight: 3
   why: soft deforming till bed
+  want: high
 - factor: planet-factor.ice-thermal
   weight: 3
   why: warm bed with high water pressure for streaming
+  want: high
 - factor: planet-factor.relief-inherited
   weight: 1
   why: topographic troughs and shelf troughs focus streams
+  want: high
 - factor: planet-factor.sea-level
   weight: 1
   why: lowstand exposes continental shelf troughs to grounded ice
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: short 0.1-20 kyr; may form in centuries
+  want: high
 - factor: planet-factor.ice-extent
   weight: 1
   why: needs ice sheet with stream catchment
+  want: high
 vocabulary_id: 63
 sources:
 - https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/drumlins/
@@ -40,10 +47,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: glacial

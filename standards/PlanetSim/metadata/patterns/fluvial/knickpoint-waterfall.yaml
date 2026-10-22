@@ -8,27 +8,35 @@ factors:
 - factor: planet-factor.base-level
   weight: 3
   why: base-level fall magnitude sets knickpoint height (Waipaoa 50-100 m)
+  want: high
 - factor: planet-factor.rock-layers
   weight: 3
   why: caprock over weak rock gives vertical falls and undercut
+  want: high
 - factor: planet-factor.rock-type
   weight: 1
   why: homogeneous rock gives diffuse knickzones
+  want: high
 - factor: planet-factor.tect-fault
   weight: 1
   why: fault slip creates knickzones
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 1
   why: uplift rate change launches transient knickpoints
+  want: high
 - factor: planet-factor.ice-extent
   weight: 1
   why: glacial overdeepening leaves hanging valleys with falls
+  want: high
 - factor: planet-factor.water-discharge
   weight: 3
   why: drainage area sets retreat rate (1 mm-10 cm/yr typical)
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 0.1 kyr-10 Myr while transient persists
+  want: high
 vocabulary_id: 37
 sources:
 - https://en.wikipedia.org/wiki/Knickpoint
@@ -42,10 +50,30 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
+- of:
+  - factors.want
+  tier: derived
+  review: true
+  source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
+  note: 'planet-factor.rock-layers: Alternating strong/weak beds or caprock require layering contrast; flat/weak
+    does not request absence of layering.'
 status: draft
+look: canyon

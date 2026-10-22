@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.accretionary-prism
+  name: Accretionary prism
+  about: A wedge of sediment scraped off the diving plate, ridged parallel to the trench.
+register: feature
+family: tectonic
+trigger: Not yet specified for the simulator; catalogue definition only.
+built: false
+status: draft
+description: A wedge of sediment scraped off the diving plate, ridged parallel to the trench.
+size:
+  across_m:
+  - 20000.0
+  - 300000.0
+  basis:
+  - of:
+    - across_m
+    tier: invented
+    review: true
+    source: planet-forge 3c40281 docs/catalogue/kinds.py
+    note: Supplied rough Earth size range in the catalogue draft; not a measured or validated range.
+ladder:
+- planet-level.10000-km
+- planet-level.100-km
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - description
+  tier: sourced
+  source: planet-forge 3c40281 docs/catalogue/kinds.py
+  note: Transcribed proposed catalogue definition; not a claim of simulator implementation.
+- of:
+  - ladder
+  tier: derived
+  source: planet-forge 3c40281 docs/catalogue/kinds.py
+  note: Derived from the proposed size range using the eight numeric bands; inherits size review.

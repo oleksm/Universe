@@ -8,45 +8,59 @@ factors:
 - factor: planet-factor.rock-soluble
   weight: 3
   why: Thick pure limestone/dolomite (>~90% CaCO3) needed; impure or thin carbonate gives fluviokarst instead
+  want: high
 - factor: planet-factor.rock-type
   weight: 1
   why: Massive, low-porosity carbonate platform rock (Mesozoic platform hundreds to thousands of m thick)
+  want: low
 - factor: planet-factor.rock-fracture
   weight: 1
   why: Joint and fault density sets doline spacing and conduit routes; faults guide poljes and gorges
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 3
   why: Uplift creates deep vadose zone and underground drainage; staged uplift leaves stepped planation surfaces
+  want: high
 - factor: planet-factor.tect-setting
   weight: 1
   why: Fold-thrust belts over carbonate platforms (Dinarides) or stable carbonate platforms
+  want: low
 - factor: planet-factor.tect-fault
   weight: 1
   why: Faults step the plateau and bound poljes; active thrusting keeps uplift going
+  want: high
 - factor: planet-factor.clim-precip
   weight: 3
   why: Humid climate; denudation rate rises roughly linearly with runoff (tens of mm/kyr at ~1000 mm runoff)
+  want: high
 - factor: planet-factor.clim-temp
   weight: 1
   why: Cold raises CO2 solubility, warmth raises soil CO2; net rate driven by runoff and soil CO2
+  want: high
 - factor: planet-factor.bio-veg
   weight: 1
   why: Soil and vegetation supply CO2 that drives dissolution; soil loss leaves bare karren
+  want: high
 - factor: planet-factor.groundwater
   weight: 1
   why: Deep water table and karst springs at margins; almost no surface streams
+  want: low
 - factor: planet-factor.base-level
   weight: 1
   why: Spring/sea level sets depth of karstification; base-level falls (e.g. Messinian) deepen it
+  want: high
 - factor: planet-factor.relief-inherited
   weight: 1
   why: Older planation surfaces and relict valley networks become blind/dry valleys
+  want: high
 - factor: planet-factor.ice-extent
   weight: 1
   why: Glaciation on high plateaus scours and fills dolines (glaciokarst)
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 100 kyr to 10 Myr for full holokarst
+  want: high
 vocabulary_id: 97
 sources:
 - https://en.wikipedia.org/wiki/Dinaric_Alps
@@ -63,10 +77,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: karst

@@ -8,30 +8,39 @@ factors:
 - factor: planet-factor.tect-setting
   weight: 3
   why: Stable craton or shield, crystalline basement
+  want: low
 - factor: planet-factor.tect-uplift
   weight: 1
   why: Very low uplift; epeirogenic pulses start new stripping cycles
+  want: low
 - factor: planet-factor.rock-type
   weight: 1
   why: 'Granite, gneiss: deep weathering; resistant compartments stay as inselbergs'
+  want: high
 - factor: planet-factor.rock-fracture
   weight: 1
   why: Joint density decides where weathering penetrates and what stands up
+  want: high
 - factor: planet-factor.clim-history
   weight: 3
   why: Humid deep-weathering phases then drier stripping (stripping rate > regolith production)
+  want: high
 - factor: planet-factor.clim-season
   weight: 1
   why: Wet season weathers, dry season strips
+  want: high
 - factor: planet-factor.regolith
   weight: 1
   why: Thick saprolite, duricrusts (laterite, silcrete)
+  want: high
 - factor: planet-factor.base-level
   weight: 1
   why: Base-level falls trigger stripping to the weathering front
+  want: high
 - factor: planet-factor.time
   weight: 3
   why: 10-100 Myr (African Surface 70-40 Ma)
+  want: high
 vocabulary_id: 148
 sources:
 - https://en.wikipedia.org/wiki/Etchplain
@@ -46,10 +55,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: tableland

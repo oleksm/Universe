@@ -8,30 +8,39 @@ factors:
 - factor: planet-factor.rock-type
   weight: 3
   why: weak poorly consolidated mudstone, shale, bentonite/smectite clays
+  want: low
 - factor: planet-factor.rock-perm
   weight: 1
   why: impermeable surface concentrates runoff
+  want: high
 - factor: planet-factor.clim-storm
   weight: 3
   why: infrequent heavy rainfall
+  want: high
 - factor: planet-factor.clim-arid
   weight: 1
   why: semi-arid to arid
+  want: high
 - factor: planet-factor.bio-veg
   weight: 3
   why: sparse cover; overgrazing makes anthropogenic badlands
+  want: low
 - factor: planet-factor.base-level
   weight: 1
   why: uplift/base-level fall rejuvenates dissection
+  want: high
 - factor: planet-factor.rock-layers
   weight: 1
   why: occasional resistant sandstone caps form pinnacles
+  want: high
 - factor: planet-factor.other-piping
   weight: 1
   why: dispersive clays piping collapses into gullies
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 0.1-100 kyr; erosion ~25 mm/kyr scale
+  want: high
 vocabulary_id: 44
 sources:
 - https://en.wikipedia.org/wiki/Badlands
@@ -45,10 +54,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: badlands

@@ -8,30 +8,39 @@ factors:
 - factor: planet-factor.tect-uplift
   weight: 3
   why: rock uplift rate sets steepness ksn (20-600 m^0.9) at steady state
+  want: high
 - factor: planet-factor.rock-type
   weight: 3
   why: erodibility sets ksn and knickzones at contacts
+  want: high
 - factor: planet-factor.rock-fracture
   weight: 1
   why: jointing controls plucking vs abrasion efficiency
+  want: high
 - factor: planet-factor.water-discharge
   weight: 1
   why: discharge scales with area; concavity theta 0.4-0.6
+  want: high
 - factor: planet-factor.clim-precip
   weight: 1
   why: runoff sets erosional efficiency
+  want: high
 - factor: planet-factor.clim-storm
   weight: 1
   why: flood variability and incision thresholds set rate-steepness nonlinearity
+  want: high
 - factor: planet-factor.sed-supply
   weight: 1
   why: sediment acts as tools vs cover; high supply raises concavity/alluvial reaches
+  want: high
 - factor: planet-factor.base-level
   weight: 3
   why: base-level falls launch knickpoints; profile grades to outlet
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: response time 10 kyr-10 Myr to reach steady state
+  want: high
 vocabulary_id: 35
 sources:
 - https://en.wikipedia.org/wiki/Knickpoint
@@ -46,10 +55,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: canyon
