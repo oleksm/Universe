@@ -228,7 +228,7 @@ refinements:
 source_document_in_registry: docs/spaceship-building-workflow-proposal.md
 source_sha256_basis: Original research proposal before normalization and subsequent owner refinements; normalized_document_sha256
   identifies the current archived proposal.
-normalized_document_sha256: 2a39f5a167caffdfad058f4cb3f163fdeb75f03472c9886e1e7ddfa35385941c
+normalized_document_sha256: c6f8eea98412488345c0aacb283031c499f84e56e8efcd412a556495c8af0fcf
 owner_refinements:
 - Feature-first intake; confirmed consolidated brief; derived prompt before whole-ship sketch.
 - Rehearsal provenance, exact prompt witnesses, hidden-feature limits and stale-input negative cases.
@@ -244,3 +244,5 @@ owner_refinements:
 - Post-clearance reshaping repeats current side/top/front silhouette and clay identity review, original intent/landmark
   witnesses and separate jointly required functional/visual decisions; no shrinking required envelopes or synthetic
   aesthetic pass.
+- Aesthetic guidance and QC explicitly review primary/subordinate masses, cockpit/nose/neck/shoulders and deliberate
+  curve/plane transitions across comparable variants without universal ratios or mandatory angularity.

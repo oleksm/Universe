@@ -35,7 +35,13 @@ statement: 'Use coherent material roles and choose geometry or supported texture
   handling, normals, transparency, texture dependencies and any substituted shader behavior. Optional wear,
   fasteners and microdetail must earn their geometry, texture and draw cost through visible improvement at
   the target camera distances. If a feature disappears in the intended view or obscures a readable construction
-  boundary, omit it or move it to a cheaper supported representation.'
+  boundary, omit it or move it to a cheaper supported representation.
+
+
+  Silhouette judges major mass relationships; plain clay reveals deliberate curved/planar transitions and large
+  surface continuity. Compare both before detailed materials. Additional panels, smoothing or sharp facets
+  cannot resolve an unwanted nose/cockpit/neck proportion or broad undifferentiated crown. Keep the rationale
+  specific to the brief and current geometry rather than use a numeric beauty score.'
 applies_to:
 - Build surfaces from material roles and readable scale
 verification:
@@ -45,3 +51,4 @@ limitations:
 - This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
 related:
 - ship-check.material-export
+- ship-check.identity
