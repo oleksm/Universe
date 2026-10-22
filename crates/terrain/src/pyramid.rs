@@ -11,6 +11,12 @@ fn min_cell_px() -> f64 {
     static V: std::sync::OnceLock<f64> = std::sync::OnceLock::new();
     *V.get_or_init(|| std::env::var("UNIVERSE_TERRAIN_CELL_PX").ok().and_then(|v| v.parse().ok()).unwrap_or(0.0))
 }
+/// UNIVERSE_TERRAIN_TRI_PX=n: a tile is split only while its children's triangles would average at least n pixels
+/// on screen (its footprint's projected area over their count), on top of the error rule; 0: off. Default 2.
+fn min_tri_px() -> f64 {
+    static V: std::sync::OnceLock<f64> = std::sync::OnceLock::new();
+    *V.get_or_init(|| std::env::var("UNIVERSE_TERRAIN_TRI_PX").ok().and_then(|v| v.parse().ok()).unwrap_or(2.0))
+}
 const CACHE_BYTES: usize = 8 * 1024 * 1024 * 1024;
 const UPLOAD_BYTES: usize = 32 * 1024 * 1024;
 use universe_world::worlds::land::{tile_height, Meta, Raster, Tile, TileMesh};
@@ -78,6 +84,26 @@ impl Source {
         // Retain the complete parent at that boundary rather than punch out its remainder.
         i0 >= w.col0 && j0 >= w.row0 && i1 < w.col0 + w.cols && j1 < w.row0 + w.rows
     }
+    /// Tile `id`'s children's triangles (their meshes', else their grids').
+    fn child_tris(&self, id: usize) -> f64 {
+        let grid = 2 * self.m.tile * self.m.tile;
+        self.children(id).iter().map(|&c| match self.m.tiles[c].mesh_nt { 0 => grid, n => n }).sum::<usize>().max(1) as f64
+    }
+    /// How far tile `id` is within the density cap: its children's triangles' average pixels on screen over
+    /// `min_tri_px` (split only over 1, as the error rule). `pixel`: a pixel's angle (rad) at the middle of the
+    /// view; 0: no screen known, no cap. The footprint is foreshortened by the angle the eye sees the ground at
+    /// (no less than FLATTEST of it: relief faces the eye at the horizon).
+    fn density(&self, id: usize, eye: DVec3, ex: f64, pixel: f64) -> f64 {
+        const FLATTEST: f64 = 0.05;
+        if pixel <= 0.0 || min_tri_px() <= 0.0 {
+            return f64::INFINITY;
+        }
+        let t = self.m.tiles[id];
+        let (c, _) = if ex == 1.0 { self.bounds[id] } else { self.bounds(t, ex) };
+        let seen = c.normalize().dot((eye - c).normalize_or_zero()).abs().max(FLATTEST);
+        let side = self.m.tile as f64 * self.m.cell0_m * self.m.scale(t.k) as f64 / (self.distance(id, eye, ex) * pixel);
+        side * side * seen / self.child_tris(id) / min_tri_px()
+    }
     fn parent(&self, id: usize) -> Option<usize> {
         let t = self.m.tiles[id];
         self.index
@@ -139,15 +165,18 @@ impl Source {
         cam: &Camera,
         aspect: f64,
         ex: f64,
+        pixel: f64,
         history: &mut HashSet<usize>,
     ) -> Selection {
         let mut out = Selection::default();
+        #[allow(clippy::too_many_arguments)]
         fn walk(
             s: &Source,
             id: usize,
             cam: &Camera,
             aspect: f64,
             ex: f64,
+            pixel: f64,
             history: &mut HashSet<usize>,
             out: &mut Selection,
         ) {
@@ -164,11 +193,12 @@ impl Source {
             };
             // Retain invisible tiles' state; changing view direction must not reset hysteresis.
             let ratio = error / distance / PX;
+            let dense = s.density(id, cam.position, ex, pixel);
             let split = s.can_split(id)
                 && if history.contains(&id) {
-                    ratio >= 0.7
+                    ratio >= 0.7 && dense >= 0.7
                 } else {
-                    ratio > 1.0
+                    ratio > 1.0 && dense > 1.0
                 };
             if split {
                 history.insert(id);
@@ -178,14 +208,14 @@ impl Source {
             if split {
                 out.split.insert(id);
                 for c in s.children(id) {
-                    walk(s, c, cam, aspect, ex, history, out);
+                    walk(s, c, cam, aspect, ex, pixel, history, out);
                 }
             } else {
                 out.leaves.push(id);
             }
         }
         if let Some(&root) = self.index.get(&(self.m.top_level, 0, 0)) {
-            walk(self, root, cam, aspect, ex, history, &mut out);
+            walk(self, root, cam, aspect, ex, pixel, history, &mut out);
         }
         out
     }
@@ -197,7 +227,7 @@ impl Source {
         }
         e.min(self.m.cell0_m * self.m.scale(t.k - 1) as f64 / min_cell_px())
     }
-    fn weight(&self, id: usize, eye: DVec3, ex: f64) -> f32 {
+    fn weight(&self, id: usize, eye: DVec3, ex: f64, pixel: f64) -> f32 {
         let Some(parent) = self.parent(id) else {
             return 0.0;
         };
@@ -210,15 +240,18 @@ impl Source {
             let t = x.clamp(0.0, 1.0);
             t * t * (3.0 - 2.0 * t)
         };
-        let m =
-            smooth((self.distance(parent, eye, ex) * PX / self.refine_error(p, ex).max(1e-9) - 0.5) / 0.5);
+        // (The parent's split by either rule: children meet its surface where either rule only just splits it.)
+        let m = smooth((self.distance(parent, eye, ex) * PX / self.refine_error(p, ex).max(1e-9) - 0.5) / 0.5)
+            .max(smooth((1.0 / self.density(parent, eye, ex, pixel) - 0.5) / 0.5));
         let t = self.m.tiles[id];
         // Keep the parent unmorphed through both the split and hysteretic merge boundary.
         // Children then meet the same surface on either side of a hierarchy change.
         let own = if t.k == 0 || t.error_m == 0.0 {
             1.0
         } else {
+            // (Unmorphed only where both rules would split it: either one holding it whole frees it to morph.)
             smooth((self.distance(id, eye, ex) * PX / self.refine_error(t, ex) - 1.0 / 0.7) / (0.5 / 0.7))
+                .max(smooth((1.0 / self.density(id, eye, ex, pixel) - 1.0 / 0.7) / (0.5 / 0.7)))
         };
         (m * own) as f32
     }
@@ -500,6 +533,8 @@ pub struct Pyramid {
     results: Receiver<ResultTile>,
     selection: Selection,
     split_history: HashSet<usize>,
+    /// A pixel's angle at the middle of the view (rad; 0: not known): the density cap's (`Source::density`).
+    pub pixel: f64,
     drawn: HashMap<usize, f32>,
     generation: u64,
     key: (u64, bool),
@@ -676,6 +711,7 @@ impl Pyramid {
             results,
             selection: Selection::default(),
             split_history: HashSet::new(),
+            pixel: 0.0,
             drawn: HashMap::new(),
             generation: 0,
             key: (1.0f64.to_bits(), false),
@@ -908,7 +944,7 @@ impl Pyramid {
                 }
             }
         }
-        self.selection = self.source.select(cam, aspect, ex, &mut self.split_history);
+        self.selection = self.source.select(cam, aspect, ex, self.pixel, &mut self.split_history);
         let underfoot = self
             .source
             .project(cam.position.normalize())
@@ -930,6 +966,7 @@ impl Pyramid {
             let t = self.source.m.tiles[id];
             if self.source.can_split(id)
                 && t.error_m * ex / self.source.distance(id, cam.position, ex) > PX * 0.6
+                && self.source.density(id, cam.position, ex, self.pixel) > 0.6
             {
                 let children = self.source.children(id);
                 // Limit speculative geometry so it cannot churn the cache around the selected cover.
@@ -971,7 +1008,7 @@ impl Pyramid {
             // (Never under the ground the camera is over.)
             seen.position = seen.position.normalize() * seen.position.length().max(cam.position.length());
             let mut history = self.split_history.clone();
-            self.source.select(&seen, aspect, ex, &mut history).visited
+            self.source.select(&seen, aspect, ex, self.pixel, &mut history).visited
         } else {
             Vec::new()
         };
@@ -1095,7 +1132,7 @@ impl Pyramid {
                 self.stats.fallback += 1;
                 0.0
             } else {
-                self.source.weight(id, eye, ex)
+                self.source.weight(id, eye, ex, self.pixel)
             };
             self.drawn.insert(id, weight);
             frame.pooled_morphed(group, &tile.mesh, placed(body, tile.origin).position, weight);
@@ -1447,13 +1484,27 @@ mod tests {
             (0.69, false),
             (0.99, false),
         ] {
-            let selection = s.select(&camera(ratio), 1., 1., &mut history);
+            let selection = s.select(&camera(ratio), 1., 1., 0., &mut history);
             assert_eq!(selection.split.contains(&root), split, "ratio={ratio}");
         }
+        // The density cap: well within the error rule's split, split only while the children's triangles
+        // would average 2 px or more on screen (`q` over 1), with the same hysteresis; just split, the
+        // children lie on the parent's surface.
+        let cam = camera(2.0);
+        let side = s.m.tile as f64 * s.m.cell0_m * s.m.scale(s.m.tiles[root].k) as f64;
+        let seen = s.bounds[root].0.normalize().dot((cam.position - s.bounds[root].0).normalize()).abs().max(0.05);
+        let pixel = |q: f64| side * seen.sqrt() / (s.distance(root, cam.position, 1.) * (q * s.child_tris(root) * 2.0).sqrt());
+        let mut history = HashSet::new();
+        for (q, split) in [(0.99, false), (1.01, true), (0.71, true), (0.69, false)] {
+            let selection = s.select(&cam, 1., 1., pixel(q), &mut history);
+            assert_eq!(selection.split.contains(&root), split, "q={q}");
+        }
+        assert!((s.weight(fine, cam.position, 1., pixel(1.001)) - 1.).abs() < 1e-4);
+        assert!(s.weight(fine, cam.position, 1., pixel(4.)).abs() < 1e-6);
         // The last half of the geometric range morphs smoothly; the hysteresis tail is fully coarse.
         for (distance_ratio, weight) in [(0.5, 0.), (0.75, 0.5), (1., 1.), (1. / 0.7, 1.)] {
             let cam = camera(1. / distance_ratio);
-            assert!((s.weight(fine, cam.position, 1.) - weight).abs() < 1e-5);
+            assert!((s.weight(fine, cam.position, 1., 0.) - weight).abs() < 1e-5);
         }
         let mut invalid: Meta =
             serde_json::from_slice(&std::fs::read(f.0.join("pyramid4/pyramid.json")).unwrap())
@@ -1557,14 +1608,14 @@ mod tests {
             ..Default::default()
         };
         cam.look_at(DVec3::ZERO, Vec3::Y);
-        let far = p.source.select(&cam, 1.0, 1.0, &mut HashSet::new());
+        let far = p.source.select(&cam, 1.0, 1.0, 0.0, &mut HashSet::new());
         assert_eq!(far.leaves.len(), 1);
         cam.position.z = 1100.;
-        let close = p.source.select(&cam, 1.0, 1.0, &mut HashSet::new());
+        let close = p.source.select(&cam, 1.0, 1.0, 0.0, &mut HashSet::new());
         assert!(close.leaves.len() > 1);
         for &id in &close.leaves {
             assert_eq!(p.source.m.tiles[id].k, 0);
-            assert_eq!(p.source.weight(id, cam.position, 1.0), 0.0);
+            assert_eq!(p.source.weight(id, cam.position, 1.0, 0.0), 0.0);
         }
         let path = f.0.join("pyramid/pyramid.json");
         let mut m: serde_json::Value =
@@ -1705,7 +1756,7 @@ mod tests {
                 ..Default::default()
             };
             cam.look_at(cam.position + forward, cam_up.as_vec3());
-            let selection = p.source.select(&cam, 16. / 9., 1., &mut history);
+            let selection = p.source.select(&cam, 16. / 9., 1., 0., &mut history);
             min = min.min(selection.leaves.len());
             max = max.max(selection.leaves.len());
             assert!(
@@ -1761,7 +1812,7 @@ mod tests {
                 ..Default::default()
             };
             cam.look_at(DVec3::ZERO, Vec3::Y);
-            let selection = s.select(&cam, 16. / 9., 1., &mut history);
+            let selection = s.select(&cam, 16. / 9., 1., 0., &mut history);
             let mut counts = [0usize; 6];
             for &id in &selection.leaves {
                 counts[s.m.tiles[id].k] += 1;
@@ -1796,7 +1847,7 @@ mod tests {
                 ..Default::default()
             };
             cam.look_at(DVec3::ZERO, Vec3::Y);
-            let sel = p.source.select(&cam, 16.0 / 9.0, 1.0, &mut HashSet::new());
+            let sel = p.source.select(&cam, 16.0 / 9.0, 1.0, 0.0, &mut HashSet::new());
             let tris = sel.leaves.len() * 2 * p.source.m.tile * p.source.m.tile;
             println!(
                 "PYRAMID selection altitude={alt} tiles={} upper_triangles={tris}",
@@ -1819,7 +1870,7 @@ mod tests {
             ..Default::default()
         };
         cam.look_at(DVec3::ZERO, Vec3::Y);
-        let selection = p.source.select(&cam, 16.0 / 9.0, 1.0, &mut HashSet::new());
+        let selection = p.source.select(&cam, 16.0 / 9.0, 1.0, 0.0, &mut HashSet::new());
         let mut largest = 0;
         let mut oversized = 0;
         for id in selection.visited {

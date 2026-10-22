@@ -644,6 +644,8 @@ pub struct Ground {
     pub grid: Grid,
     pub tiles: Vec<TileGroup>,
     pub view: View,
+    /// The render surface's height (px, f64 bits; 0: not drawn yet), from the last `draw`: the density cap's.
+    screen_px: std::sync::atomic::AtomicU64,
     pub stats: Stats,
     /// The cluster DAG, when the view has one (in place of the decisions and the chunks).
     pub clusters: Option<Mutex<Clusters>>,
@@ -917,7 +919,7 @@ impl Ground {
         }).map_err(|e| format!("decider: {e}"))?;
         let g = Ground {
             dir, d, chunks, grid, clusters, vel: DVec3::ZERO, last_eye: None, to_decider, from_decider: Mutex::new(from_decider), on_snap, tiles,
-            view: View::Real, stats: Stats::default(), jobs, done: Mutex::new(done), busy: false, bd, generation: 0, last_view: View::Real, built: Mutex::new(None),
+            view: View::Real, screen_px: Default::default(), stats: Stats::default(), jobs, done: Mutex::new(done), busy: false, bd, generation: 0, last_view: View::Real, built: Mutex::new(None),
             max_draw: std::env::var("UNIVERSE_PLANETLOD_MAXDRAW").ok().and_then(|v| v.parse().ok()).unwrap_or(usize::MAX),
             meta, ex: 1.0, show_edges: true, show_faces: true, lvl_count: vec![0; 256], risen: (0, 0), layers, pyramid, hold_layers: false,
         };
@@ -1316,7 +1318,12 @@ impl Ground {
         let t0 = Instant::now();
         let mut rebuilt = 0;
         let view = self.view;
-        if let Some(p) = &mut self.pyramid { p.get_mut().unwrap().update(&cam, aspect, self.ex, view == View::Real); }
+        if let Some(p) = &mut self.pyramid {
+            let p = p.get_mut().unwrap();
+            let h = f64::from_bits(self.screen_px.load(std::sync::atomic::Ordering::Relaxed));
+            p.pixel = if h > 0.0 { 2.0 * (cam.fov_y as f64 * 0.5).tan() / h } else { 0.0 };
+            p.update(&cam, aspect, self.ex, view == View::Real);
+        }
         if view != self.last_view {
             self.last_view = view;
             self.generation += 1;
@@ -1396,6 +1403,7 @@ impl Ground {
         let eye = cam.position;
         let size = frame.size();
         let aspect = (size.x / size.y.max(1.0)) as f64;
+        self.screen_px.store((size.y as f64).to_bits(), std::sync::atomic::Ordering::Relaxed);
         let mesh_view = self.view == View::Mesh;
         let clear = Color([0.0; 4]);
         let edges = mesh_view && self.show_edges;
