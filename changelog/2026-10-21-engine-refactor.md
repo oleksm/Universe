@@ -95,3 +95,9 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
     query, kept or not (`tile` takes it lazily now: a kept tile's query allocates nothing); keeping a tile summed
     every kept tile's bytes again for each one let go, under the write lock the readers wait on (summed once now).
     Captures match.
+20. A ground patch's skirts asked its edge heights again (twice each: their top and their foot) though its grid
+    had them: about 136 queries of a patch's ~1,580 saved, and a skirt now hangs from the very height its edge
+    has (asked later, a tile read meanwhile could give it another: a capture at 2 km over the home world differs
+    by 0.02 % of pixels along the horizon's skirts). Left as is: the material's slope samples 600 m either way per
+    vertex (four queries each; taking it from the grid would change the slope's scale on coarse patches, so the
+    look of scree and rock from afar).

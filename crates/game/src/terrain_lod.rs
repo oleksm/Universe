@@ -186,20 +186,20 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
     };
     let origin = mid * (r + at(mid));
     let g = GRID as usize + 1;
-    let place = |i: usize, j: usize, drop: f64| {
-        let (u, v) = ((key.x as f64 + i as f64 / GRID as f64) / n * 2.0 - 1.0, (key.y as f64 + j as f64 / GRID as f64) / n * 2.0 - 1.0);
-        let d = face_dir(key.face, u, v);
-        ((d * (r + at(d) - drop) - origin).as_vec3(), d)
-    };
     let mut m = WireModel { smooth: true, ..WireModel::default() };
-    let mut dirs = Vec::with_capacity(g * g);
+    let (mut dirs, mut heights) = (Vec::with_capacity(g * g), Vec::with_capacity(g * g));
     for j in 0..g {
         for i in 0..g {
-            let (p, d) = place(i, j, 0.0);
-            m.positions.push(p);
+            let (u, v) = ((key.x as f64 + i as f64 / GRID as f64) / n * 2.0 - 1.0, (key.y as f64 + j as f64 / GRID as f64) / n * 2.0 - 1.0);
+            let d = face_dir(key.face, u, v);
+            let h = at(d);
+            m.positions.push((d * (r + h) - origin).as_vec3());
             dirs.push(d);
+            heights.push(h);
         }
     }
+    // (A grid point lowered by `drop`: its own height, asked once.)
+    let place = |i: usize, j: usize, drop: f64| (dirs[j * g + i] * (r + heights[j * g + i] - drop) - origin).as_vec3();
     // (Wound to face out: which way round depends on the face.)
     let out = {
         let (a, b, c) = (m.positions[0], m.positions[1], m.positions[g]);
@@ -224,8 +224,8 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
         .collect();
     let base = m.positions.len() as u32;
     for &(i, j) in &edge {
-        m.positions.push(place(i, j, 0.0).0);
-        m.positions.push(place(i, j, drop).0);
+        m.positions.push(place(i, j, 0.0));
+        m.positions.push(place(i, j, drop));
     }
     for w in 0..edge.len() as u32 - 1 {
         let (a, b, c, d) = (base + w * 2, base + w * 2 + 2, base + w * 2 + 1, base + w * 2 + 3);
