@@ -12,10 +12,17 @@ fn min_cell_px() -> f64 {
     *V.get_or_init(|| std::env::var("UNIVERSE_TERRAIN_CELL_PX").ok().and_then(|v| v.parse().ok()).unwrap_or(0.0))
 }
 /// UNIVERSE_TERRAIN_TRI_PX=n: a tile is split only while its children's triangles would average at least n pixels
-/// on screen (its footprint's projected area over their count), on top of the error rule; 0: off. Default 2.
+/// on screen (its footprint's projected area over their count), on top of the error rule; 0 (the default): off. (It shortens the sight; the owner keeps it off.)
 fn min_tri_px() -> f64 {
     static V: std::sync::OnceLock<f64> = std::sync::OnceLock::new();
-    *V.get_or_init(|| std::env::var("UNIVERSE_TERRAIN_TRI_PX").ok().and_then(|v| v.parse().ok()).unwrap_or(2.0))
+    *V.get_or_init(|| std::env::var("UNIVERSE_TERRAIN_TRI_PX").ok().and_then(|v| v.parse().ok()).unwrap_or(0.0))
+}
+/// UNIVERSE_TERRAIN_VERSION_PX=n: each drawn tile on its coarsest version (nested coarser meshes, `mesh_lod`)
+/// whose triangles still average no more than n pixels on screen, morphing between versions; 0: always the
+/// finest. Default 2.
+fn version_px() -> f64 {
+    static V: std::sync::OnceLock<f64> = std::sync::OnceLock::new();
+    *V.get_or_init(|| std::env::var("UNIVERSE_TERRAIN_VERSION_PX").ok().and_then(|v| v.parse().ok()).unwrap_or(2.0))
 }
 const CACHE_BYTES: usize = 8 * 1024 * 1024 * 1024;
 const UPLOAD_BYTES: usize = 32 * 1024 * 1024;
@@ -94,15 +101,42 @@ impl Source {
     /// view; 0: no screen known, no cap. The footprint is foreshortened by the angle the eye sees the ground at
     /// (no less than FLATTEST of it: relief faces the eye at the horizon).
     fn density(&self, id: usize, eye: DVec3, ex: f64, pixel: f64) -> f64 {
-        const FLATTEST: f64 = 0.05;
         if pixel <= 0.0 || min_tri_px() <= 0.0 {
             return f64::INFINITY;
         }
+        self.footprint_px(id, eye, ex, pixel) / self.child_tris(id) / min_tri_px()
+    }
+    /// Tile `id`'s area on screen (px), foreshortened by the angle the eye sees the ground at (no flatter
+    /// than FLATTEST: relief faces the eye at the horizon). `pixel`: a pixel's angle at the middle of the view.
+    fn footprint_px(&self, id: usize, eye: DVec3, ex: f64, pixel: f64) -> f64 {
+        const FLATTEST: f64 = 0.05;
         let t = self.m.tiles[id];
         let (c, _) = if ex == 1.0 { self.bounds[id] } else { self.bounds(t, ex) };
         let seen = c.normalize().dot((eye - c).normalize_or_zero()).abs().max(FLATTEST);
         let side = self.m.tile as f64 * self.m.cell0_m * self.m.scale(t.k) as f64 / (self.distance(id, eye, ex) * pixel);
-        side * side * seen / self.child_tris(id) / min_tri_px()
+        side * side * seen
+    }
+    /// Which of tile `id`'s versions to draw and how far it morphs to the next coarser one (the coarsest: to
+    /// its parent): the coarsest whose triangles average no more than `version_px` pixels, between versions by
+    /// their triangle counts (log); no finer than its morph to its parent (`level`, 0 to 1) asks, which steps
+    /// through its versions before it meets its parent.
+    fn version(&self, id: usize, eye: DVec3, ex: f64, pixel: f64, level: f32) -> (usize, f32) {
+        let t = self.m.tiles[id];
+        let counts: Vec<f64> = std::iter::once(t.mesh_nt).chain(t.mesh_lod.get().iter().map(|l| l.3)).map(|n| n.max(1) as f64).collect();
+        let last = if t.mesh_nv == 0 { 0 } else { counts.len() - 1 };
+        let by_pixels = if last == 0 || pixel <= 0.0 || version_px() <= 0.0 {
+            0.0
+        } else {
+            let want = self.footprint_px(id, eye, ex, pixel) / version_px();
+            match counts.windows(2).position(|w| want > w[1]) {
+                _ if want >= counts[0] => 0.0,
+                Some(k) => k as f64 + (counts[k] / want).ln() / (counts[k] / counts[k + 1]).ln(),
+                None => last as f64,
+            }
+        };
+        let c = by_pixels.max(level as f64 * (last + 1) as f64);
+        let v = (c.floor() as usize).min(last);
+        (v, (c - v as f64).clamp(0.0, 1.0) as f32)
     }
     fn parent(&self, id: usize) -> Option<usize> {
         let t = self.m.tiles[id];
@@ -273,21 +307,27 @@ fn raster(
     universe_world::worlds::land::raster(&source.dir, &source.m, k, i0, j0, width, height, true)
 }
 struct Built {
-    mesh: PooledMesh,
+    /// Its versions' models, finest first (one: its grid, or a mesh with no coarser ones).
+    meshes: Vec<PooledMesh>,
     origin: DVec3,
     ground: Raster,
-    /// The tile's feature-aware mesh, if it has one (its vertices are the model's first).
-    tri: Option<TileMesh>,
+    /// Its versions' feature-aware meshes, if it has them (each one's vertices are its model's first).
+    tris: Vec<TileMesh>,
 }
 impl Built {
     fn bytes(&self) -> usize {
-        self.mesh.bytes()
+        self.meshes.iter().map(|m| m.bytes()).sum::<usize>()
             + self.ground.z.len() * 4
             + self.ground.rgb.len() * 3
             + self.ground.mask.len()
-            + self.tri.as_ref().map_or(0, |m| m.verts.len() * 4 + m.tris.len() * 10)
+            + self.tris.iter().map(|m| m.verts.len() * 4 + m.tris.len() * 10).sum::<usize>()
+    }
+    /// Its finest mesh, if it has one (heights: the finest surface).
+    fn tri(&self) -> Option<&TileMesh> {
+        self.tris.first()
     }
 }
+/// Tile `id`'s full model (its finest mesh, or its grid), its origin, its samples and its mesh.
 fn build_model(
     source: &Source,
     id: usize,
@@ -295,35 +335,47 @@ fn build_model(
     real: bool,
 ) -> Result<(PoolModel, DVec3, Raster, Option<TileMesh>), String> {
     let t = source.m.tiles[id];
-    let mesh = TileMesh::read(&source.dir, &source.m, &t)?;
+    let meshes: Vec<TileMesh> = t.meshes().into_iter().take(2).map(|at| TileMesh::read_at(&source.dir, &source.m, &t, at)).collect::<Result<Option<Vec<_>>, _>>()?.unwrap_or_default();
+    let (data, parent) = samples(source, id)?;
+    let (model, origin) = build_version(source, id, ex, real, &data, parent.as_ref(), meshes.first(), meshes.get(1));
+    Ok((model, origin, data, meshes.into_iter().next()))
+}
+
+/// Tile `id`'s samples (a sample's halo round it) and its parent's under it.
+fn samples(source: &Source, id: usize) -> Result<(Raster, Option<Raster>), String> {
+    let t = source.m.tiles[id];
+    let tile = source.m.tile;
+    let side = tile + 1;
+    let (i0, j0) = (t.col * tile, t.row * tile);
+    let (hi0, hj0) = (i0.saturating_sub(1), j0.saturating_sub(1));
+    let n = source.m.levels[t.k].n;
+    let data = raster(source, t.k, hi0, hj0, (i0 + side + 1).min(n) - hi0, (j0 + side + 1).min(n) - hj0)?;
+    let parent = if t.k < source.m.top_level {
+        Some(raster(source, t.k + 1, i0 / source.m.branch, j0 / source.m.branch, tile / source.m.branch + 2, tile / source.m.branch + 2)?)
+    } else {
+        None
+    };
+    Ok((data, parent))
+}
+
+/// One version of tile `id`'s model: on `mesh` (none: its grid), each vertex morphing to `next`'s surface (the
+/// next coarser version), or with no coarser version to its parent's.
+#[allow(clippy::too_many_arguments)]
+fn build_version(
+    source: &Source,
+    id: usize,
+    ex: f64,
+    real: bool,
+    data: &Raster,
+    parent: Option<&Raster>,
+    mesh: Option<&TileMesh>,
+    next: Option<&TileMesh>,
+) -> (PoolModel, DVec3) {
+    let t = source.m.tiles[id];
     let tile = source.m.tile;
     let side = tile + 1;
     let i0 = t.col * tile;
     let j0 = t.row * tile;
-    // Central differences use the same global neighbours on both sides of a tile boundary.
-    let hi0 = i0.saturating_sub(1);
-    let hj0 = j0.saturating_sub(1);
-    let n = source.m.levels[t.k].n;
-    let data = raster(
-        source,
-        t.k,
-        hi0,
-        hj0,
-        (i0 + side + 1).min(n) - hi0,
-        (j0 + side + 1).min(n) - hj0,
-    )?;
-    let parent = if t.k < source.m.top_level {
-        Some(raster(
-            source,
-            t.k + 1,
-            i0 / source.m.branch,
-            j0 / source.m.branch,
-            tile / source.m.branch + 2,
-            tile / source.m.branch + 2,
-        )?)
-    } else {
-        None
-    };
     let r = source.m.projection.radius_m;
     let point = |i: usize, j: usize, k: usize, z: f64| {
         let s = source.m.scale(k) as f64 * source.m.cell0_m;
@@ -339,7 +391,7 @@ fn build_model(
         ..Default::default()
     };
     // The vertices: the tile's mesh's, else every sample of the tile (row by row).
-    let verts: Vec<(usize, usize)> = match &mesh {
+    let verts: Vec<(usize, usize)> = match mesh {
         Some(mesh) => mesh.verts.iter().map(|v| (v[0] as usize, v[1] as usize)).collect(),
         None => (0..side).flat_map(|j| (0..side).map(move |i| (i, j))).collect(),
     };
@@ -364,7 +416,19 @@ fn build_model(
             } else {
                 [255; 4]
             });
-            let target = if let Some(parent) = &parent {
+            let on_next = next.map(|next| {
+                // (Nested: a vertex lies in the coarser version's triangles, or on their rim; off them, unmorphed.)
+                next.find(i as f64, j as f64).map_or(p, |(n, w)| {
+                    (0..3).map(|c| {
+                        let [vi, vj] = next.verts[next.tris[n][c] as usize];
+                        let (vi, vj) = ((i0 + vi as usize).min(data.n - 1), (j0 + vj as usize).min(data.n - 1));
+                        point(vi, vj, t.k, data.z(vi, vj)) * w[c]
+                    }).sum()
+                })
+            });
+            let target = if let Some(on) = on_next {
+                on
+            } else if let Some(parent) = parent {
                 let pi = gi / source.m.branch;
                 let pj = gj / source.m.branch;
                 let u = (gi % source.m.branch) as f64 / source.m.branch as f64;
@@ -403,7 +467,7 @@ fn build_model(
         }
     }
     let hole = |(x0, y0): (f64, f64), (x1, y1): (f64, f64)| t.k > 0 && source.hole_rect(x0, y0, x1, y1);
-    if let Some(mesh) = &mesh {
+    if let Some(mesh) = mesh {
         // (Stored only where all three corners are ground; a coarse level's guard against a hole smaller
         // than its cells, as the grid's.)
         let mut seen = HashSet::new();
@@ -478,16 +542,21 @@ fn build_model(
             model.faces.extend([[u, k, k + 1], [u, k + 1, v]]);
         }
     }
-    Ok((model, origin, data, mesh))
+    (model, origin)
 }
 fn build(source: &Source, id: usize, ex: f64, real: bool) -> Result<Built, String> {
-    let (model, origin, ground, tri) = build_model(source, id, ex, real)?;
-    Ok(Built {
-        mesh: PooledMesh::new(&model),
-        origin,
-        ground,
-        tri,
-    })
+    let t = source.m.tiles[id];
+    let tris: Vec<TileMesh> = t.meshes().into_iter().map(|at| TileMesh::read_at(&source.dir, &source.m, &t, at)).collect::<Result<Option<Vec<_>>, _>>()?.unwrap_or_default();
+    let (ground, parent) = samples(source, id)?;
+    let mut origin = DVec3::ZERO;
+    let meshes = (0..tris.len().max(1))
+        .map(|v| {
+            let (model, o) = build_version(source, id, ex, real, &ground, parent.as_ref(), tris.get(v), tris.get(v + 1));
+            origin = o;
+            PooledMesh::new(&model)
+        })
+        .collect();
+    Ok(Built { meshes, origin, ground, tris })
 }
 
 /// Tiles built at once, each by a loader of its own.
@@ -535,7 +604,8 @@ pub struct Pyramid {
     split_history: HashSet<usize>,
     /// A pixel's angle at the middle of the view (rad; 0: not known): the density cap's (`Source::density`).
     pub pixel: f64,
-    drawn: HashMap<usize, f32>,
+    /// Each drawn tile's morph and the version it was drawn at (see `Source::version`).
+    drawn: HashMap<usize, (f32, usize)>,
     generation: u64,
     key: (u64, bool),
     tick: u64,
@@ -756,7 +826,7 @@ impl Pyramid {
                 Some(&id) => id,
                 None => continue,
             };
-            let Some(&weight) = self.drawn.get(&id) else {
+            let Some(&(weight, version)) = self.drawn.get(&id) else {
                 continue;
             };
             let Some(c) = self.cache.get(&id) else {
@@ -764,7 +834,8 @@ impl Pyramid {
             };
             let t = m.tiles[id];
             let data = &c.tile.ground;
-            if let Some(mesh) = &c.tile.tri {
+            let drawn_mesh = &c.tile.meshes[version];
+            if let Some(mesh) = c.tile.tris.get(version) {
                 // (The triangles drawn near: the morph can shift a point a cell or so.)
                 let (lu, lv) = (u - (t.col * m.tile) as f64, v - (t.row * m.tile) as f64);
                 let mut near: Vec<u32> = [(-1.0, -1.0), (1.0, -1.0), (-1.0, 1.0), (1.0, 1.0)]
@@ -774,7 +845,7 @@ impl Pyramid {
                 near.sort_unstable();
                 near.dedup();
                 for n in near {
-                    let points = mesh.tris[n as usize].map(|vi| c.tile.origin + c.tile.mesh.morphed_position(vi as usize, weight).unwrap().as_dvec3());
+                    let points = mesh.tris[n as usize].map(|vi| c.tile.origin + drawn_mesh.morphed_position(vi as usize, weight).unwrap().as_dvec3());
                     if let Some(h) = super::flight::triangle_height(dir, points, m.projection.radius_m) {
                         return Some(h);
                     }
@@ -814,7 +885,7 @@ impl Pyramid {
                     ] {
                         let points = tri.map(|vi| {
                             c.tile.origin
-                                + c.tile.mesh.morphed_position(vi, weight).unwrap().as_dvec3()
+                                + drawn_mesh.morphed_position(vi, weight).unwrap().as_dvec3()
                         });
                         if let Some(h) =
                             super::flight::triangle_height(dir, points, m.projection.radius_m)
@@ -846,7 +917,7 @@ impl Pyramid {
             let Some(c) = self.cache.get(&id) else {
                 continue;
             };
-            return tile_height(m, &m.tiles[id], &c.tile.ground, c.tile.tri.as_ref(), u, v);
+            return tile_height(m, &m.tiles[id], &c.tile.ground, c.tile.tri(), u, v);
         }
         None
     }
@@ -877,7 +948,7 @@ impl Pyramid {
             .collect();
         for id in gone {
             let c = self.cache.remove(&id).unwrap();
-            self.releases.push(c.tile.mesh.id());
+            self.releases.extend(c.tile.meshes.iter().map(|m| m.id()));
         }
         let mut bytes: usize = self.cache.values().map(|c| c.tile.bytes()).sum();
         if bytes <= budget {
@@ -897,7 +968,7 @@ impl Pyramid {
             }
             let c = self.cache.remove(&id).unwrap();
             bytes -= c.tile.bytes();
-            self.releases.push(c.tile.mesh.id());
+            self.releases.extend(c.tile.meshes.iter().map(|m| m.id()));
         }
         bytes
     }
@@ -912,7 +983,7 @@ impl Pyramid {
             self.failed.clear();
             self.drawn.clear();
             for (_, c) in self.cache.drain() {
-                self.releases.push(c.tile.mesh.id());
+                self.releases.extend(c.tile.meshes.iter().map(|m| m.id()));
             }
         }
         let arrived: Vec<ResultTile> = self.results.try_iter().collect();
@@ -935,7 +1006,7 @@ impl Pyramid {
                             last: self.tick,
                         },
                     ) {
-                        self.releases.push(old.tile.mesh.id());
+                        self.releases.extend(old.tile.meshes.iter().map(|m| m.id()));
                     }
                 }
                 Err(e) => {
@@ -1051,13 +1122,13 @@ impl Pyramid {
             .filter(|i| {
                 self.cache
                     .get(i)
-                    .is_some_and(|c| c.tile.mesh.gpu_resident())
+                    .is_some_and(|c| c.tile.meshes.iter().any(|m| m.gpu_resident()))
             })
             .count();
         self.stats.largest_tile = self
             .cache
             .values()
-            .map(|c| c.tile.mesh.bytes())
+            .map(|c| c.tile.meshes[0].bytes())
             .max()
             .unwrap_or(0);
         self.stats.selected = self.selection.leaves.len();
@@ -1080,18 +1151,33 @@ impl Pyramid {
         for id in self.releases.drain(..) {
             frame.release_pooled(id);
         }
+        // Each tile's version and morph (a fallback, a split tile drawn while its children come, unmorphed).
+        let choice: HashMap<usize, (usize, f32)> = self
+            .selection
+            .visited
+            .iter()
+            .filter(|id| self.cache.contains_key(id))
+            .map(|&id| {
+                let level = if self.selection.split.contains(&id) { 0.0 } else { self.source.weight(id, eye, ex, self.pixel) };
+                (id, self.source.version(id, eye, ex, self.pixel, level))
+            })
+            .collect();
         let mut budget = UPLOAD_BYTES;
         // Coarse ancestors first, so incomplete refinement always has a resident cover.
         let mut ids = self.selection.visited.clone();
         ids.sort_unstable_by_key(|&i| std::cmp::Reverse(self.source.m.tiles[i].k));
         for id in ids {
-            if let Some(c) = self.cache.get(&id) {
-                frame.retain_pooled(c.tile.mesh.id());
-                if !c.tile.mesh.gpu_resident()
-                    && (c.tile.mesh.bytes() <= budget || budget == UPLOAD_BYTES)
-                {
-                    frame.prepare_pooled(&c.tile.mesh);
-                    budget = budget.saturating_sub(c.tile.mesh.bytes());
+            if let (Some(c), Some(&(v, _))) = (self.cache.get(&id), choice.get(&id)) {
+                let mesh = &c.tile.meshes[v];
+                for m in &c.tile.meshes {
+                    if m.gpu_resident() {
+                        frame.retain_pooled(m.id());
+                    }
+                }
+                frame.retain_pooled(mesh.id());
+                if !mesh.gpu_resident() && (mesh.bytes() <= budget || budget == UPLOAD_BYTES) {
+                    frame.prepare_pooled(mesh);
+                    budget = budget.saturating_sub(mesh.bytes());
                 }
             }
         }
@@ -1106,7 +1192,7 @@ impl Pyramid {
             &|id| {
                 self.cache
                     .get(&id)
-                    .is_some_and(|c| c.tile.mesh.gpu_resident())
+                    .is_some_and(|c| c.tile.meshes.iter().any(|m| m.gpu_resident()))
             },
             &mut drawn,
         ) && visible.contains(&root)
@@ -1127,16 +1213,20 @@ impl Pyramid {
         self.stats.fallback = 0;
         for id in drawn {
             let tile = &self.cache[&id].tile;
-            let fallback = self.selection.split.contains(&id);
-            let weight = if fallback {
+            if self.selection.split.contains(&id) {
                 self.stats.fallback += 1;
-                0.0
+            }
+            let (want, weight) = choice.get(&id).copied().unwrap_or((0, 0.0));
+            // (Its version not up yet: the nearest that is, unmorphed, until it is.)
+            let (v, weight) = if tile.meshes[want].gpu_resident() {
+                (want, weight)
             } else {
-                self.source.weight(id, eye, ex, self.pixel)
+                let near = (0..tile.meshes.len()).filter(|&v| tile.meshes[v].gpu_resident()).min_by_key(|&v| v.abs_diff(want));
+                (near.unwrap_or(want), 0.0)
             };
-            self.drawn.insert(id, weight);
-            frame.pooled_morphed(group, &tile.mesh, placed(body, tile.origin).position, weight);
-            self.stats.triangles += tile.mesh.faces() as usize;
+            self.drawn.insert(id, (weight, v));
+            frame.pooled_morphed(group, &tile.meshes[v], placed(body, tile.origin).position, weight);
+            self.stats.triangles += tile.meshes[v].faces() as usize;
         }
     }
 }
@@ -1331,13 +1421,13 @@ mod tests {
         );
         let dir = p.source.inverse(-5., -5.);
         assert!(p.drawn_ground_at_world(dir).is_none());
-        p.drawn.insert(root, 0.);
+        p.drawn.insert(root, (0., 0));
         let coarse = p.drawn_ground_at_world(dir).unwrap();
         p.drawn.clear();
-        p.drawn.insert(fine, 0.);
+        p.drawn.insert(fine, (0., 0));
         let detailed = p.drawn_ground_at_world(dir).unwrap();
         assert!((coarse - detailed).abs() > 1.);
-        p.drawn.insert(fine, 1.);
+        p.drawn.insert(fine, (1., 0));
         let morphed = p.drawn_ground_at_world(dir).unwrap();
         assert!(
             (morphed - coarse).abs() < 0.02,
@@ -1350,13 +1440,15 @@ mod tests {
     fn pyramid_tile_mesh_drawn_and_touched_on_its_triangles() {
         let f = fixture_branch(2, 4);
         let path = f.0.join("pyramid");
-        // Tile (0, 0, 0): its four corners and its middle, four triangles round the middle.
-        let words: [u16; 22] = [0, 0, 0, 4, 4, 0, 4, 4, 2, 2, 0, 1, 4, 1, 3, 4, 3, 2, 4, 2, 0, 4];
+        // Tile (0, 0, 0): its four corners and its middle, four triangles round the middle; and a coarser
+        // version (2x): its corners, two triangles.
+        let words: [u16; 36] = [0, 0, 0, 4, 4, 0, 4, 4, 2, 2, 0, 1, 4, 1, 3, 4, 3, 2, 4, 2, 0, 4, 0, 0, 0, 4, 4, 0, 4, 4, 0, 1, 3, 0, 3, 2];
         std::fs::write(path.join("mesh_0.u16"), words.iter().flat_map(|w| w.to_le_bytes()).collect::<Vec<u8>>()).unwrap();
         let mut meta: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(path.join("pyramid.json")).unwrap()).unwrap();
         meta["levels"][0]["mesh"] = "mesh_0.u16".into();
         let t0 = meta["tiles"].as_array_mut().unwrap().iter_mut().find(|t| t["k"] == 0 && t["row"] == 0 && t["col"] == 0).unwrap();
         (t0["mesh_off"], t0["mesh_nv"], t0["mesh_nt"]) = (0.into(), 5.into(), 4.into());
+        t0["mesh_lod"] = serde_json::json!([[2.0, 22, 4, 2]]);
         std::fs::write(path.join("pyramid.json"), meta.to_string()).unwrap();
         let mut p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
         let (meshed, plain) = (p.source.index[&(0, 0, 0)], p.source.index[&(0, 0, 1)]);
@@ -1365,9 +1457,23 @@ mod tests {
         assert_eq!(model.positions.len(), 5 + 4 * 2);
         let (grid, ..) = build_model(&p.source, plain, 1., true).unwrap();
         assert_eq!(grid.faces.len(), 4 * 4 * 2 + 4 * 4 * 2, "the grid's cells, and skirts round it");
+        // Its versions: the corners it shares with the coarser one morph to themselves (not to the parent).
+        let built = build(&p.source, meshed, 1., true).unwrap();
+        assert_eq!((built.meshes.len(), built.meshes[1].faces()), (2, 2 + 4 * 2));
+        assert!((0..4).all(|v| built.meshes[0].morphed_position(v, 1.) == built.meshes[0].morphed_position(v, 0.)));
+        // Which is drawn: by its morph to its parent (half way: the coarser, unmorphed), or by pixels (between
+        // the two counts, 4 and 2: half way at 2.83 a version's px).
+        let eye = p.source.bounds[meshed].0 * 1.5;
+        assert_eq!(p.source.version(meshed, eye, 1., 0., 0.5), (1, 0.));
+        assert_eq!(p.source.version(meshed, eye, 1., 0., 0.25), (0, 0.5));
+        let area = p.source.footprint_px(meshed, eye, 1., 1.);
+        let (v, w) = p.source.version(meshed, eye, 1., (area / (2. * 8f64.sqrt())).sqrt(), 0.);
+        assert!(v == 0 && (w - 0.5).abs() < 1e-4, "{v} {w}");
+        assert_eq!(p.source.version(meshed, eye, 1., (area / (2. * 10.)).sqrt(), 0.), (0, 0.));
+        assert_eq!(p.source.version(meshed, eye, 1., (area / (2. * 1.)).sqrt(), 0.), (1, 0.));
         for id in [meshed, plain] {
             p.cache.insert(id, Cached { tile: build(&p.source, id, 1., true).unwrap(), last: 0 });
-            p.drawn.insert(id, 0.);
+            p.drawn.insert(id, (0., 0));
         }
         // Inside the meshed tile, off its vertices: the plane's height, the same drawn and touched.
         let dir = p.source.inverse(-20. + 0.5 * 10. + 1.3 * 10., -20. + 0.5 * 10. + 2.6 * 10.);
@@ -1487,20 +1593,6 @@ mod tests {
             let selection = s.select(&camera(ratio), 1., 1., 0., &mut history);
             assert_eq!(selection.split.contains(&root), split, "ratio={ratio}");
         }
-        // The density cap: well within the error rule's split, split only while the children's triangles
-        // would average 2 px or more on screen (`q` over 1), with the same hysteresis; just split, the
-        // children lie on the parent's surface.
-        let cam = camera(2.0);
-        let side = s.m.tile as f64 * s.m.cell0_m * s.m.scale(s.m.tiles[root].k) as f64;
-        let seen = s.bounds[root].0.normalize().dot((cam.position - s.bounds[root].0).normalize()).abs().max(0.05);
-        let pixel = |q: f64| side * seen.sqrt() / (s.distance(root, cam.position, 1.) * (q * s.child_tris(root) * 2.0).sqrt());
-        let mut history = HashSet::new();
-        for (q, split) in [(0.99, false), (1.01, true), (0.71, true), (0.69, false)] {
-            let selection = s.select(&cam, 1., 1., pixel(q), &mut history);
-            assert_eq!(selection.split.contains(&root), split, "q={q}");
-        }
-        assert!((s.weight(fine, cam.position, 1., pixel(1.001)) - 1.).abs() < 1e-4);
-        assert!(s.weight(fine, cam.position, 1., pixel(4.)).abs() < 1e-6);
         // The last half of the geometric range morphs smoothly; the hysteresis tail is fully coarse.
         for (distance_ratio, weight) in [(0.5, 0.), (0.75, 0.5), (1., 1.), (1. / 0.7, 1.)] {
             let cam = camera(1. / distance_ratio);
@@ -1692,7 +1784,7 @@ mod tests {
         // Under pressure the one behind where the eye looks goes first, though it was used last.
         p.cache.get_mut(&b).unwrap().last = p.tick;
         let b_bytes = p.cache[&b].tile.bytes();
-        let b_mesh = p.cache[&b].tile.mesh.id();
+        let b_mesh = p.cache[&b].tile.meshes[0].id();
         assert_eq!(p.trim_cache(&protected, full - b_bytes, eye, (ca - eye).normalize(), DVec3::ZERO, 1.), full - b_bytes);
         assert!(p.cache.contains_key(&a) && p.cache.contains_key(&root) && !p.cache.contains_key(&b));
         assert_eq!(p.releases, vec![b_mesh]);
@@ -1787,7 +1879,7 @@ mod tests {
             let samples = [ids[0], ids[ids.len() / 2], *ids.last().unwrap()];
             for id in samples {
                 let built = build(s, id, 1., true).unwrap();
-                assert!(built.mesh.bytes() <= UPLOAD_BYTES);
+                assert!(built.meshes[0].bytes() <= UPLOAD_BYTES);
                 let w = s.m.levels[k].storage();
                 for j in 0..built.ground.mask.len() / built.ground.width {
                     for i in 0..built.ground.width {
@@ -1875,7 +1967,7 @@ mod tests {
         let mut oversized = 0;
         for id in selection.visited {
             let tile = build(&p.source, id, 1., true).unwrap();
-            let size = tile.mesh.bytes();
+            let size = tile.meshes[0].bytes();
             largest = largest.max(size);
             oversized += (size > UPLOAD_BYTES) as usize;
         }
@@ -1893,6 +1985,6 @@ mod tests {
             .or_else(|| p.source.m.tiles.iter().position(|t| t.k == 0))
             .unwrap();
         let built = build(&p.source, fine, 1., true).unwrap();
-        assert!(built.mesh.bytes() <= UPLOAD_BYTES);
+        assert!(built.meshes[0].bytes() <= UPLOAD_BYTES);
     }
 }

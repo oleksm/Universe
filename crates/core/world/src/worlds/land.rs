@@ -137,6 +137,45 @@ pub struct Tile {
     pub mesh_nv: usize,
     #[serde(default)]
     pub mesh_nt: usize,
+    /// Its coarser meshes (`tile_mesh 2`): nested, at `factor` x the allowed error, coarsest last.
+    #[serde(default, deserialize_with = "mesh_lod")]
+    pub mesh_lod: MeshLod,
+}
+
+/// A tile's coarser meshes: the first `n` of `v`, each (factor, offset in u16s, vertices, triangles).
+#[derive(Clone, Copy, Default, Debug)]
+pub struct MeshLod {
+    pub n: usize,
+    pub v: [(f64, u64, usize, usize); MESH_LODS],
+}
+
+/// The most coarser meshes a tile carries.
+pub const MESH_LODS: usize = 8;
+
+impl MeshLod {
+    pub fn get(&self) -> &[(f64, u64, usize, usize)] {
+        &self.v[..self.n]
+    }
+}
+
+fn mesh_lod<'de, D: serde::Deserializer<'de>>(d: D) -> Result<MeshLod, D::Error> {
+    let list: Vec<(f64, u64, usize, usize)> = Deserialize::deserialize(d)?;
+    if list.len() > MESH_LODS {
+        return Err(serde::de::Error::custom(format!("mesh_lod: {} versions, at most {MESH_LODS}", list.len())));
+    }
+    let mut lod = MeshLod { n: list.len(), ..Default::default() };
+    lod.v[..list.len()].copy_from_slice(&list);
+    Ok(lod)
+}
+
+impl Tile {
+    /// Its meshes, finest first: the full one (offset, vertices, triangles), then its coarser ones; none: a grid.
+    pub fn meshes(&self) -> Vec<(u64, usize, usize)> {
+        if self.mesh_nv == 0 {
+            return vec![];
+        }
+        std::iter::once((self.mesh_off, self.mesh_nv, self.mesh_nt)).chain(self.mesh_lod.get().iter().map(|&(_, o, v, t)| (o, v, t))).collect()
+    }
 }
 
 #[derive(Clone, Deserialize)]
@@ -240,20 +279,25 @@ const BUCKET: usize = 8;
 impl TileMesh {
     /// Tile `t`'s mesh from the pyramid in `dir`, if its level has meshes and it has one.
     pub fn read(dir: &Path, m: &Meta, t: &Tile) -> Result<Option<Self>, String> {
-        let Some(name) = &m.levels[t.k].mesh else { return Ok(None) };
         if t.mesh_nv == 0 {
             return Ok(None);
         }
+        Self::read_at(dir, m, t, (t.mesh_off, t.mesh_nv, t.mesh_nt))
+    }
+
+    /// One of tile `t`'s meshes, at (offset in u16s, vertices, triangles) in its level's mesh file.
+    pub fn read_at(dir: &Path, m: &Meta, t: &Tile, (off, nv, nt): (u64, usize, usize)) -> Result<Option<Self>, String> {
+        let Some(name) = &m.levels[t.k].mesh else { return Ok(None) };
         let path = dir.join(name);
         let mut file = File::open(&path).map_err(|e| format!("{}: {e}", path.display()))?;
-        let mut bytes = vec![0u8; (2 * t.mesh_nv + 3 * t.mesh_nt) * 2];
-        file.seek(SeekFrom::Start(t.mesh_off * 2)).map_err(|e| e.to_string())?;
+        let mut bytes = vec![0u8; (2 * nv + 3 * nt) * 2];
+        file.seek(SeekFrom::Start(off * 2)).map_err(|e| e.to_string())?;
         file.read_exact(&mut bytes).map_err(|e| format!("{}: {e}", path.display()))?;
         let w: Vec<u16> = bytes.chunks_exact(2).map(|c| u16::from_le_bytes([c[0], c[1]])).collect();
         // (Stored row, column: kept column, row, as the rasters' (i, j).)
-        let verts: Vec<[u16; 2]> = w[..2 * t.mesh_nv].chunks_exact(2).map(|p| [p[1], p[0]]).collect();
-        let tris: Vec<[u16; 3]> = w[2 * t.mesh_nv..].chunks_exact(3).map(|p| [p[0], p[1], p[2]]).collect();
-        if verts.iter().any(|v| v[0] as usize > m.tile || v[1] as usize > m.tile) || tris.iter().flatten().any(|&i| i as usize >= t.mesh_nv) {
+        let verts: Vec<[u16; 2]> = w[..2 * nv].chunks_exact(2).map(|p| [p[1], p[0]]).collect();
+        let tris: Vec<[u16; 3]> = w[2 * nv..].chunks_exact(3).map(|p| [p[0], p[1], p[2]]).collect();
+        if verts.iter().any(|v| v[0] as usize > m.tile || v[1] as usize > m.tile) || tris.iter().flatten().any(|&i| i as usize >= nv) {
             return Err(format!("{}: tile ({}, {}, {}): a vertex outside the tile or a triangle's past them", path.display(), t.k, t.row, t.col));
         }
         Ok(Some(Self::new(verts, tris, m.tile)))
