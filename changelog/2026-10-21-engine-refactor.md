@@ -68,3 +68,8 @@ From the engine review of 2026-10-21 (duplication, fragmentation, control, perfo
     plant and factory apps, each with its own buttons, tilt and range; five copies of the same yaw, pitch and
     distance code go. The observer saves its orbit as before (flattened). Captures match. Left to the ships
     session (its code): the studio's and test drive's own orbit (other drag and zoom rates).
+12. Small shared pieces: `Input::shift()` and `ctrl()` (12 hand-written either-key checks; the ships session's
+    interior and studio code left to it); `scene::star_light` lights a system as the game's scene, the planet app
+    and the scene app did each with the same lines; `scene::studio_sun` and `scene::ground_grid` for the plant
+    and factory apps. Captures match. Not done: one theme for `palette` and `hud_kit` (the HUD's look, a design
+    decision for the owner) and splitting `hud.rs`, `interior.rs`, `dev.rs` (the last two the ships session's).

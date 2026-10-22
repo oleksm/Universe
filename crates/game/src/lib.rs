@@ -762,7 +762,7 @@ impl App {
         // F3: debug info (performance, traffic, trades), then the profiler too, then off.
         // SHIFT+F3: observing, for whoever's helping — the live port, the profiler and
         // the hitch log on, and a recording (profile, trace, every frame); again: all off.
-        let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
+        let shift = input.shift();
         if input.pressed(KeyCode::F3) && shift {
             if self.observing {
                 observe::stop(self, ctx);

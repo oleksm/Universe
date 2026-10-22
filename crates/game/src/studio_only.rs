@@ -113,7 +113,7 @@ impl App for StudioOnly {
         crate::visual_assets::maintain();
         #[cfg(feature = "dev")]
         self.observe(ctx);
-        let shift = ctx.input.down(universe_engine::KeyCode::ShiftLeft) || ctx.input.down(universe_engine::KeyCode::ShiftRight);
+        let shift = ctx.input.shift();
         if ctx.input.pressed(universe_engine::KeyCode::F3) && !shift {
             self.debug = (self.debug+1)%3;
             #[cfg(feature = "dev")]
@@ -178,7 +178,7 @@ impl Default for Diagnostics {
 impl StudioOnly {
     fn observe(&mut self, ctx: &mut Context) {
         use crate::devkit::observe;
-        let shift = ctx.input.down(universe_engine::KeyCode::ShiftLeft) || ctx.input.down(universe_engine::KeyCode::ShiftRight);
+        let shift = ctx.input.shift();
         if ctx.input.pressed(universe_engine::KeyCode::F3) && shift {
             if self.diagnostics.on {
                 observe::stop(self, ctx);

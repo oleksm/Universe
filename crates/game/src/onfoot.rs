@@ -21,7 +21,7 @@ pub fn commands(ctx: &Context) -> WalkCommands {
     let mut c = WalkCommands {
         forward: input.axis(KeyCode::KeyS, KeyCode::KeyW) as f64,
         right: input.axis(KeyCode::KeyA, KeyCode::KeyD) as f64,
-        run: input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight),
+        run: input.shift(),
         jump: input.pressed(KeyCode::Space),
         yaw: input.axis(KeyCode::ArrowRight, KeyCode::ArrowLeft) as f64 * LOOK_KEYS * dt,
         pitch: input.axis(KeyCode::ArrowDown, KeyCode::ArrowUp) as f64 * LOOK_KEYS * dt,

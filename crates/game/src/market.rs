@@ -109,7 +109,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     } else if v.selected >= v.scroll + ROWS {
         v.scroll = v.selected + 1 - ROWS;
     }
-    let lots = if input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight) { 10 } else { 1 };
+    let lots = if input.shift() { 10 } else { 1 };
     let buy = input.pressed(KeyCode::Equal) || input.pressed(KeyCode::NumpadAdd) || input.pressed(KeyCode::Enter);
     let sell = input.pressed(KeyCode::Minus) || input.pressed(KeyCode::NumpadSubtract) || input.pressed(KeyCode::Delete);
     if (buy || sell)

@@ -451,7 +451,7 @@ impl universe_engine::apps::Service for AppObserver {
         }
         self.app = top.status();
         let input = &ctx.input;
-        let shift = input.down(universe_engine::KeyCode::ShiftLeft) || input.down(universe_engine::KeyCode::ShiftRight);
+        let shift = input.shift();
         if input.pressed(universe_engine::KeyCode::F3) && shift {
             if self.on {
                 stop(self, ctx);

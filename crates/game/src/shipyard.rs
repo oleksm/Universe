@@ -170,7 +170,7 @@ pub fn input_with(y: &mut Shipyard, ctx: &Context) -> bool {
     y.sync(ctx.dt);
     y.interior.refit();
     // CTRL+S in the deck studio: saved with the interior's plan.
-    let ctrl = ctx.input.down(universe_engine::KeyCode::ControlLeft) || ctx.input.down(universe_engine::KeyCode::ControlRight);
+    let ctrl = ctx.input.ctrl();
     if y.page == Page::Layout && ctrl && ctx.input.pressed(universe_engine::KeyCode::KeyS) {
         y.interior.save();
         return true;

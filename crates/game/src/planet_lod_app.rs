@@ -410,7 +410,7 @@ impl App for PlanetLodApp {
                 }
             }
         }
-        let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
+        let shift = input.shift();
         let r = self.g.d.r;
         // A drag slides over the ground (the ground follows the pointer); a right-drag or Shift+drag turns.
         let md = input.mouse_delta;

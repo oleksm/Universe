@@ -10,7 +10,7 @@ use std::sync::Arc;
 
 use universe_engine::apps::{App, Next};
 use universe_engine::glam::{DVec3, Vec2};
-use universe_engine::{Camera, Color, Context, Frame, KeyCode, Light, MouseButton};
+use universe_engine::{Camera, Color, Context, Frame, KeyCode, MouseButton};
 use universe_sim::clocks::{Runtime, Subscriptions};
 use universe_sim::world::registry::ClockKey;
 use universe_sim::{BodyKind, StarSystem};
@@ -199,17 +199,7 @@ impl App for PlanetApp {
     fn draw(&self, frame: &mut Frame, _: &Context) {
         crate::visuals::begin_view(&frame.camera, DVec3::ZERO, "planet".into());
         let sys = &self.system;
-        let star = sys.bodies.iter().position(|b| b.kind == BodyKind::Star);
-        let tint = sys.class.color().map(|c| 0.2 * c + 0.8);
-        let top = tint.iter().copied().fold(0.0, f32::max);
-        frame.light = star.map(|i| Light {
-            position: self.positions[i],
-            color: tint.map(|c| c / top),
-            luminosity: sys.luminosity,
-            reference: universe_sim::units::AU,
-            radius: sys.bodies[i].rail.radius,
-        });
-        frame.eclipsers = sys.bodies.iter().enumerate().filter(|(_, b)| !b.kind.artificial() && b.kind != BodyKind::Star).map(|(i, b)| (self.positions[i], b.rail.radius)).collect();
+        crate::scene::star_light(frame, sys, &self.positions);
         let sight = self.sight();
         self.view.draw_maps(frame, &sight);
         for (i, b) in sys.bodies.iter().enumerate() {

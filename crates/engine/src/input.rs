@@ -34,6 +34,16 @@ pub struct Input {
 }
 
 impl Input {
+    /// Either Shift held.
+    pub fn shift(&self) -> bool {
+        self.down(KeyCode::ShiftLeft) || self.down(KeyCode::ShiftRight)
+    }
+
+    /// Either Control held.
+    pub fn ctrl(&self) -> bool {
+        self.down(KeyCode::ControlLeft) || self.down(KeyCode::ControlRight)
+    }
+
     pub fn down(&self, key: KeyCode) -> bool {
         self.keys_down.contains(&key)
     }
@@ -59,8 +69,8 @@ impl Input {
         if down {
             self.text_events.push(TextEvent::Key {
                 key,
-                control: self.down(KeyCode::ControlLeft) || self.down(KeyCode::ControlRight),
-                shift: self.down(KeyCode::ShiftLeft) || self.down(KeyCode::ShiftRight),
+                control: self.ctrl(),
+                shift: self.shift(),
             });
             if self.keys_down.insert(key) {
                 self.keys_pressed.insert(key);

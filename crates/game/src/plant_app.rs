@@ -12,7 +12,7 @@ use std::sync::OnceLock;
 
 use universe_engine::apps::{App, Next};
 use universe_engine::glam::{DMat3, DQuat, DVec3, Vec2, Vec3};
-use universe_engine::{Camera, Color, Context, Frame, KeyCode, Light, MouseButton, Transform};
+use universe_engine::{Camera, Color, Context, Frame, KeyCode, MouseButton, Transform};
 use universe_sim::world::plant::{self, joint_scale, template_model, Laid, Plant, TemplateModel};
 use universe_sim::world::registry::{registry, Connector, Run, RunCarries, RunKind, TemplateDraws};
 
@@ -430,15 +430,8 @@ impl App for PlantApp {
     }
 
     fn draw(&self, frame: &mut Frame, _: &Context) {
-        frame.light = Some(Light { position: DVec3::new(-3.0e11, 6.0e11, 2.0e11), color: [1.0, 0.97, 0.92], luminosity: 1.0, reference: universe_sim::units::AU, radius: 7.0e8 });
-        let grid = Color::hex(0x1d2a36);
-        let reach = (self.orbit.distance * 0.8).clamp(100.0, 2000.0);
-        let mut v = -reach;
-        while v <= reach {
-            frame.line(DVec3::new(v, 0.0, -reach), DVec3::new(v, 0.0, reach), grid);
-            frame.line(DVec3::new(-reach, 0.0, v), DVec3::new(reach, 0.0, v), grid);
-            v += 10.0;
-        }
+        crate::scene::studio_sun(frame);
+        crate::scene::ground_grid(frame, (self.orbit.distance * 0.8).clamp(100.0, 2000.0), 10.0);
         let Some((p, runs)) = &self.open else { return };
         // The units: their models, else their boxes.
         let (mut models, mut boxes) = (0, 0);

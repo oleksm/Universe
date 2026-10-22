@@ -335,7 +335,7 @@ impl TextEditor {
             self.focused = rect.contains(input.cursor);
             self.dragging = self.focused;
             if self.focused {
-                let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
+                let shift = input.shift();
                 self.move_to(self.hit(input.cursor, rect), shift);
                 self.preferred_column = None;
             }
@@ -368,7 +368,7 @@ impl TextEditor {
             }
         }
         if rect.contains(input.cursor) && input.scroll != 0. {
-            let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
+            let shift = input.shift();
             let value = if shift {
                 &mut self.scroll_column
             } else {

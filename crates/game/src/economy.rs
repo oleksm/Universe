@@ -70,7 +70,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
             let count = universe_sim::world::recipes::of(&setup.module.identity.key).len();
             if count > 0 {
                 // (Nothing, then each thing it can make, round.)
-                let step = if input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight) { 10 } else { 1 };
+                let step = if input.shift() { 10 } else { 1 };
                 let now = setup.recipe.map_or(0, |r| r + 1) as i64;
                 let next = (now + if right { step } else { -step }).rem_euclid(count as i64 + 1) as usize;
                 app.engine.send(universe_sim::Command::SetUp { works: k, setup: s, recipe: next.checked_sub(1) });

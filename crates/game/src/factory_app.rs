@@ -11,7 +11,7 @@
 use serde::{Deserialize, Serialize};
 use universe_engine::apps::{App, Next};
 use universe_engine::glam::{DQuat, DVec3, Vec2};
-use universe_engine::{Camera, Color, Context, Frame, KeyCode, Light, MouseButton};
+use universe_engine::{Camera, Color, Context, Frame, KeyCode, MouseButton};
 
 use crate::palette::{DIM, PANEL, TEXT};
 
@@ -247,7 +247,7 @@ impl App for FactoryApp {
         self.orbit.keys(input, ctx.dt as f64, None);
         self.orbit.zoom(input, ctx.dt as f64, false, (20.0, 20_000.0));
         let ground = self.ground_at(ctx);
-        let ctrl = input.down(KeyCode::ControlLeft) || input.down(KeyCode::ControlRight);
+        let ctrl = input.ctrl();
         if let Some(o) = self.open.as_mut() {
             // A click picks what's under the cursor; a drag moves it on the grid.
             if input.button_pressed(MouseButton::Left) {
@@ -298,17 +298,9 @@ impl App for FactoryApp {
     }
 
     fn draw(&self, frame: &mut Frame, _: &Context) {
-        frame.light = Some(Light { position: DVec3::new(-3.0e11, 6.0e11, 2.0e11), color: [1.0, 0.97, 0.92], luminosity: 1.0, reference: universe_sim::units::AU, radius: 7.0e8 });
-        // The ground's grid, every 10 m, out past the parcel.
-        let reach = (self.orbit.distance * 0.8).clamp(100.0, 3000.0);
-        let step = if self.orbit.distance > 600.0 { 50.0 } else { 10.0 };
-        let grid = Color::hex(0x1d2a36);
-        let mut v = -reach;
-        while v <= reach {
-            frame.line(DVec3::new(v, 0.0, -reach), DVec3::new(v, 0.0, reach), grid);
-            frame.line(DVec3::new(-reach, 0.0, v), DVec3::new(reach, 0.0, v), grid);
-            v += step;
-        }
+        crate::scene::studio_sun(frame);
+        // The ground's grid, every 10 m (50 from afar), out past the parcel.
+        crate::scene::ground_grid(frame, (self.orbit.distance * 0.8).clamp(100.0, 3000.0), if self.orbit.distance > 600.0 { 50.0 } else { 10.0 });
         let Some(o) = &self.open else { return };
         // The parcel's outline.
         let edge = Color::hex(0xe5c778);

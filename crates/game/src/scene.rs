@@ -17,6 +17,42 @@ pub fn color(c: [f32; 3]) -> Color {
     Color::rgb(c[0], c[1], c[2])
 }
 
+/// The studios' sun: a sun-like star at a world's distance, high in the north-west of the scene.
+pub fn studio_sun(frame: &mut Frame) {
+    frame.light = Some(Light { position: DVec3::new(-3.0e11, 6.0e11, 2.0e11), color: [1.0, 0.97, 0.92], luminosity: 1.0, reference: universe_sim::units::AU, radius: 7.0e8 });
+}
+
+/// The ground's grid in a studio: lines every `step` metres out to `reach` each way, on y = 0.
+pub fn ground_grid(frame: &mut Frame, reach: f64, step: f64) {
+    let grid = Color::hex(0x1d2a36);
+    let mut v = -reach;
+    while v <= reach {
+        frame.line(DVec3::new(v, 0.0, -reach), DVec3::new(v, 0.0, reach), grid);
+        frame.line(DVec3::new(-reach, 0.0, v), DVec3::new(reach, 0.0, v), grid);
+        v += step;
+    }
+}
+
+/// System `sys`'s star as the light (bodies at `positions`), and its planets and moons as what hides it:
+/// the game's scene and every app that shows a system light it so.
+pub fn star_light(frame: &mut Frame, sys: &universe_sim::StarSystem, positions: &[DVec3]) {
+    // The eye adapts its white to the light it's under, most of the way (as
+    // it adapts to brightness): a white hull looks white under any star,
+    // warmer under a red one, cooler under a blue. (The star's own disc and
+    // glare keep its true colour.)
+    let tint = sys.class.color().map(|c| 0.2 * c + 0.8);
+    let top = tint.iter().copied().fold(0.0, f32::max);
+    frame.light = sys.bodies.iter().position(|b| b.kind == BodyKind::Star).map(|i| Light {
+        position: positions[i],
+        color: tint.map(|c| c / top),
+        luminosity: sys.luminosity,
+        reference: universe_sim::units::AU,
+        radius: sys.bodies[i].rail.radius,
+    });
+    // Planets and moons hide the sun from what's behind them.
+    frame.eclipsers = sys.bodies.iter().enumerate().filter(|(_, b)| !b.kind.artificial() && b.kind != BodyKind::Star).map(|(i, b)| (positions[i], b.rail.radius)).collect();
+}
+
 pub fn draw(frame: &mut Frame, app: &App) {
     crate::visuals::begin_view(&frame.camera, app.ship.velocity * app.warp(), format!("{:?}",app.view.origin));
     if app.mode == Mode::Observer && app.observer.studio {
@@ -34,22 +70,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     }
     // The system's star lights everything in it: its colour, and its
     // luminosity (1 at 1 AU from a sun-like star), fading with distance.
-    let class = app.view.system.class;
-    // The eye adapts its white to the light it's under, most of the way (as
-    // it adapts to brightness): a white hull looks white under any star,
-    // warmer under a red one, cooler under a blue. (The star's own disc and
-    // glare keep its true colour.)
-    let tint = class.color().map(|c| 0.2 * c + 0.8);
-    let top = tint.iter().copied().fold(0.0, f32::max);
-    frame.light = app.view.system.bodies.iter().position(|b| b.kind == BodyKind::Star).map(|i| Light {
-        position: app.view.positions[i],
-        color: tint.map(|c| c / top),
-        luminosity: app.view.system.luminosity,
-        reference: universe_sim::units::AU,
-        radius: app.view.system.bodies[i].rail.radius,
-    });
-    // Planets and moons hide the sun from what's behind them.
-    frame.eclipsers = app.view.system.bodies.iter().enumerate().filter(|(_, b)| !b.kind.artificial() && b.kind != BodyKind::Star).map(|(i, b)| (app.view.positions[i], b.rail.radius)).collect();
+    star_light(frame, &app.view.system, &app.view.positions);
     // Ships, stations, gates and rocks shadow each other near the eye.
     frame.shadow_reach = SHADOW_REACH;
     frame.shadow_focus = shadow_focus(frame, app);
