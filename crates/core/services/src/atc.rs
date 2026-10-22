@@ -143,6 +143,8 @@ pub enum What {
     PadFreed { system: usize, port: Facility, pad: usize },
     CorridorGranted { system: usize, body: usize },
     CorridorFreed { system: usize, body: usize },
+    /// Asked for `at` and refused (see `clearance`): nothing granted, nothing queued.
+    Refused { system: usize, at: Facility, why: crate::clearance::Refusal },
 }
 
 impl TrafficControl {
@@ -168,6 +170,13 @@ impl TrafficControl {
     pub fn request_from(&mut self, ship: ShipId) -> Cause {
         self.requests += 1;
         Cause::Message { sender: ship.0 as u64, id: self.requests }
+    }
+
+    /// Ship `ship`'s request for `at` in `system` refused (see `clearance`): noted, nothing granted.
+    pub fn refuse(&mut self, system: usize, at: Facility, ship: ShipId, why: crate::clearance::Refusal) {
+        log::debug!("ATC refused ship {} {at:?} in system {system}: {why:?}", ship.0);
+        let cause = self.request_from(ship);
+        self.note(ship, What::Refused { system, at, why }, cause);
     }
 
     /// Ship `ship` asks for a pad at `port` in `system` at time `now`.

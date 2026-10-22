@@ -280,13 +280,38 @@ impl Universe {
         use crate::vessel::Request;
         match r {
             Request::Pad { system, port, ship, now } => {
+                if let Some(why) = self.refused(ship, system, port) {
+                    return self.services.atc.refuse(system, port, ship, why);
+                }
                 self.services.atc.request_pad(system, port, ship, now);
             }
             Request::Corridor { system, body, ship, now } => {
+                let at = match self.world.system(system).bodies.get(body).map(|b| b.kind) {
+                    Some(universe_world::BodyKind::Gate) => universe_world::Facility::Gate(body),
+                    _ => universe_world::Facility::Station(body),
+                };
+                if let Some(why) = self.refused(ship, system, at) {
+                    return self.services.atc.refuse(system, at, ship, why);
+                }
                 self.services.atc.request_corridor(system, body, ship, now);
             }
             market => self.market_request(id, market),
         }
+    }
+
+    /// Why traffic control refuses ship `id` `at` in `system`, by its own records (the system's standing of the
+    /// pilot, its law, the pilot's credits): the rule the pilot asked before it asked (`clearance`), not its word.
+    fn refused(&self, id: ShipId, system: usize, at: universe_world::Facility) -> Option<universe_services::clearance::Refusal> {
+        let ship = &self.vessels.get(id)?.ship;
+        let sys = self.world.system(system);
+        let now = self.world.time;
+        let standing = universe_services::clearance::Standing {
+            hostile: self.services.standings.of(id, system) <= crate::standing::HOSTILE,
+            outlaw: self.services.law.outlawed(id, system, now),
+            credits: self.services.ledger.credits(universe_services::Party::Pilot(id)),
+        };
+        let span = crate::pilots::gate_span(&sys, at, |to| self.world.distance_ly(system, to));
+        universe_services::clearance::refusal(&sys, ship, at, &standing, span).map(|(why, _)| why)
     }
 
     /// The charts (shared with clients).

@@ -4,6 +4,7 @@
 //! (see `docs/rearchitecture.md` §5).
 
 pub mod atc;
+pub mod clearance;
 pub mod economy;
 pub mod land;
 pub mod lots;

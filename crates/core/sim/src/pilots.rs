@@ -191,35 +191,17 @@ impl Bus for PoolLink<'_> {
     fn request_clearance(&mut self, target: Option<NavTarget>) -> Result<NavTarget, String> {
         let positions = self.rails();
         let target = target.or_else(|| universe_services::atc::nearest_station(&self.sys, self.ship.position, &positions));
-        // The system's docks refuse its enemies, and those outside its law.
-        if self.view.snaps.get(self.id.0).is_some_and(|s| s.hostile) {
-            return Err(format!("REFUSED - {} TREATS YOU AS AN ENEMY", self.sys.name.to_uppercase()));
-        }
-        if self.view.snaps.get(self.id.0).is_some_and(|s| s.outlaw) {
-            return Err(format!("REFUSED - YOU ARE OUTSIDE {}'S LAW", self.sys.name.to_uppercase()));
-        }
-        // A port on ground its lift can't hold it over (or its legs can't stand on): no clearance.
-        if let Some(NavTarget::Spaceport(p)) = target
-            && let Some(sp) = self.sys.spaceports.get(p)
-        {
-            let g = self.sys.bodies[sp.body].surface_gravity();
-            let (lift, legs) = universe_world::legs::ground_check(self.ship.spec(), self.ship.mass(), g);
-            if lift < 1.0 {
-                return Err(format!("REFUSED - ITS LIFT HOLDS {lift:.2} OF ITS WEIGHT ON {}", self.sys.bodies[sp.body].name.to_uppercase()));
-            }
-            if legs.is_some_and(|v| v <= 0.0) {
-                return Err(format!("REFUSED - ITS LEGS CAN'T STAND ITS WEIGHT ON {}", self.sys.bodies[sp.body].name.to_uppercase()));
-            }
-        }
-        // A gate: its crossing paid for, or no clearance.
-        if let Some(NavTarget::Gate(g)) = target
-            && let Some(to) = self.sys.bodies.get(g).and_then(|b| b.link)
-        {
-            let span = self.view.charts.distance_ly(self.system, to) * universe_physics::laws::LIGHT_YEAR;
-            let toll = universe_world::gate::crossing_toll(self.ship.mass(), span);
-            let credits = self.view.credits.get(&self.id).copied().unwrap_or(0.0);
-            if credits < toll {
-                return Err(format!("REFUSED - THE CROSSING COSTS {toll:.0} CR, YOU HAVE {credits:.0}"));
+        // (The rule traffic control applies again before it grants anything: see `clearance`.)
+        if let Some(target) = target {
+            let snap = self.view.snaps.get(self.id.0);
+            let standing = universe_services::clearance::Standing {
+                hostile: snap.is_some_and(|s| s.hostile),
+                outlaw: snap.is_some_and(|s| s.outlaw),
+                credits: self.view.credits.get(&self.id).copied().unwrap_or(0.0),
+            };
+            let span = gate_span(&self.sys, target, |to| self.view.charts.distance_ly(self.system, to));
+            if let Some((_, why)) = universe_services::clearance::refusal(&self.sys, &self.ship, target, &standing, span) {
+                return Err(why);
             }
         }
         universe_services::atc::request(&self.sys, &self.ship, target, self.view.time, &positions)
@@ -229,6 +211,13 @@ impl Bus for PoolLink<'_> {
         let positions = self.rails();
         !universe_services::atc::lapsed(&self.sys, &self.ship, target, self.view.time, &positions)
     }
+}
+
+/// How far a gate's crossing goes (m), if `target` is a gate: `ly` gives light years to its far side.
+pub(crate) fn gate_span(sys: &StarSystem, target: NavTarget, ly: impl Fn(usize) -> f64) -> Option<f64> {
+    let NavTarget::Gate(g) = target else { return None };
+    let to = sys.bodies.get(g)?.link?;
+    Some(ly(to) * universe_physics::laws::LIGHT_YEAR)
 }
 
 /// What the pilot expects of its ship once command `c` is carried out:
