@@ -10,6 +10,10 @@ sources:
 - document: docs/spaceship-building-workflow-proposal.md
   section: 5.1 Use the existing release state machine
   note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.5 Co-design cockpit, routes and hull
+  note: 'Owner deferred-module correction,2026-10-22: correct reuse/ownership does not authorize current inclusion;
+    defer geometry from source/render/export while retaining future clearance data.'
 order: 7
 depends_on:
 - ship-stage.production
@@ -17,6 +21,9 @@ entry:
 - Required source/export evidence current for exact candidate and supported consumer contract.
 exit:
 - Delegated or explicit acceptance binds hashes; installer creates immutable package and handoff.
+- Exact source/render/export and inventory reconcile to the current included/deferred delivery scope. Deferred
+  product geometry is absent, including hidden copies and proxies; future clearance data may be retained externally,
+  and deferred functions remain outside the accepted capability.
 failure:
 - Any content change creates a new candidate; never edit an installed package.
 inputs:
@@ -30,5 +37,6 @@ rules:
 - ship-rule.lifecycle
 - ship-rule.authority
 - ship-rule.claim-boundaries
+- ship-rule.module-reuse
 decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
   forks; technical roles resolve routine repairs within those constraints.

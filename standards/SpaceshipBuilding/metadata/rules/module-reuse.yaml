@@ -12,6 +12,10 @@ sources:
   section: 3.5 Co-design cockpit, routes and hull
   note: 'Owner correction, 2026-10-21: discover and reuse existing modules before interior sizing; no custom
     fit-out substitutes.'
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.5 Co-design cockpit, routes and hull
+  note: 'Owner deferred-module correction,2026-10-22: correct reuse/ownership does not authorize current inclusion;
+    defer geometry from source/render/export while retaining future clearance data.'
 statement: 'Before G3 aisle, cabin or cockpit sizing, discover reusable modules for the agreed functions. Search
   the current registry and the actual Studio/runtime catalogue; inspect installed model availability and the
   supported placement consumer. Record candidate keys, record revision/hash, real envelope, mass, mount/port
@@ -77,7 +81,19 @@ statement: 'Before G3 aisle, cabin or cockpit sizing, discover reusable modules 
   clearance, not applicable or pass by default. A reasoned not-applicable disposition needs evidence. Recheck
   affected clearances after placement, source/model, mount, route, ownership or export changes. Declaration
   counterexamples include an inherited pilot substitute, an unknown required clearance marked pass and scaled
-  reference geometry presented as unchanged equipment.'
+  reference geometry presented as unchanged equipment.
+
+
+  Treat module discovery, future arrangement selection and current delivery inclusion as separate decisions.
+  For each candidate, record a per-delivery ledger of included/installed versus deferred instances and the
+  authority for that scope. Correctly reusing an existing catalogue seat, dash or other product does not authorize
+  displaying or installing it now. If the delivery defers it, remove its geometry and copies/proxies from the
+  active delivered source, render scene and export, including hidden objects, linked instances and disabled
+  collections, and prevent the build from regenerating them. Keep immutable library assets intact; retain product
+  identity, dimensions, hashes, tentative poses and required future clearance data separately. Do not render
+  a reservation as installed equipment or infer future fit/function from its absence. Reconcile actual source/build/render/export
+  and BOM/fit rosters against the ledger, invalidate withdrawn previews and preserve unresolved future module/operational
+  gates. A limited hull study may proceed in its stated scope while deferred equipment remains uninstalled.'
 applies_to:
 - G3 arrangement, cockpit and interior fit-out, and material revisions affecting module allocation.
 verification:
@@ -89,6 +105,9 @@ verification:
   new-object names.
 - Bind each clearance and allowance to its provenance, actual model/frame, witness and dependent claim; unknowns
   cannot pass.
+- Reconcile per-delivery installed/deferred scope with actual source objects, build outputs, renders, export
+  and BOM/fit roster. Catalogue ownership, selection for a future arrangement or correct reuse does not authorize
+  current inclusion; hidden/disabled geometry still counts as present in the source.
 limitations:
 - A definition or declaration check does not allocate a module, prove geometric fit or implement an unsupported
   placement/holder layer.
