@@ -18,6 +18,10 @@ sources:
   section: 6.1 Use a complete evidence checklist
   note: 'Owner assembly-QC correction, 2026-10-21: closure, gear bays, services and cockpit direction; complete
     state/pair/view coverage.'
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: 'Owner gear-integration correction, 2026-10-22: review whole-ship deployed/stowed bay/support silhouette
+    and ground height before detail; rejected packaging returns to G2/G3.'
 statement: 'Resolve structural masses and openings before surface detail; detail must explain use or construction.
 
 
@@ -79,7 +83,18 @@ statement: 'Resolve structural masses and openings before surface detail; detail
   unresolved or unjustifiably excluded required rows prevent whole-assembly acceptance; preserve the failing
   witness and last passing subset. Forbidden combined states need an interlock contract and separate consumer
   evidence, not convenient omission. Sampled clearance does not prove continuous freedom, and visual closure
-  is not pressure or structural qualification.'
+  is not pressure or structural qualification.
+
+
+  Before detailing landing-gear bays, fairings or supports, review their actual blockout in the complete hull.
+  Bind deployed, stowed and transition side/front/underside silhouettes and clay views to current source, cameras,
+  scale and ground plane. State extended and compressed contact heights and the ramp-to-ground relationship.
+  Judge the landing stance, bay protrusion, belly continuity, attachment junctions and primary/subordinate
+  mass hierarchy against the current brief. A clearance shroud is a space reservation until this integrated
+  review passes; neither an isolated assembly render nor recolouring rejected hanging boxes changes the shape
+  finding. Return the affected hull/bay/support arrangement to G2/G3, preserve applicable unscaled products
+  and required crew/ground/load envelopes, and invalidate dependent detail, mechanism, fit and export evidence
+  until repaired inputs are rechecked.'
 applies_to:
 - Establish readable construction without false engineering claims
 verification:
@@ -89,6 +104,9 @@ verification:
   acceptance.
 - Reconcile complete assembly states/pairs/views; a valid partial sweep cannot pass missing or failed required
   assembly rows.
+- Require integrated hull/gear/bay/support silhouette and clay review with ground height before detail; reopen
+  G2/G3 packaging on a rejected hanging/protruding mass, rather than accepting recolour or an isolated clearance
+  pass.
 limitations:
 - This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
 related:

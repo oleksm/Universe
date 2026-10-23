@@ -11,6 +11,10 @@ sources:
   section: 3.6 Establish readable construction without false engineering claims
   note: 'Owner assembly-QC correction, 2026-10-21: closure, gear bays, services and cockpit direction; complete
     state/pair/view coverage.'
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: 'Owner gear-integration correction, 2026-10-22: review whole-ship deployed/stowed bay/support silhouette
+    and ground height before detail; rejected packaging returns to G2/G3.'
 purpose: Declare closure and installation ownership early, then bind complete assembly QC to actual parts,
   states, pairs and views.
 contents:
@@ -26,6 +30,9 @@ contents:
   aggregate status and retained partial results.
 - Closed/open/intermediate/combined-state stern, underside, cockpit and interior witnesses, exact source/export
   hashes, sampling limits and consumer status.
+- Integrated early hull/gear/bay/support blockout, deployed/stowed/transition side/front/underside silhouettes
+  and clay, declared ground plane, extension/compression contact heights and ramp relationship; current whole-ship
+  visual verdict and shape-feedback disposition before detail.
 boundary: An early plan may contain bounded unknowns; it does not pass architecture, mechanism, pressure, assembly
   or runtime acceptance.
 consumers:

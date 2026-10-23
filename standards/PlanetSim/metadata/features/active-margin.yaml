@@ -5,7 +5,30 @@ identity:
   about: 'A continent edge at a subduction zone: trench, forearc, arc, often a narrow shelf.'
 register: province
 family: tectonic
-trigger: Not yet specified for the simulator; catalogue definition only.
+trigger: Continental marine margin adjacent within TECTONIC_REACH_M to currently active convergent or transform
+  plate boundary, supported by relative motion >= BOUNDARY_SPEED_MIN_M_S and crust/coast topology. Store boundary
+  type and polarity; latitude, a mountain belt or old scar alone cannot make a current active margin. Apply finite-input,
+  resolved-scale and candidate/provenance rules in docs/planet-feature-trigger-rules-2026-10-22.md; missing required
+  evidence stays unknown, not a confirmed absence or occurrence.
+trigger_params:
+- name: TECTONIC_REACH_M
+  value: 250000.0
+  unit: m
+  meaning: Regional maximum association distance to actual boundary geometry; not a claim of uniform boundary width.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
+- name: BOUNDARY_SPEED_MIN_M_S
+  value: 3.168808781402895e-11
+  unit: m/s
+  meaning: Relative normal/tangential motion screening of1mm/yr, chosen numerical activity threshold.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
 built: false
 status: draft
 description: 'A continent edge at a subduction zone: trench, forearc, arc, often a narrow shelf.'
@@ -37,3 +60,12 @@ basis:
   tier: derived
   source: planet-forge 3c40281 docs/catalogue/kinds.py
   note: Derived from the proposed size range using the eight numeric bands; inherits size review.
+- of:
+  - trigger
+  - trigger_params
+  tier: invented
+  review: true
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Owner-authorized detector proposal. Qualitative source definitions and provisional screening constants are
+    distinguished in the source; not a built generator or calibrated occurrence rate. Missing support and subcell
+    geometry remain unresolved.

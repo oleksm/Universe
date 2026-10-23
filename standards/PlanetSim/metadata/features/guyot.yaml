@@ -5,7 +5,30 @@ identity:
   about: A flat-topped seamount, its top cut by waves when it stood at sea level.
 register: feature
 family: marine
-trigger: Not yet specified for the simulator; catalogue definition only.
+trigger: Submerged isolated volcanic edifice with a resolved flat summit and evidence of former near-sea-level truncation/reef
+  cap followed by subsidence. A seamount plus old crust alone is insufficient; flat summit without erosion history
+  may be an unresolved tablemount candidate. Apply finite-input, resolved-scale and candidate/provenance rules in
+  docs/planet-feature-trigger-rules-2026-10-22.md; missing required evidence stays unknown, not a confirmed absence
+  or occurrence.
+trigger_params:
+- name: SEAMOUNT_RELIEF_MIN_M
+  value: 1000.0
+  unit: m
+  meaning: Catalogue screen for a resolved isolated marine volcanic high; smaller knolls remain distinct.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
+- name: SUMMIT_RELIEF_MAX_M
+  value: 100.0
+  unit: m
+  meaning: Flat-summit local relief screen; past truncation evidence required for guyot interpretation.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
 built: false
 status: draft
 description: A flat-topped seamount, its top cut by waves when it stood at sea level.
@@ -37,3 +60,12 @@ basis:
   tier: derived
   source: planet-forge 3c40281 docs/catalogue/kinds.py
   note: Derived from the proposed size range using the eight numeric bands; inherits size review.
+- of:
+  - trigger
+  - trigger_params
+  tier: invented
+  review: true
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Owner-authorized detector proposal. Qualitative source definitions and provisional screening constants are
+    distinguished in the source; not a built generator or calibrated occurrence rate. Missing support and subcell
+    geometry remain unresolved.

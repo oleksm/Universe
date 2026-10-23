@@ -15,6 +15,10 @@ sources:
   section: 4.2 Resolve the complete ramp and landing mechanism
   note: 'Owner assembly-QC correction, 2026-10-21: closure, gear bays, services and cockpit direction; complete
     state/pair/view coverage.'
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: 'Owner gear-integration correction, 2026-10-22: review whole-ship deployed/stowed bay/support silhouette
+    and ground height before detail; rejected packaging returns to G2/G3.'
 method:
 - Reconcile expected versus actual component, state, interaction-pair and view rosters independently of checker
   name/parent filters; preserve hashes and classify every exclusion with a bounded reason.
@@ -37,6 +41,9 @@ method:
   tested.'
 - Apply ship-check.crew-routes to continuous support and actor/task/state traversal, reachable operating positions
   outside mechanism sweeps and declared recovery sequences; collision-only results cannot pass inhabitation.
+- Confirm early integrated gear/bay/support silhouette and ground-height review in the whole assembly before
+  dependent detail. Recheck actual deployed, stowed and transition ground contacts, support junctions and ramp
+  relation after arrangement changes; keep visual, clearance and load results separately required.
 evidence:
 - Assembly-state plan with independent expected/actual component/state/pair/view reconciliation and reasoned
   exclusions.

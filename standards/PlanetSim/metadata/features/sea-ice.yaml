@@ -5,7 +5,21 @@ identity:
   about: Frozen sea water, its extent changing with the seasons.
 register: water
 family: marine
-trigger: Not yet specified for the simulator; catalogue definition only.
+trigger: Sea water frozen in place or advected as sea ice, with ice concentration >= COVER_FRACTION_MIN at a specified
+  time/season. Require sea-ice phase or concentration and marine salinity/temperature basis; an ocean air-temperature
+  threshold alone is only freezing potential, not sea ice. Apply finite-input, resolved-scale and candidate/provenance
+  rules in docs/planet-feature-trigger-rules-2026-10-22.md; missing required evidence stays unknown, not a confirmed
+  absence or occurrence.
+trigger_params:
+- name: COVER_FRACTION_MIN
+  value: 0.5
+  unit: '1'
+  meaning: Fractional cover threshold for boundary extraction; chosen.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
 built: false
 status: draft
 description: Frozen sea water, its extent changing with the seasons.
@@ -37,3 +51,12 @@ basis:
   tier: derived
   source: planet-forge 3c40281 docs/catalogue/kinds.py
   note: Derived from the proposed size range using the eight numeric bands; inherits size review.
+- of:
+  - trigger
+  - trigger_params
+  tier: invented
+  review: true
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Owner-authorized detector proposal. Qualitative source definitions and provisional screening constants are
+    distinguished in the source; not a built generator or calibrated occurrence rate. Missing support and subcell
+    geometry remain unresolved.

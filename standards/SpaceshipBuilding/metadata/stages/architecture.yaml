@@ -10,6 +10,10 @@ sources:
 - document: docs/spaceship-building-workflow-proposal.md
   section: 5.1 Use the existing release state machine
   note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: 'Owner gear-integration correction, 2026-10-22: review whole-ship deployed/stowed bay/support silhouette
+    and ground height before detail; rejected packaging returns to G2/G3.'
 order: 3
 depends_on:
 - ship-stage.silhouette
@@ -38,6 +42,9 @@ exit:
 - Each claimed designed assembly has a current region-spec intent/interface contract, actual object mapping
   and scoped construction evidence plus independent assembled visual critique. Mesh separation alone does not
   establish parts-designed; unresolved required interfaces or whole-ship visual failures hold dependent detail.
+- Integrated gear bays, doors and supports have current whole-ship deployed/stowed/transition silhouette and
+  clay review, with actual ground plane, extended/compressed contact heights and ramp relation. A clearance
+  reservation is not final exterior geometry; unresolved load, mount or mechanism data stays explicit.
 failure:
 - Reopen the affected shape/arrangement only; keep approved unrelated regions.
 - Missing inventory, product, model or consumer support blocks dependent arrangement/release; record the gap
@@ -47,6 +54,10 @@ failure:
   evidence before resuming.
 - If clearance-driven shape changes erase protected identity, return affected G2/G3 alternatives with unchanged
   applicable envelopes; no detail, shrink-to-fit or stale visual packet closes the conflict.
+- Rejected bay/support silhouette or ground-height integration returns the affected hull/bay/gear arrangement
+  to G2/G3 blockout before detail. Invalidate dependent views, fit, mechanism and export results for changed
+  inputs; recolour alone cannot close a shape or packaging rejection. Preserve applicable unscaled products,
+  crew routes and ground/load requirements.
 inputs:
 - ship-artifact.silhouette-study
 - ship-artifact.requirements

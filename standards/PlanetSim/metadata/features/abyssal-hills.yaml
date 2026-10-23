@@ -5,7 +5,39 @@ identity:
   about: Ridges a few hundred metres high parallel to the ridge that made them; the commonest landform on Earth.
 register: feature
 family: marine
-trigger: Not yet specified for the simulator; catalogue definition only.
+trigger: Deep oceanic crust with resolved repeated low-relief hills, outside ridge axes, isolated seamounts and
+  flat abyssal sediment plains. Require local bathymetry at the hill scale; crust age or roughness over 130km alone
+  gives a rough-seafloor province, not individual abyssal hills. Apply finite-input, resolved-scale and candidate/provenance
+  rules in docs/planet-feature-trigger-rules-2026-10-22.md; missing required evidence stays unknown, not a confirmed
+  absence or occurrence.
+trigger_params:
+- name: ABYSSAL_DEPTH_MIN_M
+  value: 3000.0
+  unit: m
+  meaning: Depth candidate threshold, never sufficient without marine morphology; chosen.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
+- name: ABYSSAL_HILL_RELIEF_MIN_M
+  value: 50.0
+  unit: m
+  meaning: Lower resolved relief threshold for hill morphology; chosen.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
+- name: ABYSSAL_HILL_RELIEF_MAX_M
+  value: 1000.0
+  unit: m
+  meaning: Upper hill relief screening threshold; isolated volcanic highs require separate classification.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
 built: false
 status: draft
 description: Ridges a few hundred metres high parallel to the ridge that made them; the commonest landform
@@ -38,3 +70,12 @@ basis:
   tier: derived
   source: planet-forge 3c40281 docs/catalogue/kinds.py
   note: Derived from the proposed size range using the eight numeric bands; inherits size review.
+- of:
+  - trigger
+  - trigger_params
+  tier: invented
+  review: true
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Owner-authorized detector proposal. Qualitative source definitions and provisional screening constants are
+    distinguished in the source; not a built generator or calibrated occurrence rate. Missing support and subcell
+    geometry remain unresolved.
