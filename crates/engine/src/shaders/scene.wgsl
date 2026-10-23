@@ -446,13 +446,48 @@ fn through_air(c: vec3<f32>, p: vec3<f32>, center: vec3<f32>, radius: f32, air: 
 // How bright sunlit air is, against ground of the same brightness lit straight on.
 const AIR_GLOW: f32 = 0.55;
 
+// A pool tile's texture as sampled for a pixel (see `fs_pool`): whether it has one, its colour (linear) and its lit
+// normal in the texel's own frame.
+struct TileSample {
+    on: bool,
+    colour: vec3<f32>,
+    normal: vec3<f32>,
+};
+
 @fragment
 fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
+    return shade(in, TileSample(false, vec3<f32>(0.0), vec3<f32>(0.0)));
+}
+
+// The pool's meshes: as `fs_mesh`, with a tile's texture where it has one resident (only the pool's pipeline has its
+// bindings, group 3).
+@fragment
+fn fs_pool(in: MeshOut) -> @location(0) vec4<f32> {
+    // (Not a globe's ground patch: those keep a signed slope in data.w.)
+    let on = in.data.w < -0.5 && in.globe.x < 0.5;
+    let uv = in.data.xy;
+    let dx = dpdx(uv);
+    let dy = dpdy(uv);
+    var tile = TileSample(false, vec3<f32>(0.0), vec3<f32>(0.0));
+    if (on) {
+        // (Rounded: interpolated across the face, a constant can come out a hair under itself.)
+        let layer = i32(round(-in.data.w)) - 1;
+        tile = TileSample(true, textureSampleGrad(tile_colour, tile_smp, uv, layer, dx, dy).rgb, textureSampleGrad(tile_normal, tile_smp, uv, layer, dx, dy).xyz * 2.0 - 1.0);
+    }
+    return shade(in, tile);
+}
+
+// A mesh's face or edge lit (and its tile's texture, if any: `tile`).
+fn shade(in: MeshOut, tile: TileSample) -> vec4<f32> {
     // (Globe surfacing, sampled whatever the mesh: derivatives need it out
     // here, and it's cheap; used only for a globe.)
     let dir = normalize(in.local);
     let px = dpdx(in.at);
     let py = dpdy(in.at);
+    // (A pool tile's texture: whether it has one, and its steps across the screen.)
+    let tile_on = tile.on;
+    let tile_dx = dpdx(in.data.xy);
+    let tile_dy = dpdy(in.data.xy);
     let on_patch = in.patch_scale < 0.5;
     // (Where on the world is good to about a metre only (it's in radii, in
     // 32 bits): on a patch its steps across the screen come from the eye's
@@ -525,6 +560,9 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     let hy = dpdy(lift);
     var n = normalize(in.normal);
     var albedo = in.color;
+    if (tile_on) {
+        albedo = vec4<f32>(tile.colour, in.color.a);
+    }
     if (in.globe.x > 0.5) {
         // Slopes from the height (surface gradient: no tangents needed).
         let r1 = cross(py, n);
@@ -668,7 +706,19 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
         // (A face that carries its own flat normal and size (data: the planet LOD's base tiles) is shaded flat
         // while it spans a pixel or two (each its own relief), smooth by its corners once it spans several.)
         var nv = n;
-        if (dot(in.data.xyz, in.data.xyz) > 0.25) {
+        if (tile_on) {
+            // (Its lit normal per texel, in the texel's own frame: up from the world, along the tile's columns and
+            // rows as the screen steps over them.)
+            let t = tile.normal;
+            let up = normalize(in.at - g.view_world.xyz);
+            let det = tile_dx.x * tile_dy.y - tile_dx.y * tile_dy.x;
+            var along = (px * tile_dy.y - py * tile_dx.y) * sign(det);
+            along = along - up * dot(along, up);
+            if (dot(along, along) > 1e-20 && dot(t, t) > 0.01) {
+                let e = normalize(along);
+                nv = normalize(e * t.x + cross(up, e) * t.y + up * t.z);
+            }
+        } else if (in.data.w > 0.0 && dot(in.data.xyz, in.data.xyz) > 0.25) {
             let span = in.data.w / max(0.5 * (length(px) + length(py)), 1e-6);
             nv = normalize(mix(normalize(in.data.xyz), n, smoothstep(2.0, 6.0, span)));
         }
@@ -818,6 +868,8 @@ struct PoolDraw {
     face_start: u32,
     edge_start: u32,
     morph: f32,
+    // Its tile texture's layer + 1 (0: none resident).
+    layer: u32,
 };
 struct PoolGroup {
     c0: vec4<f32>,
@@ -838,6 +890,18 @@ struct PoolGroup {
 @group(3) @binding(1) var<storage, read> pool_draws: array<PoolDraw>;
 @group(3) @binding(2) var<storage, read> pool_groups: array<PoolGroup>;
 @group(3) @binding(3) var<storage, read> pool_lists: array<vec4<u32>>;
+// The pool's tile textures (pool.rs `TileTextures`): colour (sRGB, decoded on sampling) and lit normal (each texel's
+// own frame: x along its columns, y along its rows, z up from the world), a layer a tile.
+@group(3) @binding(4) var tile_colour: texture_2d_array<f32>;
+@group(3) @binding(5) var tile_normal: texture_2d_array<f32>;
+@group(3) @binding(6) var tile_smp: sampler;
+// A tile texture's side (texels): pool.rs `TILE_TEX`.
+const TILE_TEX: f32 = 256.0;
+
+// A pool vertex's words: its position (3), then its normal, colour and texel if it has them.
+fn pool_stride(flags: u32) -> u32 {
+    return 3u + (flags & 1u) + ((flags >> 1u) & 1u) + ((flags >> 6u) & 1u);
+}
 
 // The draw corner `c` of a layer belongs to: the last whose first corner is at or before it.
 fn pool_find(layer: u32, c: u32, edges: bool) -> u32 {
@@ -905,7 +969,7 @@ fn pool_in(d: PoolDraw, pos: vec3<f32>, normal: vec3<f32>, color: vec4<f32>) -> 
 // Vertex `i` of the mesh at `h` where it's drawn: moved toward its parent's shape by its morph
 // band (by its distance from the eye), if it has one.
 fn pool_pos(d: PoolDraw, h: u32, flags: u32, i: u32) -> vec3<f32> {
-    let a = h + 8u + i * (3u + (flags & 1u) + ((flags >> 1u) & 1u));
+    let a = h + 8u + i * pool_stride(flags);
     var p = vec3<f32>(bitcast<f32>(pool[a]), bitcast<f32>(pool[a + 1u]), bitcast<f32>(pool[a + 2u]));
     if ((flags & 8u) != 0u) {
         let m = h + pool[h + 7u] + i * 4u;
@@ -924,7 +988,7 @@ fn pool_normal(h: u32, flags: u32, i: u32) -> vec3<f32> {
     if ((flags & 1u) == 0u) {
         return vec3<f32>(0.0);
     }
-    return oct_normal(pool[h + 8u + i * (3u + 1u + ((flags >> 1u) & 1u)) + 3u]);
+    return oct_normal(pool[h + 8u + i * pool_stride(flags) + 3u]);
 }
 
 // A pool mesh's colour bytes are sRGB as given (`PoolModel::colors`): to the scene's linear light (the
@@ -940,8 +1004,13 @@ fn pool_color(h: u32, flags: u32, i: u32) -> vec4<f32> {
     if ((flags & 2u) == 0u) {
         return vec4<f32>(1.0);
     }
-    let stride = 3u + (flags & 1u) + 1u;
-    return pool_srgb(pool[h + 8u + i * stride + stride - 1u]);
+    return pool_srgb(pool[h + 8u + i * pool_stride(flags) + 3u + (flags & 1u)]);
+}
+
+// Vertex `i`'s texel on its tile texture (column, row), if it has one.
+fn pool_texel(h: u32, flags: u32, i: u32) -> vec2<f32> {
+    let w = pool[h + 8u + i * pool_stride(flags) + 3u + (flags & 1u) + ((flags >> 1u) & 1u)];
+    return vec2<f32>(f32(w & 0xffffu), f32(w >> 16u));
 }
 
 @vertex
@@ -970,7 +1039,13 @@ fn vs_pool(@builtin(vertex_index) c: u32, @builtin(instance_index) layer: u32) -
     if ((flags & 4u) != 0u) {
         color = pool_srgb(pool[h + pool[h + 6u] + face]);
     }
-    return mesh_vertex(pool_in(d, p, n, color));
+    var o = mesh_vertex(pool_in(d, p, n, color));
+    // (A tile with its texture resident: where on it, and which layer, in `data` (a pool mesh has none of its own):
+    // its texels' centres, and minus the layer + 1.)
+    if ((flags & 64u) != 0u && d.layer > 0u) {
+        o.data = vec4<f32>((pool_texel(h, flags, i) + 0.5) / TILE_TEX, 0.0, -f32(d.layer));
+    }
+    return o;
 }
 
 @vertex

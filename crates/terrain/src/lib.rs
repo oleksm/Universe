@@ -19,7 +19,7 @@ use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
 use universe_engine::glam::{DVec3, Vec3};
-use universe_engine::{Camera, Color, Frame, Mesh, Morph, PoolModel, PooledMesh, Transform, WireModel};
+use universe_engine::{Camera, Color, Frame, Mesh, Morph, PoolModel, PooledMesh, TileTexture, Transform, WireModel, TILE_TEX};
 
 /// Chunk edge (m): a chunk is one mesh.
 /// Chunks hold about this many finest triangles (their edge from the pattern's density: about 15 km on the 3x3

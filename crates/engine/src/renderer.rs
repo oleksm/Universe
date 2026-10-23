@@ -829,7 +829,7 @@ impl Renderer {
                 multisample: wgpu::MultisampleState { count: SAMPLES, ..Default::default() },
                 fragment: Some(wgpu::FragmentState {
                     module: &scene,
-                    entry_point: Some("fs_mesh"),
+                    entry_point: Some("fs_pool"),
                     compilation_options: Default::default(),
                     targets: &[Some(wgpu::ColorTargetState { format: SCENE_FORMAT, blend: Some(wgpu::BlendState::ALPHA_BLENDING), write_mask: wgpu::ColorWrites::ALL })],
                 }),

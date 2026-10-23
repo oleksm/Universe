@@ -319,6 +319,7 @@ struct Built {
 impl Built {
     fn bytes(&self) -> usize {
         self.meshes.iter().map(|m| m.bytes()).sum::<usize>()
+            + self.meshes.first().and_then(|m| m.texture()).map_or(0, |t| t.bytes())
             + self.ground.z.len() * 4
             + self.ground.rgb.len() * 3
             + self.ground.mask.len()
@@ -329,7 +330,9 @@ impl Built {
         self.tris.first()
     }
 }
-/// Tile `id`'s full model (its finest mesh, or its grid), its origin, its samples and its mesh.
+/// Tile `id`'s full model (its finest mesh, or its grid), its origin, its samples and its mesh (the tests' view of
+/// `build`).
+#[cfg(test)]
 fn build_model(
     source: &Source,
     id: usize,
@@ -339,8 +342,50 @@ fn build_model(
     let t = source.m.tiles[id];
     let meshes: Vec<TileMesh> = t.meshes().into_iter().take(2).map(|at| TileMesh::read_at(&source.dir, &source.m, &t, at)).collect::<Result<Option<Vec<_>>, _>>()?.unwrap_or_default();
     let (data, parent) = samples(source, id)?;
-    let (model, origin) = build_version(source, id, ex, real, &data, parent.as_ref(), meshes.first(), meshes.get(1));
+    let texture = real.then(|| tile_texture(source, id, ex, &data)).flatten();
+    let (model, origin) = build_version(source, id, ex, real, &data, parent.as_ref(), meshes.first(), meshes.get(1), texture.as_ref());
     Ok((model, origin, data, meshes.into_iter().next()))
+}
+
+/// Tile `id`'s texture (see `TileTexture`): its samples' colours, and their normals as the package lights them (its
+/// light exaggeration), each in its texel's own frame: x along the tile's columns, y up × x, z up from the world.
+/// None if it has more samples a side than a texture takes.
+fn tile_texture(source: &Source, id: usize, ex: f64, data: &Raster) -> Option<Arc<TileTexture>> {
+    let t = source.m.tiles[id];
+    let side = source.m.tile + 1;
+    if side > TILE_TEX as usize {
+        return None;
+    }
+    let (i0, j0) = (t.col * source.m.tile, t.row * source.m.tile);
+    let r = source.m.projection.radius_m;
+    let s = source.m.scale(t.k) as f64 * source.m.cell0_m;
+    let at = |i: usize, j: usize, z: f64| {
+        source.inverse(source.m.x0 + 0.5 * source.m.cell0_m + i as f64 * s, source.m.y0 + 0.5 * source.m.cell0_m + j as f64 * s) * (r + z * ex)
+    };
+    let last = data.n - 1;
+    let mut colour = Vec::with_capacity(side * side);
+    let mut normal = Vec::with_capacity(side * side);
+    for j in 0..side {
+        for i in 0..side {
+            let (gi, gj) = ((i0 + i).min(last), (j0 + j).min(last));
+            let c = data.rgb[data.at(gi, gj)];
+            colour.push([c[0], c[1], c[2], 255]);
+            let (left, right) = (gi.saturating_sub(1), (gi + 1).min(last));
+            let (down, top) = (gj.saturating_sub(1), (gj + 1).min(last));
+            let lit = |a: usize, b: usize| at(a, b, source.m.lit_height(data.z(a, b)));
+            let up = at(gi, gj, data.z(gi, gj)).normalize();
+            let mut n = (lit(right, gj) - lit(left, gj)).cross(lit(gi, top) - lit(gi, down)).normalize_or(up);
+            if n.dot(up) < 0.0 {
+                n = -n;
+            }
+            let along = at(right, gj, data.z(right, gj)) - at(left, gj, data.z(left, gj));
+            let e = (along - up * along.dot(up)).normalize_or(up.any_orthonormal_vector());
+            let f = up.cross(e);
+            let enc = |v: f64| ((v * 0.5 + 0.5).clamp(0.0, 1.0) * 255.0).round() as u8;
+            normal.push([enc(n.dot(e)), enc(n.dot(f)), enc(n.dot(up)), 255]);
+        }
+    }
+    Some(Arc::new(TileTexture::new(side as u32, colour, normal)))
 }
 
 /// Tile `id`'s samples (a sample's halo round it) and its parent's under it.
@@ -372,6 +417,7 @@ fn build_version(
     parent: Option<&Raster>,
     mesh: Option<&TileMesh>,
     next: Option<&TileMesh>,
+    texture: Option<&Arc<TileTexture>>,
 ) -> (PoolModel, DVec3) {
     let t = source.m.tiles[id];
     let tile = source.m.tile;
@@ -467,6 +513,9 @@ fn build_version(
                 near: 0.0,
                 far: 1.0,
             });
+            if texture.is_some() {
+                model.uv.push([i as u16, j as u16]);
+            }
         }
     }
     let hole = |(x0, y0): (f64, f64), (x1, y1): (f64, f64)| t.k > 0 && source.hole_rect(x0, y0, x1, y1);
@@ -541,20 +590,25 @@ fn build_version(
                 model.colors.push(model.colors[w as usize]);
                 model.normals.push(model.normals[w as usize]);
                 model.morph.push(model.morph[w as usize]);
+                if let Some(&uv) = model.uv.get(w as usize) {
+                    model.uv.push(uv);
+                }
             }
             model.faces.extend([[u, k, k + 1], [u, k + 1, v]]);
         }
     }
+    model.texture = texture.cloned();
     (model, origin)
 }
 fn build(source: &Source, id: usize, ex: f64, real: bool) -> Result<Built, String> {
     let t = source.m.tiles[id];
     let tris: Vec<TileMesh> = t.meshes().into_iter().map(|at| TileMesh::read_at(&source.dir, &source.m, &t, at)).collect::<Result<Option<Vec<_>>, _>>()?.unwrap_or_default();
     let (ground, parent) = samples(source, id)?;
+    let texture = real.then(|| tile_texture(source, id, ex, &ground)).flatten();
     let mut origin = DVec3::ZERO;
     let meshes = (0..tris.len().max(1))
         .map(|v| {
-            let (model, o) = build_version(source, id, ex, real, &ground, parent.as_ref(), tris.get(v), tris.get(v + 1));
+            let (model, o) = build_version(source, id, ex, real, &ground, parent.as_ref(), tris.get(v), tris.get(v + 1), texture.as_ref());
             origin = o;
             PooledMesh::new(&model)
         })

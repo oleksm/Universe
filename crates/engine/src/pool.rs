@@ -43,6 +43,46 @@ pub struct PoolModel {
     pub morph: Vec<Morph>,
     /// Shaded smooth (by the normals), not face by face.
     pub smooth: bool,
+    /// Per vertex (empty: none): where it is on `texture`, in its texels (column, row).
+    pub uv: Vec<[u16; 2]>,
+    /// Its own colour (and lit normal) texture (see `TileTexture`): sampled per pixel in place of its vertices'
+    /// colours where it's resident; its vertices' meanwhile.
+    pub texture: Option<Arc<TileTexture>>,
+}
+
+/// A tile's textures: its colour (sRGB) and, for the view shade, its lit normal in each texel's own frame (x along
+/// its columns, y along its rows, z up from the world: see `scene.wgsl`), `size` × `size` texels, at most
+/// `TILE_TEX` a side. Shared by the meshes that draw the same tile.
+#[derive(Debug)]
+pub struct TileTexture {
+    id: u64,
+    pub size: u32,
+    pub colour: Vec<[u8; 4]>,
+    pub normal: Vec<[u8; 4]>,
+}
+
+/// A tile texture's most texels a side, and the most the pool keeps on the GPU at once (fewer where the device's
+/// array layers are fewer).
+pub const TILE_TEX: u32 = 256;
+const TILE_LAYERS: u32 = 512;
+/// Tile texture bytes uploaded a frame, at most (whole textures: one at least).
+const TILE_UPLOAD_BYTES: usize = 8 << 20;
+
+impl TileTexture {
+    pub fn new(size: u32, colour: Vec<[u8; 4]>, normal: Vec<[u8; 4]>) -> Self {
+        static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
+        assert!(size <= TILE_TEX && colour.len() == (size * size) as usize && (normal.is_empty() || normal.len() == colour.len()));
+        Self { id: NEXT.fetch_add(1, Ordering::Relaxed), size, colour, normal }
+    }
+
+    pub fn id(&self) -> u64 {
+        self.id
+    }
+
+    /// Its texels' bytes, colour and normal.
+    pub fn bytes(&self) -> usize {
+        (self.colour.len() + self.normal.len()) * 4
+    }
 }
 
 /// A vertex's morph: `offset` (model units) is the way to its parent's shape; it is all the way
@@ -61,6 +101,7 @@ const F_FACE_COLORS: u32 = 4;
 const F_MORPH: u32 = 8;
 const F_U16: u32 = 16;
 const F_SMOOTH: u32 = 32;
+const F_UV: u32 = 64;
 
 /// A mesh in the pool (or waiting to go in). Cheap to clone; its range is let go with its last copy.
 #[derive(Clone, Debug)]
@@ -75,6 +116,7 @@ struct Inner {
     edges: u32,
     radius: f32,
     resident: AtomicUsize,
+    texture: Option<Arc<TileTexture>>,
 }
 
 /// Meshes whose every copy is gone, for the renderer to let their ranges go.
@@ -93,7 +135,12 @@ impl PooledMesh {
         static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
         let radius = m.positions.iter().map(|p| p.length()).fold(0.0, f32::max);
         let words = pack(m);
-        Self(Arc::new(Inner { id: NEXT.fetch_add(1, Ordering::Relaxed), words, faces: m.faces.len() as u32, edges: m.edges.len() as u32, radius, resident: AtomicUsize::new(0) }))
+        Self(Arc::new(Inner { id: NEXT.fetch_add(1, Ordering::Relaxed), words, faces: m.faces.len() as u32, edges: m.edges.len() as u32, radius, resident: AtomicUsize::new(0), texture: m.texture.clone() }))
+    }
+
+    /// Its texture, if it has one.
+    pub fn texture(&self) -> Option<&Arc<TileTexture>> {
+        self.0.texture.as_ref()
     }
 
     pub fn id(&self) -> u64 {
@@ -129,7 +176,7 @@ impl PooledMesh {
         let w = &self.0.words;
         if index >= w[0] as usize { return None; }
         let flags = w[3];
-        let stride = 3 + (flags & F_NORMALS != 0) as usize + (flags & F_COLORS != 0) as usize;
+        let stride = 3 + (flags & F_NORMALS != 0) as usize + (flags & F_COLORS != 0) as usize + (flags & F_UV != 0) as usize;
         let vec_at = |at: usize| Vec3::new(f32::from_bits(w[at]),f32::from_bits(w[at+1]),f32::from_bits(w[at+2]));
         let position = vec_at(HEADER as usize + index * stride);
         Some(if flags & F_MORPH != 0 { position + vec_at(w[7] as usize + index * 4) * weight.clamp(0.0,1.0) } else { position })
@@ -174,14 +221,15 @@ fn pack(m: &PoolModel) -> Vec<u32> {
     assert!(m.colors.is_empty() || m.colors.len() == n, "a colour per vertex");
     assert!(m.face_colors.is_empty() || m.face_colors.len() == m.faces.len(), "a colour per face");
     assert!(m.morph.is_empty() || m.morph.len() == n, "a morph per vertex");
+    assert!(m.uv.is_empty() || m.uv.len() == n, "a texel per vertex");
     let u16s = n <= 1 << 16;
     let mut flags = 0;
-    for (on, f) in [(!normals.is_empty(), F_NORMALS), (!m.colors.is_empty(), F_COLORS), (!m.face_colors.is_empty(), F_FACE_COLORS), (!m.morph.is_empty(), F_MORPH), (u16s, F_U16), (m.smooth, F_SMOOTH)] {
+    for (on, f) in [(!normals.is_empty(), F_NORMALS), (!m.colors.is_empty(), F_COLORS), (!m.face_colors.is_empty(), F_FACE_COLORS), (!m.morph.is_empty(), F_MORPH), (u16s, F_U16), (m.smooth, F_SMOOTH), (!m.uv.is_empty(), F_UV)] {
         if on {
             flags |= f;
         }
     }
-    let stride = 3 + (flags & F_NORMALS != 0) as usize + (flags & F_COLORS != 0) as usize;
+    let stride = 3 + (flags & F_NORMALS != 0) as usize + (flags & F_COLORS != 0) as usize + (flags & F_UV != 0) as usize;
     let index_words = |count: usize| if u16s { count.div_ceil(2) } else { count };
     let mut w: Vec<u32> = vec![0; HEADER as usize];
     w.reserve(n * stride + index_words(m.faces.len() * 3) + index_words(m.edges.len() * 2) + m.face_colors.len() + m.morph.len() * 4);
@@ -192,6 +240,9 @@ fn pack(m: &PoolModel) -> Vec<u32> {
         }
         if let Some(c) = m.colors.get(i) {
             w.push(u32::from_le_bytes(*c));
+        }
+        if let Some(t) = m.uv.get(i) {
+            w.push(t[0] as u32 | (t[1] as u32) << 16);
         }
     }
     let indices = |w: &mut Vec<u32>, list: &mut dyn Iterator<Item = u32>| {
@@ -304,6 +355,9 @@ pub(crate) struct GpuDraw {
     pub face_start: u32,
     pub edge_start: u32,
     pub morph: f32,
+    /// Its texture's layer + 1 (0: none resident: its vertices' colours).
+    pub layer: u32,
+    pub _pad: [u32; 3],
 }
 
 /// The pool on the GPU, and this frame's draws.
@@ -323,6 +377,8 @@ pub(crate) struct PoolStore {
     groups: wgpu::Buffer,
     groups_cap: u64,
     lists: wgpu::Buffer,
+    /// The tiles' textures on the GPU (see `TileTexture`).
+    textures: TileTextures,
     pub bind: wgpu::BindGroup,
     /// This frame's corners to draw: the scene's faces and edges, the front layer's.
     pub scene: (u32, u32),
@@ -358,6 +414,130 @@ impl Drop for PooledMeshRef {
 
 const START_WORDS: u32 = 1 << 20;
 
+/// Tile textures on the GPU: a colour and a normal array of `TILE_LAYERS` layers, `TILE_TEX` a side with their mips,
+/// each layer one tile's (by its texture's id), the least lately drawn let go for a new one.
+struct TileTextures {
+    colour: wgpu::Texture,
+    normal: wgpu::Texture,
+    sampler: wgpu::Sampler,
+    /// Each texture's layer and the frame it was last drawn.
+    slots: HashMap<u64, (u32, u64)>,
+    free: Vec<u32>,
+    layers: u32,
+}
+
+/// A tile texture's mip levels (256 to 1).
+const TILE_MIPS: u32 = TILE_TEX.ilog2() + 1;
+
+impl TileTextures {
+    fn new(device: &wgpu::Device) -> Self {
+        let layers = TILE_LAYERS.min(device.limits().max_texture_array_layers);
+        let array = |label, format| device.create_texture(&wgpu::TextureDescriptor {
+            label: Some(label),
+            size: wgpu::Extent3d { width: TILE_TEX, height: TILE_TEX, depth_or_array_layers: layers },
+            mip_level_count: TILE_MIPS,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        });
+        let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
+            label: Some("tile textures"),
+            mag_filter: wgpu::FilterMode::Linear,
+            min_filter: wgpu::FilterMode::Linear,
+            mipmap_filter: wgpu::MipmapFilterMode::Linear,
+            ..Default::default()
+        });
+        Self {
+            colour: array("tile colour", wgpu::TextureFormat::Rgba8UnormSrgb),
+            normal: array("tile normal", wgpu::TextureFormat::Rgba8Unorm),
+            sampler,
+            slots: HashMap::new(),
+            free: (0..layers).rev().collect(),
+            layers,
+        }
+    }
+
+    fn views(&self) -> (wgpu::TextureView, wgpu::TextureView) {
+        let view = |t: &wgpu::Texture| t.create_view(&wgpu::TextureViewDescriptor { dimension: Some(wgpu::TextureViewDimension::D2Array), ..Default::default() });
+        (view(&self.colour), view(&self.normal))
+    }
+
+    /// `t` resident (drawn at `tick`): its layer, uploaded if it must be and `budget` (bytes) allows. None: not now.
+    fn ensure(&mut self, queue: &wgpu::Queue, t: &TileTexture, tick: u64, budget: &mut usize) -> Option<u32> {
+        if let Some(s) = self.slots.get_mut(&t.id) {
+            s.1 = tick;
+            return Some(s.0);
+        }
+        if *budget == 0 {
+            return None;
+        }
+        let layer = match self.free.pop() {
+            Some(l) => l,
+            None => {
+                // (The least lately drawn, if not this frame.)
+                let (&id, &(l, last)) = self.slots.iter().min_by_key(|e| e.1 .1)?;
+                if last >= tick {
+                    return None;
+                }
+                self.slots.remove(&id);
+                l
+            }
+        };
+        for (texture, texels) in [(&self.colour, &t.colour), (&self.normal, &t.normal)] {
+            if texels.is_empty() {
+                continue;
+            }
+            for (level, (side, data)) in mips(t.size, texels).into_iter().enumerate() {
+                queue.write_texture(
+                    wgpu::TexelCopyTextureInfo { texture, mip_level: level as u32, origin: wgpu::Origin3d { x: 0, y: 0, z: layer }, aspect: wgpu::TextureAspect::All },
+                    bytemuck::cast_slice(&data),
+                    wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(side * 4), rows_per_image: Some(side) },
+                    wgpu::Extent3d { width: side, height: side, depth_or_array_layers: 1 },
+                );
+            }
+        }
+        *budget = budget.saturating_sub(t.bytes());
+        self.slots.insert(t.id, (layer, tick));
+        Some(layer)
+    }
+
+    /// What the arrays hold (bytes, all layers and mips: they're made whole).
+    fn bytes(&self) -> u64 {
+        2 * (TILE_TEX as u64).pow(2) * 4 * self.layers as u64 * 4 / 3
+    }
+}
+
+/// `texels` (`size` a side) padded to `TILE_TEX` by their edges (so a mip never takes in what isn't theirs), and its
+/// mips by halving (a box of four, in the bytes as they are), largest first.
+fn mips(size: u32, texels: &[[u8; 4]]) -> Vec<(u32, Vec<[u8; 4]>)> {
+    let n = TILE_TEX as usize;
+    let s = size as usize;
+    let mut level: Vec<[u8; 4]> = (0..n * n).map(|k| texels[(k / n).min(s - 1) * s + (k % n).min(s - 1)]).collect();
+    let mut out = Vec::with_capacity(TILE_MIPS as usize);
+    let mut side = n;
+    loop {
+        out.push((side as u32, level.clone()));
+        if side == 1 {
+            return out;
+        }
+        let half = side / 2;
+        level = (0..half * half)
+            .map(|k| {
+                let (x, y) = (2 * (k % half), 2 * (k / half));
+                let at = |dx: usize, dy: usize| level[(y + dy) * side + x + dx];
+                let mut c = [0u8; 4];
+                for (ch, v) in c.iter_mut().enumerate() {
+                    *v = ((at(0, 0)[ch] as u32 + at(1, 0)[ch] as u32 + at(0, 1)[ch] as u32 + at(1, 1)[ch] as u32 + 2) / 4) as u8;
+                }
+                c
+            })
+            .collect();
+        side = half;
+    }
+}
+
 impl PoolStore {
     pub fn new(device: &wgpu::Device) -> Self {
         let storage = |binding| wgpu::BindGroupLayoutEntry {
@@ -366,9 +546,23 @@ impl PoolStore {
             ty: wgpu::BindingType::Buffer { ty: wgpu::BufferBindingType::Storage { read_only: true }, has_dynamic_offset: false, min_binding_size: None },
             count: None,
         };
+        let texture = |binding| wgpu::BindGroupLayoutEntry {
+            binding,
+            visibility: wgpu::ShaderStages::FRAGMENT,
+            ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::D2Array, multisampled: false },
+            count: None,
+        };
         let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("mesh pool"),
-            entries: &[storage(0), storage(1), storage(2), storage(3)],
+            entries: &[
+                storage(0),
+                storage(1),
+                storage(2),
+                storage(3),
+                texture(4),
+                texture(5),
+                wgpu::BindGroupLayoutEntry { binding: 6, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None },
+            ],
         });
         let max = (device.limits().max_storage_buffer_binding_size.min(device.limits().max_buffer_size) / 4).min(u32::MAX as u64) as u32;
         let cap = START_WORDS.min(max);
@@ -376,8 +570,9 @@ impl PoolStore {
         let draws = Self::storage(device, "pool draws", 4096);
         let groups = Self::storage(device, "pool groups", 4096);
         let lists = Self::storage(device, "pool lists", 64);
-        let bind = Self::bind(device, &layout, &buffer, &draws, &groups, &lists);
-        Self { layout, buffer, cap, max, free: Free::new(cap), live: HashMap::new(), tick: 0, last_full_warning: 0, draws, draws_cap: 4096, groups, groups_cap: 4096, lists, bind, scene: (0, 0), front: (0, 0) }
+        let textures = TileTextures::new(device);
+        let bind = Self::bind(device, &layout, &buffer, &draws, &groups, &lists, &textures);
+        Self { layout, buffer, cap, max, free: Free::new(cap), live: HashMap::new(), tick: 0, last_full_warning: 0, draws, draws_cap: 4096, groups, groups_cap: 4096, lists, textures, bind, scene: (0, 0), front: (0, 0) }
     }
 
     fn pool_buffer(device: &wgpu::Device, words: u32) -> wgpu::Buffer {
@@ -393,7 +588,8 @@ impl PoolStore {
         device.create_buffer(&wgpu::BufferDescriptor { label: Some(label), size, usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST, mapped_at_creation: false })
     }
 
-    fn bind(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, pool: &wgpu::Buffer, draws: &wgpu::Buffer, groups: &wgpu::Buffer, lists: &wgpu::Buffer) -> wgpu::BindGroup {
+    fn bind(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, pool: &wgpu::Buffer, draws: &wgpu::Buffer, groups: &wgpu::Buffer, lists: &wgpu::Buffer, textures: &TileTextures) -> wgpu::BindGroup {
+        let (colour, normal) = textures.views();
         device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("mesh pool"),
             layout,
@@ -402,13 +598,16 @@ impl PoolStore {
                 wgpu::BindGroupEntry { binding: 1, resource: draws.as_entire_binding() },
                 wgpu::BindGroupEntry { binding: 2, resource: groups.as_entire_binding() },
                 wgpu::BindGroupEntry { binding: 3, resource: lists.as_entire_binding() },
+                wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::TextureView(&colour) },
+                wgpu::BindGroupEntry { binding: 5, resource: wgpu::BindingResource::TextureView(&normal) },
+                wgpu::BindGroupEntry { binding: 6, resource: wgpu::BindingResource::Sampler(&textures.sampler) },
             ],
         })
     }
 
-    /// The pool's size and what of it is in use (bytes), and the meshes in it.
+    /// The pool's size with its tile textures and what of it is in use (bytes), and the meshes in it.
     pub fn usage(&self) -> (u64, u64, usize) {
-        (self.cap as u64 * 4, (self.cap as u64 - self.free.words()) * 4, self.live.len())
+        (self.cap as u64 * 4 + self.textures.bytes(), (self.cap as u64 - self.free.words()) * 4, self.live.len())
     }
 
     /// Copy `m` in if it isn't (growing the pool if it must). False: no room even grown.
@@ -427,7 +626,7 @@ impl PoolStore {
             gpu.queue.submit([enc.finish()]);
             self.free.give(self.cap,want-self.cap);
             self.buffer=bigger; self.cap=want;
-            self.bind=Self::bind(&gpu.device,&self.layout,&self.buffer,&self.draws,&self.groups,&self.lists);
+            self.bind=Self::bind(&gpu.device,&self.layout,&self.buffer,&self.draws,&self.groups,&self.lists,&self.textures);
             at=self.free.take(len);
         }
         let at = match at.or_else(||allocate_lru(&mut self.free,&mut self.live,len,protected)) {
@@ -467,13 +666,21 @@ impl PoolStore {
         for m in pf.uploads.iter().chain(&pf.meshes) {
             self.put(gpu, m, &protected);
         }
+        // (The drawn meshes' tile textures resident, the nearest first as they're drawn, as many new as a frame takes.)
+        let mut budget = TILE_UPLOAD_BYTES;
+        for d in pf.draws.iter().chain(&pf.front) {
+            if let Some(t) = pf.meshes[d.mesh as usize].texture() {
+                self.textures.ensure(&gpu.queue, t, self.tick, &mut budget);
+            }
+        }
         let mut out: Vec<GpuDraw> = Vec::with_capacity(pf.draws.len() + pf.front.len());
         let lay = |draws: &[Draw], out: &mut Vec<GpuDraw>| {
             let (mut faces, mut edges) = (0u32, 0u32);
             for d in draws {
                 let m = &pf.meshes[d.mesh as usize];
                 let Some(&(at, ..)) = self.live.get(&m.id()) else { continue };
-                out.push(GpuDraw { t: d.t, group: d.group, mesh: at, face_start: faces, edge_start: edges, morph: d.morph });
+                let layer = m.texture().and_then(|t| self.textures.slots.get(&t.id())).map_or(0, |s| s.0 + 1);
+                out.push(GpuDraw { t: d.t, group: d.group, mesh: at, face_start: faces, edge_start: edges, morph: d.morph, layer, _pad: [0; 3] });
                 faces += m.faces() * 3;
                 if pf.groups[d.group as usize].1 {
                     edges += m.edges() * 2;
@@ -501,7 +708,7 @@ impl PoolStore {
             gpu.queue.write_buffer(buf, 0, bytes);
         }
         if rebind {
-            self.bind = Self::bind(&gpu.device, &self.layout, &self.buffer, &self.draws, &self.groups, &self.lists);
+            self.bind = Self::bind(&gpu.device, &self.layout, &self.buffer, &self.draws, &self.groups, &self.lists, &self.textures);
         }
     }
 }

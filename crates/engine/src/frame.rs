@@ -1192,6 +1192,7 @@ mod pyramid_tests {
         let g=f.pool_group(&Transform::default(),Color::WHITE,Color::WHITE,0.,false);
         f.pooled(g,&mesh,DVec3::ZERO);f.pooled_morphed(g,&mesh,DVec3::ZERO,0.75);f.release_pooled(mesh.id());
         assert_eq!(f.pool.draws[0].morph,-1.);assert_eq!(f.pool.draws[1].morph,0.75);assert_eq!(f.pool.releases,vec![mesh.id()]);
-        assert_eq!(std::mem::size_of::<crate::pool::GpuDraw>(),32);
+        // (As scene.wgsl lays out PoolDraw: a vec3, six words, rounded up to its 16-byte alignment.)
+        assert_eq!(std::mem::size_of::<crate::pool::GpuDraw>(),48);
     }
 }

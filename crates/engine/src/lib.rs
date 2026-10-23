@@ -46,4 +46,4 @@ pub mod viewport;
 
 pub mod mesh_budget;
 pub mod pool;
-pub use pool::{Morph, PoolModel, PooledMesh};
+pub use pool::{Morph, PoolModel, PooledMesh, TileTexture, TILE_TEX};
