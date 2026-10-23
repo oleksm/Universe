@@ -17,6 +17,13 @@ the engine's to edit (ships: diagnostics only, as now).
 - Every ship must carry a Drive and a Thrusters (RCS) module among its base blocks.
 - One fuel aboard: tanks, plants and engines must all hold or burn one material.
 
+## Status (2026-10-22)
+
+Steps 1-6 are in (see `changelog/2026-10-22-engines-as-products.md`), for chemical engines. Every CH record is held
+out of the catalogue for now: their jets carry more energy than their fuel gives at their efficiency (S1, S2:
+4,400 m/s needs efficiency 0.745 or exhaust 4,386 m/s at hydrolox's 13 MJ/kg; S3, S4: 3,290 m/s needs 0.542 or
+3,286 m/s at methalox's 10 MJ/kg). The cold-gas RCS beside hydrolox is next (registry 6ce7).
+
 ## The route (one engine commit, the world crate)
 
 1. `Does::Engine { thrust, exhaust, efficiency, burns }` from `Kinds::engine` (throttle floor and gimbal read and

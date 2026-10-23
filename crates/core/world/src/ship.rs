@@ -104,6 +104,9 @@ pub struct ClassSpec {
     /// Where each module sits, and what has no room (see `place`).
     pub placed: Vec<Placed>,
     pub crowded: Vec<String>,
+    /// What its modules are rated for that the game doesn't simulate (an engine's throttle floor, its gimbal, its
+    /// starts): stated, so an acceptance can hold on them; none for a ship of the old drives.
+    pub limits: Vec<String>,
     /// Collision radius (m).
     pub radius: f64,
     /// Drag coefficient × frontal area (m²).
@@ -135,6 +138,9 @@ pub enum ThrusterRole {
     Rcs,
     Lift,
 }
+
+/// An engine's push within this of the nose (or of up) makes it a main drive (or a lift): cos 30°.
+const ENGINE_AXIS: f64 = 0.866_025_403_784_438_6;
 
 /// A passenger's mass (kg), with their things (their seat is a cabin's).
 pub const PASSENGER_MASS: f64 = 100.0;
@@ -564,7 +570,12 @@ impl ClassSpec {
             }
             fitted.push((slot, m));
         }
+        // (An engine stands for the drive: whether it drives forward is its nozzles', checked with the thrusters.)
+        let engines = fitted.iter().any(|(_, m)| matches!(m.does, Does::Engine { .. }));
         for base in BASE_BLOCKS.into_iter().filter(|_| validate_install) {
+            if base == SlotKind::Drive && engines {
+                continue;
+            }
             if !fitted.iter().any(|(s, m)| s.kind == base && !matches!(m.does, Does::Inert { .. })) {
                 return Err(format!("no {base:?}: every ship must carry one"));
             }
@@ -611,10 +622,42 @@ impl ClassSpec {
                 (SlotKind::Drive, Does::Drive { .. }) => ThrusterRole::Main,
                 (SlotKind::Thrusters, Does::Thrusters { .. }) => ThrusterRole::Rcs,
                 (SlotKind::Lift, Does::Lift { .. }) => ThrusterRole::Lift,
+                // (An engine drives as it points: along the nose (our −Z) a main drive, upward (+Y) a lift; an
+                // engine is no attitude thruster.)
+                (SlotKind::Engine, Does::Engine { .. }) => match n.push {
+                    p if p.dot(DVec3::NEG_Z) >= ENGINE_AXIS => ThrusterRole::Main,
+                    p if p.dot(DVec3::Y) >= ENGINE_AXIS => ThrusterRole::Lift,
+                    _ => return Err(format!("engine at {} (slot '{}') pushes neither along the nose nor up", n.nozzle, n.slot)),
+                },
                 _ => return Err(format!("thruster at {}: slot '{}' doesn't drive nozzles", n.nozzle, n.slot)),
             };
             let (rating, exhaust, efficiency, _) = m.does.engine().expect("an engine");
             thrusters.push(Thruster { nozzle: n.nozzle.clone(), role, at: n.at, push: n.push, thrust: rating * n.share, exhaust, efficiency });
+        }
+        if validate_install && engines && !thrusters.iter().any(|t| t.role == ThrusterRole::Main) {
+            return Err("no main drive: no engine pushes along the nose".into());
+        }
+        if engines {
+            for (slot, _) in fitted.iter().filter(|(s, _)| s.kind == SlotKind::Engine) {
+                if !thrusters.iter().any(|t| frame.nozzles.iter().any(|n| n.nozzle == t.nozzle && n.slot == slot.name)) {
+                    return Err(format!("engine slot '{}' drives no nozzle", slot.name));
+                }
+            }
+        }
+        let mut limits = Vec::new();
+        for (slot, m) in &fitted {
+            if let Does::Engine { throttle, gimbal, .. } = m.does {
+                let at = format!("{} ({})", slot.name, m.key);
+                if throttle > 0.0 {
+                    limits.push(format!("{at}: throttle floor {throttle} of full not enforced (thrust runs 0 to full)"));
+                } else {
+                    limits.push(format!("{at}: on or off only, not enforced (thrust runs 0 to full)"));
+                }
+                if gimbal > 0.0 {
+                    limits.push(format!("{at}: gimbal {gimbal} rad not simulated (fixed)"));
+                }
+                limits.push(format!("{at}: thrust as rated at every ambient pressure; ignition, restarts and chill-down not modelled"));
+            }
         }
         // Each role's push along a direction (only thrusters pushing that way count).
         let along = |role: ThrusterRole, d: DVec3| thrusters.iter().filter(|t| t.role == role).map(|t| t.thrust * t.push.dot(d).max(0.0)).sum::<f64>();
@@ -699,6 +742,7 @@ impl ClassSpec {
             trim_cells: crate::trim::cells(shape, tank_at),
             placed,
             crowded,
+            limits,
             radius: frame.radius,
             drag_area: frame.drag_area,
             hull_strength: frame.hull_strength,

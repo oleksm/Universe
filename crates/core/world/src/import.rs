@@ -71,19 +71,27 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
         }).collect(),
         None => inferred_slots,
     };
-    // Its nozzles, each driven by a slot by its name.
-    let thrusters: Vec<(String, String, f64)> = read
+    // Its engines' nozzles as its record binds them (exactly: see `bind_engines`); every other nozzle driven by a
+    // slot by its name.
+    let nozzles: Vec<&str> = read.nodes.iter().filter(|n| n.0.starts_with("nozzle_")).map(|n| n.0.as_str()).collect();
+    let engines = match record {
+        Some(h) => bind_engines(&h.thrusters.iter().map(|t| (t.nozzle.clone(), t.slot.clone(), t.share)).collect::<Vec<_>>(), &slots, &nozzles)?,
+        None => Vec::new(),
+    };
+    let mut thrusters: Vec<(String, String, f64)> = read
         .nodes
         .iter()
-        .filter(|n| n.0.starts_with("nozzle_"))
+        .filter(|n| n.0.starts_with("nozzle_") && !engines.iter().any(|e| e.0 == n.0))
         .map(|n| {
             let slot = if n.0.starts_with("nozzle_main") { "drive" } else if n.0.starts_with("nozzle_lift") { "lift" } else { "thrusters" };
             (n.0.clone(), slot.to_string(), 1.0)
         })
         .collect();
-    if !thrusters.iter().any(|t| t.1 == "drive") {
-        return Err("no main drive nozzle (an empty named nozzle_main_*)".into());
+    // (An engine's nozzle may be the main drive: whether one pushes along the nose is the ship's to check.)
+    if !thrusters.iter().any(|t| t.1 == "drive") && engines.is_empty() {
+        return Err("no main drive nozzle (an empty named nozzle_main_*, or an engine's nozzle its record binds)".into());
     }
+    thrusters.extend(engines);
     let mut shape = crate::shape::ShapeDef::made(format!("shape.{key}"), body, parts, Vec::new(), read.nodes).build()?;
     // (Its surfaces in its frame, centred as the shape is.)
     let c = shape.made_centre;
@@ -139,6 +147,41 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     spec.shape_own = Some(shape);
     spec.visual = Some(visual.to_string());
     Ok(spec)
+}
+
+/// The nozzles a hull's record binds to its engine slots (`thrusters`: nozzle, slot, share), checked strictly: each
+/// to an engine slot it has, a nozzle the model has, once, at a share over 0 and up to 1, an engine's shares
+/// summing to no more than 1; each engine slot driving at least one. Bindings to other slots are left to the
+/// name rule (as the MC-07's are).
+fn bind_engines(record: &[(String, String, f64)], slots: &[(String, crate::modules::SlotKind, u8)], nozzles: &[&str]) -> Result<Vec<(String, String, f64)>, String> {
+    use crate::modules::SlotKind;
+    let engine = |slot: &str| slots.iter().any(|s| s.0 == slot && s.1 == SlotKind::Engine);
+    let mut bound: Vec<(String, String, f64)> = Vec::new();
+    for (nozzle, slot, share) in record {
+        if !engine(slot) {
+            continue;
+        }
+        if !nozzles.contains(&nozzle.as_str()) {
+            return Err(format!("thruster {nozzle} (slot '{slot}'): the model has no such nozzle"));
+        }
+        if !(share.is_finite() && *share > 0.0 && *share <= 1.0) {
+            return Err(format!("thruster {nozzle} (slot '{slot}'): share {share} is not over 0 and up to 1"));
+        }
+        if bound.iter().any(|b| &b.0 == nozzle) {
+            return Err(format!("thruster {nozzle}: bound twice"));
+        }
+        bound.push((nozzle.clone(), slot.clone(), *share));
+    }
+    for (name, ..) in slots.iter().filter(|s| s.1 == SlotKind::Engine) {
+        let total: f64 = bound.iter().filter(|b| &b.1 == name).map(|b| b.2).sum();
+        if total == 0.0 {
+            return Err(format!("engine slot '{name}': its record binds it no nozzle"));
+        }
+        if total > 1.0 + 1e-9 {
+            return Err(format!("engine slot '{name}': its nozzles' shares sum to {total}, over 1"));
+        }
+    }
+    Ok(bound)
 }
 
 /// Prefer the authored CargoRamp hinge. Older unnamed ramps use the hatch
@@ -294,5 +337,59 @@ mod tests {
         assert!((spec.dry_mass - spec.frame_mass - modules).abs() < 1e-6 && gear.iter().map(|g| g.1.mass).sum::<f64>() == 3972.0);
         let slots = vec![("command".to_string(), crate::modules::SlotKind::Command, 1), ("gear_0".to_string(), crate::modules::SlotKind::Gear, 3)];
         assert!(crate::design::stock_fit(&slots).is_err_and(|e| e.contains("power")), "nothing fitted to them; only the plant missing");
+    }
+
+    /// A hull's engines as its record binds them: exactly, or refused (a missing nozzle or slot, twice, a share
+    /// out of (0, 1], an engine's shares over 1, an engine left driving nothing); other bindings left alone.
+    #[test]
+    fn import_binds_engine_nozzles_strictly() {
+        use crate::modules::SlotKind::{Engine, Lift};
+        let slots = vec![("engine_aft".to_string(), Engine, 2), ("engine_down".to_string(), Engine, 2), ("lift".to_string(), Lift, 2)];
+        let nozzles = ["nozzle_engine_aft", "nozzle_engine_down", "nozzle_lift_0"];
+        let t = |n: &str, s: &str, share: f64| (n.to_string(), s.to_string(), share);
+        let good = vec![t("nozzle_engine_aft", "engine_aft", 1.0), t("nozzle_engine_down", "engine_down", 1.0), t("nozzle_lift_0", "lift", 1.0)];
+        assert_eq!(bind_engines(&good, &slots, &nozzles).unwrap(), good[..2].to_vec(), "the lift's left to its name");
+        let refused = |record: Vec<(String, String, f64)>, why: &str| {
+            let e = bind_engines(&record, &slots, &nozzles).unwrap_err();
+            assert!(e.contains(why), "{e}");
+        };
+        refused(vec![t("nozzle_engine_aft", "engine_aft", 1.0), t("nozzle_engine_gone", "engine_down", 1.0)], "no such nozzle");
+        refused(vec![t("nozzle_engine_aft", "engine_aft", 1.0), t("nozzle_engine_aft", "engine_down", 0.5), t("nozzle_engine_down", "engine_down", 0.5)], "bound twice");
+        refused(vec![t("nozzle_engine_aft", "engine_aft", 0.0), t("nozzle_engine_down", "engine_down", 1.0)], "share 0");
+        refused(vec![t("nozzle_engine_aft", "engine_aft", 1.5), t("nozzle_engine_down", "engine_down", 1.0)], "share 1.5");
+        refused(vec![t("nozzle_engine_aft", "engine_aft", 0.7), t("nozzle_engine_down", "engine_aft", 0.7)], "sum to 1.4");
+        refused(vec![t("nozzle_engine_aft", "engine_aft", 1.0)], "engine slot 'engine_down': its record binds it no nozzle");
+    }
+
+    /// Engines drive as they point: aft-facing ones a main drive, downward ones a lift, each its own thrust; one
+    /// pointing elsewhere refused; their throttle floor and gimbal stated as limits, not simulated.
+    #[test]
+    fn import_engines_drive_as_they_point() {
+        use crate::modules::SlotKind;
+        use crate::ship::{ClassSpec, HullFrame, NozzleLink, Slot, ThrusterRole};
+        // (The methalox CA S1. The CH records' jets carry a little more than their fuel gives at their efficiency
+        // (S1 and S2 hydrolox, S3 and S4 methalox): held out of the catalogue until the registry mends them.)
+        assert!(["ch.s1", "ch.s2", "ch.s3", "ch.s4"].iter().all(|k| content().handle::<Module>(&format!("equipment.engine.{k}")).is_none()));
+        let engine = content().handle::<Module>("equipment.engine.ca.s1").expect("the ca s1 engine is carried");
+        let slot = |name: &str| Slot { name: name.into(), kind: SlotKind::Engine, size: 2, mount: None };
+        // (A nozzle's push is opposite its exhaust: aft-firing pushes along the nose, −Z; down-firing pushes up.)
+        let link = |n: &str, s: &str, push: DVec3| NozzleLink { nozzle: n.into(), slot: s.into(), share: 1.0, at: DVec3::new(0.0, -1.0, 5.0), push };
+        let build = |pushes: [DVec3; 4]| {
+            let names = ["engine_aft_p", "engine_aft_s", "engine_down_p", "engine_down_s"];
+            let frame = HullFrame { frame_mass: 8000.0, price: 1.0, slots: names.iter().map(|n| slot(n)).collect(), nozzles: names.iter().zip(pushes).map(|(n, p)| link(&format!("nozzle_{n}"), n, p)).collect(), radius: 10.0, drag_area: 10.0, hull_strength: 1e6, bay: (0.0, 0.0) };
+            let shape = std::sync::Arc::new(crate::shape::ShapeDef::made("shape.test-engines".into(), (0..8).map(|i| DVec3::new(if i & 1 == 0 { -2.0 } else { 2.0 }, if i & 2 == 0 { -2.0 } else { 2.0 }, if i & 4 == 0 { -6.0 } else { 6.0 })).collect(), vec![], vec![], vec![]).build().unwrap());
+            ClassSpec::assemble_uncommissioned_owned("hull.test-engines".into(), "TEST".into(), shape, frame, names.iter().map(|n| (n.to_string(), engine)).collect())
+        };
+        let spec = build([DVec3::NEG_Z, DVec3::NEG_Z, DVec3::Y, DVec3::Y]).unwrap();
+        let roles: Vec<ThrusterRole> = spec.thrusters.iter().map(|t| t.role).collect();
+        assert_eq!(roles, [ThrusterRole::Main, ThrusterRole::Main, ThrusterRole::Lift, ThrusterRole::Lift]);
+        let rated = content().get(engine).does.engine().unwrap().0;
+        assert!(spec.thrusters.iter().all(|t| t.thrust == rated), "each engine its own, at its rating");
+        assert!((spec.dry_mass - 8000.0 - 4.0 * content().get(engine).mass).abs() < 1e-6);
+        let (throttle, gimbal) = match content().get(engine).does { crate::modules::Does::Engine { throttle, gimbal, .. } => (throttle, gimbal), _ => unreachable!() };
+        assert!(spec.limits.iter().any(|l| l.contains(&format!("throttle floor {throttle}")) || (throttle == 0.0 && l.contains("on or off"))));
+        assert_eq!(spec.limits.iter().any(|l| l.contains("gimbal")), gimbal > 0.0);
+        let sideways = build([DVec3::NEG_Z, DVec3::NEG_Z, DVec3::Y, DVec3::X]).unwrap_err();
+        assert!(sideways.contains("pushes neither along the nose nor up"), "{sideways}");
     }
 }

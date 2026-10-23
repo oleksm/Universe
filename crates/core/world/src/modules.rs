@@ -23,6 +23,11 @@ pub enum Does {
     Thrusters { thrust: f64, exhaust: f64, efficiency: f64, burns: String },
     /// The belly lift: the thrust of a full-share nozzle (N).
     Lift { thrust: f64, exhaust: f64, efficiency: f64, burns: String },
+    /// An engine as a product (SFO 22), one instance in its own slot: the thrust of a full-share nozzle (N),
+    /// pushing as its nozzles point (a main drive along the nose, a lift upward: `ship`). `throttle`: the least
+    /// steady thrust (a share of full; 0: on or off only), `gimbal` (rad): both kept, not simulated (the ship's
+    /// `limits` says so).
+    Engine { thrust: f64, exhaust: f64, efficiency: f64, burns: String, throttle: f64, gimbal: f64 },
     /// Holds fuel (kg): the material it `holds`.
     Tank { capacity: f64, holds: String },
     /// A capacitor bank: stores energy (J), taken in or given out at up to `rate` (W).
@@ -113,6 +118,8 @@ pub enum SlotKind {
     /// The command station (SFO 20, crewing): where the ship is flown from. Its fit is carried (mass, model);
     /// nothing in the game works it yet.
     Command,
+    /// An engine (SFO 22): one instance a slot, driving the nozzles its hull's record binds to it.
+    Engine,
     /// Landing gear (SFO 15): a leg's product. Its fit is carried (mass, model); the legs the ground meets are
     /// the hull's (`ground::struts`), its motion not made.
     Gear,
@@ -125,7 +132,8 @@ impl SlotKind {
         use SlotKind as G;
         match k {
             // (Fittings, SFO 20: ways in and out, bulk handling, heat. No game slot kind for them yet: not made.)
-            R::Access | R::Handling | R::Thermal | R::Engine => None,
+            R::Access | R::Handling | R::Thermal => None,
+            R::Engine => Some(G::Engine),
             R::Gear => Some(G::Gear),
             R::Command => Some(G::Command),
             R::Power => Some(G::Power),
@@ -167,6 +175,7 @@ impl Does {
     pub fn engine(&self) -> Option<(f64, f64, f64, &str)> {
         match self {
             Does::Drive { thrust, exhaust, efficiency, burns } | Does::Thrusters { thrust, exhaust, efficiency, burns } | Does::Lift { thrust, exhaust, efficiency, burns } => Some((*thrust, *exhaust, *efficiency, burns)),
+            Does::Engine { thrust, exhaust, efficiency, burns, .. } => Some((*thrust, *exhaust, *efficiency, burns)),
             _ => None,
         }
     }
@@ -187,6 +196,7 @@ impl Does {
             Does::Drive { .. } => SlotKind::Drive,
             Does::Thrusters { .. } => SlotKind::Thrusters,
             Does::Lift { .. } => SlotKind::Lift,
+            Does::Engine { .. } => SlotKind::Engine,
             Does::Tank { .. } => SlotKind::Tank,
             Does::Capacitor { .. } => SlotKind::Capacitor,
             Does::Rack { .. } | Does::Cabin { .. } => SlotKind::Cargo,
@@ -294,7 +304,7 @@ impl Module {
 
     pub(crate) fn check(&self) -> Result<(), String> {
         // (A carried command station or leg, unpriced, is at 0: never sold.)
-        let carried = matches!(self.does, Does::Inert { slot: SlotKind::Command | SlotKind::Gear });
+        let carried = matches!(self.does, Does::Inert { slot: SlotKind::Command | SlotKind::Gear } | Does::Engine { .. });
         for (what, v) in [("mass", self.mass), ("volume", self.volume), ("price", self.price)] {
             if what == "price" && carried && v == 0.0 {
                 continue;
@@ -428,6 +438,14 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
     fn life_support(&mut self, _: &r::EquipmentFunctionLifeSupport) -> Self::Out {
         Some(Does::LifeSupport)
     }
+    /// A chemical engine: its jet driven by the energy of what it burns. The other cycles take their energy
+    /// elsewhere (a reactor, a tank's pressure, a fan's power) and aren't made here yet: none of them pretends.
+    fn engine(&mut self, it: &r::EquipmentFunctionEngine) -> Self::Out {
+        if it.cycle != r::EngineCycle::Chemical {
+            return None;
+        }
+        Some(Does::Engine { thrust: it.thrust, exhaust: it.exhaust, efficiency: it.efficiency, burns: it.burns.clone()?, throttle: it.throttle, gimbal: it.gimbal })
+    }
     fn gun(&mut self, it: &r::EquipmentFunctionGun) -> Self::Out {
         let f = |v: Option<f64>| v.unwrap_or(0.0);
         Some(Does::Gun(crate::weapons::Gun { muzzle: f(it.muzzle_speed), rate: f(it.rate), slug_mass: f(it.slug_mass), magazine: it.magazine.unwrap_or(0).max(0) as u32 }))
@@ -442,6 +460,6 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
     }
     // (The kinds the game doesn't make yet (`x-in-game: not made` in the schema: a gate's throat
     // coil, an ore bay as a product, the ship fittings of SFO 20, the crewing equipment, the
-    // engines and swivels, a landing leg as a product) go to `not_made`: the generated trait's
+    // swivels, a landing leg as a product) go to `not_made`: the generated trait's
     // default for each.)
 }
