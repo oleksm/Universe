@@ -27,6 +27,8 @@ use universe_engine::{Camera, Color, Context, Frame, KeyCode, Light, Mesh, Mouse
 
 /// Straight down at and above this altitude, level with the horizon at the ground (as the page).
 const TILT_HI: f64 = 100_000.0;
+/// The light every face gets, whatever it faces: the planet lab's views' (`features.rs` `draw`).
+const VIEW_AMBIENT: f32 = 0.3;
 /// The panel's widgets.
 const ID_HIDE: u32 = 1;
 const ID_MESH: u32 = 10;
@@ -561,7 +563,11 @@ impl App for PlanetLodApp {
         let east = DVec3::Y.cross(up).normalize_or(DVec3::X);
         let north = up.cross(east);
         let sun = self.sun.unwrap_or_else(|| (up * 0.574 + north * 0.579 - east * 0.579).normalize());
-        frame.light = Some(Light { position: eye + sun * 1.5e11, color: [1.0, 0.98, 0.94], luminosity: 1.0, reference: 1.5e11, radius: 7e8 });
+        // (Lit as the planet lab's views are, `0.3 + 0.95 max(0, n·l)`: the frame's ambient 0.3, and a white sun whose
+        // adapted brightness, `luminosity^ADAPT`, makes the rest 0.95: 0.95 / 0.7 of full.)
+        frame.ambient = VIEW_AMBIENT;
+        let luminosity = (0.95 / (1.0 - VIEW_AMBIENT as f64)).powf(1.0 / universe_engine::ADAPT as f64);
+        frame.light = Some(Light { position: eye + sun * 1.5e11, color: [1.0, 1.0, 1.0], luminosity, reference: 1.5e11, radius: 7e8 });
         let size = frame.size();
         let LandDrawn { drawn, sent, chunks_drawn, tiles_drawn, pattern_tris, drawn_clusters, cl_data, aspect } = self.g.draw(frame, &cam, &Transform::default());
         if self.show_feat && let Some(f) = &self.feat {

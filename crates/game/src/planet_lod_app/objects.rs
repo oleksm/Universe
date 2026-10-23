@@ -1,6 +1,6 @@
 //! Optional producer boxes: one shared cube, camera-relative instances, nearest visible labels.
 use super::*;
-use universe_terrain::srgb_to_linear;
+use universe_terrain::package_colour;
 use serde::Deserialize;
 use universe_engine::glam::{DMat3, DQuat};
 
@@ -68,12 +68,7 @@ impl Objects {
             }
             families.push(Family {
                 name: l.family,
-                color: Color([
-                    srgb_to_linear(l.rgb[0]),
-                    srgb_to_linear(l.rgb[1]),
-                    srgb_to_linear(l.rgb[2]),
-                    1.0,
-                ]),
+                color: Color(package_colour(l.rgb, 1.0)),
                 on: true,
             });
         }

@@ -349,7 +349,7 @@ pub(crate) fn pack_mesh(mesh: &Mesh) -> PackedMesh {
         // (Not "away from the centre": a station or a winged hull isn't convex about it.)
         let n = (b - a).cross(c - a).normalize_or_zero();
         for &i in f {
-            let n = corner_normals.get(i as usize).copied().unwrap_or(n);
+            let n = mesh.normals.get(i as usize).or(corner_normals.get(i as usize)).copied().unwrap_or(n);
             faces.push(MeshVertex { pos: mesh.positions[i as usize].to_array(), normal: n.to_array(), color: color(i), data: data(i) });
         }
     }

@@ -391,6 +391,26 @@ pub struct BuildData {
     pub chunk_tris: Vec<Vec<u32>>,
     pub chunk_edges: Vec<Vec<u32>>,
     pub origin: Vec<DVec3>,
+    /// The package's light exaggeration (`info.json` `light_exaggeration`): the radius, and how much steeper land
+    /// (over the radius) and sea floor (under) are lit than they stand. None: lit as they stand.
+    pub light: Option<(f64, f64, f64)>,
+}
+
+/// A triangle's normal as the package lights it: its corners lifted by `light` (its land or sea factor on their
+/// height over `light`'s radius); None without one (the faces' own).
+fn lit_normal(t: [DVec3; 3], light: Option<(f64, f64, f64)>) -> Option<Vec3> {
+    let (r, land, sea) = light?;
+    let [a, b, c] = t.map(|p| {
+        let h = p.length() - r;
+        p.normalize() * (r + h * if h >= 0.0 { land } else { sea })
+    });
+    Some((b - a).cross(c - a).normalize_or_zero().as_vec3())
+}
+
+/// A package colour (sRGB bytes) as the renderer takes it: authored values pass through as they are (its target
+/// is not sRGB-encoding: `engine::gpu`), as the pyramid's tiles do.
+pub fn package_colour(c: [u8; 3], alpha: f32) -> [f32; 4] {
+    [c[0] as f32 / 255.0, c[1] as f32 / 255.0, c[2] as f32 / 255.0, alpha]
 }
 
 pub struct Job {
@@ -436,8 +456,10 @@ pub fn build_mesh(bd: &BuildData, on: &[u8], c: usize, view: View) -> (Mesh, usi
                 m.positions.push((bd.pos[v as usize] - origin).as_vec3());
             }
             m.faces.push([k, k + 1, k + 2]);
-            let rgb = bd.col[t[2] as usize].map(srgb_to_linear);
-            m.colors.extend([[rgb[0], rgb[1], rgb[2], 1.0]; 3]);
+            m.colors.extend([package_colour(bd.col[t[2] as usize], 1.0); 3]);
+            if let Some(n) = lit_normal(t.map(|v| bd.pos[v as usize]), bd.light) {
+                m.normals.extend([n; 3]);
+            }
         }
         let n = tris.len();
         return (Mesh::new(m), n);
@@ -587,7 +609,7 @@ impl Layers {
     fn build(&self, k: usize, pos: &[DVec3], dirs: &[DVec3]) -> Vec<(Mesh, DVec3, f64)> {
         let l = &self.list[k];
         let lift = LAYER_LIFT * (k + 1) as f64;
-        let col: Vec<[f32; 4]> = l.rgb.iter().map(|c| [srgb_to_linear(c[0]), srgb_to_linear(c[1]), srgb_to_linear(c[2]), LAYER_ALPHA]).collect();
+        let col: Vec<[f32; 4]> = l.rgb.iter().map(|c| package_colour(*c, LAYER_ALPHA)).collect();
         self.groups.iter().filter_map(|(m, cos_a, ts)| {
             let origin = *m * pos.iter().take(1).map(|p| p.length()).next().unwrap_or(6.371e6);
             let mut w = WireModel::default();
@@ -612,10 +634,6 @@ impl Layers {
     }
 }
 
-pub fn srgb_to_linear(c: u8) -> f32 {
-    let c = c as f32 / 255.0;
-    if c <= 0.04045 { c / 12.92 } else { ((c + 0.055) / 1.055).powf(2.4) }
-}
 
 /// What `land_draw` drew, for the app's panel and its view-box count.
 pub struct LandDrawn<'a> {
@@ -869,6 +887,7 @@ impl Ground {
             chunk_tris: chunks.iter().map(|c| c.tris.clone()).collect(),
             chunk_edges: chunks.iter().map(|c| c.edges.clone()).collect(),
             origin: chunks.iter().map(|c| c.origin).collect(),
+            light: info.get("light_exaggeration").and_then(|l| Some((r, l["land"].as_f64()?, l["sea"].as_f64()?))),
         });
         let (jobs, inbox) = std::sync::mpsc::channel::<Job>();
         let (outbox, done) = std::sync::mpsc::channel::<Built>();
@@ -1104,7 +1123,7 @@ impl Ground {
             g.mesh = None;
         }
         let old = self.bd.clone();
-        self.bd = Arc::new(BuildData { pos: self.d.pos.clone(), col: old.col.clone(), ft: old.ft.clone(), fe: old.fe.clone(), stand_in: old.stand_in.clone(), chunk_tris: old.chunk_tris.clone(), chunk_edges: old.chunk_edges.clone(), origin: old.origin.clone() });
+        self.bd = Arc::new(BuildData { pos: self.d.pos.clone(), col: old.col.clone(), ft: old.ft.clone(), fe: old.fe.clone(), stand_in: old.stand_in.clone(), chunk_tris: old.chunk_tris.clone(), chunk_edges: old.chunk_edges.clone(), origin: old.origin.clone(), light: old.light });
         self.generation += 1;
         *self.built.lock().unwrap() = None;
     }
@@ -1211,8 +1230,10 @@ impl Ground {
                     m.positions.push((d.pos[v as usize] - origin).as_vec3());
                 }
                 m.faces.push([k, k + 1, k + 2]);
-                let rgb = d.col[t[2] as usize].map(srgb_to_linear);
-                m.colors.extend([[rgb[0], rgb[1], rgb[2], 1.0]; 3]);
+                m.colors.extend([package_colour(d.col[t[2] as usize], 1.0); 3]);
+                if let Some(n) = lit_normal(t.map(|v| d.pos[v as usize]), self.bd.light) {
+                    m.normals.extend([n; 3]);
+                }
             }
             return Mesh::new(m);
         }

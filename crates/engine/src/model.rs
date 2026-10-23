@@ -204,6 +204,8 @@ pub struct WireModel {
     /// Shaded smooth (a curved surface: each corner's normal the average of
     /// the faces meeting there), not face by face.
     pub smooth: bool,
+    /// Optional per-vertex normals, lit by these instead of the faces' (none: from the faces).
+    pub normals: Vec<Vec3>,
 }
 
 impl WireModel {
