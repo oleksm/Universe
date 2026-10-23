@@ -34,8 +34,17 @@ struct Source {
     index: HashMap<(usize, usize, usize), usize>,
     bounds: Vec<(DVec3, f64)>,
     holes: Vec<(f64, f64, f64)>,
+    /// The coarsest cell a drawn tile may have (m, f64 bits; 0: any): the base's own resolution where the base is
+    /// the coarse level of detail (`Pyramid::set_base_cell`). A tile coarser always splits, so the pyramid only ever
+    /// refines below the base, never draws coarser than it.
+    base_cell: std::sync::atomic::AtomicU64,
 }
 impl Source {
+    /// Must tile `id` split, being coarser than the base (see `base_cell`)?
+    fn coarser_than_base(&self, id: usize) -> bool {
+        let limit = f64::from_bits(self.base_cell.load(std::sync::atomic::Ordering::Relaxed));
+        limit > 0.0 && self.m.cell0_m * self.m.scale(self.m.tiles[id].k) as f64 > limit
+    }
     fn inverse(&self, x: f64, y: f64) -> DVec3 {
         self.m.projection.inverse(x, y)
     }
@@ -231,11 +240,12 @@ impl Source {
             let ratio = error / distance / PX;
             let dense = s.density(id, cam.position, ex, pixel);
             let split = s.can_split(id)
-                && if history.contains(&id) {
-                    ratio >= 0.7 && dense >= 0.7
-                } else {
-                    ratio > 1.0 && dense > 1.0
-                };
+                && (s.coarser_than_base(id)
+                    || if history.contains(&id) {
+                        ratio >= 0.7 && dense >= 0.7
+                    } else {
+                        ratio > 1.0 && dense > 1.0
+                    });
             if split {
                 history.insert(id);
             } else {
@@ -269,6 +279,10 @@ impl Source {
         };
         // Hole boundaries deliberately stay fine; never morph back across their missing coarse quads.
         if self.intersects_hole(self.m.tiles[parent]) {
+            return 0.0;
+        }
+        // (A parent coarser than the base is never drawn: nothing to meet.)
+        if self.coarser_than_base(parent) {
             return 0.0;
         }
         let p = self.m.tiles[parent];
@@ -745,6 +759,7 @@ impl Pyramid {
             index: HashMap::new(),
             bounds: Vec::new(),
             holes: Vec::new(),
+            base_cell: Default::default(),
         };
         for (i, t) in source.m.tiles.iter().enumerate() {
             if source.index.insert((t.k, t.row, t.col), i).is_some() {
@@ -1045,6 +1060,11 @@ impl Pyramid {
         }
         bytes
     }
+    /// The base's own resolution (m; 0: none): no tile coarser is drawn (see `Source::base_cell`).
+    pub fn set_base_cell(&self, cell_m: f64) {
+        self.source.base_cell.store(cell_m.to_bits(), std::sync::atomic::Ordering::Relaxed);
+    }
+
     pub fn update(&mut self, cam: &Camera, aspect: f64, ex: f64, real: bool) {
         let _scope = universe_prof::scope("update/planetlod/pyramid");
         self.tick += 1;
@@ -1663,6 +1683,7 @@ mod tests {
             index: HashMap::from([((1, 0, 0), 0)]),
             bounds: vec![],
             holes: vec![],
+            base_cell: Default::default(),
         };
         assert!(!source.can_split(0));
     }

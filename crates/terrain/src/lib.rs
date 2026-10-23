@@ -1049,6 +1049,10 @@ impl Ground {
             max_draw: std::env::var("UNIVERSE_PLANETLOD_MAXDRAW").ok().and_then(|v| v.parse().ok()).unwrap_or(usize::MAX),
             meta, ex: 1.0, show_edges: true, show_faces: true, lvl_count: vec![0; 256], risen: (0, 0), layers, pyramid, hold_layers: false, cube,
         };
+        // (The base is the coarse level of detail: the pyramid refines below its cube's texels, never coarser.)
+        if let (Some(c), Some(p)) = (&g.cube, &g.pyramid) {
+            p.lock().unwrap().set_base_cell(g.d.r * std::f64::consts::FRAC_PI_2 / c.n as f64);
+        }
         log::info!(
             "planet LOD: {} vertices ({} collapsed), {} finest triangles in {} chunks, {} tile groups, read in {:.1} s from {}",
             g.d.pos.len(), g.d.mv.len(), g.d.ft.len(), g.chunks.iter().filter(|c| !c.tris.is_empty()).count(), g.tiles.len(), t0.elapsed().as_secs_f64(), g.dir.display()
