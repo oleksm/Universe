@@ -12,6 +12,10 @@ sources:
   section: 3.5 Co-design cockpit, routes and hull
   note: 'Owner corrections, 2026-10-21: inherited pilot products must be reused and module clearances must
     be explicit in QC.'
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.5 Co-design cockpit, routes and hull
+  note: 'Owner deferred-module correction,2026-10-22: correct reuse/ownership does not authorize current inclusion;
+    defer geometry from source/render/export while retaining future clearance data.'
 method:
 - Identify every selected instance, existing record/model hash, actual consumer basis/origin and pose; reject
   model scaling or an envelope smaller than the product. Include command station and inherited instances.
@@ -38,12 +42,20 @@ method:
   hull space is incompatible, return affected G2/G3 shaping and arrangement with unchanged required envelope
   and protected intent; retain provisional/unknown criterion limits. Do not prescribe global enlargement or
   weaken a fixture/product to force a pass.
+- Before mesh/fit checks, reconcile the current delivery inclusion ledger against all source objects, hidden/disabled
+  collections, linked instances, build-script output, render scene and actual export. Deferred products, copies
+  and geometric substitutes must be absent from the delivered source/render/export; preserve their required
+  dimensions, hashes and future clearance assumptions as separate data only. Correct catalogue ownership or
+  invisibility does not grant permission to include.
 evidence:
 - Per-instance clearance matrix with requirement/allowance provenance, actual model/record/consumer/frame hashes,
   poses, geometry and fixtures.
 - Worst-case measurements, intersections or failed routes, views and motion/path samples; separate declared
   tests from geometry/export/runtime evidence.
 - Source-object ownership roster, retired substitute/export exclusions and fresh preview/export hashes.
+- Delivery-scoped inclusion/exclusion reconciliation with module/instance IDs, exact source/build/render/export
+  hashes, deferred clearances retained as data and affected old previews withdrawn. Missing current inclusion
+  authority or a hidden deferred product prevents scope acceptance.
 failure: Retain failed/unknown witnesses and block dependent claims. A demonstrated route or module envelope
   conflict with hull space returns the affected region to G2/G3 hull shaping and arrangement, not further detail
   polish. Preserve required intent and unscaled products/crew fixtures; escalate incompatible constraints for

@@ -16,10 +16,12 @@ trigger_params:
   unit: K
   meaning: Annual-mean temperate climate-potential bound; chosen.
   open: true
-  used: false
+  used: true
   source: docs/planet-feature-trigger-rules-2026-10-22.md
   note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
     this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
+    Read by planet-forge c20fe5f relief-landscape; consulted does not mean calibrated, sole effective threshold
+    or full trigger implementation.
 - name: TROPICAL_MEAN_MIN_K
   value: 291.15
   unit: K
@@ -34,19 +36,23 @@ trigger_params:
   unit: m/s
   meaning: 0.6m annual rain as SI rate, provisional forest-suitability threshold.
   open: true
-  used: false
+  used: true
   source: docs/planet-feature-trigger-rules-2026-10-22.md
   note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
     this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
+    Read by planet-forge c20fe5f relief-landscape; consulted does not mean calibrated, sole effective threshold
+    or full trigger implementation.
 - name: FOREST_PHI_MAX
   value: 2.0
   unit: '1'
   meaning: Upper PET/P for provisional forest moisture suitability; chosen.
   open: true
-  used: false
+  used: true
   source: docs/planet-feature-trigger-rules-2026-10-22.md
   note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
     this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
+    Read by planet-forge c20fe5f relief-landscape; consulted does not mean calibrated, sole effective threshold
+    or full trigger implementation.
 built: false
 status: draft
 description: Leaf-shedding forest of mild wet climates.

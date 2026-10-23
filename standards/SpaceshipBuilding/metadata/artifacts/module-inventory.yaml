@@ -11,6 +11,10 @@ sources:
   section: 3.5 Co-design cockpit, routes and hull
   note: 'Owner correction, 2026-10-21: discover and reuse existing modules before interior sizing; no custom
     fit-out substitutes.'
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 3.5 Co-design cockpit, routes and hull
+  note: 'Owner deferred-module correction,2026-10-22: correct reuse/ownership does not authorize current inclusion;
+    defer geometry from source/render/export while retaining future clearance data.'
 purpose: Discover existing reusable modules before G3 sizing and retain explicit selection, ownership and consumer
   gaps.
 contents:
@@ -33,6 +37,9 @@ contents:
   missing-data status.'
 - Fit failure disposition identifies whether hull/arrangement needs G2/G3 rework; required products stay unscaled,
   product/consumer gaps and incompatible intent escalate explicitly.
+- 'Per-delivery inclusion ledger for every discovered/selected instance: included/installed in this candidate
+  or explicitly deferred, authority and scope, future clearance-data reference and current source/render/export/BOM
+  disposition. Future selection and current delivery inclusion are separate decisions.'
 boundary: Project authoring evidence using existing equipment references; not a new runtime schema, module
   approval database or implicit installation.
 consumers:

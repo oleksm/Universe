@@ -1,0 +1,575 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.relief-landscape
+  name: The present landscape from the state the simulation holds
+  about: 'Each feature kind below as a rule over the samples'' fields and the record: a region (one feature a connected
+    group of samples meeting the rule), a line (the rule''s samples chained) or a point (its best samples a spacing
+    apart). The kinds describe the planet now: each run drops what it wrote before and writes again. A kind whose
+    inputs a checkpoint lacks is skipped.'
+area: relief
+clock:
+  when: every 10 steps (as coast-features)
+reads:
+- name: height
+  field: planet-field.height
+- name: crust-kind
+  field: planet-field.crust-kind
+- name: crust-age
+  field: planet-field.crust-age
+- name: rock
+  field: planet-field.rock
+- name: plate
+  field: planet-field.plate
+- name: temperature
+  field: planet-field.temperature
+- name: rain
+  field: planet-field.rain
+- name: aridity
+  field: planet-field.aridity
+- name: ice
+  field: planet-field.ice
+- name: ice-lgm
+  field: planet-field.ice-lgm
+- name: ice-cycles
+  field: planet-field.ice-cycles
+- name: glacial-erosion
+  field: planet-field.glacial-erosion
+- name: incision
+  field: planet-field.incision
+- name: recent-incision
+  field: planet-field.recent-incision
+- name: discharge
+  field: planet-field.discharge
+- name: drainage-area
+  field: planet-field.drainage-area
+- name: receiver
+  field: planet-field.receiver
+- name: lake
+  field: planet-field.lake
+- name: lake-id
+  field: planet-field.lake-id
+- name: lake-mark
+  field: planet-field.lake-mark
+- name: dust
+  field: planet-field.dust
+- name: wear-wind
+  field: planet-field.wear-wind
+- name: laid
+  field: planet-field.laid
+- name: denuded
+  field: planet-field.denuded
+- name: lowstand-shore
+  field: planet-field.lowstand-shore
+- name: fold
+  field: planet-field.fold
+- name: fault
+  field: planet-field.fault
+- name: routing-slope
+  field: planet-field.routing-slope
+- name: plates table (plate-id, plate-spin)
+  meaning: boundary types from the plates' relative motion
+- name: features (arc fronts, orogen axes, thrust fronts, scarps, anticlines, rift margins, river mouths, deltas,
+    captures, meander belts, flood basalts, volcano centres)
+  meaning: what the derived kinds sit on
+- name: craters table (diameter, sample)
+  meaning: impact sizes
+writes:
+- name: features
+  meaning: abyssal-hills, abyssal-plain, accretionary-prism, active-margin, alluvial-fan, alluvial-plain, anastomosing-reach,
+    archipelago, arete, atoll, back-arc-basin, bajada, barrier-island, barrier-reef, beach-ridge-plain, braided-reach,
+    breached-anticline, canyon-gorge, carbonate-platform, cirque, coastal-plain, continent, continental-rift-zone,
+    continental-rise, continental-slope, cuesta, deflation-hollow, desert-basin-bolson, desert-margin, doline-field,
+    drainage-divide, drumlin-field, erg-sand-sea, esker, estuary, fjord, forearc-basin, foreland-basin, forest-edge,
+    fracture-zone, fringing-reef, geothermal-field, giant-landslide-sector-collapse, glacial-trough-u-valley, graben,
+    guyot, hanging-valley, hogback, homoclinal-ridge, horst, ice-cap, ice-dammed-lake-shorelines, ice-sheet, ice-sheet-extent,
+    ice-shelf, impact-crater-simple, inselberg, island, island-arc, kame-and-kettle-terrain, karst-plateau, knickpoint-waterfall,
+    lagoon, lake, lake-basin-rift-glacial-volcanic-dammed, lake-shoreline-terraces, lateral-moraine, lava-dome,
+    loess-plateau, mangrove-coast, marginal-sea, marine-terrace, mega-scale-glacial-lineations, megaflood-scabland,
+    mesa, microcontinent, mid-ocean-ridge, mountain-pass, multi-ring-impact-basin, oasis, ocean, ocean-basin, oceanic-plateau,
+    oceanic-trench, offset-stream, orogen-belt, outwash-plain-sandur, overdeepening-and-riegel, oxbow-lake, passive-margin,
+    peak, pediment, peneplain-etchplain, permafrost-limit, plateau, plateau-edge, playa-salt-pan, polje, proglacial-lake,
+    raised-shoreline-rebound, range-crest-main-divide, range-front-fault-bounded, recessional-moraine, ria, ridge-axis-valley,
+    river, river-terrace, roche-moutonnee-whaleback, salt-marsh, sandy-beach, sea, sea-cliff, sea-ice, sea-ice-edge,
+    seamount, shelf, shelf-edge, shield-craton, shore-platform, snow-line, structural-basin, structural-dome, submarine-canyon,
+    submarine-fan, syncline-axis, terminal-moraine, tidal-flat, till-plain, transform-valley, tree-line, tributary-network,
+    v-valley, valley-glacier, wadi, waterfall, wetland, wind-gap, yardangs
+params:
+- name: min line points
+  value: 3.0
+  unit: '1'
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: points
+    factor: 1.0
+- name: shield boundary hops
+  value: 4.0
+  unit: '1'
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: lattice hops
+    factor: 1.0
+- name: shield samples
+  value: 4.0
+  unit: '1'
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: samples
+    factor: 1.0
+- name: plateau height
+  value: 600.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: plateau relief
+  value: 300.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: plateau samples
+  value: 3.0
+  unit: '1'
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: samples
+    factor: 1.0
+- name: range front relief
+  value: 1000.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: river discharge
+  value: 100.0
+  unit: m3/s
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: abyssal plain relief
+  value: 400.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: shelf depth
+  value: -200.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: atoll depth
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: -2000.0
+  unit: m
+- name: ocean basin samples
+  value: 60.0
+  unit: '1'
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: samples
+    factor: 1.0
+- name: canyon discharge
+  value: 500.0
+  unit: m3/s
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: fan discharge
+  value: 3000.0
+  unit: m3/s
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: ice thickness
+  value: 1.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: ice extent samples
+  value: 10.0
+  unit: '1'
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: samples
+    factor: 1.0
+- name: ice sheet area
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 1000000000000.0
+  unit: m2
+- name: ice stream thickness
+  value: 2000.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: esker discharge
+  value: 50.0
+  unit: m3/s
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: trough erosion
+  value: 300.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: cirque relief
+  value: 1000.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: cliff height
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 300.0
+  unit: m
+- name: low coast height
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 150.0
+  unit: m
+- name: beach laid
+  value: 5.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: beach ridge laid
+  value: 30.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: ria relief
+  value: 300.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: island share
+  value: 0.01
+  unit: '1'
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: network basin samples
+  value: 20.0
+  unit: '1'
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: samples
+    factor: 1.0
+- name: v valley incision
+  value: 50.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: canyon incision
+  value: 800.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: terrace incision
+  value: 50.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: braided laid
+  value: 20.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: braided slope
+  value: 0.001
+  unit: '1'
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: fan aridity
+  value: 1.5
+  unit: '1'
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: PET over rain
+    factor: 1.0
+- name: erg aridity
+  value: 5.0
+  unit: '1'
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: PET over rain
+    factor: 1.0
+- name: loess dust
+  value: 2.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: deflation wear
+  value: 1.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: playa aridity
+  value: 2.0
+  unit: '1'
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: PET over rain
+    factor: 1.0
+- name: wadi aridity
+  value: 2.0
+  unit: '1'
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: PET over rain
+    factor: 1.0
+- name: inselberg relief
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 300.0
+  unit: m
+- name: pediment aridity
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 1.2
+  unit: '1'
+- name: fold strength
+  value: 0.2
+  unit: '1'
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: breached denudation
+  value: 100.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: mesa incision
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 200.0
+  unit: m
+- name: bare rock relief
+  value: 2500.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: cover samples
+  value: 2.0
+  unit: '1'
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: samples
+    factor: 1.0
+- name: lake mark
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 0.5
+  unit: '1'
+- name: simple crater diameter
+  value: 4000.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: multi-ring diameter
+  value: 300000.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: peak height
+  value: 1500.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: collapse relief
+  value: 2000.0
+  unit: m
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+- name: shield age
+  value: 4.73364e+16
+  unit: s
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+- name: slow spreading
+  value: 1.267523512561158e-09
+  unit: m/s
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: m/yr
+    factor: 3.168808781402895e-08
+- name: reef temperature
+  value: 293.15
+  unit: K
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: degC
+    factor: 1.0
+    note: 'Offset conversion: SI kelvin = display degC x factor + 273.15; conversion is explicit in landscape.rs
+      si(Unit::C), not read from display metadata.'
+- name: guyot quiet
+  value: 631152000000000.0
+  unit: s
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+- name: sea ice temperature
+  value: 271.15
+  unit: K
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: degC
+    factor: 1.0
+    note: 'Offset conversion: SI kelvin = display degC x factor + 273.15; conversion is explicit in landscape.rs
+      si(Unit::C), not read from display metadata.'
+- name: cirque temperature
+  value: 279.15
+  unit: K
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: degC
+    factor: 1.0
+    note: 'Offset conversion: SI kelvin = display degC x factor + 273.15; conversion is explicit in landscape.rs
+      si(Unit::C), not read from display metadata.'
+- name: mangrove temperature
+  value: 293.15
+  unit: K
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: degC
+    factor: 1.0
+    note: 'Offset conversion: SI kelvin = display degC x factor + 273.15; conversion is explicit in landscape.rs
+      si(Unit::C), not read from display metadata.'
+- name: peneplain age
+  value: 3.15576e+16
+  unit: s
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+- name: wetland rain
+  value: 3.802570537683474e-08
+  unit: m/s
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: mm/yr
+    factor: 3.168808781402895e-11
+- name: karst rain
+  value: 2.535047025122316e-08
+  unit: m/s
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  said_as:
+    unit: mm/yr
+    factor: 3.168808781402895e-11
+- name: active quiet
+  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 157788000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+depends_on:
+- planet-process.coast-features
+- planet-process.relief-volcano-types
+backends:
+- cpu
+implementations:
+- where: planet-forge crates/forge-core/src/models/tectonic/landscape.rs
+  state: current
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: invented
+  note: 'planets, 22 Oct 2026: docs/full-landscape-plan-2026-10-22.md phase 1'
+  review: true
+unverified:
+- First coarse-lattice recognition rules do not establish all proposed feature.trigger predicates, origin or fine
+  geometry. Preserve proxy/candidate provenance and missing required evidence; raw emitted counts are not a confirmed-type
+  census.
+- Region areas currently use uniform cell area from sample count; adaptive-cell area and subcell morphology require
+  separate validation.
+- Some feature-local thresholds are consulted together with process limits or fallbacks. Ice-sheet area is max(feature
+  ICE_SHEET_AREA_MIN_M2=5e10m2, process ice sheet area=1e12m2) in the reviewed snapshot, so used:true does not mean
+  the feature value alone determines output.
+- Seasonality, groundwater, glacial flow/flotation and marine sea-ice evidence remain incomplete where the state
+  lacks those signals. Confirming those kinds from annual-climate/volcano proximity alone is not accepted by the
+  proposed catalogue trigger.

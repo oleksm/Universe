@@ -20,6 +20,10 @@ sources:
   section: 6.1 Use a complete evidence checklist
   note: 'Owner gear-integration correction, 2026-10-22: review whole-ship deployed/stowed bay/support silhouette
     and ground height before detail; rejected packaging returns to G2/G3.'
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: 'Owner gear-shape correction,2026-10-22: review unsupported volume/blank bulk so local gear packaging
+    cannot pass by inflating the whole hull.'
 method:
 - Compare registered full-ship views and protected landmarks against the selected candidate.
 - Inspect thumbnail silhouette and declared camera distances; expose inferred reference regions.
@@ -62,6 +66,10 @@ method:
   and transition states using registered side/front/underside silhouette and clay plus a declared ground plane
   and height. Evaluate hanging masses, bay protrusion, belly continuity, support junctions, landing stance
   and ramp-to-ground relationship against the current brief; a colour change cannot repair rejected geometry.
+- After a clearance-driven reshape, inspect side/top/front/underside silhouette and clay plus longitudinal/transverse
+  sections annotated with actual cabin, gear and support reservations. Identify blank bulk, oversized closure
+  faces and needless repetition of a full section; distinguish required functional volume, deliberate aesthetic
+  mass and unsupported padding. A local gear fit does not pass whole-body hierarchy.
 evidence:
 - Decision packet, views, reference provenance and owner/delegate decision bound to candidate.
 - Post-reshape side/top/front silhouette and clay comparison packet, original intent witnesses, current landmark
@@ -74,6 +82,9 @@ evidence:
 - Early integrated gear/bay/support blockout packet with state/camera/scale/ground-height bindings, whole-ship
   observations and current authorized verdict. Isolated parts, clearance-only sweeps or recoloured old geometry
   cannot substitute.
+- Before/after section and assembled-view packet with changed volumes traced to independent requirements or
+  explicit aesthetic intent, alternatives considered and scoped reviewer judgment. No universal fill fraction
+  or minimum occupied-volume ratio substitutes for that review.
 failure: Retain the visual witness and prior candidates. Identity lost or unresolved after clearance-driven
   reshaping returns the affected G2/G3 form/arrangement to review and blocks dependent architecture/detail/export
   acceptance even if clearance passes. Preserve applicable required envelopes and original intent; escalate

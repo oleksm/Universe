@@ -14,6 +14,10 @@ sources:
   section: 6.1 Use a complete evidence checklist
   note: 'Owner gear-integration correction, 2026-10-22: review whole-ship deployed/stowed bay/support silhouette
     and ground height before detail; rejected packaging returns to G2/G3.'
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: 'Owner gear-shape correction,2026-10-22: review unsupported volume/blank bulk so local gear packaging
+    cannot pass by inflating the whole hull.'
 order: 2
 depends_on:
 - ship-stage.references
@@ -34,6 +38,10 @@ exit:
   reservations in registered side/front/underside silhouette and clay views at declared ground height. Explicitly
   judge bay protrusion, belly continuity and mass hierarchy; isolated clearance envelopes cannot establish
   whole-ship appearance.
+- Before selecting a gear-driven hull reshape, compare longitudinal/cross sections and whole-ship clay/silhouettes
+  showing required cabin, folded gear, support and ground envelopes separately. Review unsupported blank stern/crown/body
+  bulk and unnecessary continuation of full cabin sections; fitting a local gear reservation by inflating the
+  entire hull does not close identity review.
 failure:
 - Keep alternatives; do not erase prior source or mix incompatible features silently.
 - Required route/module envelope conflict with hull space returns affected G2/G3 shape and arrangement; preserve

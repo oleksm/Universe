@@ -1,0 +1,125 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.relief-volcano-types
+  name: Volcano types from the centres' records
+  about: Each alive arc and hotspot volcano centre gains, once each, the volcanic landforms its record earns by
+    the registry's triggers (stratovolcano a long-active arc centre, shield a hotspot centre off the continents,
+    caldera a long-active continental centre, monogenetic field a short continental burst or a continental hotspot,
+    necks and dikes an old quiet centre, maars and tuff rings a field near water, lahar plains a stratovolcano in
+    rain). Each is a point child of its centre where the centre stands.
+area: relief
+clock:
+  when: every step, after relief-hotspot-chain
+reads:
+- name: features (planet-feature.arc-volcano-centre, planet-feature.hotspot-volcano-centre)
+  meaning: born, last active, where
+- name: crust kind
+  field: planet-field.crust-kind
+  unit: '1'
+  meaning: on a continent
+- name: crust age
+  field: planet-field.crust-age
+  unit: s
+  meaning: a spreading ridge under a hotspot
+- name: height
+  field: planet-field.height
+  unit: m
+  meaning: water near a field
+- name: rain
+  field: planet-field.rain
+  unit: m/s
+  meaning: lahars (no climate model, no lahars)
+writes:
+- name: features (stratovolcano-shasta-rainier, monogenetic-volcanic-field, cinder-cone, maar, tuff-ring, shield-volcano,
+    volcanic-rift-zone, lava-flow-field, caldera-crater-lake, resurgent-dome, ignimbrite-plateau, lahar-plain, volcanic-neck,
+    dike-ridge)
+  meaning: children of their centre, rule relief.volcano_types
+params:
+- name: STRATO_MYR
+  value: 157788000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: an arc centre active this long builds a stratovolcano; shorter on a continent is a monogenetic field
+  source: 'planets, 22 Oct 2026: Earth''s Holocene volcanoes (Smithsonian GVP) by type against e113''s centres (tools/compare_types.py)'
+  open: true
+- name: CALDERA_MYR
+  value: 2051244000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: a continental centre active this long collapses into a caldera (with its resurgent dome)
+  source: 'planets, 22 Oct 2026: Earth''s Holocene volcanoes (Smithsonian GVP) by type against e113''s centres (tools/compare_types.py)'
+  open: true
+- name: IGNIMBRITE_MYR
+  value: 2366820000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: a caldera centre active this long spreads an ignimbrite plateau
+  source: 'planets, 22 Oct 2026: Earth''s Holocene volcanoes (Smithsonian GVP) by type against e113''s centres (tools/compare_types.py)'
+  open: true
+- name: NECK_MYR
+  value: 946728000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: a continental centre quiet this long after a stratovolcano is worn to its neck and dikes
+  source: 'planets, 22 Oct 2026: Earth''s Holocene volcanoes (Smithsonian GVP) by type against e113''s centres (tools/compare_types.py)'
+  open: true
+- name: RIFT_AGE_MYR
+  value: 315576000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: 'a hotspot over crust younger than this sits on a spreading ridge: a volcanic rift zone'
+  source: 'planets, 22 Oct 2026: Earth''s Holocene volcanoes (Smithsonian GVP) by type against e113''s centres (tools/compare_types.py)'
+  open: true
+- name: FIELD_QUIET_MYR
+  value: 315576000000000.0
+  unit: s
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  meaning: a continental centre quiet this long after less than STRATO_MYR of activity was a monogenetic field (its
+    maars while just quiet)
+  source: 'planets, 22 Oct 2026: two steps, so a centre that comes back is not typed early'
+  open: true
+- name: wet height
+  value: 100.0
+  unit: m
+  meaning: a monogenetic field below this meets water (maars, tuff rings)
+  open: true
+- name: wet rain
+  value: 3.168808781402895e-08
+  unit: m/s
+  said_as:
+    unit: mm/yr
+    factor: 3.168808781402895e-11
+  meaning: a stratovolcano in at least this much rain sheds lahars (1,000 mm/yr)
+  open: true
+depends_on:
+- planet-process.zones-arc-volcanoes
+- planet-process.zones-hotspot-volcano
+backends:
+- cpu
+implementations:
+- where: planet-forge crates/forge-core/src/models/tectonic/volcano_types.rs
+  state: current
+status: draft
+basis:
+- of:
+  - params
+  - clock
+  - reads
+  - writes
+  tier: invented
+  note: 'planets, 22 Oct 2026: the volcanic kinds'' triggers (metadata/features/*.yaml) made rules; thresholds set
+    against Earth''s Holocene volcano mix (GVP: of 838 subduction volcanoes 660 stratovolcanoes, 85 calderas, 138
+    fields).'
+  review: true
