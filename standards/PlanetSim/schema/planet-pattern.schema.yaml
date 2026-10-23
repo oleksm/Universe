@@ -34,7 +34,7 @@ properties:
         to: { type: number, minimum: 0, maximum: 1, x-unit: "1", description: "Band only: upper full-score bound in normalized factor strength." }
         soft: { type: number, exclusiveMinimum: 0, maximum: 1, x-unit: "1", description: "Band only, required: each outside ramp has width soft*(to-from). Score is 1 within [from,to], falls linearly to 0 at from-width and to+width, and remains 0 beyond. No inferred width." }
         signal:
-          $ref: "planet-factor.schema.yaml#/properties/signal"
+          $ref: "planet-factor.schema.yaml#/definitions/factor_signal"
           description: "Per-pattern evidence override. Feature proximity is model screening, not measured composition or origin."
         why: { type: string, description: "The library's own words: how the factor makes or shapes it." }
   when: { type: array, items: { $ref: "planet-layer.schema.yaml#/definitions/condition" }, description: "Hard conditions: a place that fails one does not match at all (no glacier below the snowline)." }
