@@ -15,19 +15,23 @@ trigger_params:
   unit: m/s
   meaning: Relative normal/tangential motion screening of1mm/yr, chosen numerical activity threshold.
   open: true
-  used: false
+  used: true
   source: docs/planet-feature-trigger-rules-2026-10-22.md
   note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
     this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
+    Read by planet-forge c20fe5f relief-landscape; consulted does not mean calibrated, sole effective threshold
+    or full trigger implementation.
 - name: YOUNG_OCEAN_AGE_MAX_S
   value: 631152000000000.0
   unit: s
   meaning: Young seafloor screening age; active boundary evidence remains required.
   open: true
-  used: false
+  used: true
   source: docs/planet-feature-trigger-rules-2026-10-22.md
   note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
     this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
+    Read by planet-forge c20fe5f relief-landscape; consulted does not mean calibrated, sole effective threshold
+    or full trigger implementation.
 built: false
 status: draft
 description: The broad swell of young ocean floor along a spreading boundary, its flanks of abyssal hills.

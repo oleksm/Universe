@@ -104,3 +104,11 @@ This is a review index; the feature-local records are the consumer source. Units
 | GEOTHERMAL_HEAT_FLUX_MIN_W_M2 | 0.2 | W/m2 | Anomalous local shallow conductive flux screening value; hydrothermal transport can differ and needs independent evidence. |
 | GEOTHERMAL_CLUSTER_RADIUS_M | 20000 | m | Provisional spatial grouping radius for known hydrothermal sites; not inferred from coarse mantle heat alone. |
 | DOME_RELIEF_MIN_M | 50 | m | Resolved viscous extrusive mound relief screen; vent/eruption evidence required. |
+
+## First consuming implementation
+
+Planet-forge c20fe5f adds the relief-landscape record writer and consults25 literal feature-local parameter pairs; only those pairs are marked used. This means consulted, not calibrated or proof of the complete trigger. The other115 pre-existing process parameter lists remain unchanged. The new record-only classifier was revised by its owner: SI storage/conversion,62process settings,9added and6removed settings and three further recognition-value changes are recorded in the handoff audit. Its terrain-identical e119 rerun is reported by Planets and has not been independently rerun by Registry.
+
+In this snapshot ice thickness1m agrees between feature and process, but the process ice sheet area1e12m2 overrides the feature5e10m2 through max(). The definition's convention has not become the classifier's effective boundary; this remains an explicit conformance gap. Source declarations and recognized counts do not certify seasonality, groundwater, flotation, marine sea ice or fine morphology. Missing required evidence needs proxy/unknown separation in the writer and census.
+
+The two new process records are mirrored from e3 with source/schema validation. Celsius display offsets live in supported said_as.note; numeric SI values are unchanged and code si(Unit::C) handles conversion. Existing immutable checkpoints and prior classifier reports remain historical inputs, not evidence of current full predicate conformance.

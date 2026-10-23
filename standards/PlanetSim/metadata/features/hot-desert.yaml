@@ -15,19 +15,23 @@ trigger_params:
   unit: '1'
   meaning: PET/P threshold for a dry-climate desert candidate; chosen, not a universal biome law.
   open: true
-  used: false
+  used: true
   source: docs/planet-feature-trigger-rules-2026-10-22.md
   note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
     this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
+    Read by planet-forge c20fe5f relief-landscape; consulted does not mean calibrated, sole effective threshold
+    or full trigger implementation.
 - name: HOT_DESERT_MEAN_MIN_K
   value: 291.15
   unit: K
   meaning: Annual-mean split of hot/cold desert potential; chosen proxy, not monthly Koppen classification.
   open: true
-  used: false
+  used: true
   source: docs/planet-feature-trigger-rules-2026-10-22.md
   note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
     this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
+    Read by planet-forge c20fe5f relief-landscape; consulted does not mean calibrated, sole effective threshold
+    or full trigger implementation.
 built: false
 status: draft
 description: Bare or sparse ground, under 250 mm of rain, hot.
