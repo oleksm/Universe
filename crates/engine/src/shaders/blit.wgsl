@@ -8,13 +8,48 @@
 @group(0) @binding(4) var soft: sampler;
 
 struct Globals {
+    // Camera-relative world -> clip (reversed-Z, infinite far plane).
     view_proj: mat4x4<f32>,
+    // Low-res pixel coords -> clip.
     hud_proj: mat4x4<f32>,
+    // Camera-relative world -> the shadow map's near and far cascades (the tight and ground ones below).
     shadow_near: mat4x4<f32>,
     shadow_far: mat4x4<f32>,
+    // x, y: a texel of each cascade (metres); z: shadows on (1) or not;
+    // w: tint what's in shadow red (checking them).
     shadow: vec4<f32>,
+    // Graphics toggles (1 on): textures, normal maps, occlusion, emission; specular, planet light, tone map.
     look: vec4<f32>,
     look2: vec4<f32>,
+    // The tight cascade round what's looked at; x: a texel of it (metres), y: in use.
+    shadow_tight: mat4x4<f32>,
+    shadow2: vec4<f32>,
+    // The environment (see renderer.rs: not used here).
+    env_sun: vec4<f32>,
+    env_world: vec4<f32>,
+    env_world_color: vec4<f32>,
+    env_mode: vec4<f32>,
+    env_sky: vec4<f32>,
+    // x: the angle a pixel spans (radians) at the screen's middle; y: how far the world's maps
+    // are faded in (0..1); z: 1 where its air's tables are bound.
+    view: vec4<f32>,
+    // Clip → camera-relative world.
+    inv_view_proj: mat4x4<f32>,
+    // The world whose maps are bound: its centre from the eye (m), its radius (m; 0: none).
+    world_at: vec4<f32>,
+    // The scene's frame to that world's own (its turn undone), for its clouds.
+    world_to_body: mat4x4<f32>,
+    // The ground cascade (the ground's patches alone, tens of kilometres round the eye);
+    // shadow2.z: a texel of it (metres), shadow2.w: in use.
+    shadow_ground: mat4x4<f32>,
+    // Faces shaded on the screen's colours (Frame::view_shade): on, ambient, diffuse, sea; the world's centre
+    // from the eye and its sea level (m).
+    view_shade: vec4<f32>,
+    view_world: vec4<f32>,
+    // The normals' exaggeration given (land, sea) and its taper by a pixel's ground (far, near: m).
+    view_light: vec4<f32>,
+    // After the curve: the unsharp mask's amount (0: none).
+    post: vec4<f32>,
 };
 @group(0) @binding(5) var<uniform> g: Globals;
 
@@ -74,15 +109,35 @@ fn film(x: vec3<f32>) -> vec3<f32> {
 // The camera's exposure: scene light to the screen, before the curve.
 const EXPOSURE: f32 = 0.9;
 
+// The scene on the screen, unsharp-masked where asked (`Frame::sharpen`): the picture less a one-pixel blur of it,
+// times the amount, added back, on the encoded colours, as the planet lab's views are.
+fn scene_on_screen(uv: vec2<f32>) -> vec3<f32> {
+    let amount = g.post.x;
+    if (amount <= 0.0) {
+        return film(textureSample(scene_tex, soft, uv).rgb);
+    }
+    let size = vec2<i32>(textureDimensions(scene_tex));
+    let at = clamp(vec2<i32>(uv * vec2<f32>(size)), vec2<i32>(0), size - 1);
+    var blur = vec3<f32>(0.0);
+    var centre = vec3<f32>(0.0);
+    for (var dy = -1; dy <= 1; dy++) {
+        for (var dx = -1; dx <= 1; dx++) {
+            let c = film(textureLoad(scene_tex, clamp(at + vec2<i32>(dx, dy), vec2<i32>(0), size - 1), 0).rgb);
+            blur += c * f32((2 - abs(dx)) * (2 - abs(dy)));
+            if (dx == 0 && dy == 0) { centre = c; }
+        }
+    }
+    return clamp(centre + amount * (centre - blur / 16.0), vec3<f32>(0.0), vec3<f32>(1.0));
+}
+
 @fragment
 fn fs_main(in: VertexOut) -> @location(0) vec4<f32> {
-    let scene = textureSample(scene_tex, soft, in.uv);
     // The HUD layer holds premultiplied color (alpha-blended onto transparent black).
     let hud = textureSample(hud_tex, soft, in.uv);
     // So does the front layer (in light, before the curve).
     let front = textureSample(front_tex, soft, in.uv);
     let fa = max(front.a, 1e-4);
-    let world = film(scene.rgb) * (1.0 - front.a) + film(front.rgb / fa) * front.a;
+    let world = scene_on_screen(in.uv) * (1.0 - front.a) + film(front.rgb / fa) * front.a;
     return vec4<f32>(world * (1.0 - hud.a) + hud.rgb, 1.0);
 }
 

@@ -109,6 +109,8 @@ pub struct PlanetLodApp {
     /// the light gamma-encoded as it is, as the lab's views are: the default (the owner, 2026-10-23); `look=film`
     /// puts the game's curve back.
     raw_look: bool,
+    /// `sharp=`: the view's unsharp mask (one pixel), as the lab's views have; 0.25 by default, `sharp=0` off.
+    sharp: f32,
     easing: bool,
     /// UNIVERSE_PLANETLOD_FLY: the camera descends and drifts by itself (captures ignore the keys);
     /// =pan: it slides sideways at its altitude instead.
@@ -230,6 +232,7 @@ impl PlanetLodApp {
             fov: 50.0,
             sun: None,
             raw_look: true,
+            sharp: 0.25,
             easing: false,
             fly: crate::devenv::var_os("UNIVERSE_PLANETLOD_FLY").is_some(),
             pan: crate::devenv::var("UNIVERSE_PLANETLOD_FLY").is_ok_and(|v| v == "pan"),
@@ -268,6 +271,7 @@ impl PlanetLodApp {
                     ("fov", Some(v)) => app.fov = v.clamp(1.0, 170.0),
                     ("look", _) if kv.ends_with("raw") => app.raw_look = true,
                     ("hud", Some(v)) => app.hud = v > 0.0,
+                    ("sharp", Some(v)) => app.sharp = v.clamp(0.0, 4.0) as f32,
                     ("look", _) if kv.ends_with("film") => app.raw_look = false,
                     ("sun", _) => {
                         let enu: Vec<f64> = kv[4..].split(',').filter_map(|x| x.trim().parse().ok()).collect();
@@ -574,6 +578,7 @@ impl App for PlanetLodApp {
         // (Lit as the planet lab's views are, `0.3 + 0.95 max(0, n·l)`: the frame's ambient 0.3, and a white sun whose
         // adapted brightness, `luminosity^ADAPT`, makes the rest 0.95: 0.95 / 0.7 of full.)
         frame.ambient = VIEW_AMBIENT;
+        frame.sharpen = self.sharp;
         if self.raw_look {
             frame.graphics.tone_map = false;
             // (And shaded as the lab's views are, on the screen's colours: exact with the tone map off.)

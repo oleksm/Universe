@@ -63,6 +63,8 @@ struct Globals {
     view_world: [f32; 4],
     /// The view shade's exaggeration given (land, sea) and its taper (far, near ground of a pixel, m).
     view_light: [f32; 4],
+    /// After the curve: the unsharp mask's amount (`Frame::sharpen`; 0: none).
+    post: [f32; 4],
 }
 
 /// The shadow map's side (texels), each of its four cascades (see `Shadows`).
@@ -1197,6 +1199,7 @@ impl Renderer {
             shadow_ground: shadow_ground.to_cols_array_2d(),
             view_shade: frame.view_shade.map_or([0.0; 4], |v| [1.0, v.ambient, v.diffuse, v.sea]),
             view_light: frame.view_shade.map_or([1.0, 1.0, crate::frame::TAPER_FAR, crate::frame::TAPER_NEAR], |v| [v.land_light, v.sea_light, crate::frame::TAPER_FAR, crate::frame::TAPER_NEAR]),
+            post: [frame.sharpen, 0.0, 0.0, 0.0],
             view_world: frame.view_shade.map_or([0.0; 4], |v| {
                 let c = (v.centre - frame.camera.position).as_vec3();
                 [c.x, c.y, c.z, v.radius as f32]

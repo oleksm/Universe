@@ -124,6 +124,9 @@ pub struct Frame {
     pub studio: bool,
     /// Lit faces shaded on the screen's colours, as a map shades relief (see `ViewShade`); None: by the scene's light.
     pub view_shade: Option<ViewShade>,
+    /// An unsharp mask on the screen's colours, as the planet lab's views have: its amount (0: none) over a
+    /// one-pixel blur (3×3 binomial), the scene only (not the HUD or the front layer).
+    pub sharpen: f32,
     /// A planet's colour and lit normal by direction (see `PlanetCube`), for meshes whose vertices carry their
     /// directions in `data` (w: `PLANET_CUBE_DATA`). None: a blank one.
     pub planet_cube: Option<std::sync::Arc<crate::worldmaps::PlanetCube>>,
@@ -320,8 +323,9 @@ pub struct ViewShade {
 }
 
 /// A view-shade pixel's ground (m) at and over which a normal's exaggeration is kept whole, and at and under which
-/// it is taken back to 1 (the planet lab's: x13 is right for its 19.5 km pixels, over-darkens a 4 km range at 60 km).
-pub const TAPER_FAR: f32 = 19_500.0;
+/// it is taken back to 1 (the planet lab's: x13 whole down to 2 km pixels, so 5,000 km up keeps the approved look;
+/// 19.5 km left it at about x6.7 there, blurry, 2026-10-23).
+pub const TAPER_FAR: f32 = 2_000.0;
 pub const TAPER_NEAR: f32 = 100.0;
 
 /// A sphere reflecting the light: a planet or moon. What it gives a point
@@ -470,6 +474,7 @@ impl Frame {
             size: hud_size,
             studio: false,
             view_shade: None,
+            sharpen: 0.0,
             planet_cube: None,
             sun_probe: None,
             shadow_focus: 0.0,
