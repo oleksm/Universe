@@ -1,0 +1,267 @@
+{
+  "scope": "Exact static assembled showcase installation packet. NOT commissioned hull, runtime animation or physical acceptance.",
+  "source_sha256": "b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c",
+  "source": "/home/alexm/git/blender/ships/explorer-study/crew-hatch-01/install-20261023/explorer.blend",
+  "frame_map": "Blender source X/Y/Z -> glTF X/Z/-Y, metres; not the formal +Y-nose hull exporter frame",
+  "exports": [
+    {
+      "pose": "open",
+      "frame": 501,
+      "path": "export/explorer-current-open-review.glb",
+      "sha256": "1399990f6dddc1c0b43a112e6d93f491bce4bf3b40c9cd06f03cbb86bcaec8a3",
+      "bytes": 3283556,
+      "pose_matrices": {
+        "RearRamp_Pivot": [
+          [
+            -0.4968308210372925,
+            0.0,
+            0.8678474426269531,
+            4.949999809265137
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            -0.8678474426269531,
+            0.0,
+            -0.4968308210372925,
+            1.75
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "RearRamp_ExtensionPivot": [
+          [
+            -0.4968308210372925,
+            0.0,
+            0.8678474426269531,
+            6.388238906860352
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            -0.8678474426269531,
+            0.0,
+            -0.4968308210372925,
+            1.0418554544448853
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "CrewHatch_FloorSlide": [
+          [
+            -1.0,
+            8.742277657347586e-08,
+            0.0,
+            -1.0499999523162842
+          ],
+          [
+            -8.742277657347586e-08,
+            -1.0,
+            0.0,
+            -1.2239188151852431e-07
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            -0.014999999664723873
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "CrewHatch_BellySlide": [
+          [
+            -1.0,
+            8.742277657347586e-08,
+            0.0,
+            -1.0499999523162842
+          ],
+          [
+            -8.742277657347586e-08,
+            -1.0,
+            0.0,
+            -1.2239188151852431e-07
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.009999999776482582
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "explicit_overrides": {},
+      "purpose": "static assembled visual review; no runtime mechanism/commissioning authority",
+      "frozen_file": "/home/alexm/git/blender/ships/explorer-study/crew-hatch-01/install-20261023/explorer-current-open-review.glb",
+      "raw_pose_errors": {
+        "RearRamp_Pivot": 1.468385519842741e-07,
+        "RearRamp_ExtensionPivot": 3.6699243866067377e-07,
+        "CrewHatch_FloorSlide": 2.9802322387695312e-08,
+        "CrewHatch_BellySlide": 2.9802322387695312e-08
+      },
+      "animations": 0,
+      "nodes": 1015
+    },
+    {
+      "pose": "closed",
+      "frame": 657,
+      "path": "export/explorer-current-closed-review.glb",
+      "sha256": "50a33c16150f3c950dbb873036254a02ac6937c051e6127db320ead5364fab9e",
+      "bytes": 3283480,
+      "pose_matrices": {
+        "RearRamp_Pivot": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            4.949999809265137
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            1.75
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "RearRamp_ExtensionPivot": [
+          [
+            -1.0,
+            0.0,
+            8.742277657347586e-08,
+            4.849999904632568
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            -8.742277657347586e-08,
+            0.0,
+            -1.0,
+            3.3499999046325684
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "CrewHatch_FloorSlide": [
+          [
+            -1.0,
+            8.742277657347586e-08,
+            0.0,
+            0.3499999940395355
+          ],
+          [
+            -8.742277657347586e-08,
+            -1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "CrewHatch_BellySlide": [
+          [
+            -1.0,
+            8.742277657347586e-08,
+            0.0,
+            0.3499999940395355
+          ],
+          [
+            -8.742277657347586e-08,
+            -1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "explicit_overrides": {
+        "RearRamp_Pivot.rotation_y": 0,
+        "RearRamp_ExtensionPivot.rotation_y": -3.141592653589793
+      },
+      "purpose": "static assembled visual review; no runtime mechanism/commissioning authority",
+      "frozen_file": "/home/alexm/git/blender/ships/explorer-study/crew-hatch-01/install-20261023/explorer-current-closed-review.glb",
+      "raw_pose_errors": {
+        "RearRamp_Pivot": 0.0,
+        "RearRamp_ExtensionPivot": 0.0,
+        "CrewHatch_FloorSlide": 0.0,
+        "CrewHatch_BellySlide": 0.0
+      },
+      "animations": 0,
+      "nodes": 1015
+    }
+  ],
+  "inventory": {
+    "command_station": "deferred; not included",
+    "gear": "edited study geometry included, no catalogue rating inheritance",
+    "propulsion": "unselected; no fabricated nozzles"
+  },
+  "mechanisms": "independent rear leaves, pocket hatch slides, folding ladder, edited gear; exported static snapshots only",
+  "physical_mass": "unresolved; old material measure not transferred",
+  "historical_qc": "Prior geometry, headroom, sweep and route findings are not current-byte passes."
+}
