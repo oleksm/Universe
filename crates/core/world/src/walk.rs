@@ -284,12 +284,23 @@ impl WalkMesh {
     /// bounds to where it leaves them or meets something: a long sight line
     /// through the model costs what it crosses.)
     pub fn ray(&self, from: DVec3, dir: DVec3, max: f64) -> Option<(f64, DVec3)> {
-        self.ray_face(from, dir, max).map(|(d, n)| (d, if n.dot(dir) > 0.0 { -n } else { n }))
+        self.ray_where(from, dir, max, &|_| true)
+    }
+
+    /// `ray`, meeting only the surfaces `accept` takes (by their normal facing the ray): the others are passed
+    /// through, as if not there.
+    pub fn ray_where(&self, from: DVec3, dir: DVec3, max: f64, accept: &dyn Fn(DVec3) -> bool) -> Option<(f64, DVec3)> {
+        let facing = |n: DVec3| if n.dot(dir) > 0.0 { -n } else { n };
+        self.ray_face_where(from, dir, max, &|n| accept(facing(n))).map(|(d, n)| (d, facing(n)))
     }
 
     /// `ray`, with the surface's own normal (out of its front, as it's wound):
     /// facing the ray if it's met from in front.
     pub fn ray_face(&self, from: DVec3, dir: DVec3, max: f64) -> Option<(f64, DVec3)> {
+        self.ray_face_where(from, dir, max, &|_| true)
+    }
+
+    fn ray_face_where(&self, from: DVec3, dir: DVec3, max: f64, accept: &dyn Fn(DVec3) -> bool) -> Option<(f64, DVec3)> {
         // The part of the ray within the bounds.
         let (lo, hi) = (self.lo - DVec3::splat(0.01), self.hi + DVec3::splat(0.01));
         let (mut t0, mut t1) = (0.0f64, max);
@@ -337,7 +348,9 @@ impl WalkMesh {
                         && best.is_none_or(|b| d < b.0)
                     {
                         let n = (t[1] - t[0]).cross(t[2] - t[0]).normalize();
-                        best = Some((d, n));
+                        if accept(n) {
+                            best = Some((d, n));
+                        }
                     }
                 }
             }
@@ -464,6 +477,15 @@ impl Collider<'_> {
                 }
             }
             Collider::Ground(_) => {}
+        }
+    }
+
+    /// `ray`, meeting only surfaces `accept` takes (by their normal facing the ray): a model's others are passed
+    /// through; a solid's (a box, a convex, the ground: one surface met) refused whole.
+    fn ray_where(&self, from: DVec3, dir: DVec3, max: f64, accept: &dyn Fn(DVec3) -> bool) -> Option<(f64, DVec3)> {
+        match self {
+            Collider::Mesh { mesh, at, rot } => mesh.ray_where(rot.inverse() * (from - *at), rot.inverse() * dir, max, &|n| accept(*rot * n)).map(|(d, n)| (d, *rot * n)),
+            _ => self.ray(from, dir, max).filter(|&(_, n)| accept(n)),
         }
     }
 
@@ -641,8 +663,33 @@ impl Walker {
 }
 
 /// How far below `feet + up·STEP` a floor flat enough to stand on is, if it's
-/// within `STEP + below` of there.
+/// within `STEP + below` of there: the nearest standable surface down the ray. A steeper face in the way (a
+/// tread's side, a wall's foot) is no floor and hides none: it is the walker's sides' to meet, not its feet's.
 fn floor(colliders: &[Collider], feet: DVec3, up: DVec3, below: f64) -> Option<f64> {
     let from = feet + up * STEP;
-    ray(colliders, from, -up, STEP + below).filter(|&(_, n)| n.dot(up) >= SLOPE).map(|(d, _)| d)
+    let standable = |n: DVec3| n.dot(up) >= SLOPE;
+    colliders.iter().filter_map(|c| c.ray_where(from, -up, STEP + below, &standable)).min_by(|a, b| a.0.total_cmp(&b.0)).map(|(d, _)| d)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// A steep face over a floor, within a step (a tread's side on a ramp, a wall's foot): no floor itself, and
+    /// it hides none; the floor under it is found. Nothing standable: none.
+    #[test]
+    fn walk_floor_is_the_nearest_standable_surface() {
+        let floor_tris = [[DVec3::new(-5.0, 0.0, -5.0), DVec3::new(5.0, 0.0, -5.0), DVec3::new(5.0, 0.0, 5.0)], [DVec3::new(-5.0, 0.0, -5.0), DVec3::new(5.0, 0.0, 5.0), DVec3::new(-5.0, 0.0, 5.0)]];
+        // (60° from level, 0.2 m over the floor where the feet are: its normal's rise 0.5, under SLOPE.)
+        let (r, h) = (60f64.to_radians(), 0.2);
+        let steep = [DVec3::new(-1.0, h - r.tan(), -1.0), DVec3::new(-1.0, h + r.tan(), 1.0), DVec3::new(1.0, h, 0.0)];
+        let mesh = WalkMesh::new(&[floor_tris[0], floor_tris[1], steep]);
+        let only_steep = WalkMesh::new(&[steep]);
+        fn at(m: &WalkMesh) -> [Collider<'_>; 1] {
+            [Collider::Mesh { mesh: m, at: DVec3::ZERO, rot: DQuat::IDENTITY }]
+        }
+        let d = floor(&at(&mesh), DVec3::ZERO, DVec3::Y, 0.05).expect("the floor under the steep face");
+        assert!((d - STEP).abs() < 1e-9, "{d}");
+        assert!(floor(&at(&only_steep), DVec3::ZERO, DVec3::Y, 0.05).is_none());
+    }
 }
