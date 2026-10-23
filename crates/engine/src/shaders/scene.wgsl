@@ -494,6 +494,11 @@ fn shade(in: MeshOut, tile: TileSample) -> vec4<f32> {
     let cube_dir = in.data.xyz;
     let cube_dx = dpdx(cube_dir);
     let cube_dy = dpdy(cube_dir);
+    // (Where on the planet cube a pixel is, by its place from the view shade's world (its frame unturned), and its
+    // steps across the screen: for a tile coarser than the cube, the cube's normals.)
+    let world_dir = normalize(in.at - g.view_world.xyz);
+    let world_dx = dpdx(world_dir);
+    let world_dy = dpdy(world_dir);
     // (A pool tile's texture: whether it has one, and its steps across the screen.)
     let tile_on = tile.on;
     let tile_dx = dpdx(in.data.xy);
@@ -730,6 +735,14 @@ fn shade(in: MeshOut, tile: TileSample) -> vec4<f32> {
                 let e = normalize(along);
                 nv = normalize(e * t.x + cross(up, e) * t.y + up * t.z);
             }
+            // (Coarser than the planet cube bound (a far tile's level): the cube's finer normals.)
+            let cube_n = textureDimensions(planet_normal).x;
+            if (cube_n > 1u && in.data.z > g.view_world.w * 1.5707964 / f32(cube_n)) {
+                let c = textureSampleGrad(planet_normal, planet_smp, world_dir, world_dx, world_dy).xyz * 2.0 - 1.0;
+                if (dot(c, c) > 0.01) {
+                    nv = normalize(c);
+                }
+            }
         } else if (cube_on) {
             // (Its lit normal per texel, in the planet's own frame: right for a planet drawn unturned, as the
             // view shade's are.)
@@ -887,8 +900,9 @@ struct PoolDraw {
     face_start: u32,
     edge_start: u32,
     morph: f32,
-    // Its tile texture's layer + 1 (0: none resident).
+    // Its tile texture's layer + 1 (0: none resident), and a texel's span on the ground (m).
     layer: u32,
+    texel_m: f32,
 };
 struct PoolGroup {
     c0: vec4<f32>,
@@ -1062,7 +1076,7 @@ fn vs_pool(@builtin(vertex_index) c: u32, @builtin(instance_index) layer: u32) -
     // (A tile with its texture resident: where on it, and which layer, in `data` (a pool mesh has none of its own):
     // its texels' centres, and minus the layer + 1.)
     if ((flags & 64u) != 0u && d.layer > 0u) {
-        o.data = vec4<f32>((pool_texel(h, flags, i) + 0.5) / TILE_TEX, 0.0, -f32(d.layer));
+        o.data = vec4<f32>((pool_texel(h, flags, i) + 0.5) / TILE_TEX, d.texel_m, -f32(d.layer));
     }
     return o;
 }

@@ -385,7 +385,7 @@ fn tile_texture(source: &Source, id: usize, ex: f64, data: &Raster) -> Option<Ar
             normal.push([enc(n.dot(e)), enc(n.dot(f)), enc(n.dot(up)), 255]);
         }
     }
-    Some(Arc::new(TileTexture::new(side as u32, colour, normal)))
+    Some(Arc::new(TileTexture::new(side as u32, s as f32, colour, normal)))
 }
 
 /// Tile `id`'s samples (a sample's halo round it) and its parent's under it.

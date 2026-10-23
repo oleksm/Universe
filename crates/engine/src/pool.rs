@@ -57,6 +57,9 @@ pub struct PoolModel {
 pub struct TileTexture {
     id: u64,
     pub size: u32,
+    /// A texel's span on the ground (m): where a finer source of normals is bound (the planet cube), the view shade
+    /// takes that one's instead.
+    pub texel_m: f32,
     pub colour: Vec<[u8; 4]>,
     pub normal: Vec<[u8; 4]>,
 }
@@ -69,10 +72,10 @@ const TILE_LAYERS: u32 = 512;
 const TILE_UPLOAD_BYTES: usize = 8 << 20;
 
 impl TileTexture {
-    pub fn new(size: u32, colour: Vec<[u8; 4]>, normal: Vec<[u8; 4]>) -> Self {
+    pub fn new(size: u32, texel_m: f32, colour: Vec<[u8; 4]>, normal: Vec<[u8; 4]>) -> Self {
         static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
         assert!(size <= TILE_TEX && colour.len() == (size * size) as usize && (normal.is_empty() || normal.len() == colour.len()));
-        Self { id: NEXT.fetch_add(1, Ordering::Relaxed), size, colour, normal }
+        Self { id: NEXT.fetch_add(1, Ordering::Relaxed), size, texel_m, colour, normal }
     }
 
     pub fn id(&self) -> u64 {
@@ -357,7 +360,9 @@ pub(crate) struct GpuDraw {
     pub morph: f32,
     /// Its texture's layer + 1 (0: none resident: its vertices' colours).
     pub layer: u32,
-    pub _pad: [u32; 3],
+    /// Its texture's texel on the ground (m; 0: none).
+    pub texel_m: f32,
+    pub _pad: [u32; 2],
 }
 
 /// The pool on the GPU, and this frame's draws.
@@ -680,7 +685,8 @@ impl PoolStore {
                 let m = &pf.meshes[d.mesh as usize];
                 let Some(&(at, ..)) = self.live.get(&m.id()) else { continue };
                 let layer = m.texture().and_then(|t| self.textures.slots.get(&t.id())).map_or(0, |s| s.0 + 1);
-                out.push(GpuDraw { t: d.t, group: d.group, mesh: at, face_start: faces, edge_start: edges, morph: d.morph, layer, _pad: [0; 3] });
+                let texel_m = m.texture().map_or(0.0, |t| t.texel_m);
+                out.push(GpuDraw { t: d.t, group: d.group, mesh: at, face_start: faces, edge_start: edges, morph: d.morph, layer, texel_m, _pad: [0; 2] });
                 faces += m.faces() * 3;
                 if pf.groups[d.group as usize].1 {
                     edges += m.edges() * 2;

@@ -38,3 +38,17 @@ faces of 1,024, as wgpu samples a cube):
 forge_e124s43-mesh from 10,000 km: the vertices' blotches (angular coasts, patchy shelves) give way to the cube's
 smooth coasts (`out/review/tile-textures/far_cmp.png`). A faint honeycomb of dots on some land is in both, before and
 after: not this.
+
+## Far relief: coarse tiles take the cube's normals
+
+Planets `20261023T134425-planets-94ba`: far relief had faded (their specks 42 against the reference's 1,034). All the
+land at 10,000 km is the pyramid's coarse levels, whose texels (tens of km) were finer than nothing but coarser than
+the cube's (~9.8 km): their normal textures, mip-averaged too, flattened it. Now a tile's texel span (`TileTexture::
+texel_m`, in its draw: `GpuDraw::texel_m`, `data.z`) is compared with the cube's, and under the view shade a coarser
+tile takes the cube's normal by the pixel's direction from the world's centre (its frame unturned, as the planet LOD
+app's). The cube's normals carry the package's ×13 (land) and ×3 (sea).
+
+forge_e124s43-mesh from 10,000 km: detail (a 2 px high-pass's spread) 1.52 → 6.25 (`far_cmp2.png`).
+
+Open: a faint honeycomb of darker dots on some pyramid land, in the tiles' own pixels (not the base, not the colour
+rasters, which are clean; there before the textures too).
