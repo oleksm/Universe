@@ -87,8 +87,10 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
             (n.0.clone(), slot.to_string(), 1.0)
         })
         .collect();
-    // (An engine's nozzle may be the main drive: whether one pushes along the nose is the ship's to check.)
-    if !thrusters.iter().any(|t| t.1 == "drive") && engines.is_empty() {
+    // (An engine's nozzle may be the main drive: whether one pushes along the nose is the ship's to check. A model
+    // no record describes needs one to be a hull at all; a registered hull without one is its stage before
+    // propulsion: built uncommissioned below, no nozzle made up.)
+    if record.is_none() && !thrusters.iter().any(|t| t.1 == "drive") && engines.is_empty() {
         return Err("no main drive nozzle (an empty named nozzle_main_*, or an engine's nozzle its record binds)".into());
     }
     thrusters.extend(engines);
@@ -372,6 +374,36 @@ mod tests {
         assert!(def.clone().build(any, &shape, &module).is_err_and(|e| e.contains("every ship must carry")));
         let spec = def.build_uncommissioned(any, &shape, &module).unwrap();
         assert!(!spec.commissioned && spec.fit.is_empty() && spec.dry_mass == 8000.0);
+    }
+
+    /// A model with no nozzle at all: refused unregistered; registered (its record names it), a stage built
+    /// uncommissioned (through the real importer), no nozzle made up.
+    #[test]
+    fn import_registered_model_without_nozzles_is_a_stage() {
+        // (A glTF binary of one box, no nodes but its mesh.)
+        let p: Vec<f32> = [[-2.0f32, -1.0, -3.0], [2.0, -1.0, -3.0], [2.0, 1.0, -3.0], [-2.0, 1.0, -3.0], [-2.0, -1.0, 3.0], [2.0, -1.0, 3.0], [2.0, 1.0, 3.0], [-2.0, 1.0, 3.0]].concat();
+        let idx: [u16; 36] = [0, 2, 1, 0, 3, 2, 4, 5, 6, 4, 6, 7, 0, 1, 5, 0, 5, 4, 3, 6, 2, 3, 7, 6, 1, 2, 6, 1, 6, 5, 0, 4, 7, 0, 7, 3];
+        let mut bin: Vec<u8> = p.iter().flat_map(|v| v.to_le_bytes()).collect();
+        bin.extend(idx.iter().flat_map(|v| v.to_le_bytes()));
+        let json = serde_json::json!({
+            "asset": {"version": "2.0"}, "scene": 0, "scenes": [{"nodes": [0]}], "nodes": [{"name": "Hull", "mesh": 0}],
+            "meshes": [{"primitives": [{"attributes": {"POSITION": 0}, "indices": 1}]}],
+            "accessors": [{"bufferView": 0, "componentType": 5126, "count": 8, "type": "VEC3", "min": [-2, -1, -3], "max": [2, 1, 3]}, {"bufferView": 1, "componentType": 5123, "count": 36, "type": "SCALAR"}],
+            "bufferViews": [{"buffer": 0, "byteOffset": 0, "byteLength": 96}, {"buffer": 0, "byteOffset": 96, "byteLength": 72}],
+            "buffers": [{"byteLength": bin.len()}]
+        }).to_string();
+        let mut j = json.into_bytes();
+        while j.len() % 4 != 0 { j.push(b' '); }
+        while bin.len() % 4 != 0 { bin.push(0); }
+        let mut glb = Vec::new();
+        glb.extend(b"glTF"); glb.extend(2u32.to_le_bytes()); glb.extend(((12 + 8 + j.len() + 8 + bin.len()) as u32).to_le_bytes());
+        glb.extend((j.len() as u32).to_le_bytes()); glb.extend(b"JSON"); glb.extend(&j);
+        glb.extend((bin.len() as u32).to_le_bytes()); glb.extend(b"BIN\0"); glb.extend(&bin);
+        assert!(hull_from_gltf(&glb, "nowhere/unregistered-box.glb").is_err_and(|e| e.contains("no main drive nozzle")));
+        // (The MC-07's record names its model's path: these bytes under it are that record's hull with no nozzle.)
+        let spec = hull_from_gltf(&glb, "assets/models/mc07.glb").unwrap();
+        assert!(!spec.commissioned && spec.thrusters.is_empty());
+        assert!(spec.limits[0].starts_with("not commissioned: no main drive"), "{}", spec.limits[0]);
     }
 
     /// A hull's engines as its record binds them: exactly, or refused (a missing nozzle or slot, twice, a share

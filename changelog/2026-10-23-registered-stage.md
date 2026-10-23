@@ -24,3 +24,11 @@ propulsion and avionics are chosen).
 - Until those land, the explorer's record can stand as an uncommissioned stage with exactly what it carries.
 
 Test: `import::tests::import_empty_fit_is_an_uncommissioned_stage`; the workspace's library tests pass.
+
+## Follow-up: the importer's nozzle check (ships `20261023T183414-ships-632b`)
+
+- `hull_from_gltf` refused any model without a main nozzle before the stage path. Now only an unregistered model
+  is refused for it; a registered one with no nozzle builds uncommissioned ("not commissioned: no main drive: …"),
+  no nozzle made up. The assembler's main-drive check now covers hulls with no engine slots too.
+- Test through the real importer: `import_registered_model_without_nozzles_is_a_stage` (a nozzle-less box GLB:
+  refused unregistered, a stage under a registered model path).

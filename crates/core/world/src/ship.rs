@@ -723,8 +723,9 @@ impl ClassSpec {
                     .collect(),
             })
             .collect();
-        if validate_install && engines && !thrusters.iter().any(|t| t.role == ThrusterRole::Main) {
-            return Err("no main drive: no engine pushes along the nose".into());
+        // (Nothing pushing along the nose: no ship to fly, whatever is fitted.)
+        if validate_install && !thrusters.iter().any(|t| t.role == ThrusterRole::Main) {
+            return Err(if engines { "no main drive: no engine pushes along the nose" } else { "no main drive: no nozzle of the drive's" }.into());
         }
         if engines || cold {
             for (slot, _) in fitted.iter().filter(|(s, _)| s.kind == SlotKind::Engine) {
