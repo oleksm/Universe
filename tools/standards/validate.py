@@ -61,6 +61,21 @@ def pattern_preferences(rec):
     return errors
 
 
+def feature_trigger_parameters(rec):
+    """Feature-local detector names must be unambiguous; schema checks their SI values."""
+    if not (rec.get("identity") or {}).get("key", "").startswith("planet-feature."):
+        return []
+    params = rec.get("trigger_params", [])
+    names = [p["name"] for p in params]
+    errors = []
+    if len(names) != len(set(names)):
+        errors.append("trigger_params: duplicate detector parameter name")
+    for param in params:
+        if not UNIT.fullmatch(param["unit"]):
+            errors.append(f"trigger_params.{param['name']}: unit must be SI (or deg)")
+    return errors
+
+
 def validate(v, sch, here, at=""):
     """What of `v` does not fit `sch` (from the schema file `here`): a list of plain sentences."""
     if not isinstance(sch, dict):
@@ -444,6 +459,7 @@ def check_all():
                 found.extend((full, e) for e in size_ranges(rec))
                 found.extend((full, e) for e in example_sources(rec))
                 found.extend((full, e) for e in pattern_preferences(rec))
+                found.extend((full, e) for e in feature_trigger_parameters(rec))
             # (Its key: there, of its kind, as its file says, and no other record's.)
             key, want = key_in(rec), key_of(rel, rec)
             if not isinstance(key, str) or not KEY.match(key):

@@ -5,7 +5,21 @@ identity:
   about: The steeper drop from the shelf edge to the deep floor.
 register: feature
 family: marine
-trigger: Not yet specified for the simulator; catalogue definition only.
+trigger: Seaward steepening belt between continental shelf break and foot of slope, with a consistent downslope
+  path to deep ocean. Require shelf/margin topology and gradient >= CONTINENTAL_SLOPE_MIN; do not classify isolated
+  seamount or canyon walls as continental slope from gradient alone. Apply finite-input, resolved-scale and candidate/provenance
+  rules in docs/planet-feature-trigger-rules-2026-10-22.md; missing required evidence stays unknown, not a confirmed
+  absence or occurrence.
+trigger_params:
+- name: CONTINENTAL_SLOPE_MIN
+  value: 0.02
+  unit: '1'
+  meaning: Lower continental-slope rise/run screening value; margin topology required.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
 built: false
 status: draft
 description: The steeper drop from the shelf edge to the deep floor.
@@ -37,3 +51,12 @@ basis:
   tier: derived
   source: planet-forge 3c40281 docs/catalogue/kinds.py
   note: Derived from the proposed size range using the eight numeric bands; inherits size review.
+- of:
+  - trigger
+  - trigger_params
+  tier: invented
+  review: true
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Owner-authorized detector proposal. Qualitative source definitions and provisional screening constants are
+    distinguished in the source; not a built generator or calibrated occurrence rate. Missing support and subcell
+    geometry remain unresolved.

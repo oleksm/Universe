@@ -129,6 +129,15 @@ properties:
   trigger:
     type: string
     description: What in the sim makes one.
+  trigger_params:
+    type: array
+    description: Named detector thresholds used by this feature's trigger, in SI. These are recognition settings, not edits to physical process parameters. Open/unused values remain proposals until the consuming detector reads and calibrates them.
+    items:
+      type: object
+      additionalProperties: false
+      allOf:
+      - $ref: ../../common.schema.yaml#/definitions/sim_param
+      required: [name, meaning, unit, value]
   generator:
     type: string
     description: How its geometry is made.

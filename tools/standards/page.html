@@ -683,7 +683,7 @@ function detail(k) {
       }
       if (typeof v === "object") return Object.entries(v).map(([a, b]) => `${esc(a)}: ${val(b)}`).join("; ");
       if (keyish(v) && KP[v]) return `<a data-k="${esc(KP[v])}">${esc(v)}</a>`;
-      if (typeof v === "number") return esc((+v).toLocaleString(undefined, { maximumFractionDigits: 6 }));
+      if (typeof v === "number") return esc(v !== 0 && Math.abs(v) < 1e-6 ? v.toExponential(6) : v.toLocaleString(undefined, { maximumFractionDigits: 6 }));
       if (workflow && /^(docs|standards|crates|tools|config)\/[\w./-]+(?:#[\w-]+)?$/.test(v)) return `<a href="../${esc(v)}">${esc(v)}</a>`;
       if (workflow && /^https?:\/\/[^\s]+$/.test(v)) return `<a href="${esc(v)}">${esc(v)}</a>`;
       return workflow ? workflowProse(v) : esc(String(v));

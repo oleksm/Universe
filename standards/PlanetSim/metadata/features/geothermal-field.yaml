@@ -5,7 +5,32 @@ identity:
   about: Hot springs, geysers and steaming ground.
 register: landmark
 family: volcanic
-trigger: Not yet specified for the simulator; catalogue definition only.
+trigger: Spatial cluster of demonstrated anomalous shallow heat flux/temperature and hydrothermal discharge or alteration
+  above a heat source. Volcanic-centre proximity and mantle mean heat flux can seed exploration potential only;
+  groundwater circulation/permeability or a specific hydrothermal record is required for a confirmed geothermal
+  field. Apply finite-input, resolved-scale and candidate/provenance rules in docs/planet-feature-trigger-rules-2026-10-22.md;
+  missing required evidence stays unknown, not a confirmed absence or occurrence.
+trigger_params:
+- name: GEOTHERMAL_HEAT_FLUX_MIN_W_M2
+  value: 0.2
+  unit: W/m2
+  meaning: Anomalous local shallow conductive flux screening value; hydrothermal transport can differ and needs
+    independent evidence.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
+- name: GEOTHERMAL_CLUSTER_RADIUS_M
+  value: 20000.0
+  unit: m
+  meaning: Provisional spatial grouping radius for known hydrothermal sites; not inferred from coarse mantle heat
+    alone.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
 built: false
 status: draft
 description: Hot springs, geysers and steaming ground.
@@ -37,3 +62,12 @@ basis:
   tier: derived
   source: planet-forge 3c40281 docs/catalogue/kinds.py
   note: Derived from the proposed size range using the eight numeric bands; inherits size review.
+- of:
+  - trigger
+  - trigger_params
+  tier: invented
+  review: true
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Owner-authorized detector proposal. Qualitative source definitions and provisional screening constants are
+    distinguished in the source; not a built generator or calibrated occurrence rate. Missing support and subcell
+    geometry remain unresolved.

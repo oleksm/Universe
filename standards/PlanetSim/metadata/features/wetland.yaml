@@ -5,7 +5,22 @@ identity:
   about: 'Waterlogged land: marsh, swamp, bog or fen.'
 register: water
 family: fluvial
-trigger: Not yet specified for the simulator; catalogue definition only.
+trigger: Land repeatedly inundated or waterlogged through a declared hydrological season, with suitable wetland
+  cover or saturated-soil evidence, outside permanent lake/river/ocean polygons. Flat low terrain, positive runoff
+  or a lake margin alone give candidate suitability; require inundation/hydroperiod or groundwater support before
+  confirmed wetland. Apply finite-input, resolved-scale and candidate/provenance rules in docs/planet-feature-trigger-rules-2026-10-22.md;
+  missing required evidence stays unknown, not a confirmed absence or occurrence.
+trigger_params:
+- name: WETLAND_HYDROPERIOD_MIN_SHARE
+  value: 0.25
+  unit: '1'
+  meaning: Provisional inundated/saturated fraction of declared year for wetland screening; hydroperiod/vegetation
+    must be demonstrated.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
 built: false
 status: draft
 description: 'Waterlogged land: marsh, swamp, bog or fen.'
@@ -37,3 +52,12 @@ basis:
   tier: derived
   source: planet-forge 3c40281 docs/catalogue/kinds.py
   note: Derived from the proposed size range using the eight numeric bands; inherits size review.
+- of:
+  - trigger
+  - trigger_params
+  tier: invented
+  review: true
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Owner-authorized detector proposal. Qualitative source definitions and provisional screening constants are
+    distinguished in the source; not a built generator or calibrated occurrence rate. Missing support and subcell
+    geometry remain unresolved.

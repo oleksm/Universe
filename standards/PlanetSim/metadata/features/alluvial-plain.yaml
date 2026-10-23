@@ -5,7 +5,21 @@ identity:
   about: 'A wide plain built by rivers: floodplains, terraces and fans merged.'
 register: province
 family: fluvial
-trigger: Not yet specified for the simulator; catalogue definition only.
+trigger: Low-gradient connected river-fed plain with demonstrated alluvial deposition or an existing floodplain/sediment
+  record, not merely flat terrain. Intersect river reach connectivity and slope <= PLAIN_SLOPE_MAX with deposition
+  evidence; absent sediment provenance yields an alluvial-suitability candidate only. Apply finite-input, resolved-scale
+  and candidate/provenance rules in docs/planet-feature-trigger-rules-2026-10-22.md; missing required evidence stays
+  unknown, not a confirmed absence or occurrence.
+trigger_params:
+- name: PLAIN_SLOPE_MAX
+  value: 0.01
+  unit: '1'
+  meaning: Rise/run upper bound for provisional alluvial plain geometry; chosen.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
 built: false
 status: draft
 description: 'A wide plain built by rivers: floodplains, terraces and fans merged.'
@@ -37,3 +51,12 @@ basis:
   tier: derived
   source: planet-forge 3c40281 docs/catalogue/kinds.py
   note: Derived from the proposed size range using the eight numeric bands; inherits size review.
+- of:
+  - trigger
+  - trigger_params
+  tier: invented
+  review: true
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Owner-authorized detector proposal. Qualitative source definitions and provisional screening constants are
+    distinguished in the source; not a built generator or calibrated occurrence rate. Missing support and subcell
+    geometry remain unresolved.

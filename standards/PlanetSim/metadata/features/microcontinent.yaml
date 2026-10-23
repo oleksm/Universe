@@ -5,7 +5,22 @@ identity:
   about: A fragment of continental crust rifted away and isolated in the ocean.
 register: realm
 family: tectonic
-trigger: Not yet specified for the simulator; catalogue definition only.
+trigger: Isolated coherent continental-crust fragment below CONTINENT_AREA_MIN_M2 under the declared size convention,
+  separated from a principal continental realm by oceanic crust, with continental affinity/history. An island on
+  oceanic crust is not a microcontinent; size alone cannot distinguish them. Apply finite-input, resolved-scale
+  and candidate/provenance rules in docs/planet-feature-trigger-rules-2026-10-22.md; missing required evidence stays
+  unknown, not a confirmed absence or occurrence.
+trigger_params:
+- name: CONTINENT_AREA_MIN_M2
+  value: 1000000000000.0
+  unit: m2
+  meaning: Operational continent/island size convention of one million km2; geology and topology remain required,
+    not a universal definition.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
 built: false
 status: draft
 description: A fragment of continental crust rifted away and isolated in the ocean.
@@ -37,3 +52,12 @@ basis:
   tier: derived
   source: planet-forge 3c40281 docs/catalogue/kinds.py
   note: Derived from the proposed size range using the eight numeric bands; inherits size review.
+- of:
+  - trigger
+  - trigger_params
+  tier: invented
+  review: true
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Owner-authorized detector proposal. Qualitative source definitions and provisional screening constants are
+    distinguished in the source; not a built generator or calibrated occurrence rate. Missing support and subcell
+    geometry remain unresolved.

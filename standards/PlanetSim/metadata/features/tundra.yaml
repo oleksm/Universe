@@ -5,7 +5,39 @@ identity:
   about: Treeless low plants over frozen ground.
 register: cover
 family: biotic
-trigger: Not yet specified for the simulator; catalogue definition only.
+trigger: Treeless cold land with short growing season, warmest-month temperature above freezing but below TREE_WARM_MONTH_MIN_K,
+  and moss/lichen/low-shrub cover, excluding permanent ice and bare polar desert. Annual T in [TUNDRA_MEAN_MIN_K,
+  BOREAL_MEAN_MIN_K) seeds climate potential only; distinguish alpine from lowland by local mountain context. Apply
+  finite-input, resolved-scale and candidate/provenance rules in docs/planet-feature-trigger-rules-2026-10-22.md;
+  missing required evidence stays unknown, not a confirmed absence or occurrence.
+trigger_params:
+- name: TUNDRA_MEAN_MIN_K
+  value: 263.15
+  unit: K
+  meaning: Annual-mean cold vegetation potential bound; chosen, not a growing-season criterion.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
+- name: BOREAL_MEAN_MIN_K
+  value: 273.15
+  unit: K
+  meaning: Lower annual-mean boreal climate-potential threshold; chosen.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
+- name: TREE_WARM_MONTH_MIN_K
+  value: 283.15
+  unit: K
+  meaning: Warmest-month tree-limit screening value; growing-season/cover evidence still required.
+  open: true
+  used: false
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
+    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
 built: false
 status: draft
 description: Treeless low plants over frozen ground.
@@ -37,3 +69,12 @@ basis:
   tier: derived
   source: planet-forge 3c40281 docs/catalogue/kinds.py
   note: Derived from the proposed size range using the eight numeric bands; inherits size review.
+- of:
+  - trigger
+  - trigger_params
+  tier: invented
+  review: true
+  source: docs/planet-feature-trigger-rules-2026-10-22.md
+  note: Owner-authorized detector proposal. Qualitative source definitions and provisional screening constants are
+    distinguished in the source; not a built generator or calibrated occurrence rate. Missing support and subcell
+    geometry remain unresolved.
