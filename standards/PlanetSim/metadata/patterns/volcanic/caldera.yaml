@@ -9,6 +9,10 @@ factors:
   weight: 3
   why: silicic explosive gives large calderas with ignimbrite; basaltic drainage gives summit pit calderas
   want: high
+  signal:
+    features:
+    - planet-feature.caldera-crater-lake
+    radius_m: 50000
 - factor: planet-factor.other-chamber-depth-roof
   weight: 3
   why: chamber depth and roof aspect ratio pick piston, piecemeal, trapdoor or downsag
@@ -71,7 +75,16 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors
+  tier: invented
+  review: true
+  note: '2026-10-22 category-specific magma screening override: only the named edifice/flow kind, within provisional50000m
+    of its pin/line points. This is association with a classified feature, not measured chemistry, viscosity or
+    gas. Never share one union of silicic and basaltic category evidence. Proxy outputs excluded by consumer7645f03;
+    missing listed kinds remain unknown. Other patterns with ambiguous or unsupported composition retain unresolved
+    evidence; no why-text inference or weight/threshold retuning.'
 status: draft
 look: volcanic

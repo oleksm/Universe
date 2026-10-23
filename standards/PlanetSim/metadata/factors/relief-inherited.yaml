@@ -5,17 +5,41 @@ identity:
   about: pre-existing relief and drainage the form develops from
 source: RELIEF_INHERITED
 reads:
-  fields: [planet-field.incision, planet-field.peak-discharge]
-  landmarks: [planet-landmark.water-gap, planet-landmark.river-capture, planet-landmark.dry-valley]
+  fields:
+  - planet-field.incision
+  - planet-field.peak-discharge
+  landmarks:
+  - planet-landmark.water-gap
+  - planet-landmark.river-capture
+  - planet-landmark.dry-valley
 signal:
-  landmarks: [planet-landmark.water-gap, planet-landmark.river-capture, planet-landmark.dry-valley]
-levels: [planet-level.1000-km, planet-level.100-km]
+  features:
+  - planet-feature.water-gap
+  - planet-feature.river-capture
+  - planet-feature.dry-valley
+  - planet-feature.wind-gap
+  radius_m: 25000
+levels:
+- planet-level.1000-km
+- planet-level.100-km
 status: draft
 basis:
-- of: [identity]
+- of:
+  - identity
   tier: derived
   note: planet-trees-pgs2 docs/landforms/deciding_factors_vocab.md.
-- of: [reads, signal]
+- of:
+  - reads
+  - signal
   tier: invented
   review: true
-  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17): for planets to correct.'
+  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17):
+    for planets to correct.'
+- of:
+  - signal
+  tier: invented
+  review: true
+  note: 2026-10-22 screening association, radius 25000m is provisional, not calibrated. planet-forge 7645f03 uses
+    confirmed non-worn/non-replaced feature pins and sampled line points only, excludes trigger.proxy. No matching
+    kinds => unknown, not known absence; away from points =>0 only within this screening model. Not an origin/composition/history
+    measurement; avoid independent corroboration claims when feature and pattern share source rules.

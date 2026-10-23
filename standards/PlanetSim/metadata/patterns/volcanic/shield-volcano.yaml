@@ -9,6 +9,10 @@ factors:
   weight: 3
   why: 'low-viscosity basalt, effusive Hawaiian style: slopes 2-12 deg, H/W 0.01-0.1'
   want: low
+  signal:
+    features:
+    - planet-feature.shield-volcano
+    radius_m: 50000
 - factor: planet-factor.tect-setting
   weight: 1
   why: oceanic hotspot (giant shields), rift or monogenetic field (small lava shields)
@@ -23,8 +27,7 @@ factors:
   want: high
 - factor: planet-factor.sea-level
   weight: 1
-  why: submarine growth steeper (10-14 deg); subaerial above sea gives low slopes; breaking surface changes
-    style
+  why: submarine growth steeper (10-14 deg); subaerial above sea gives low slopes; breaking surface changes style
   want: low
 - factor: planet-factor.tect-uplift
   weight: 1
@@ -73,7 +76,16 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors
+  tier: invented
+  review: true
+  note: '2026-10-22 category-specific magma screening override: only the named edifice/flow kind, within provisional50000m
+    of its pin/line points. This is association with a classified feature, not measured chemistry, viscosity or
+    gas. Never share one union of silicic and basaltic category evidence. Proxy outputs excluded by consumer7645f03;
+    missing listed kinds remain unknown. Other patterns with ambiguous or unsupported composition retain unresolved
+    evidence; no why-text inference or weight/threshold retuning.'
 status: draft
 look: volcanic

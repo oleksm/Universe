@@ -42,11 +42,29 @@ def is_type(v, t):
     return isinstance(v, TYPES[t])
 
 
+def feature_factor_signals(rec):
+    """Feature proximity contracts beyond the supported schema subset."""
+    key = (rec.get('identity') or {}).get('key', '')
+    signals = [rec.get('signal')] if key.startswith('planet-factor.') else [f.get('signal') for f in rec.get('factors', [])] if key.startswith('planet-pattern.') else []
+    errors = []
+    for sig in signals:
+        if not isinstance(sig, dict) or not ('features' in sig or 'radius_m' in sig):
+            continue
+        if not ('features' in sig and 'radius_m' in sig):
+            errors.append('feature signal requires both features and radius_m')
+        if any(k in sig for k in ('field', 'layer', 'landmarks', 'from', 'to', 'classes')):
+            errors.append('feature signal cannot mix field/layer/landmark modes')
+        kinds = sig.get('features', [])
+        if isinstance(kinds, list) and all(isinstance(x, str) for x in kinds) and len(kinds) != len(set(kinds)):
+            errors.append('feature signal kinds must be unique')
+    return errors
+
+
 def pattern_preferences(rec):
     """Conditional band fields and ordering, beyond the supported schema subset."""
     if not (rec.get("identity") or {}).get("key", "").startswith("planet-pattern."):
         return []
-    errors = []
+    errors = feature_factor_signals(rec)
     for i, factor in enumerate(rec.get("factors", [])):
         bounds = ("from", "to", "soft")
         if factor.get("want") == "band":
@@ -459,6 +477,8 @@ def check_all():
                 found.extend((full, e) for e in size_ranges(rec))
                 found.extend((full, e) for e in example_sources(rec))
                 found.extend((full, e) for e in pattern_preferences(rec))
+                if (rec.get("identity") or {}).get("key", "").startswith("planet-factor."):
+                    found.extend((full, e) for e in feature_factor_signals(rec))
                 found.extend((full, e) for e in feature_trigger_parameters(rec))
             # (Its key: there, of its kind, as its file says, and no other record's.)
             key, want = key_in(rec), key_of(rel, rec)

@@ -193,12 +193,6 @@ params:
   meaning: a threshold of the landscape rules (see the implementation's comment at its use)
   source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
   open: true
-- name: ice thickness
-  value: 1.0
-  unit: m
-  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
-  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
-  open: true
 - name: ice extent samples
   value: 10.0
   unit: '1'
@@ -208,12 +202,6 @@ params:
   said_as:
     unit: samples
     factor: 1.0
-- name: ice sheet area
-  meaning: a threshold of the landscape rules (see the implementation's comment at its use)
-  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
-  open: true
-  value: 1000000000000.0
-  unit: m2
 - name: ice stream thickness
   value: 2000.0
   unit: m
@@ -567,9 +555,9 @@ unverified:
   census.
 - Region areas currently use uniform cell area from sample count; adaptive-cell area and subcell morphology require
   separate validation.
-- Some feature-local thresholds are consulted together with process limits or fallbacks. Ice-sheet area is max(feature
-  ICE_SHEET_AREA_MIN_M2=5e10m2, process ice sheet area=1e12m2) in the reviewed snapshot, so used:true does not mean
-  the feature value alone determines output.
-- Seasonality, groundwater, glacial flow/flotation and marine sea-ice evidence remain incomplete where the state
-  lacks those signals. Confirming those kinds from annual-climate/volcano proximity alone is not accepted by the
-  proposed catalogue trigger.
+- Planet-forge 1bc9fd4 reads required feature-local trigger parameters as finite SI values and errors if missing;
+  ice-sheet thickness 1m and area 5e10m2 come directly from the feature. The two redundant process limits were removed.
+  used:true means consulted, not calibrated or full predicate acceptance.
+- Planet-forge 1bc9fd4 labels 24 stand-in-evidence kinds with trigger.proxy and proxy_for; feature_report counts
+  proxy outputs separately from confirmed placements. Missing seasonal, groundwater, flotation and marine sea-ice
+  inputs remain unresolved. The label is provenance, not validation of the proposed catalogue trigger.

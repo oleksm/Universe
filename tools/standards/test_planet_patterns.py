@@ -72,6 +72,28 @@ class PatternPreferences(unittest.TestCase):
         self.assertEqual([x['score'] for x in lod.match(r, {})], [0, 0])
         self.assertEqual(lod.match(r, {'landmarks': []})[0]['key'], 'low')
 
+    def test_feature_signal_requires_radius_and_excludes_mixed_modes(self):
+        signal = {'features': ['planet-feature.water-gap'], 'radius_m': 25000}
+        self.assertFalse(self.faults(record({'want': 'high', 'signal': signal})))
+        invalid = [dict(signal, radius_m=x) for x in (0, -1, True, float('inf'))]
+        invalid += [{'features': signal['features']}, {'radius_m': 3},
+                    dict(signal, features=[]), dict(signal, features=signal['features']*2),
+                    dict(signal, landmarks=['planet-landmark.water-gap'])]
+        for sig in invalid:
+            with self.subTest(sig=sig):
+                self.assertTrue(self.faults(record({'want': 'high', 'signal': sig})))
+
+    def test_entry_override_does_not_leak_global_or_given_strength(self):
+        r = self.registry()
+        for p in r['planet-pattern'].values():
+            p['factors'][0]['signal'] = {'features': ['planet-feature.water-gap'], 'radius_m': 25000}
+        for signature in ({}, {'factors': {'TEST': 1}}, {'fields': {'test': 10}}, {'landmarks': []}):
+            self.assertEqual([x['score'] for x in lod.match(r, signature)], [0, 0])
+        # A known override field is evaluated instead of global TEST/field.test.
+        for p in r['planet-pattern'].values():
+            p['factors'][0]['signal'] = {'field': 'planet-field.other', 'from': 0, 'to': 10}
+        self.assertEqual(lod.match(r, {'factors': {'TEST': 1}, 'fields': {'other': 0}})[0]['key'], 'low')
+
     def test_generated_matcher_executes_same_band_and_missing_semantics(self):
         # Generate in memory, rather than depending on a previously built module.
         generated = {}
