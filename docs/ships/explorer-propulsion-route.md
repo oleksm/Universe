@@ -43,6 +43,15 @@ the engine's to edit (ships: diagnostics only, as now).
   engines). The explorer needs an RCS fit (a `thrusters` slot with its nozzles), or gimbal physics as a separate,
   larger engine change. Without one it fails the base-block check, as it should.
 - A whole mass (`goods::hull_mass` must be Recorded or Parts: the import refuses partial or none).
+- Ships' gates (`20261022T192308-ships-fe6a`):
+  - The CHS2 v2 model (`engine-ch-s2/v2`) carries `motion.json`, so `mounted` refuses to draw it (`has_motion`) even
+    fitted fixed. It needs a static variant, or the articulated mounted consumer (open).
+  - Its primary node is `mount_CHS2`, not one per instance slot: placement must go by each slot's own mount node.
+  - A nitrogen cold-gas RCS (CGS1) beside hydrolox breaks the one-fuel rule in the native assembler. Either an
+    all-hydrolox RCS, or native support for a second propellant. The device fit's `Propellant` already models one
+    (cold gas beside hydrolox) on the studio path, but the import path doesn't build a device fit. That is a step 7
+    of this route if chosen.
+  - CGS1's four named nozzles share 500 N a block: bind with record shares summing to the block, never 4 × 500 N.
 - Power and tanks sized for hydrolox (fuel cell or batteries; hydrolox tanks).
 
 ## Limits, stated
