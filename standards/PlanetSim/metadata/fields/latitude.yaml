@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.latitude
+  name: Body-fixed latitude
+  about: Body-fixed latitude of each Earth fixture sample, derived from its z-up body frame; do not infer latitude
+    from the simulation y axis for this fixture.
+unit: rad
+per: sample
+producer:
+  where: planet-forge tools/earth_fields.py
+  file: checkpoint fields/*.npy
+  key: planet-field.latitude
+  epoch: Earth fixture body frame
+missing: Must be finite radians at every fixture sample; missing/invalid latitude is not a zero-latitude observation.
+cautions:
+- The Earth fixture is z-up; simulation positions use a different north axis. Preserve frame provenance.
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - missing
+  tier: derived
+  note: Source audit planet-forge3c06390 tools/earth_fields.py; WorldClim2.1 monthly tavg/prec,10arc-minute cells,
+    nearest-cell sampling. Seasonal source coverage is not a live weather observation.
+range:
+- -1.5707963267948966
+- 1.5707963267948966

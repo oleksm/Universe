@@ -73,27 +73,97 @@ reads:
   meaning: what the derived kinds sit on
 - name: craters table (diameter, sample)
   meaning: impact sizes
+- name: temperature-warm-month
+  field: planet-field.temperature-warm-month
+- name: temperature-cold-month
+  field: planet-field.temperature-cold-month
+- name: rain-season
+  field: planet-field.rain-season
+- name: latitude
+  field: planet-field.latitude
 writes:
 - name: features
   meaning: abyssal-hills, abyssal-plain, accretionary-prism, active-margin, alluvial-fan, alluvial-plain, anastomosing-reach,
-    archipelago, arete, atoll, back-arc-basin, bajada, barrier-island, barrier-reef, beach-ridge-plain, braided-reach,
-    breached-anticline, canyon-gorge, carbonate-platform, cirque, coastal-plain, continent, continental-rift-zone,
-    continental-rise, continental-slope, cuesta, deflation-hollow, desert-basin-bolson, desert-margin, doline-field,
-    drainage-divide, drumlin-field, erg-sand-sea, esker, estuary, fjord, forearc-basin, foreland-basin, forest-edge,
-    fracture-zone, fringing-reef, geothermal-field, giant-landslide-sector-collapse, glacial-trough-u-valley, graben,
-    guyot, hanging-valley, hogback, homoclinal-ridge, horst, ice-cap, ice-dammed-lake-shorelines, ice-sheet, ice-sheet-extent,
-    ice-shelf, impact-crater-simple, inselberg, island, island-arc, kame-and-kettle-terrain, karst-plateau, knickpoint-waterfall,
-    lagoon, lake, lake-basin-rift-glacial-volcanic-dammed, lake-shoreline-terraces, lateral-moraine, lava-dome,
-    loess-plateau, mangrove-coast, marginal-sea, marine-terrace, mega-scale-glacial-lineations, megaflood-scabland,
-    mesa, microcontinent, mid-ocean-ridge, mountain-pass, multi-ring-impact-basin, oasis, ocean, ocean-basin, oceanic-plateau,
-    oceanic-trench, offset-stream, orogen-belt, outwash-plain-sandur, overdeepening-and-riegel, oxbow-lake, passive-margin,
-    peak, pediment, peneplain-etchplain, permafrost-limit, plateau, plateau-edge, playa-salt-pan, polje, proglacial-lake,
-    raised-shoreline-rebound, range-crest-main-divide, range-front-fault-bounded, recessional-moraine, ria, ridge-axis-valley,
-    river, river-terrace, roche-moutonnee-whaleback, salt-marsh, sandy-beach, sea, sea-cliff, sea-ice, sea-ice-edge,
-    seamount, shelf, shelf-edge, shield-craton, shore-platform, snow-line, structural-basin, structural-dome, submarine-canyon,
-    submarine-fan, syncline-axis, terminal-moraine, tidal-flat, till-plain, transform-valley, tree-line, tributary-network,
-    v-valley, valley-glacier, wadi, waterfall, wetland, wind-gap, yardangs
+    archipelago, arete, atoll, back-arc-basin, bajada, barchan-dunes, barrier-island, barrier-reef, beach-ridge-plain,
+    braided-reach, breached-anticline, canyon-gorge, carbonate-platform, cirque, coastal-foredune, coastal-plain,
+    continent, continental-rift-zone, continental-rise, continental-slope, cuesta, deflation-hollow, delta-tide-dominated,
+    delta-wave-dominated, desert-basin-bolson, desert-margin, desert-pavement, doline-field, drainage-divide, drumlin-field,
+    erg-sand-sea, esker, estuary, fjord, forearc-basin, foreland-basin, forest-edge, fracture-zone, fringing-reef,
+    geothermal-field, giant-landslide-sector-collapse, glacial-trough-u-valley, graben, guyot, hanging-valley, hogback,
+    homoclinal-ridge, horst, ice-cap, ice-dammed-lake-shorelines, ice-sheet, ice-sheet-extent, ice-shelf, impact-crater-simple,
+    inselberg, island, island-arc, kame-and-kettle-terrain, karst-plateau, knickpoint-waterfall, lagoon, lake, lake-basin-rift-glacial-volcanic-dammed,
+    lake-shoreline-terraces, lateral-moraine, lava-dome, linear-seif-dunes, loess-plateau, mangrove-coast, marginal-sea,
+    marine-terrace, mega-scale-glacial-lineations, megaflood-scabland, mesa, microcontinent, mid-ocean-ridge, mountain-pass,
+    multi-ring-impact-basin, oasis, ocean, ocean-basin, oceanic-plateau, oceanic-trench, offset-stream, orogen-belt,
+    outwash-plain-sandur, overdeepening-and-riegel, oxbow-lake, passive-margin, peak, pediment, peneplain-etchplain,
+    permafrost-limit, plateau, plateau-edge, playa-salt-pan, polje, proglacial-lake, raised-shoreline-rebound, range-crest-main-divide,
+    range-front-fault-bounded, recessional-moraine, ria, ridge-axis-valley, river, river-terrace, roche-moutonnee-whaleback,
+    salt-marsh, sandy-beach, sea, sea-cliff, sea-ice, sea-ice-edge, sea-stacks-and-arches, seamount, shelf, shelf-edge,
+    shield-craton, shore-platform, snow-line, spit, star-dunes, structural-basin, structural-dome, submarine-canyon,
+    submarine-fan, syncline-axis, terminal-moraine, tidal-flat, till-plain, tombolo, transform-valley, transverse-dunes,
+    tree-line, tributary-network, v-valley, valley-glacier, wadi, waterfall, wetland, wind-gap, yardangs
 params:
+- name: obliquity
+  meaning: Provisional axial tilt of the seasonal screening model; not a measured per-body obliquity.
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 0.40910517666747087
+  unit: rad
+  said_as:
+    unit: deg
+    factor: 0.017453292519943295
+- name: belt shift per tilt
+  meaning: Seasonal wind-belt angular displacement divided by axial tilt.
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 0.25
+  unit: '1'
+- name: itcz shift per tilt
+  meaning: Seasonal intertropical convergence-zone angular displacement divided by axial tilt.
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 0.3
+  unit: '1'
+- name: range at equator
+  meaning: Equatorial annual temperature-range term, a temperature difference, before maritime/continental and obliquity
+    factors.
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 2.0
+  unit: K
+- name: range poleward
+  meaning: Additional annual temperature-range coefficient multiplied by sine(latitude) squared; temperature difference,
+    not absolute temperature.
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 50.0
+  unit: K
+- name: westerly storminess
+  meaning: Multiplier on westerly belt-wind strength in the seasonal proxy.
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 1.5
+  unit: '1'
+- name: fetch hops
+  meaning: Maximum upwind sea-neighbour steps used in the wave index; lattice-dependent count, not a physical fetch
+    distance.
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 25.0
+  unit: '1'
+- name: tide base
+  meaning: Base modeled coastal tidal-range index; screening proxy, not astronomical tide prediction.
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 0.5
+  unit: m
+- name: tide per shelf hop
+  meaning: Added tidal-range index per shelf-neighbour hop; lattice-dependent proxy, not a physical shelf-response
+    law.
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 1.5
+  unit: m
 - name: min line points
   value: 3.0
   unit: '1'
@@ -361,6 +431,51 @@ params:
   open: true
   value: 1.2
   unit: '1'
+- name: dune aridity
+  meaning: PET/P dryness threshold for sandy dry-ground candidates.
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 2.5
+  unit: '1'
+- name: dune sand laid
+  meaning: Minimum accumulated modeled laid-material thickness used as sand-abundance evidence; not a grain-size
+    measurement.
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 20.0
+  unit: m
+- name: unimodal turn
+  meaning: Upper seasonal wind-turn boundary for unidirectional dune screening; stored radians, compared in degrees
+    after explicit conversion.
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 0.7853981633974483
+  unit: rad
+  said_as:
+    unit: deg
+    factor: 0.017453292519943295
+- name: bimodal turn
+  meaning: Upper seasonal wind-turn boundary for linear versus multidirectional dune screening; stored radians,
+    compared in degrees after explicit conversion.
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 2.356194490192345
+  unit: rad
+  said_as:
+    unit: deg
+    factor: 0.017453292519943295
+- name: wave energy
+  meaning: Dimensionless threshold over the normalized belt-wind/fetch proxy; not physical wave energy in joules.
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 0.35
+  unit: '1'
+- name: macrotidal range
+  meaning: Tidal-index screening boundary; no lunar/solar or hydrodynamic tide solution.
+  source: 'planets, 22 Oct 2026: first value, to calibrate against Earth''s references'
+  open: true
+  value: 4.0
+  unit: m
 - name: fold strength
   value: 0.2
   unit: '1'
@@ -547,7 +662,8 @@ basis:
   - reads
   - writes
   tier: invented
-  note: 'planets, 22 Oct 2026: docs/full-landscape-plan-2026-10-22.md phase 1'
+  note: 'planets, 22 Oct 2026: docs/full-landscape-plan-2026-10-22.md phase 1 Phase3 seasonal/wind/coastal settings
+    from planet-forge042215e, corrected SI/provenance in3c06390; all retained for review.'
   review: true
 unverified:
 - First coarse-lattice recognition rules do not establish all proposed feature.trigger predicates, origin or fine
@@ -558,6 +674,10 @@ unverified:
 - Planet-forge 1bc9fd4 reads required feature-local trigger parameters as finite SI values and errors if missing;
   ice-sheet thickness 1m and area 5e10m2 come directly from the feature. The two redundant process limits were removed.
   used:true means consulted, not calibrated or full predicate acceptance.
-- Planet-forge 1bc9fd4 labels 24 stand-in-evidence kinds with trigger.proxy and proxy_for; feature_report counts
-  proxy outputs separately from confirmed placements. Missing seasonal, groundwater, flotation and marine sea-ice
-  inputs remain unresolved. The label is provenance, not validation of the proposed catalogue trigger.
+- Planet-forge3c06390 separates observed monthly Earth seasons from modelled samples. Seasonal features require
+  observed provenance at every contributing sample; modelled seasons and all belt-wind/wave/tide/dune stand-ins
+  retain proxy labels. A confirmed classifier label still does not establish all proposed catalogue predicates or
+  fine geometry.
+- The15 phase3 settings are invented screening defaults, not calibrated climate, wind or tide physics. Fetch and
+  shelf hops depend on lattice spacing; warm/cold temperature ranges are differences in K. No terrain/climate feedback
+  or distribution calibration is claimed.
