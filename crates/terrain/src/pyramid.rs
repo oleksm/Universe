@@ -667,6 +667,8 @@ pub struct Pyramid {
     key: (u64, bool),
     tick: u64,
     releases: Vec<u64>,
+    /// Its `pyramid.json`'s stamp when opened (see `PyramidStats::stale`).
+    stamp: Option<(std::time::SystemTime, u64)>,
     pub stats: PyramidStats,
 }
 #[derive(Default, Clone, Copy)]
@@ -681,7 +683,19 @@ pub struct PyramidStats {
     pub worst: f64,
     pub resident: usize,
     pub largest_tile: usize,
+    /// Its `pyramid.json` changed on disk since it was opened (rebuilt under it): nothing more is loaded (new tiles
+    /// would be read at the old offsets); what's loaded is drawn. Opened again, it's read anew.
+    pub stale: bool,
 }
+
+/// A file's stamp: when it was last written and how long it is (None: not there).
+fn stamp(path: &Path) -> Option<(std::time::SystemTime, u64)> {
+    let m = std::fs::metadata(path).ok()?;
+    Some((m.modified().ok()?, m.len()))
+}
+
+/// How many updates between looks at whether the pyramid changed on disk (about a second).
+const STAMP_EVERY: u64 = 60;
 fn lock<T>(m: &Mutex<T>) -> std::sync::MutexGuard<'_, T> {
     m.lock().unwrap_or_else(|e| e.into_inner())
 }
@@ -704,6 +718,7 @@ impl Pyramid {
             view.join("pyramid")
         };
         let path = dir.join("pyramid.json");
+        let opened = stamp(&path);
         let text = match std::fs::read_to_string(&path) {
             Ok(t) => t,
             Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(None),
@@ -843,6 +858,7 @@ impl Pyramid {
             generation: 0,
             key: (1.0f64.to_bits(), false),
             tick: 0,
+            stamp: opened,
             releases: vec![],
             stats: PyramidStats::default(),
         }))
@@ -1032,6 +1048,14 @@ impl Pyramid {
     pub fn update(&mut self, cam: &Camera, aspect: f64, ex: f64, real: bool) {
         let _scope = universe_prof::scope("update/planetlod/pyramid");
         self.tick += 1;
+        if !self.stats.stale && self.tick.is_multiple_of(STAMP_EVERY) && stamp(&self.source.dir.join("pyramid.json")) != self.stamp {
+            self.stats.stale = true;
+            lock(&self.plan.0).queue.clear();
+            log::error!(
+                "land pyramid {}: pyramid.json changed on disk since it was opened; no more tiles are loaded (they'd be read at the old offsets). Open the view again to read the new one",
+                self.source.dir.display()
+            );
+        }
         let key = (ex.to_bits(), real);
         if key != self.key {
             self.key = key;
@@ -1166,7 +1190,7 @@ impl Pyramid {
             let mut p = lock(m);
             (p.generation, p.ex, p.real) = (self.generation, ex, real);
             let building = p.building.clone();
-            p.queue = missing.into_iter().filter(|i| !building.contains(i)).collect();
+            p.queue = if self.stats.stale { Default::default() } else { missing.into_iter().filter(|i| !building.contains(i)).collect() };
             if !p.queue.is_empty() {
                 ready.notify_all();
             }
@@ -1561,6 +1585,24 @@ mod tests {
         let v = 2 * 5 + 2;
         // (The fixture's ground is steep already, ~66°: lit thirteen times steeper, it leans close to level.)
         assert!(lean(&lit, v) > lean(&plain, v) + 0.25 && lean(&lit, v) > 1.4, "{} vs {}", lean(&lit, v), lean(&plain, v));
+    }
+    /// Its pyramid.json rewritten under it: within a second's updates it says so, and loads nothing more.
+    #[test]
+    fn pyramid_changed_on_disk_stops_loading_and_says_so() {
+        let f = fixture();
+        let mut p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
+        let mut cam = Camera { position: p.source.inverse(0.0, 0.0) * 1100.0, ..Default::default() };
+        cam.look_at(DVec3::ZERO, Vec3::Y);
+        p.update(&cam, 1.0, 1.0, true);
+        assert!(!p.stats.stale);
+        let path = f.0.join("pyramid/pyramid.json");
+        let text = std::fs::read_to_string(&path).unwrap();
+        std::fs::write(&path, format!("{text} ")).unwrap();
+        for _ in 0..STAMP_EVERY {
+            p.update(&cam, 1.0, 1.0, true);
+        }
+        assert!(p.stats.stale);
+        assert!(lock(&p.plan.0).queue.is_empty());
     }
     #[test]
     fn pyramid_windowed_rows_mask_and_boundary_cover() {

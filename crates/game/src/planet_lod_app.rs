@@ -846,6 +846,9 @@ impl PlanetLodApp {
             let s = land.lock().unwrap().stats;
             p.section("LAND PYRAMID", &[]);
             p.row("tiles drawn / selected", &format!("{} / {}", s.drawn, s.selected), &format!("{} fallback", s.fallback));
+            if s.stale {
+                p.row("CHANGED ON DISK", "reopen", "no new tiles");
+            }
             p.row("triangles", &thousands(s.triangles as f64), "");
             p.row("streaming", &format!("{} pending", s.pending), &format!("{} MB", s.bytes / (1024*1024)));
         }
