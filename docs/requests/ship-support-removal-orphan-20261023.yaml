@@ -1,0 +1,35 @@
+title: Support changes must preserve intended panels and resolve orphaned dependents
+authority: Owner found floating bridge cover; Blender task20261023T124028-blender-68f2 requests reusable counterexample.
+scope: Amend existing workflow definitions only; not an executed attachment check or ship acceptance.
+project_report: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/review/obsolete-bridge-covers.json
+project_report_sha256: e0fc81e835c6167d359f24f570703f50e5ad232f6eeb95a5677c7a867fb583f5
+reason: Supporting equipment bridge removed for owner-requested side access; covers orphaned
+case_specifications:
+  reject: Remove a supporting bridge while its covers/markings and duplicate or mirrored source objects survive
+    or regenerate. A zero-hit moving-versus-fixed sweep is offered as complete QC despite the unsupported static
+    geometry.
+  allow: 'Disposition follows current owner intent: retain one required inspection panel/markings per side and explicitly
+    rebind to the current wall with attachment/access witnesses; retire genuinely unwanted duplicates from source/build/export.
+    Truly obsolete generic dependents may be retired, but removed support alone is not permission to delete retained
+    functions.'
+  reject_intent: Delete still-required inspection panels and call the orphan repaired, despite owner intent to retain
+    and seat them. Geometric absence or a zero-hit sweep cannot satisfy the requested feature.
+case_execution: Specifications only. Blender removal report is peer evidence, not replayed by Registry.
+historical_report_status: Withdrawn removal repair attempt, superseded by owner retention correction20261023T124443-blender-5ee2.
+  Not the desired current repair.
+historical_removed_objects:
+- Bridge inspection closure -1
+- Bridge inspection closure -1.001
+- Bridge inspection closure 1
+- Bridge inspection closure 1.001
+- Bridge orange access marking -1
+- Bridge orange access marking -1.001
+- Bridge orange access marking 1
+- Bridge orange access marking 1.001
+owner_correction:
+  message: 20261023T124443-blender-5ee2
+  requirement: Retain one inspection panel and associated markings on each side; seat them against the wall. Removal
+    was a misunderstanding. Duplicates and obsolete support relationships require reconciliation, not blanket panel
+    deletion.
+  reported_seating: Panel rear face at body y=+/-1.926m matches the cover wall. Peer-reported geometry only, not
+    independently replayed or qualified.

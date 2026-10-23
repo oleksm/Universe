@@ -27,6 +27,10 @@ sources:
   section: changes.three-outcomes
   note: Owner-authorized earlier-decision/intent-first amendment, 2026-10-23. The 16 supplied case specifications
     are not executed tests or ship acceptance.
+- document: docs/requests/ship-support-removal-orphan-20261023.yaml
+  section: case_specifications
+  note: Owner support-removal/orphan correction, 2026-10-23, followed by retained-panel correction5ee2. Two rejection
+    and one permitted-scope specifications; no executed geometry test or ship acceptance.
 method:
 - Reconcile expected versus actual component, state, interaction-pair and view rosters independently of checker
   name/parent filters; preserve hashes and classify every exclusion with a bounded reason.
@@ -65,6 +69,20 @@ method:
   is a review case specification, not an executed result.'
 - 'Permitted scoped example: Explicit asymmetric feature retained while symmetric hull opening is repaired on both
   sides. This is a review case specification, not an executed result.'
+- Audit static attachment and deletion dependencies independently of the moving-part clash roster. When a support/host
+  is removed or replaced, trace surviving covers, closures, trim, markings, fasteners and services to a current
+  purpose and supported host; object parenting, names or lack of collision are not physical attachment evidence.
+- Reconcile mirrored, duplicate, hidden, linked, generated/source and exported dependents. Each obsolete object
+  is retired with build regeneration prevented, or explicitly rebound with current world-space seating/support/interface
+  witnesses. An intentionally offset marking still needs a real host and purpose; this review does not invent a
+  universal offset or load qualification.
+- 'Required rejection case: a bridge support is removed while covers and duplicated markings remain floating, but
+  a zero-hit moving-versus-fixed sweep is promoted to complete assembly acceptance. Reject the unsupported static/deletion-dependency
+  claim. This is a case specification, not an executed result.'
+- 'Required intent-rejection case: an inspection panel is still required, but the repair deletes it to eliminate
+  an orphan. Retain and seat the intended panel and markings on each side against the current host; remove only
+  genuinely unwanted duplicates. Support disappearance alone does not make the panel obsolete. This is a review
+  specification, not an executed result.'
 evidence:
 - Assembly-state plan with independent expected/actual component/state/pair/view reconciliation and reasoned
   exclusions.
@@ -75,11 +93,19 @@ evidence:
 - Named counterpart roster, declared plane and paired before/after inspection.
 - Separate current intent/geometry/presentation outcomes with exact target, source, camera/state, measured change,
   applicable scope and reviewer authority. Manual visual judgments are not synthetic beauty scores.
+- Before/after support-host dependency roster, current source/build/export object dispositions including both sides
+  and duplicate/hidden copies, replacement closure/function ownership and current static attachment witnesses. Keep
+  moving-clash, static attachment and complete-assembly verdicts distinct.
+- Current owner/delivery retention intent and disposition per panel/marking, with replacement-host attachment/access
+  witnesses. Historical removal reports are explicitly withdrawn where superseded by a retained-and-seated repair;
+  no project seating/load acceptance follows from this definition.
 failure: Keep the candidate in failed or incomplete assembly review for the affected scope; retain witnesses and
   repair the owning geometry or missing coverage before dependent G4/G6 and release acceptance. Required failed
   or unknown intent, geometry or presentation prevents an overall completion claim. A correctly annotated target
   whose actual changed/exported geometry affects another feature remains an intent failure. Preserve authorized
-  limited-study scope and existing owner/delegate authority.
+  limited-study scope and existing owner/delegate authority. Missing, stale or unsupported required static attachments
+  after support removal block the affected construction/assembly claim even when moving-part clearance passes. Preserve
+  valid measured subsets and repair or rebind the orphaned dependency before claiming completion.
 scope: assembly
 artifacts:
 - ship-artifact.assembly-state-plan

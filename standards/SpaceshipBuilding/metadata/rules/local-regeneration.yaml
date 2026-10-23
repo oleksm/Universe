@@ -26,6 +26,10 @@ sources:
   section: changes.three-outcomes
   note: Owner-authorized earlier-decision/intent-first amendment, 2026-10-23. The 16 supplied case specifications
     are not executed tests or ship acceptance.
+- document: docs/requests/ship-support-removal-orphan-20261023.yaml
+  section: case_specifications
+  note: Owner support-removal/orphan correction, 2026-10-23, followed by retained-panel correction5ee2. Two rejection
+    and one permitted-scope specifications; no executed geometry test or ship acceptance.
 statement: 'Build owned regions from pinned inputs through an acyclic dependency graph; promote only checked candidates.
 
 
@@ -73,7 +77,16 @@ statement: 'Build owned regions from pinned inputs through an acyclic dependency
   Separate intent, geometry and presentation: Report intent, geometry and presentation separately. Intent asks whether
   the requested feature changed in the specified direction; geometry checks the affected closures, contacts and
   applicable motion; presentation judges the close view and assembled ship. A technical pass cannot substitute for
-  either intent or visual judgment. Unknown or failed required outcomes prevent an overall completion claim.'
+  either intent or visual judgment. Unknown or failed required outcomes prevent an overall completion claim.
+
+
+  Removing or replacing a support is a dependency change, even if every surviving part is static. Inventory its
+  dependent covers, closures, trim, markings, fasteners and service attachments by actual owner and function, including
+  mirrored, duplicate, hidden, linked and generated/source copies. Retire obsolete dependents from current source,
+  build and export, or explicitly rebind them to a current supported host with geometric witnesses. Prevent regeneration
+  from stale scripts. Preserve required closure/function through a replacement where needed; do not remove a pressure
+  closure merely to hide an orphan. Invalidate affected construction, views and exports until current attachment
+  and deletion-dependency evidence is reconciled.'
 applies_to:
 - Compile a dependency DAG for local regeneration
 verification:
@@ -90,6 +103,12 @@ verification:
   This is a review case specification, not an executed result.'
 - 'Permitted scoped example: Scoped routine change with unambiguous target, paired counterpart and current local
   evidence. This is a review case specification, not an executed result.'
+- Reject support removal that leaves or regenerates a floating cover/marking on either side, including duplicated
+  or hidden/source objects, even when moving-versus-fixed clearance remains zero-hit. Verify actual current source/build/export
+  disposition and affected functional closure.
+- Resolve retained versus genuinely obsolete dependents from current owner intent and delivery scope. Removing a
+  support does not authorize deleting a required inspection panel; rebind it to the intended current wall/support
+  and preserve access/purpose. Reject deletion offered as completion of a requested seating repair.
 limitations:
 - This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
 related:
