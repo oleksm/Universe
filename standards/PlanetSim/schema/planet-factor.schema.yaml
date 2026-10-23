@@ -24,7 +24,12 @@ properties:
       layers: { type: array, items: { type: string, x-ref: [planet-layer] } }
       landmarks: { type: array, items: { type: string, x-ref: [planet-landmark] } }
       lines: { type: array, items: { type: string, x-ref: [planet-line] } }
-  signal:
+  signal: { $ref: "#/definitions/factor_signal" }
+  status: { enum: [draft, published, retired] }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }
+
+definitions:
+  factor_signal:
     description: "How its strength (0 to 1) comes from a signature when none is given: a field's value ramped from `from` (0) to `to` (1), or a class among `classes`, or a landmark present nearby."
     type: object
     additionalProperties: false
@@ -48,6 +53,3 @@ properties:
               - { required: [field] }
               - { required: [layer] }
               - { required: [landmarks] }
-
-  status: { enum: [draft, published, retired] }
-  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }
