@@ -2032,7 +2032,7 @@
 - { record: planet-feature.barrier-reef, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "5afcef631093957a" }
 - { record: planet-feature.beach-ridge-plain, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e42433dc0a33735f" }
 - { record: planet-feature.blockfield-felsenmeer, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "7e7003875dc7936d" }
-- { record: planet-feature.boreal-forest-taiga, at: "2026-10-23T01:18:15Z", status: "", summary: "changed: trigger_params", sha: "eb2f455eeaaf3dae" }
+- { record: planet-feature.boreal-forest-taiga, at: "2026-10-23T01:50:07Z", status: "", summary: "changed: trigger_params", sha: "03d24a29ca2d8b6c" }
 - { record: planet-feature.braided-reach, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "74ba0275c2089946" }
 - { record: planet-feature.breached-anticline, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "755a09bfd2f28576" }
 - { record: planet-feature.butte, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e9e04212c33795fa" }
@@ -2230,7 +2230,7 @@
 - { record: planet-feature.tower-karst, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "2954f935e449d4de" }
 - { record: planet-feature.transform-valley, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "8311148b3c50f85c" }
 - { record: planet-feature.transverse-dunes, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e3cd0676b0e52a56" }
-- { record: planet-feature.tree-line, at: "2026-10-23T00:57:38Z", status: "", summary: "changed: trigger, trigger_params, basis", sha: "09308cee8d740ff5" }
+- { record: planet-feature.tree-line, at: "2026-10-23T01:50:07Z", status: "", summary: "changed: trigger_params", sha: "acb653e90eea3135" }
 - { record: planet-feature.triangular-facet, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "13c11962a2e67fc4" }
 - { record: planet-feature.tributary-network, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c6a665dc433bcdc9" }
 - { record: planet-feature.tropical-rainforest, at: "2026-10-23T01:18:15Z", status: "", summary: "changed: trigger_params", sha: "aad459c7ae2c44a6" }
