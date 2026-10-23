@@ -3286,8 +3286,8 @@
 - { record: ship-artifact.spatial-layout, at: "2026-10-22T02:55:09Z", status: "", summary: "changed", sha: "3d0eb2448fffe86b" }
 - { record: ship-artifact.task-packet, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "670031c142bbaf9a" }
 - { record: ship-check.assembly, at: "2026-10-22T01:31:11Z", status: "", summary: "changed: method", sha: "858d4104081d8633" }
-- { record: ship-check.assembly-state-coverage, at: "2026-10-23T16:51:43Z", status: "", summary: "changed: sources, method, evidence, failure", sha: "d1f11435c31b4eba" }
-- { record: ship-check.construction, at: "2026-10-22T21:42:41Z", status: "", summary: "changed", sha: "c0137ca95d29c10b" }
+- { record: ship-check.assembly-state-coverage, at: "2026-10-23T17:43:42Z", status: "", summary: "changed: sources, method, evidence, failure", sha: "94961dc95a955b56" }
+- { record: ship-check.construction, at: "2026-10-23T17:43:42Z", status: "", summary: "changed: sources, method, evidence, failure", sha: "a12a6c858e597d7c" }
 - { record: ship-check.crew-routes, at: "2026-10-22T03:59:24Z", status: "", summary: "changed", sha: "a024a814a858ce55" }
 - { record: ship-check.hull-geometry, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "b4183fb69a6f413e" }
 - { record: ship-check.identity, at: "2026-10-23T16:51:43Z", status: "", summary: "changed: sources, method, evidence, failure", sha: "01905d5c4fe34bba" }
@@ -3344,7 +3344,7 @@
 - { record: ship-rule.immutable-release, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "19ed7960a494fbf2" }
 - { record: ship-rule.implementation-phases, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "74ea8c62778537d5" }
 - { record: ship-rule.lifecycle, at: "2026-10-22T03:59:24Z", status: "", summary: "changed", sha: "9f680c876218cb0b" }
-- { record: ship-rule.local-regeneration, at: "2026-10-23T16:51:43Z", status: "", summary: "changed: sources, statement, verification", sha: "87a4befac904dcff" }
+- { record: ship-rule.local-regeneration, at: "2026-10-23T17:43:42Z", status: "", summary: "changed: sources, statement, verification", sha: "fa1823726ee489ff" }
 - { record: ship-rule.materials-and-surfaces, at: "2026-10-22T04:04:05Z", status: "", summary: "changed", sha: "edd0de5cf4aa68ee" }
 - { record: ship-rule.module-reuse, at: "2026-10-23T16:51:43Z", status: "", summary: "changed: sources, statement, verification", sha: "e1e2daba87ce9d03" }
 - { record: ship-rule.pilot-scope, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "cafd22baad8b7614" }
