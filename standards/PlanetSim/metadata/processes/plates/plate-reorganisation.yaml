@@ -142,6 +142,13 @@ params:
   meaning: 'the insulation clock is a leaky integrator: a plate carrying more than BIG_SHARE of the continent gains the step time as heat; below that share it loses this fraction of the step; past INSULATE_MYR of heat it is insulated
     and rifts (any cut). The clock that reset at every dip of the share never ran 150 Myr in 4 Gyr (forge e73 tracker)'
   source: planets, 20 Oct 2026 (chosen); forge models/plates/reorganisation.rs; e77
+- name: continental topup share
+  value: 0.0
+  unit: '1'
+  meaning: 'Probability per extra top-up request of choosing an any-cut rift on an eligible plate with the most continental particles (ties: lowest plate id). If none is eligible, use the previous top-up rule. Zero preserves the prior
+    selection and makes no draws from the independent continental-top-up stream.'
+  source: 'planets, 22 Oct 2026: plan part C2 (continents rifting as Earth''s do), docs/ladder-log.md'
+  open: true
 random_draws:
 - 'next_reorg = t + rng.uniform(100,250)/1e3 at each scheduled reorganisation; rng.uniform() for RIFT_CHANCE drawn only when no plate is insulated (conditional expression evaluated lazily); then each rift''s draws in order: insulated
   targets first, then top-ups.'
@@ -171,3 +178,9 @@ basis:
   note: 'planets, 20 Oct 2026 (the shape audit): BIG_SHARE 0.35 -> 0.25 and INSULATE_MYR 200 -> 150 Myr so the supercontinent rift (the only cut through continent) fires: in e71 it never did in 4 Gyr (the largest plate held over 35%
     of the continent in 15 of 83 checkpoints, never 200 Myr running), 85 of 87 rifts were ocean-only, and 0% of the coast was a rifted margin (Earth ~50%). The cut follows old sutures (SUTURE_STRENGTH) and the halves stretch before
     parting. e73.'
+- of:
+  - params
+  tier: invented
+  review: true
+  note: Only continental topup share is added here from planet-forge da15dd1 (plan C2); default0 is an opt-in scheduling control, not a calibrated physical rate. Independent draw stream S_CONT_TOPUP=3; no draw at0. Owner run overrides
+    such as0.3 are not the registry default. Planets reports92e123checkpoints identical at0; Registry reviewed the source branch but did not regenerate that run.

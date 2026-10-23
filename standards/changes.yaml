@@ -2782,7 +2782,7 @@
 - { record: planet-process.orographic-downscale, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "8277c3b07c0a8717" }
 - { record: planet-process.paleo-climate, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "1027f9d4a0268b8a" }
 - { record: planet-process.plate-motion-and-forces, at: "2026-10-20T13:49:47Z", status: "", summary: "changed", sha: "74aacf627ed110d6" }
-- { record: planet-process.plate-reorganisation, at: "2026-10-21T01:48:25Z", status: "", summary: "changed", sha: "a8399f3bb7469baa" }
+- { record: planet-process.plate-reorganisation, at: "2026-10-23T04:34:06Z", status: "", summary: "changed: params, basis", sha: "13c568f092cbc506" }
 - { record: planet-process.plate-rifting, at: "2026-10-21T01:48:25Z", status: "", summary: "changed", sha: "9b7fa772740dec2e" }
 - { record: planet-process.plate-welding, at: "2026-10-20T13:49:47Z", status: "", summary: "changed", sha: "166798827e76ccbb" }
 - { record: planet-process.plates-init, at: "2026-10-20T20:18:03Z", status: "", summary: "changed", sha: "084a98b336a24780" }
