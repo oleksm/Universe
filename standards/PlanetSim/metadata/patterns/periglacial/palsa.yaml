@@ -8,27 +8,35 @@ factors:
 - factor: planet-factor.clim-temp
   weight: 3
   why: MAAT just below 0 C; 0.8 C warming collapsed palsas in Norway
+  want: high
 - factor: planet-factor.clim-precip
   weight: 1
   why: Low precipitation, generally <500 mm/yr
+  want: low
 - factor: planet-factor.clim-wind
   weight: 3
   why: Wind strips snow from mound tops, letting frost penetrate
+  want: high
 - factor: planet-factor.permafrost
   weight: 1
   why: Sporadic/discontinuous permafrost margin; segregation ice core
+  want: high
 - factor: planet-factor.bio-veg
   weight: 3
   why: Peat cover insulates in summer; mire vegetation needed
+  want: high
 - factor: planet-factor.regolith
   weight: 1
   why: Peat over frost-susceptible silt
+  want: high
 - factor: planet-factor.slope-relief
   weight: 1
   why: Flat mires
+  want: low
 - factor: planet-factor.time
   weight: 1
   why: 'Cyclic: embryonic, mature, degrading over decades to ~3 kyr'
+  want: high
 vocabulary_id: 108
 sources:
 - https://en.wikipedia.org/wiki/Palsa
@@ -42,10 +50,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: periglacial

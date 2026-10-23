@@ -41,6 +41,9 @@ contents:
   unless an actual consumer supports them. The existing motion checker and runtime playback have distinct scopes;
   a plain-axis check can pass while game consumption remains pending. (Motion proposal and schema evolution
   (registry repository `docs/proposals/plant-motion.md`), motion schema (registry repository `docs/formats/freefall-motion-1.schema.yaml`))'
+- Required gear deployed/stowed/transition poses, actual bay/door/support volumes, actuator/flexible-service
+  routes and ramp/gear/access combinations.
+- Complete relevant component/state/pair/view roster; separate partial sweep results from whole-assembly acceptance.
 boundary: Blender drivers are not runtime support; sample clearance does not prove all continuous poses.
 consumers:
 - blender
@@ -51,3 +54,5 @@ rules:
 checks:
 - ship-check.motion-coverage
 - ship-check.runtime
+- ship-check.assembly-state-coverage
+- ship-check.crew-routes

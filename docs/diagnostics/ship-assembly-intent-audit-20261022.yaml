@@ -1,0 +1,61 @@
+date: '2026-10-22'
+subject: Per-assembly design evidence before dependent detail
+status: reusable definition review; no project acceptance
+problem: >-
+  Named objects or mesh slices can be mistaken for designed assemblies. Existing regional ownership
+  already rejects arbitrary slices, but did not explicitly require per-assembly intent and assembled
+  visual evidence before dependent detailing.
+change:
+  records:
+  - ship-artifact.region-spec
+  - ship-rule.region-ownership
+  - ship-check.construction
+  - ship-check.identity
+  - ship-stage.architecture
+  - ship-stage.production
+  contract:
+  - Purpose, visual role, brief links, editable design controls and actual source/object mapping.
+  - Adjacent assemblies, shared boundary owner, mating frames, join treatment, support and access obligations.
+  - Current local/interface witnesses and independent complete-ship silhouette/clay critique.
+  - Separate technical and visual verdicts; concrete defect ownership, preservation constraints and reinspection.
+  - Existing candidate checkpoint remains the state authority; no second database or new runtime schema.
+  limits:
+  - Definitions remain draft; no generic geometric or aesthetic evaluator was implemented.
+  - Unknown required criteria hold dependent claims; reversible alternatives and unrelated authorized work continue.
+  - One assembly may use many objects; repeated/mirrored instances may share a contract but need placement coverage.
+  - A coherent assembly may be one mesh; object count and mesh separation are not aesthetic metrics.
+review_cases:
+  method: Manual contract review, not an executable test or geometry certificate.
+  cases:
+  - input: One loft split and renamed with no individual purpose or interfaces.
+    expected: Reject parts-designed claim; require missing region contracts and evidence.
+  - input: Complete local contracts and attractive isolated renders, but no assembled critique.
+    expected: Hold dependent detailing pending independent assembled visual review.
+  - input: Interface screen passes while current whole-ship visual critique fails.
+    expected: Preserve separate verdicts and return affected form to review; technical pass cannot override visual fail.
+  - input: Previous candidate critique reused after geometry, brief or relevant interface changes.
+    expected: Reopen affected review and bind fresh witnesses; old evidence remains historical.
+  - input: Missing or provisional required mounting/service criteria hidden behind a declared interface pass.
+    expected: Keep qualification unresolved and hold dependent claims without blocking unrelated study.
+  - input: Several coherent assemblies share a parameterized generator; repeated instances have one contract and current placement/junction witnesses.
+    expected: Eligible for scoped review; separate generator files and arbitrary object counts are not required.
+  - input: Current contracts and local technical witnesses plus independent assembled critique support the authorized scope; named defects are rechecked.
+    expected: May advance only that supported scope through existing checkpoint authority; no production or engineering promotion.
+project_execution_review:
+  candidate: restart-02
+  checkpoint: /home/alexm/git/blender/ships/explorer-study/restart-02/delivery.yaml
+  observed: Visual composition failed; part_contracts pending; downstream QC depends on both plus functional allocation.
+  peer_review: /home/alexm/git/blender/ships/explorer-study/agentic/reviews/cycle02-visual.json
+  verified: Eight peer source/brief/manifest/image hash bindings matched at inspection.
+  boundary: Peer visual findings were inspected as evidence records, not independently rescored for beauty.
+  follow_up: >-
+    Pending part_contracts and fit/physical entries referenced cycle01 evidence. Blender was notified
+    to bind the current assembly roster and interface witnesses before recording any pass. The pending
+    state is honest; historical evidence does not qualify restart-02 or future candidates.
+validation:
+  focused_regressions: 9 passed (test_ship_workflow and test_reg_page)
+  registry_and_pages: Full reg check passed; zero schema misfits; all six affected pages passed.
+  visual_page: Region source contract rendered and inspected with new obligations visible.
+  unrelated_report: Planet catalogue migration reports 937 gaps across 175 kinds; this change does not alter that catalogue.
+  schema_runtime_change: none
+  workflow_definitions: 99, unchanged count

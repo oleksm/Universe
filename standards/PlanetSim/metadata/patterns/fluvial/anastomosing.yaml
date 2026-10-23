@@ -8,27 +8,35 @@ factors:
 - factor: planet-factor.slope-relief
   weight: 3
   why: very low valley gradient 5e-5 to 1e-3
+  want: low
 - factor: planet-factor.base-level
   weight: 3
   why: rising base level (downstream) forces aggradation and avulsion
+  want: high
 - factor: planet-factor.sed-supply
   weight: 1
   why: fine cohesive or organic load; aggrading valley
+  want: high
 - factor: planet-factor.bio-veg
   weight: 3
   why: dense bank vegetation/peat makes channels stable
+  want: high
 - factor: planet-factor.water-discharge
   weight: 1
   why: floods trigger avulsions creating new channels
+  want: high
 - factor: planet-factor.clim-arid
   weight: 1
   why: arid variant (Channel Country) with mud banks and ephemeral floods
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 1
   why: subsidence creates accommodation
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 1-100 kyr
+  want: high
 vocabulary_id: 34
 sources:
 - https://en.wikipedia.org/wiki/Anabranch
@@ -42,10 +50,29 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
+- of:
+  - factors.want
+  tier: derived
+  review: true
+  source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
+  note: 'planet-factor.bio-veg: Dense vegetation stabilizes banks; stable describes channels.'
 status: draft
+look: dendritic

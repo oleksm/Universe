@@ -188,7 +188,7 @@ def engines():
           (3, "methalox", 500000.0, 3600, 600, 2.5, 1.2, 1.2, 0.4, 0.26, "CHE3", "between the RL10 and a Raptor by thrust, at a Raptor's weight per thrust; review"),
           (4, "methalox", 2300000.0, 3290, 1630, 3.1, 1.3, 1.3, 0.4, 0.26, "CHE4", "a Raptor 2 class engine, from memory: about 230 tf, 1,630 kg, methane and oxygen, throttling to about 40%, gimbal about 15 degrees. No source looked up. Review")]
     for cls, prop, thrust, ve, mass, L, W, H, thr, gim, code, scale in CH:
-        jet = 0.5 * thrust * ve; energy = {"hydrolox": 13e6, "methalox": 10e6}[prop]; eff = float(f"{0.5 * ve * ve / energy:.2g}")
+        jet = 0.5 * thrust * ve; energy = {"hydrolox": 13e6, "methalox": 10e6}[prop]; eff = 0.5 * ve * ve / energy
         equipment(f"engine-ch-s{cls}", f"equipment.engine.ch.s{cls}", f"Chemical engine S{cls} ({prop})", "engine", cls, mass, L, W, H, 0,
                   {"kind": "engine", "cycle": "chemical", "thrust": thrust, "exhaust": ve, "efficiency": eff, "burns": f"material.{prop}", "throttle": thr, "gimbal": gim, "isotropic_loss": 0.0, "shield_pass": 1.0, "reaction_offset": L * 0.5, "heat_to_hull": 1e-4},
                   [("Thrust chamber and nozzle", "Regeneratively cooled.", 0.45, ST, WB), ("Turbopumps", "", 0.3, PU, AS), ("Valves, lines and injector", "", 0.15, ST, MC), ("Controller and gimbal actuators", "", 0.1, MOT, AS)], code,

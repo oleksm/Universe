@@ -8,30 +8,39 @@ factors:
 - factor: planet-factor.waves-tides
   weight: 3
   why: 'tidal range sets gradient: type A sloping 1-5 deg macrotidal, type B near-horizontal 0.2-1.3 deg microtidal'
+  want: high
 - factor: planet-factor.rock-type
   weight: 3
   why: moderately strong sedimentary rock best; width falls with rock strength (10-1000 m)
+  want: high
 - factor: planet-factor.rock-layers
   weight: 1
   why: bedding dip and hard beds make stepped or ramp platforms
+  want: high
 - factor: planet-factor.rock-fracture
   weight: 1
   why: joint density controls quarrying rate and surface roughness
+  want: high
 - factor: planet-factor.clim-temp
   weight: 1
   why: 'warm climates: wetting-drying and salt weathering lower platform to near high-water level'
+  want: low
 - factor: planet-factor.bio-veg
   weight: 1
   why: bioerosion (borers, grazers) in tropics; algae protect in cool seas
+  want: high
 - factor: planet-factor.sea-level
   weight: 3
   why: needs stable level; inheritance from previous interglacial highstands widens platforms
+  want: low
 - factor: planet-factor.tect-uplift
   weight: 1
   why: uplift strands platforms as terraces
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: widths need 1-100 kyr; inherited components older
+  want: high
 vocabulary_id: 29
 sources:
 - https://en.wikipedia.org/wiki/Wave-cut_platform
@@ -47,10 +56,30 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
+- of:
+  - factors.want
+  tier: derived
+  review: true
+  source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
+  note: 'planet-factor.clim-temp: The record asks for warmth; existing clim-temp strength rises toward cold
+    (283.15 to 263.15 K).'
 status: draft
+look: coastal

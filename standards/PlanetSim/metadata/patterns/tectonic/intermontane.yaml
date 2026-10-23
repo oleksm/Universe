@@ -7,16 +7,25 @@ family: tectonic
 factors:
 - factor: planet-factor.tect-setting
   weight: 3
-  why: 'a structural trough between ranges: forearc (California''s Central Valley), foreland, or between thrust sheets'
+  why: 'a structural trough between ranges: forearc (California''s Central Valley), foreland, or between thrust
+    sheets'
+  want: high
 - factor: planet-factor.sed-supply
   weight: 3
-  why: 'filled by the sediment the ranges shed: alluvial fans at the margins, fine floodplain and lake beds in the axis; fill several km thick'
+  why: 'filled by the sediment the ranges shed: alluvial fans at the margins, fine floodplain and lake beds
+    in the axis; fill several km thick'
+  want: high
 - factor: planet-factor.base-level
   weight: 3
-  why: '(the library writes HYDRO_BASIN, which its vocabulary lacks: mapped here by the registry, to confirm) an axial river gathers the fans'' streams; closed or poorly drained floors hold lakes in wet periods (Tulare, Corcoran)'
+  why: '(the library writes HYDRO_BASIN, which its vocabulary lacks: mapped here by the registry, to confirm)
+    an axial river gathers the fans'' streams; closed or poorly drained floors hold lakes in wet periods (Tulare,
+    Corcoran)'
+  want: high
 - factor: planet-factor.clim-arid
   weight: 1
-  why: '(the library writes CLIM, which its vocabulary lacks: mapped here by the registry, to confirm) rain shadow of the seaward range sets fan size and lake persistence'
+  why: '(the library writes CLIM, which its vocabulary lacks: mapped here by the registry, to confirm) rain
+    shadow of the seaward range sets fan size and lake persistence'
+  want: high
 vocabulary_id: 166
 sources:
 - https://en.wikipedia.org/wiki/Central_Valley_(California)
@@ -31,10 +40,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: dendritic

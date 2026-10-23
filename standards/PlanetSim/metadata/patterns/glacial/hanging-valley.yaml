@@ -8,27 +8,35 @@ factors:
 - factor: planet-factor.ice-flow
   weight: 3
   why: tributary/trunk ice discharge ratio sets incision difference and step height (100-1000 m)
+  want: high
 - factor: planet-factor.ice-extent
   weight: 3
   why: needs valley glaciation; duration grows the step
+  want: high
 - factor: planet-factor.relief-inherited
   weight: 3
   why: tributary junction of a fluvial network
+  want: high
 - factor: planet-factor.rock-type
   weight: 1
   why: resistant tributary rock enhances step; also forms by differential erosion
+  want: high
 - factor: planet-factor.ice-thermal
   weight: 1
   why: warm-based trunk glacier needed for deep trunk incision
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: post-glacial fluvial incision slowly cuts gorge into lip
+  want: high
 - factor: planet-factor.water-discharge
   weight: 1
   why: tributary stream forms waterfall over step; low discharge preserves the hang
+  want: low
 - factor: planet-factor.sea-level
   weight: 1
   why: in fjords, tributary hangs below or above sea level
+  want: high
 vocabulary_id: 83
 sources:
 - https://en.wikipedia.org/wiki/Hanging_valley
@@ -43,10 +51,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: glacial

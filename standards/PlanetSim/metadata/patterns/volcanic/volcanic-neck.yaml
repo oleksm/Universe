@@ -8,24 +8,31 @@ factors:
 - factor: planet-factor.rock-type
   weight: 3
   why: 'strong contrast: resistant conduit fill vs soft host/tephra decides standing spire'
+  want: high
 - factor: planet-factor.time
   weight: 3
   why: Myr of erosion needed to strip cone and host (1-30 Myr)
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 3
   why: regional uplift drives incision that exhumes the neck
+  want: high
 - factor: planet-factor.clim-arid
   weight: 1
   why: arid climate keeps steep sides and sharp spires
+  want: high
 - factor: planet-factor.ice-flow
   weight: 1
   why: glacial flow over plug makes crag-and-tail
+  want: high
 - factor: planet-factor.rock-fracture
   weight: 1
   why: columnar joints in plug control spire faces and talus
+  want: high
 - factor: planet-factor.volc-vent
   weight: 1
   why: conduit diameter and radial dikes set plan
+  want: high
 vocabulary_id: 140
 sources:
 - https://en.wikipedia.org/wiki/Volcanic_plug
@@ -39,10 +46,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: volcanic

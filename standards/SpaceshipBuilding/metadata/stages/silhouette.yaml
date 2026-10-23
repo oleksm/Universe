@@ -19,19 +19,28 @@ entry:
   choice.
 exit:
 - One coherent alternative selected with registered views and protected landmarks.
-- Sketches reviewed feature by feature; misses and ambiguities resolved or explicitly retained before
-  selection.
-- A rehearsal selection and a real design selection are distinct. Exterior-only feedback cannot close
-  the gate while its rough functional occupancy prerequisite or required observable identity features
-  remain unresolved.
+- Sketches reviewed feature by feature; misses and ambiguities resolved or explicitly retained before selection.
+- A rehearsal selection and a real design selection are distinct. Exterior-only feedback cannot close the gate
+  while its rough functional occupancy prerequisite or required observable identity features remain unresolved.
+- Direction includes an opening/closure, gear/bay, service/support and cockpit interface plan; unresolved installation
+  or state requirements remain explicit before selection.
+- Direction includes connected crew routes and operating/staging space across intended ramp/door states before
+  shape selection; unresolved human/suit/carry fixtures and recovery scope remain explicit.
 failure:
 - Keep alternatives; do not erase prior source or mix incompatible features silently.
+- Required route/module envelope conflict with hull space returns affected G2/G3 shape and arrangement; preserve
+  design intent and applicable envelopes, escalate incompatible constraints, and invalidate dependent detail/export
+  evidence before resuming.
+- If clearance-driven shape changes erase protected identity, return affected G2/G3 alternatives with unchanged
+  applicable envelopes; no detail, shrink-to-fit or stale visual packet closes the conflict.
 inputs:
 - ship-artifact.reference-atlas
 - ship-artifact.requirements
 - ship-artifact.sketch-prompt
 outputs:
 - ship-artifact.silhouette-study
+- ship-artifact.assembly-state-plan
+- ship-artifact.crew-route-plan
 checks:
 - ship-check.identity
 rules:
@@ -39,5 +48,6 @@ rules:
 - ship-rule.authority
 - ship-rule.claim-boundaries
 - ship-rule.feature-intake
+- ship-rule.construction-and-detail
 decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
   forks; technical roles resolve routine repairs within those constraints.

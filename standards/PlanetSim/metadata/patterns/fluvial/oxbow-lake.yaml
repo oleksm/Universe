@@ -8,24 +8,31 @@ factors:
 - factor: planet-factor.events
   weight: 3
   why: floods trigger neck or chute cutoff
+  want: high
 - factor: planet-factor.water-discharge
   weight: 3
   why: active meander migration rate sets cutoff frequency
+  want: high
 - factor: planet-factor.sed-supply
   weight: 3
   why: fine sediment plugs ends, infills to bog then dry
+  want: high
 - factor: planet-factor.slope-relief
   weight: 1
   why: high-sinuosity low-gradient floodplains give longer lakes
+  want: low
 - factor: planet-factor.bio-veg
   weight: 1
   why: vegetation and peat infill the lake
+  want: high
 - factor: planet-factor.clim-arid
   weight: 1
   why: evaporation hastens drying
+  want: low
 - factor: planet-factor.time
   weight: 1
   why: forms in years-decades; persists 0.01-10 kyr
+  want: high
 vocabulary_id: 39
 sources:
 - https://en.wikipedia.org/wiki/Oxbow_lake
@@ -39,10 +46,30 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
+- of:
+  - factors.want
+  tier: derived
+  review: true
+  source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
+  note: 'planet-factor.clim-arid: The why text says aridity causes replacement, sand wedges, or lake drying;
+    lower aridity supports the named wet feature.'
 status: draft
+look: dendritic

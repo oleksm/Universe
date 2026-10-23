@@ -8,27 +8,35 @@ factors:
 - factor: planet-factor.bio-veg
   weight: 3
   why: halophytes colonise upper intertidal, trap sediment and add organic matter
+  want: high
 - factor: planet-factor.clim-temp
   weight: 1
   why: temperate to boreal; replaced by mangrove where coldest month >~20 C
+  want: high
 - factor: planet-factor.waves-tides
   weight: 3
   why: sheltered low-wave sites; sufficient tidal range for zonation; platform between MHW and highest tide
+  want: low
 - factor: planet-factor.sed-supply
   weight: 3
   why: fine suspended sediment supply lets accretion keep pace
+  want: high
 - factor: planet-factor.sea-level
   weight: 1
   why: accretion must match sea-level rise; too fast rise drowns marsh
+  want: high
 - factor: planet-factor.slope-relief
   weight: 1
   why: gently sloping shore behind barriers, spits, in estuaries
+  want: high
 - factor: planet-factor.clim-arid
   weight: 1
   why: not hypersaline; arid coasts give sabkha instead
+  want: low
 - factor: planet-factor.time
   weight: 1
   why: 0.1-7 kyr
+  want: high
 vocabulary_id: 32
 sources:
 - https://www.coastalwiki.org/wiki/Salt_marshes
@@ -43,10 +51,30 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
+- of:
+  - factors.want
+  tier: derived
+  review: true
+  source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
+  note: 'planet-factor.clim-arid: The why text says aridity causes replacement, sand wedges, or lake drying;
+    lower aridity supports the named wet feature.'
 status: draft
+look: coastal

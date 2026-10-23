@@ -18,6 +18,8 @@ method:
 - Check declared emergency-route scope, narrow obstacles and service-volume preservation.
 - Use discovered/selected real module envelopes and poses, including pilot station and service/removal space;
   a custom fixture or unselected proxy does not verify product fit.
+- Apply ship-check.crew-routes to continuous support and actor/task/state traversal, reachable operating positions
+  outside mechanism sweeps and declared recovery sequences; collision-only results cannot pass inhabitation.
 evidence:
 - Pose/route witnesses, pilot views and minimum clearances with fixture limitations.
 failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
@@ -26,6 +28,7 @@ scope: inhabitation
 artifacts:
 - ship-artifact.spatial-layout
 - ship-artifact.module-inventory
+- ship-artifact.crew-route-plan
 coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
   claim is inferred.
 rules:

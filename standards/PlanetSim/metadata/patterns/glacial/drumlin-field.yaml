@@ -8,30 +8,39 @@ factors:
 - factor: planet-factor.regolith
   weight: 3
   why: deformable till/soft sediment bed; length 250-1000 m
+  want: high
 - factor: planet-factor.ice-flow
   weight: 3
   why: flow aligns long axis; faster ice gives elongation 1.7-4.1 and toward MSGL
+  want: high
 - factor: planet-factor.ice-thermal
   weight: 3
   why: warm-based but not meltwater-flooded; abundant meltwater destroys bedforms
+  want: high
 - factor: planet-factor.ice-extent
   weight: 1
   why: ice-sheet interiors and lobes behind margins
+  want: high
 - factor: planet-factor.slope-relief
   weight: 1
   why: lowlands with gentle bed
+  want: low
 - factor: planet-factor.time
   weight: 1
   why: 1-20 kyr of steady flow; instability growth
+  want: high
 - factor: planet-factor.sed-supply
   weight: 1
   why: till supply builds bodies; can have rock cores
+  want: high
 - factor: planet-factor.rock-type
   weight: 1
   why: soft sedimentary bedrock supplies till
+  want: high
 - factor: planet-factor.clim-history
   weight: 1
   why: later flow phases overprint/cross-cut fields
+  want: high
 vocabulary_id: 62
 sources:
 - https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/drumlins/
@@ -46,10 +55,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: glacial

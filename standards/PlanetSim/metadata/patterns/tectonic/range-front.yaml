@@ -8,27 +8,35 @@ factors:
 - factor: planet-factor.tect-fault
   weight: 3
   why: bounding normal/reverse fault; segment length sets front segments
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 3
   why: 'uplift rate vs erosion: Smf 1.2-1.6 active, 1.8-3.4 weak, >3.5 inactive'
+  want: high
 - factor: planet-factor.rock-type
   weight: 1
   why: resistant footwall keeps straight front, facets
+  want: high
 - factor: planet-factor.clim-precip
   weight: 1
   why: erosion efficiency embays the front, raises sinuosity
+  want: high
 - factor: planet-factor.clim-arid
   weight: 1
   why: arid fronts keep facets and fans; fans head at front
+  want: high
 - factor: planet-factor.sed-supply
   weight: 1
   why: catchment sediment builds fans; supply vs subsidence decides fan entrenchment
+  want: high
 - factor: planet-factor.base-level
   weight: 1
   why: basin subsidence/through-drainage sets front base level
+  want: high
 - factor: planet-factor.time
   weight: 3
   why: time since uplift slowed raises sinuosity and valley width (Vf)
+  want: high
 vocabulary_id: 168
 sources:
 - https://WWW.ISPRS.org/proceedings/2011/ISRSE-34/211104015Final00629.pdf
@@ -42,10 +50,30 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
+- of:
+  - factors.want
+  tier: derived
+  review: true
+  source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
+  note: 'planet-factor.tect-uplift: Uplift relative to erosion defines the active front; weak/inactive are
+    contrasting cases.'
 status: draft
+look: basin-range

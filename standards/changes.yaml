@@ -616,10 +616,10 @@
 - { record: equipment.engine.ca.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "d65081d0b1101e52" }
 - { record: equipment.engine.cg.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "36106cff07e69fe4" }
 - { record: equipment.engine.cg.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "0c3184a35b5722ec" }
-- { record: equipment.engine.ch.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "4953dcc5d17754ff" }
-- { record: equipment.engine.ch.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "cf6610b99d71ad8b" }
-- { record: equipment.engine.ch.s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "8c91e18a8da962fe" }
-- { record: equipment.engine.ch.s4, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "fc649b765372d064" }
+- { record: equipment.engine.ch.s1, at: "2026-10-23T00:34:57Z", status: draft, summary: "changed: function, basis", sha: "e444108a156f73da" }
+- { record: equipment.engine.ch.s2, at: "2026-10-23T00:34:57Z", status: draft, summary: "changed: function, basis", sha: "28e7c78e8cadef0f" }
+- { record: equipment.engine.ch.s3, at: "2026-10-23T00:34:57Z", status: draft, summary: "changed: function, basis", sha: "cceeff5cd621e5ac" }
+- { record: equipment.engine.ch.s4, at: "2026-10-23T00:34:57Z", status: draft, summary: "changed: function, basis", sha: "578d866ab62101f6" }
 - { record: equipment.engine.fan.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "1b9b90efe95a3fb0" }
 - { record: equipment.engine.fan.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "2541fb14913bf787" }
 - { record: equipment.engine.fan.s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "24e903208b9ea540" }
@@ -2009,20 +2009,30 @@
 - { record: planet-factor.volc-vent, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "57891197e94bb237" }
 - { record: planet-factor.water-discharge, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "9df27befeb5d401c" }
 - { record: planet-factor.waves-tides, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e0f911291637cf30" }
+- { record: planet-feature.abyssal-hills, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "6509fc8bc908a1ed" }
+- { record: planet-feature.abyssal-plain, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "12d76ace55dfeb53" }
+- { record: planet-feature.accretionary-prism, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "c3883571976f5ab4" }
+- { record: planet-feature.active-margin, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "752fe5a2420e7b88" }
 - { record: planet-feature.alluvial-fan, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "0c8da5db3be8baa6" }
+- { record: planet-feature.alluvial-plain, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "bc4734bfe74eb0f3" }
+- { record: planet-feature.alpine-zone, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "f20005c5f99c821e" }
 - { record: planet-feature.anastomosing-reach, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "f42fc3ec4485e764" }
 - { record: planet-feature.anticline-axis, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "edbc9129dced6ea8" }
 - { record: planet-feature.arc-front, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "ac6b22126fb4c820" }
 - { record: planet-feature.arc-volcano-centre, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c7df2a3ba6ca802a" }
+- { record: planet-feature.archipelago, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "29921a8edded78ee" }
 - { record: planet-feature.arete, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "d08b01b7a58c695e" }
 - { record: planet-feature.atoll, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "d135a6537f4d1fed" }
+- { record: planet-feature.back-arc-basin, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "045dc4be15f4558e" }
 - { record: planet-feature.badlands, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "041db984861082e9" }
 - { record: planet-feature.bajada, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "934e289eaf518ae2" }
 - { record: planet-feature.barchan-dunes, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "55998a9dadc04822" }
+- { record: planet-feature.bare-rock, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "43aa2841fbb10028" }
 - { record: planet-feature.barrier-island, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "0606a37d3dcffa54" }
 - { record: planet-feature.barrier-reef, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "5afcef631093957a" }
 - { record: planet-feature.beach-ridge-plain, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e42433dc0a33735f" }
 - { record: planet-feature.blockfield-felsenmeer, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "7e7003875dc7936d" }
+- { record: planet-feature.boreal-forest-taiga, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "3907ff6af88d2a8c" }
 - { record: planet-feature.braided-reach, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "74ba0275c2089946" }
 - { record: planet-feature.breached-anticline, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "755a09bfd2f28576" }
 - { record: planet-feature.butte, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e9e04212c33795fa" }
@@ -2032,12 +2042,18 @@
 - { record: planet-feature.cinder-cone, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "314fc3e73598c392" }
 - { record: planet-feature.cirque, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "cb59966ef8f17584" }
 - { record: planet-feature.coastal-foredune, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "4c28011b2450ec5d" }
+- { record: planet-feature.coastal-plain, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "6b20b412888bb80f" }
 - { record: planet-feature.coastline-typed, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e3bc019dd9a5d186" }
 - { record: planet-feature.cockpit-cone-karst, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c2fee4d8af7a8b44" }
 - { record: planet-feature.col, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "ce38a7df7a43dbd7" }
+- { record: planet-feature.cold-desert, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "42b57c2cb28bf1bf" }
 - { record: planet-feature.collapse-doline-tiankeng, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "5eb23f0472fc8300" }
 - { record: planet-feature.colluvial-hollow, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "bd3a50ffa24f7818" }
 - { record: planet-feature.consequent-subsequent-obsequent-valley, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "6c14a1aa4ef61a3f" }
+- { record: planet-feature.continent, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "dc19162f627c1802" }
+- { record: planet-feature.continental-rift-zone, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "5198ad01320408df" }
+- { record: planet-feature.continental-rise, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "94070bc3307f7a75" }
+- { record: planet-feature.continental-slope, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "2bbd3894fcb130d7" }
 - { record: planet-feature.cuesta, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e7ddeffed66123da" }
 - { record: planet-feature.debris-flow-fan, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "7546c43e31caec07" }
 - { record: planet-feature.deflation-hollow, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "d5cf978cac64fa87" }
@@ -2045,6 +2061,7 @@
 - { record: planet-feature.delta-tide-dominated, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "7f0fd41e8730aeaa" }
 - { record: planet-feature.delta-wave-dominated, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "3fedcaace957737e" }
 - { record: planet-feature.desert-basin-bolson, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "64e2663636093e5e" }
+- { record: planet-feature.desert-margin, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "5af207bf7a900d86" }
 - { record: planet-feature.desert-pavement, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "ddeadac88dd3c299" }
 - { record: planet-feature.dike-ridge, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "9c026e1c0e58cb15" }
 - { record: planet-feature.doline-field, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c0f039ef670d473b" }
@@ -2058,62 +2075,90 @@
 - { record: planet-feature.flatiron, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "6bf4eecb9eed24a1" }
 - { record: planet-feature.flood-basalt-plateau, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "92db803b3d7e4f61" }
 - { record: planet-feature.floodplain, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "33fb1c687418e0bf" }
+- { record: planet-feature.forearc-basin, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "71bb368ef5815c2e" }
 - { record: planet-feature.foreland-basin, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "9c7b6f181e3f816f" }
+- { record: planet-feature.forest-edge, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "0d0a2e3334b683fa" }
 - { record: planet-feature.former-lake-bed, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "82de9683f5ee173b" }
+- { record: planet-feature.fracture-zone, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "8f0e5284950618bd" }
 - { record: planet-feature.free-face-cliff, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "010d7c2aa8defc07" }
 - { record: planet-feature.fringing-reef, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "bbac5e456fbc507e" }
+- { record: planet-feature.geothermal-field, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "b1901eaea840f458" }
 - { record: planet-feature.giant-landslide-sector-collapse, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "5d4add97500e6a8f" }
 - { record: planet-feature.glacial-horn, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c30bcbda335186f7" }
 - { record: planet-feature.glacial-trough-u-valley, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "6efd2396115d86dc" }
 - { record: planet-feature.graben, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "950f7f94ca1107d2" }
 - { record: planet-feature.great-escarpment, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "bd426627a7db6590" }
+- { record: planet-feature.guyot, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "6432c21114102235" }
 - { record: planet-feature.hanging-valley, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "97ae824c6bc24840" }
 - { record: planet-feature.hogback, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "613275d6db6458b1" }
 - { record: planet-feature.homoclinal-ridge, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "d87ea225d89d81bb" }
 - { record: planet-feature.horst, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "0d14892fb53973ff" }
+- { record: planet-feature.hot-desert, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "f960ca491f31664f" }
 - { record: planet-feature.hotspot-chain, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "eb55ffa6130eb76b" }
 - { record: planet-feature.hotspot-volcano-centre, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "eb335ff1f7ca0e36" }
+- { record: planet-feature.ice-cap, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "2a22abc8c3a7e33b" }
 - { record: planet-feature.ice-dammed-lake-shorelines, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "8fd9b48e675a8b45" }
+- { record: planet-feature.ice-sheet, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "27a8641eed37853d" }
 - { record: planet-feature.ice-sheet-extent, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "d666451489077327" }
+- { record: planet-feature.ice-shelf, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "df8ed43b56b04cce" }
 - { record: planet-feature.ice-wedge-polygons, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "6251dbafbd6d7af5" }
 - { record: planet-feature.ignimbrite-plateau, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "687a7b1c95d53e66" }
 - { record: planet-feature.impact-crater-complex, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "f5a7440e0e777e87" }
 - { record: planet-feature.impact-crater-simple, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e0110541902f7ef2" }
 - { record: planet-feature.inselberg, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "10ccfef61083f448" }
 - { record: planet-feature.interfluve-ridge-crest, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "89f3902da258fc92" }
+- { record: planet-feature.island, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "aeaab53f004c8b2b" }
+- { record: planet-feature.island-arc, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "358391e44152baec" }
 - { record: planet-feature.kame-and-kettle-terrain, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "ce6f27294efe5fc2" }
 - { record: planet-feature.karst-plateau, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "1c735c81f8799b3e" }
 - { record: planet-feature.knickpoint-waterfall, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "5023f1878c221834" }
 - { record: planet-feature.lagoon, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "dd52d67f8f15e856" }
 - { record: planet-feature.lahar-plain, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "f5817f3f2d9cb555" }
+- { record: planet-feature.lake, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "84d01606cfbc5e8e" }
 - { record: planet-feature.lake-basin-rift-glacial-volcanic-dammed, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "6d80b4e123f15ad5" }
 - { record: planet-feature.lake-shoreline-terraces, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e65f720d7f6508e6" }
 - { record: planet-feature.landslide-rotational-translational, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "0f0976cf4838b42b" }
 - { record: planet-feature.lateral-moraine, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "03a69e1ac40bd439" }
+- { record: planet-feature.lava-dome, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "6050273340ef74a9" }
 - { record: planet-feature.lava-flow-field, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "fb8c367244d32a6e" }
 - { record: planet-feature.linear-seif-dunes, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "3d5e0f9169c24fa3" }
 - { record: planet-feature.loess-plateau, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "fbd497e9fad0a8fd" }
 - { record: planet-feature.maar, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "f96540cb8f38ea36" }
 - { record: planet-feature.mangrove-coast, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "44753209fa6c8050" }
+- { record: planet-feature.marginal-sea, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "bd1fd427fc126d66" }
 - { record: planet-feature.marine-terrace, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "ce5cc096def13c70" }
 - { record: planet-feature.meander-belt, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "8783c5052f7852d2" }
 - { record: planet-feature.medial-moraine, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b7c7e65aa569936c" }
+- { record: planet-feature.mediterranean-shrubland, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "c46a911f059961c7" }
 - { record: planet-feature.mega-scale-glacial-lineations, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c047785e0b934108" }
 - { record: planet-feature.megaflood-scabland, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b4ac3c9e3a442f2b" }
 - { record: planet-feature.mesa, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "d7f0582c2522ab29" }
+- { record: planet-feature.microcontinent, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "f38fd637ef192c82" }
+- { record: planet-feature.mid-ocean-ridge, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "ab484e54abe5b90c" }
 - { record: planet-feature.misfit-river, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "df8822e1af448ab4" }
 - { record: planet-feature.monogenetic-volcanic-field, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "a28b01b775961277" }
+- { record: planet-feature.mountain-pass, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "17809acca8046066" }
 - { record: planet-feature.multi-ring-impact-basin, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "fbf8e11eeb702145" }
 - { record: planet-feature.nivation-hollow, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "5f9d4c91b500f2ed" }
 - { record: planet-feature.normal-fault-scarp, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "054bef0e597193b9" }
+- { record: planet-feature.oasis, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "ecb908cb109c5352" }
+- { record: planet-feature.ocean, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "da391955deb2c504" }
+- { record: planet-feature.ocean-basin, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "cb18f63e21e2269b" }
+- { record: planet-feature.oceanic-plateau, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "b390f2fff4d8f92d" }
+- { record: planet-feature.oceanic-trench, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "a64320361e2d8aec" }
 - { record: planet-feature.offset-stream, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "7316bc56d3334c56" }
 - { record: planet-feature.orogen-axis, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "feb3516fcf45ba63" }
+- { record: planet-feature.orogen-belt, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "3961798e1ba86526" }
 - { record: planet-feature.outwash-plain-sandur, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "f4fd18121a7c8e73" }
 - { record: planet-feature.overdeepening-and-riegel, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "52d510935fba4364" }
 - { record: planet-feature.oxbow-lake, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "4d7d0b6463ba9f43" }
 - { record: planet-feature.palsa-peat-plateau, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "ba502b2dcc474399" }
+- { record: planet-feature.passive-margin, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "7b54f3b9069955f3" }
+- { record: planet-feature.peak, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "5ac81d9f956f4cb7" }
 - { record: planet-feature.pediment, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "5393af05ba80933d" }
 - { record: planet-feature.peneplain-etchplain, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c60cc62e5c2f70db" }
+- { record: planet-feature.perennial-snow-and-ice, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "09698893ade01512" }
+- { record: planet-feature.permafrost-limit, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "1e66746b9a994671" }
 - { record: planet-feature.pingo, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "09f78f9dc37b4743" }
 - { record: planet-feature.plate-boundary-convergent, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "58a368708deffd61" }
 - { record: planet-feature.plate-boundary-divergent, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "719f8b43d361ce30" }
@@ -2129,10 +2174,12 @@
 - { record: planet-feature.recessional-moraine, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "0c0fcf690ce927e9" }
 - { record: planet-feature.resurgent-dome, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "1fadc3abe3745d18" }
 - { record: planet-feature.ria, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "5a9421259c045021" }
+- { record: planet-feature.ridge-axis-valley, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "d57ed62f25a98528" }
 - { record: planet-feature.rift-floor-axis, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c92920cdf019048a" }
 - { record: planet-feature.rift-margin, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "29ca3d325041a294" }
 - { record: planet-feature.rift-shoulder, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "9155511ef247c75a" }
 - { record: planet-feature.rill-and-gully-system, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c80708914f351f39" }
+- { record: planet-feature.river, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "d03129368e0423ba" }
 - { record: planet-feature.river-capture, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "6b3e7e1da4b6c2e2" }
 - { record: planet-feature.river-mouth, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "4da8922ae206ba14" }
 - { record: planet-feature.river-terrace, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "554b61f54b702e7b" }
@@ -2141,8 +2188,13 @@
 - { record: planet-feature.sag-pond, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "a9b6a4346d1bba86" }
 - { record: planet-feature.salt-marsh, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "fe3b7f9c9bb34239" }
 - { record: planet-feature.sandy-beach, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "2b7db01b71cb5a44" }
+- { record: planet-feature.savanna, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "130dda191b3ac2e9" }
+- { record: planet-feature.sea, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "ffaaa3a66aa9d762" }
 - { record: planet-feature.sea-cliff, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "f2aa7faf7e974533" }
+- { record: planet-feature.sea-ice, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "2eb28aad28185625" }
+- { record: planet-feature.sea-ice-edge, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "8e68d9d3c7a1e0b0" }
 - { record: planet-feature.sea-stacks-and-arches, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "052d98896b705c5f" }
+- { record: planet-feature.seamount, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "94fdcb0f4f030a7a" }
 - { record: planet-feature.shelf, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "4bf6c7f2c4c214a6" }
 - { record: planet-feature.shelf-edge, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "502c905cf3a2b2c1" }
 - { record: planet-feature.shield-craton, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b6e92f30e26d83ea" }
@@ -2150,18 +2202,25 @@
 - { record: planet-feature.shore-platform, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "69c18fb8d285d549" }
 - { record: planet-feature.shutter-ridge, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b41f8088356ac785" }
 - { record: planet-feature.slot-canyon, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "8469602f9f8f04ba" }
+- { record: planet-feature.snow-line, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "448bd450e2a591bd" }
 - { record: planet-feature.soil-mantled-hillslope, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "1f99ad9a47ed05db" }
 - { record: planet-feature.solifluction-lobes, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "7e31a7ac1b375da1" }
 - { record: planet-feature.sorted-patterned-ground, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "03ea558401022445" }
 - { record: planet-feature.spit, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "90f2e52a19bf0050" }
+- { record: planet-feature.spring, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "4076f5fcb4316cd5" }
 - { record: planet-feature.star-dunes, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "d185aba5b10a2df5" }
+- { record: planet-feature.steppe-grassland, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "1be20d04961f9906" }
 - { record: planet-feature.stratovolcano-shasta-rainier, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "d9eb6fd30ac4be34" }
 - { record: planet-feature.structural-basin, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "3ed29be2a46c57d9" }
 - { record: planet-feature.structural-dome, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b03f8f681ab3aa9f" }
+- { record: planet-feature.submarine-canyon, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "2bda7e1b60d497d1" }
+- { record: planet-feature.submarine-fan, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "d92f9dc0e4c15339" }
 - { record: planet-feature.subsidiary-ridge, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b814963fb9190b9d" }
 - { record: planet-feature.suture, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "d953c44685134e4e" }
 - { record: planet-feature.syncline-axis, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "bb66e1ed09bc9ed4" }
 - { record: planet-feature.talus-slope, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "93fd1183fca8dbd3" }
+- { record: planet-feature.temperate-broadleaf-forest, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "803b03c3c2ebf8b0" }
+- { record: planet-feature.temperate-rainforest, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "0854d7d82a597bfb" }
 - { record: planet-feature.terminal-moraine, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "f6ce9b99bdf4db9a" }
 - { record: planet-feature.thermokarst-lakes, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "cf92750722aa3458" }
 - { record: planet-feature.thrust-front, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c164f43c395f5a94" }
@@ -2171,17 +2230,24 @@
 - { record: planet-feature.tower-karst, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "2954f935e449d4de" }
 - { record: planet-feature.transform-valley, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "8311148b3c50f85c" }
 - { record: planet-feature.transverse-dunes, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e3cd0676b0e52a56" }
+- { record: planet-feature.tree-line, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "b4044394bec82bb2" }
 - { record: planet-feature.triangular-facet, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "13c11962a2e67fc4" }
 - { record: planet-feature.tributary-network, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c6a665dc433bcdc9" }
+- { record: planet-feature.tropical-rainforest, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "66b0bed5cf25ecfe" }
+- { record: planet-feature.tropical-seasonal-forest, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "9edc678d6017fe69" }
 - { record: planet-feature.trunk-river, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "a93bdd57995f30a8" }
 - { record: planet-feature.tuff-ring, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "af2ea6a759ff8008" }
+- { record: planet-feature.tundra, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "8eee3b3bbd7e828c" }
 - { record: planet-feature.v-valley, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "4277532c898d39e1" }
+- { record: planet-feature.valley-glacier, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "81cede01256ad94f" }
 - { record: planet-feature.volcanic-arc-chain, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "3e9d66e1ef71fb68" }
 - { record: planet-feature.volcanic-neck, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "3a7bd4824d98b5c6" }
 - { record: planet-feature.volcanic-rift-zone, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "cf2bebbbbc68165c" }
 - { record: planet-feature.wadi, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "8e6c8da9d90207cf" }
 - { record: planet-feature.water-carved-land, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b23101c3d7a00b7f" }
 - { record: planet-feature.water-gap, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b0ce66d9e6cc59b8" }
+- { record: planet-feature.waterfall, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "958ee29f9bd90b5f" }
+- { record: planet-feature.wetland, at: "2026-10-22T22:36:13Z", status: "", summary: "first tracked", sha: "14df777c69dc36c4" }
 - { record: planet-feature.wind-gap, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "1c2b5d81f152d06b" }
 - { record: planet-feature.yardangs, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "099b74186ecedcef" }
 - { record: planet-field.arc-last-active, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "4b834a56aea421d2" }
@@ -2466,191 +2532,191 @@
 - { record: planet-object.rock-province, at: "2026-10-19T15:32:29Z", status: "", summary: "first tracked", sha: "759f0409ac4983cb" }
 - { record: planet-object.surface, at: "2026-10-19T15:32:29Z", status: "", summary: "first tracked", sha: "8915cfe7eb2ef546" }
 - { record: planet-object.suture, at: "2026-10-19T15:32:29Z", status: "", summary: "first tracked", sha: "97ebeb91fd8241e0" }
-- { record: planet-pattern.aeolian.dune.barchan, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e908df3d9b58415f" }
-- { record: planet-pattern.aeolian.dune.carbonate-eolianite, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "12d83360c92b2ff3" }
-- { record: planet-pattern.aeolian.dune.coastal-foredune, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "75250a8a9097a6c5" }
-- { record: planet-pattern.aeolian.dune.linear, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "f80c60d6815fd6eb" }
-- { record: planet-pattern.aeolian.dune.star, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "f802c5d8ded0a371" }
-- { record: planet-pattern.aeolian.dune.transverse, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "833b38277b8b385e" }
-- { record: planet-pattern.aeolian.erosion.deflation-hollow, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "2d4c68a33191b825" }
-- { record: planet-pattern.aeolian.erosion.yardang, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "6de4e8a6eac56290" }
-- { record: planet-pattern.aeolian.landscape.erg, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "49e841077bc80566" }
-- { record: planet-pattern.aeolian.loess.plateau, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "724a103be3e4c8d8" }
-- { record: planet-pattern.aeolian.surface.desert-pavement, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "ed0caa58995b4e81" }
-- { record: planet-pattern.arid.basin.playa, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c0acf1f5f0936dd8" }
-- { record: planet-pattern.arid.channel.wadi, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b004ec039738651a" }
-- { record: planet-pattern.arid.landscape.desert-basin, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "ec40b029f453ea7d" }
-- { record: planet-pattern.arid.landscape.desert-margin, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "8ab3c5be35d84d5a" }
-- { record: planet-pattern.arid.landscape.shield-plain, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "26c5982f67a40769" }
-- { record: planet-pattern.arid.plateau.layered-tableland, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "9a69d1641440ae20" }
-- { record: planet-pattern.arid.plateau.mesa-butte, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "2347f601dc5b7e15" }
-- { record: planet-pattern.arid.residual.inselberg, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "209640458ac6afd4" }
-- { record: planet-pattern.arid.slope.alluvial-fan, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "98c8731e114345a8" }
-- { record: planet-pattern.arid.slope.pediment, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c4937a6ea117a956" }
-- { record: planet-pattern.coastal.barrier.barrier-island, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "4b5032c7efe7faf9" }
-- { record: planet-pattern.coastal.barrier.beach-ridge-plain, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "def01cc9585c6682" }
-- { record: planet-pattern.coastal.beach.sandy-shoreface, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "9d9540a739616858" }
-- { record: planet-pattern.coastal.carbonate.platform, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "62e8c7ededec7076" }
-- { record: planet-pattern.coastal.delta.tidal-delta, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "4337dd3c3fbfd8ad" }
-- { record: planet-pattern.coastal.depositional.spit, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "7670e3a97fc4976e" }
-- { record: planet-pattern.coastal.depositional.tombolo, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "68df8d5a6477a16c" }
-- { record: planet-pattern.coastal.drowned.estuary, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "bfb7254c4a12541f" }
-- { record: planet-pattern.coastal.drowned.ria, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "52c3b862ea4232a2" }
-- { record: planet-pattern.coastal.emergent.marine-terrace, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "8252a531bbd8f4ff" }
-- { record: planet-pattern.coastal.reef.atoll, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "9b64c9eeae775698" }
-- { record: planet-pattern.coastal.reef.barrier, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "f6744585d51c07c7" }
-- { record: planet-pattern.coastal.reef.fringing, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "f1f0d5d63cbfe992" }
-- { record: planet-pattern.coastal.rocky.rocky-coast, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "65b32a295a226d55" }
-- { record: planet-pattern.coastal.rocky.sea-cliff, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "73811917411ad41e" }
-- { record: planet-pattern.coastal.rocky.shore-platform, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "fb151c34290badf1" }
-- { record: planet-pattern.coastal.rocky.stack-arch, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "370440e625d7761c" }
-- { record: planet-pattern.coastal.tidal.mangrove, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "6166dbe9ea9f9f9b" }
-- { record: planet-pattern.coastal.tidal.salt-marsh, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "1ba10cedc3e7dc6b" }
-- { record: planet-pattern.coastal.tidal.tidal-flat, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "35460cb50bed94f3" }
-- { record: planet-pattern.fluvial.channel.anastomosing, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "bd5f050c2fbc6a68" }
-- { record: planet-pattern.fluvial.channel.bedrock-long-profile, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "106158119ab51e87" }
-- { record: planet-pattern.fluvial.channel.braided, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e741e09aa9dec840" }
-- { record: planet-pattern.fluvial.channel.knickpoint-waterfall, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "8f4ad48982141c54" }
-- { record: planet-pattern.fluvial.channel.meandering, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "66b6e9de5ce2ddba" }
-- { record: planet-pattern.fluvial.channel.oxbow-lake, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "ca004ae40d5af832" }
-- { record: planet-pattern.fluvial.channel.point-bar, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "d5544bd7c9af99d0" }
-- { record: planet-pattern.fluvial.channel.subsequent-stream, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "995d12fb95ccdfa6" }
-- { record: planet-pattern.fluvial.delta.river-dominated, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "d37b206acb6f89d4" }
-- { record: planet-pattern.fluvial.delta.tide-dominated, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "78ab4ec728fd5847" }
-- { record: planet-pattern.fluvial.delta.wave-dominated, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "70a90598614c3141" }
-- { record: planet-pattern.fluvial.erosion.badlands, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "87acc43a6d189b25" }
-- { record: planet-pattern.fluvial.erosion.gully-rill, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "764a33ed7eb2d264" }
-- { record: planet-pattern.fluvial.estuary.fluvial-reach, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "9f55b750f06271eb" }
-- { record: planet-pattern.fluvial.fan.alluvial-fan, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e5d1459b68be13b9" }
-- { record: planet-pattern.fluvial.fan.bajada, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "4d2b676a649b3841" }
-- { record: planet-pattern.fluvial.gap.water-gap, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "3e3a77989eb91f21" }
-- { record: planet-pattern.fluvial.gap.wind-gap, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "cf50b53935c81ec2" }
-- { record: planet-pattern.fluvial.landscape.peneplain-etchplain, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b094b6b7e486ed35" }
-- { record: planet-pattern.fluvial.network.dendritic, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "2722cce145aa80f6" }
-- { record: planet-pattern.fluvial.network.drainage-basin, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "345bfff0f5e50f1e" }
-- { record: planet-pattern.fluvial.network.parallel, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "0b4f0fbe6fbf08a8" }
-- { record: planet-pattern.fluvial.network.radial, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "1ef1a4ffc5623a12" }
-- { record: planet-pattern.fluvial.network.rectangular, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "4585cbdc2434d14e" }
-- { record: planet-pattern.fluvial.network.trellis, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "0135302228586c65" }
-- { record: planet-pattern.fluvial.piedmont.pediment, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "cdba3782fbc6af46" }
-- { record: planet-pattern.fluvial.valley.canyon, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "d45f7450410d5059" }
-- { record: planet-pattern.fluvial.valley.consequent, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b109efccc3cfac30" }
-- { record: planet-pattern.fluvial.valley.floodplain, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b18ba61e3823d9d0" }
-- { record: planet-pattern.fluvial.valley.incised, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b5ab3d980a961a6a" }
-- { record: planet-pattern.fluvial.valley.obsequent, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "3e82373000481cf6" }
-- { record: planet-pattern.fluvial.valley.slot-canyon, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "1522d6ad39cfeefb" }
-- { record: planet-pattern.fluvial.valley.terrace, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "81ee4e51e79abd8c" }
-- { record: planet-pattern.fluvial.valley.v-shaped, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "a9983993558dfe05" }
-- { record: planet-pattern.glacial.bedform.drumlin-field, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "5397db3360facaf7" }
-- { record: planet-pattern.glacial.bedform.mega-scale-lineation, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "6be1b23f6bea61b2" }
-- { record: planet-pattern.glacial.deposit.esker, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c2f134ae999af4f9" }
-- { record: planet-pattern.glacial.deposit.kame-kettle, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "6a96cbf57073c64c" }
-- { record: planet-pattern.glacial.deposit.moraine-lateral, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c3054740120d1511" }
-- { record: planet-pattern.glacial.deposit.moraine-medial, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "394c368bdc58125b" }
-- { record: planet-pattern.glacial.deposit.moraine-terminal, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "efc2ae0fca1f4b13" }
-- { record: planet-pattern.glacial.deposit.outwash-plain, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "875c08592aa1377b" }
-- { record: planet-pattern.glacial.deposit.till-plain, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b9682d5037150641" }
-- { record: planet-pattern.glacial.erosion.arete, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "719e683d0d54c4c7" }
-- { record: planet-pattern.glacial.erosion.cirque, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "6f71491dd8f1b82f" }
-- { record: planet-pattern.glacial.erosion.col, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "351f23730547a492" }
-- { record: planet-pattern.glacial.erosion.fjord, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "af26f88ad342c4ad" }
-- { record: planet-pattern.glacial.erosion.horn, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "9d10b69bd40aac71" }
-- { record: planet-pattern.glacial.erosion.knock-and-lochan, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "532321388c2e2c61" }
-- { record: planet-pattern.glacial.erosion.roche-moutonnee, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "89fdb495e1d4a6c4" }
-- { record: planet-pattern.glacial.erosion.whaleback, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "8656de0f1bcc04a8" }
-- { record: planet-pattern.glacial.isostatic.rebound-coast, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "2f0957ea097ba22d" }
-- { record: planet-pattern.glacial.lake.ice-dammed-shorelines, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "cdb6b86d59fd1757" }
-- { record: planet-pattern.glacial.lake.proglacial, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "82240df8baab5d65" }
-- { record: planet-pattern.glacial.landscape.alpine, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "571b38956d200bfd" }
-- { record: planet-pattern.glacial.landscape.ice-sheet-bed, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "5801dd2d967d6e6c" }
-- { record: planet-pattern.glacial.landscape.periglacial-plain, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "cff24d6f5ae90c8e" }
-- { record: planet-pattern.glacial.valley.hanging-valley, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b61689cee96ab877" }
-- { record: planet-pattern.glacial.valley.overdeepening, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c298294688fff584" }
-- { record: planet-pattern.glacial.valley.trough, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "752332712bf0d3e8" }
-- { record: planet-pattern.hillslope.fan.debris-flow, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "bc2430a03c4dc05f" }
-- { record: planet-pattern.hillslope.flatiron, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "326f099448c35aaf" }
-- { record: planet-pattern.hillslope.hollow.colluvial, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e233e2ad2c770305" }
-- { record: planet-pattern.hillslope.landslide.rotational, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "7317230ce5bf2b12" }
-- { record: planet-pattern.hillslope.landslide.translational, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "2802b6f72060ffcc" }
-- { record: planet-pattern.hillslope.profile.soil-mantled, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "de75a6cc5a72340c" }
-- { record: planet-pattern.hillslope.ridge.interfluve, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "cbd827749e2c33a9" }
-- { record: planet-pattern.hillslope.scarp.free-face, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "f5fceefba9d18869" }
-- { record: planet-pattern.hillslope.talus.cone, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "dd582249718257e7" }
-- { record: planet-pattern.karst.collapse.gorge, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e9d2246f17423df7" }
-- { record: planet-pattern.karst.depression.doline, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c4eb0f64e4fbc558" }
-- { record: planet-pattern.karst.depression.polje, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "ab78381f6541b541" }
-- { record: planet-pattern.karst.landscape.cockpit, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "5aec70b7439b009a" }
-- { record: planet-pattern.karst.landscape.plateau, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "4096ff47a66cf4a0" }
-- { record: planet-pattern.karst.landscape.tower, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "3c3e83f13be90abd" }
-- { record: planet-pattern.karst.landscape.tropical, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "8dceda8f9cef822b" }
-- { record: planet-pattern.lacustrine.basin.glacial, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "0529ce4bd0db8a47" }
-- { record: planet-pattern.lacustrine.basin.oxbow, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "4f779788107f8548" }
-- { record: planet-pattern.lacustrine.basin.seasonal-karst-lake, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "d4cb365704e09168" }
-- { record: planet-pattern.lacustrine.basin.tectonic, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b54a9046694fa839" }
-- { record: planet-pattern.lacustrine.basin.volcanic, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "1fdf0cbd7cd07118" }
-- { record: planet-pattern.lacustrine.lake.dammed-lake, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "318e3002bba85fc2" }
-- { record: planet-pattern.lacustrine.shoreline.terrace, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "171044bc1e55395a" }
-- { record: planet-pattern.periglacial.creep.rock-glacier, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "f191f488485e9cf2" }
-- { record: planet-pattern.periglacial.ground.ice-wedge-polygons, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e5e5837030fb1605" }
-- { record: planet-pattern.periglacial.ground.patterned-sorted, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b80250f74d09ae7e" }
-- { record: planet-pattern.periglacial.lake.thermokarst, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "4c77eccf26b1586a" }
-- { record: planet-pattern.periglacial.mound.palsa, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "864a8e303acbf04a" }
-- { record: planet-pattern.periglacial.mound.pingo, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "a531ae387555bf51" }
-- { record: planet-pattern.periglacial.slope.blockfield, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "19bce63f80df8bde" }
-- { record: planet-pattern.periglacial.slope.nivation-hollow, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "62d41d1203ffbf61" }
-- { record: planet-pattern.periglacial.slope.protalus-rampart, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "9385edfc7e0a66b0" }
-- { record: planet-pattern.periglacial.slope.solifluction-lobe, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c4c173be12d6a60f" }
-- { record: planet-pattern.periglacial.slope.talus, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "280df068381ce152" }
-- { record: planet-pattern.structural.flat.mesa-butte, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "2d7ac60ef15dff1a" }
-- { record: planet-pattern.structural.flat.pinnacle, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "d1892e5d2435fa4a" }
-- { record: planet-pattern.structural.homocline.cuesta, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "0b469554d1515c16" }
-- { record: planet-pattern.structural.homocline.hogback, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c7d5621069a734dc" }
-- { record: planet-pattern.structural.homocline.homoclinal-ridge, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "33648dec66d5a832" }
-- { record: planet-pattern.tectonic.basin.intermontane, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "7be33de2effe947f" }
-- { record: planet-pattern.tectonic.craton.shield, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "bd8dcf738d930853" }
-- { record: planet-pattern.tectonic.extension.horst-graben, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c2e6ddb56aac0c28" }
-- { record: planet-pattern.tectonic.extension.rift-valley, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "25b7aded793bc9ce" }
-- { record: planet-pattern.tectonic.fault.fault-scarp, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "605ade17ab320a62" }
-- { record: planet-pattern.tectonic.fault.range-front, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "099e3d2b1e11b085" }
-- { record: planet-pattern.tectonic.fault.triangular-facet, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "f3a7e0930cf75f2c" }
-- { record: planet-pattern.tectonic.fold.anticlinal-ridge, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "05dec7125d8d67c8" }
-- { record: planet-pattern.tectonic.fold.breached-anticline, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "fd07e37acca34d3c" }
-- { record: planet-pattern.tectonic.fold.dome-basin, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b4894f7122334449" }
-- { record: planet-pattern.tectonic.fold.synclinal-valley, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "ecafc7593a540290" }
-- { record: planet-pattern.tectonic.margin.convergent, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "a0e6a32f62e752f7" }
-- { record: planet-pattern.tectonic.margin.great-escarpment, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e7123188d90066b6" }
-- { record: planet-pattern.tectonic.margin.passive, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "148a6d27add917f0" }
-- { record: planet-pattern.tectonic.province.craton-platform, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "173cf7c16713cd44" }
-- { record: planet-pattern.tectonic.province.extensional-province, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "bff549a548c6266c" }
-- { record: planet-pattern.tectonic.province.fold-thrust-belt, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "8080cfadba31cff8" }
-- { record: planet-pattern.tectonic.province.orogen, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "659c168d30384842" }
-- { record: planet-pattern.tectonic.province.transform-boundary, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "8683389e7c36237d" }
-- { record: planet-pattern.tectonic.strike-slip.offset-stream, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "476091fe1d450002" }
-- { record: planet-pattern.tectonic.strike-slip.sag-pond, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "5b1403249cac66eb" }
-- { record: planet-pattern.tectonic.strike-slip.shutter-ridge, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "ede8336c4cd2994f" }
-- { record: planet-pattern.tectonic.strike-slip.transform-valley, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "563b595102f686b0" }
-- { record: planet-pattern.tectonic.uplift.plateau, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "28ba7618304c089e" }
-- { record: planet-pattern.volcanic.deposit.lahar-fan, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "c34350ee008c155a" }
-- { record: planet-pattern.volcanic.depression.caldera, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "4e12046f781f7ceb" }
-- { record: planet-pattern.volcanic.depression.maar, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "632c5bcf2eb20e55" }
-- { record: planet-pattern.volcanic.edifice.cinder-cone, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "d07895a8571507c4" }
-- { record: planet-pattern.volcanic.edifice.resurgent-dome, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "10681598401a886b" }
-- { record: planet-pattern.volcanic.edifice.shield-volcano, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "fe6a9467d21a0081" }
-- { record: planet-pattern.volcanic.edifice.stratovolcano, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "7202770be5d679f7" }
-- { record: planet-pattern.volcanic.edifice.tuff-ring, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "5e5d5b8eda9ae886" }
-- { record: planet-pattern.volcanic.field.monogenetic-field, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "7f0adeec72edbe38" }
-- { record: planet-pattern.volcanic.flow.lava-flow-field, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "4d588b37dd053db9" }
-- { record: planet-pattern.volcanic.flow.lava-tube, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "8a31b089ec7a2175" }
-- { record: planet-pattern.volcanic.flow.pressure-ridge, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "62319621984dd845" }
-- { record: planet-pattern.volcanic.flow.tumulus, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "1ce27878545bf4ab" }
-- { record: planet-pattern.volcanic.intrusion.dike-ridge, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "6e543b1937dea21f" }
-- { record: planet-pattern.volcanic.intrusion.volcanic-neck, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "0184005a47ff83db" }
-- { record: planet-pattern.volcanic.material.columnar-jointing, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "61b752c21b630b83" }
-- { record: planet-pattern.volcanic.province.flood-basalt, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b58a0a9aa6de4104" }
-- { record: planet-pattern.volcanic.province.hotspot, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "a0011313fad2b4b9" }
-- { record: planet-pattern.volcanic.province.ignimbrite-plateau, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "ca59a7a7d3a40fca" }
-- { record: planet-pattern.volcanic.province.volcanic-arc, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "028c7c0f56c7ff65" }
-- { record: planet-pattern.volcanic.rift-zone, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b11bf3eb0188a0d0" }
+- { record: planet-pattern.aeolian.dune.barchan, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "f56076c3605c4fd9" }
+- { record: planet-pattern.aeolian.dune.carbonate-eolianite, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "f48ddc70904b402d" }
+- { record: planet-pattern.aeolian.dune.coastal-foredune, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "749cb7164f9b88fe" }
+- { record: planet-pattern.aeolian.dune.linear, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "049a2569774bb304" }
+- { record: planet-pattern.aeolian.dune.star, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "41e48e617b3f4a44" }
+- { record: planet-pattern.aeolian.dune.transverse, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "f62143751d4bc6e3" }
+- { record: planet-pattern.aeolian.erosion.deflation-hollow, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "d4dbd6afab875240" }
+- { record: planet-pattern.aeolian.erosion.yardang, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "7db54327cc943207" }
+- { record: planet-pattern.aeolian.landscape.erg, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "62c37af38b77b85c" }
+- { record: planet-pattern.aeolian.loess.plateau, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "a5432d29aac193c7" }
+- { record: planet-pattern.aeolian.surface.desert-pavement, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "ab958e7d32a00e08" }
+- { record: planet-pattern.arid.basin.playa, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "daf55244b93dd275" }
+- { record: planet-pattern.arid.channel.wadi, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "e1b055d00ea7e566" }
+- { record: planet-pattern.arid.landscape.desert-basin, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "f81a7635c18c58cb" }
+- { record: planet-pattern.arid.landscape.desert-margin, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "2ae9b1b4eccf009c" }
+- { record: planet-pattern.arid.landscape.shield-plain, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "e8f252da063acc7c" }
+- { record: planet-pattern.arid.plateau.layered-tableland, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "38696f01e04cdc1b" }
+- { record: planet-pattern.arid.plateau.mesa-butte, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "6523a15a2f7d58c6" }
+- { record: planet-pattern.arid.residual.inselberg, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "93a72c70858c0152" }
+- { record: planet-pattern.arid.slope.alluvial-fan, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "661ac9b339fbd94d" }
+- { record: planet-pattern.arid.slope.pediment, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "7aa6544becc6b39f" }
+- { record: planet-pattern.coastal.barrier.barrier-island, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "9fd6565c87ca5e4c" }
+- { record: planet-pattern.coastal.barrier.beach-ridge-plain, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "7c826016d83fb5ec" }
+- { record: planet-pattern.coastal.beach.sandy-shoreface, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "6d982faf06fdb9a3" }
+- { record: planet-pattern.coastal.carbonate.platform, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "636a58764a461e09" }
+- { record: planet-pattern.coastal.delta.tidal-delta, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "6fc72442c8ba7ae9" }
+- { record: planet-pattern.coastal.depositional.spit, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "3b16e659fd2a6853" }
+- { record: planet-pattern.coastal.depositional.tombolo, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "702bdc7a8a3f22c4" }
+- { record: planet-pattern.coastal.drowned.estuary, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "8283f0b598b3f8e6" }
+- { record: planet-pattern.coastal.drowned.ria, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "b5df4d410ba536b9" }
+- { record: planet-pattern.coastal.emergent.marine-terrace, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "a235ccbaf1f7db12" }
+- { record: planet-pattern.coastal.reef.atoll, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "631bee280d31e617" }
+- { record: planet-pattern.coastal.reef.barrier, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "8e9b52fb0a0674e8" }
+- { record: planet-pattern.coastal.reef.fringing, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "30393877f74f3572" }
+- { record: planet-pattern.coastal.rocky.rocky-coast, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "d9263b0d3310f788" }
+- { record: planet-pattern.coastal.rocky.sea-cliff, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "fbf60f4a73eb3f8c" }
+- { record: planet-pattern.coastal.rocky.shore-platform, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "459ed40b5549cfd6" }
+- { record: planet-pattern.coastal.rocky.stack-arch, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "c64a1ec6e4caa6ea" }
+- { record: planet-pattern.coastal.tidal.mangrove, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "b27f9f287e13ddc6" }
+- { record: planet-pattern.coastal.tidal.salt-marsh, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "058fe99dad7b8c55" }
+- { record: planet-pattern.coastal.tidal.tidal-flat, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "d1a9d0012362eafd" }
+- { record: planet-pattern.fluvial.channel.anastomosing, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "5d681ff3ac62e648" }
+- { record: planet-pattern.fluvial.channel.bedrock-long-profile, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "a4a9109e746a38df" }
+- { record: planet-pattern.fluvial.channel.braided, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "5764298990010537" }
+- { record: planet-pattern.fluvial.channel.knickpoint-waterfall, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "76896e5a4783ebc8" }
+- { record: planet-pattern.fluvial.channel.meandering, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "d102fcf261525c0a" }
+- { record: planet-pattern.fluvial.channel.oxbow-lake, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "d9b58d211eb4fe47" }
+- { record: planet-pattern.fluvial.channel.point-bar, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "ef018b11a7f62981" }
+- { record: planet-pattern.fluvial.channel.subsequent-stream, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "afd5941726f2fc0c" }
+- { record: planet-pattern.fluvial.delta.river-dominated, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "bf5fdf0738929d76" }
+- { record: planet-pattern.fluvial.delta.tide-dominated, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "5fa05ae064c24028" }
+- { record: planet-pattern.fluvial.delta.wave-dominated, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "8bbdfc86a8039422" }
+- { record: planet-pattern.fluvial.erosion.badlands, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "e543224c49263545" }
+- { record: planet-pattern.fluvial.erosion.gully-rill, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "90549fbdc255b4dc" }
+- { record: planet-pattern.fluvial.estuary.fluvial-reach, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "11c74a09afabc5d3" }
+- { record: planet-pattern.fluvial.fan.alluvial-fan, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "d253f843ba708556" }
+- { record: planet-pattern.fluvial.fan.bajada, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "1d700d8819dc0b63" }
+- { record: planet-pattern.fluvial.gap.water-gap, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "44eec53eb5690167" }
+- { record: planet-pattern.fluvial.gap.wind-gap, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "962260f7ea25f02c" }
+- { record: planet-pattern.fluvial.landscape.peneplain-etchplain, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "a081a8184ff7d522" }
+- { record: planet-pattern.fluvial.network.dendritic, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "2e2fbc36cbde58c4" }
+- { record: planet-pattern.fluvial.network.drainage-basin, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "a0ebcd1866b64864" }
+- { record: planet-pattern.fluvial.network.parallel, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "334b5c6754a7a21e" }
+- { record: planet-pattern.fluvial.network.radial, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "0373e0486fdc21ac" }
+- { record: planet-pattern.fluvial.network.rectangular, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "8cb005699cb6343b" }
+- { record: planet-pattern.fluvial.network.trellis, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "212d5d6118c12fb0" }
+- { record: planet-pattern.fluvial.piedmont.pediment, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "e10a9bac6d6bf032" }
+- { record: planet-pattern.fluvial.valley.canyon, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "b697793fe4620a7f" }
+- { record: planet-pattern.fluvial.valley.consequent, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "f430e0ef360b1009" }
+- { record: planet-pattern.fluvial.valley.floodplain, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "2bb642b16321fb37" }
+- { record: planet-pattern.fluvial.valley.incised, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "1e5c6e8ef691d937" }
+- { record: planet-pattern.fluvial.valley.obsequent, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "ca7c6c24de2b3a03" }
+- { record: planet-pattern.fluvial.valley.slot-canyon, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "547cdde52e789adc" }
+- { record: planet-pattern.fluvial.valley.terrace, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "77fa1e6a3b4a38ba" }
+- { record: planet-pattern.fluvial.valley.v-shaped, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "556b2a1d13ad7c9e" }
+- { record: planet-pattern.glacial.bedform.drumlin-field, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "e0648e4f15cf43b7" }
+- { record: planet-pattern.glacial.bedform.mega-scale-lineation, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "d2cd70bfafcd0ad6" }
+- { record: planet-pattern.glacial.deposit.esker, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "f039af77dc48e626" }
+- { record: planet-pattern.glacial.deposit.kame-kettle, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "b880e4958e7a086b" }
+- { record: planet-pattern.glacial.deposit.moraine-lateral, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "27c7411aca9a16f5" }
+- { record: planet-pattern.glacial.deposit.moraine-medial, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "bcaec548329fb0cf" }
+- { record: planet-pattern.glacial.deposit.moraine-terminal, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "9ec1979a0fd67c31" }
+- { record: planet-pattern.glacial.deposit.outwash-plain, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "fc7850b97ca5374d" }
+- { record: planet-pattern.glacial.deposit.till-plain, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "b0574f9b2bc3d92d" }
+- { record: planet-pattern.glacial.erosion.arete, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "ffd206128ef76838" }
+- { record: planet-pattern.glacial.erosion.cirque, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "cf18332eb2ec075b" }
+- { record: planet-pattern.glacial.erosion.col, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "c8c51ad3a7590998" }
+- { record: planet-pattern.glacial.erosion.fjord, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "f2946ce56d69a36f" }
+- { record: planet-pattern.glacial.erosion.horn, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "8f79a9bb1dd7bdd8" }
+- { record: planet-pattern.glacial.erosion.knock-and-lochan, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "913b3b3988a85c02" }
+- { record: planet-pattern.glacial.erosion.roche-moutonnee, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "b914ddb194b9d6b7" }
+- { record: planet-pattern.glacial.erosion.whaleback, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "bc4982cf019ee498" }
+- { record: planet-pattern.glacial.isostatic.rebound-coast, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "e18318a9c8b694de" }
+- { record: planet-pattern.glacial.lake.ice-dammed-shorelines, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "1d0f51c5128f728b" }
+- { record: planet-pattern.glacial.lake.proglacial, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "8771acc6a750d12a" }
+- { record: planet-pattern.glacial.landscape.alpine, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "4ef6503102a39368" }
+- { record: planet-pattern.glacial.landscape.ice-sheet-bed, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "4dd34d7d3ba3c008" }
+- { record: planet-pattern.glacial.landscape.periglacial-plain, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "fcb3b63c04b48cc2" }
+- { record: planet-pattern.glacial.valley.hanging-valley, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "2fd6512bdef61601" }
+- { record: planet-pattern.glacial.valley.overdeepening, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "f1408c1386d9cb1a" }
+- { record: planet-pattern.glacial.valley.trough, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "e5d328dc9a10eb88" }
+- { record: planet-pattern.hillslope.fan.debris-flow, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "3f696e917374bbdb" }
+- { record: planet-pattern.hillslope.flatiron, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "9c9fee49a3f54e2e" }
+- { record: planet-pattern.hillslope.hollow.colluvial, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "f89d8f0315cfae2f" }
+- { record: planet-pattern.hillslope.landslide.rotational, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "7d974b2de4b40257" }
+- { record: planet-pattern.hillslope.landslide.translational, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "9da95cd9c72c41e6" }
+- { record: planet-pattern.hillslope.profile.soil-mantled, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "a5c3080f4684fd04" }
+- { record: planet-pattern.hillslope.ridge.interfluve, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "a3a4e64a617fc177" }
+- { record: planet-pattern.hillslope.scarp.free-face, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "926378fa05aeb587" }
+- { record: planet-pattern.hillslope.talus.cone, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "890ed5489f6865d5" }
+- { record: planet-pattern.karst.collapse.gorge, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "36f0185612e704ac" }
+- { record: planet-pattern.karst.depression.doline, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "17cd021f4e217ead" }
+- { record: planet-pattern.karst.depression.polje, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "08b386c664000404" }
+- { record: planet-pattern.karst.landscape.cockpit, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "fcd88bc258f8a3c2" }
+- { record: planet-pattern.karst.landscape.plateau, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "c15ed834bc942def" }
+- { record: planet-pattern.karst.landscape.tower, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "fedfd120e3f5b78d" }
+- { record: planet-pattern.karst.landscape.tropical, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "4944bd59001198b3" }
+- { record: planet-pattern.lacustrine.basin.glacial, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "d4f581862f7680da" }
+- { record: planet-pattern.lacustrine.basin.oxbow, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "41fe995e93ccdff9" }
+- { record: planet-pattern.lacustrine.basin.seasonal-karst-lake, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "d914a58de5d43f3d" }
+- { record: planet-pattern.lacustrine.basin.tectonic, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "a5d871545bacacf3" }
+- { record: planet-pattern.lacustrine.basin.volcanic, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "dc1352e83b43d70c" }
+- { record: planet-pattern.lacustrine.lake.dammed-lake, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "b78baf2949517d39" }
+- { record: planet-pattern.lacustrine.shoreline.terrace, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "dc1bdf829d751d5f" }
+- { record: planet-pattern.periglacial.creep.rock-glacier, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "08ca4e53d7424c85" }
+- { record: planet-pattern.periglacial.ground.ice-wedge-polygons, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "d4f47a0496985f3f" }
+- { record: planet-pattern.periglacial.ground.patterned-sorted, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "4ff1af16fe48fe38" }
+- { record: planet-pattern.periglacial.lake.thermokarst, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "ceca79e0f906cd27" }
+- { record: planet-pattern.periglacial.mound.palsa, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "a9e361e9a8b51d67" }
+- { record: planet-pattern.periglacial.mound.pingo, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "13d0c5698ee4a41b" }
+- { record: planet-pattern.periglacial.slope.blockfield, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "f4fbd39c433ad73d" }
+- { record: planet-pattern.periglacial.slope.nivation-hollow, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "aebdc87a2b6a635c" }
+- { record: planet-pattern.periglacial.slope.protalus-rampart, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "ecaf9ed29677aec9" }
+- { record: planet-pattern.periglacial.slope.solifluction-lobe, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "11a9cf16135af57d" }
+- { record: planet-pattern.periglacial.slope.talus, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "b3121b6c1cb75a50" }
+- { record: planet-pattern.structural.flat.mesa-butte, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "5b67914e92244394" }
+- { record: planet-pattern.structural.flat.pinnacle, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "f29c99ec820a7c91" }
+- { record: planet-pattern.structural.homocline.cuesta, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "9cd215082d11e691" }
+- { record: planet-pattern.structural.homocline.hogback, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "b11d17cfc084da85" }
+- { record: planet-pattern.structural.homocline.homoclinal-ridge, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "50d3657d268271fe" }
+- { record: planet-pattern.tectonic.basin.intermontane, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "30df4b103cefe56f" }
+- { record: planet-pattern.tectonic.craton.shield, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "2acec7ec57d4d0d0" }
+- { record: planet-pattern.tectonic.extension.horst-graben, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "f2318967173f1cfd" }
+- { record: planet-pattern.tectonic.extension.rift-valley, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "607c812f92c97e4f" }
+- { record: planet-pattern.tectonic.fault.fault-scarp, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "e1cd7a1ec1dd5edb" }
+- { record: planet-pattern.tectonic.fault.range-front, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "bff767d128e1a038" }
+- { record: planet-pattern.tectonic.fault.triangular-facet, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "79dbab9c4cb49da5" }
+- { record: planet-pattern.tectonic.fold.anticlinal-ridge, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "2232fb807500bbc1" }
+- { record: planet-pattern.tectonic.fold.breached-anticline, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "9a4c51e071a3beac" }
+- { record: planet-pattern.tectonic.fold.dome-basin, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "7a5d72f55acf78da" }
+- { record: planet-pattern.tectonic.fold.synclinal-valley, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "08dcceb4ef2368cb" }
+- { record: planet-pattern.tectonic.margin.convergent, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "f2f0d3793eab191c" }
+- { record: planet-pattern.tectonic.margin.great-escarpment, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "d4d7c69814ca7d0a" }
+- { record: planet-pattern.tectonic.margin.passive, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "bab70accb7c69378" }
+- { record: planet-pattern.tectonic.province.craton-platform, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "ac7e7284f76ab352" }
+- { record: planet-pattern.tectonic.province.extensional-province, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "704b5b824a394a4b" }
+- { record: planet-pattern.tectonic.province.fold-thrust-belt, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "952334e744aacdd0" }
+- { record: planet-pattern.tectonic.province.orogen, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "3456f9ad8c2707e1" }
+- { record: planet-pattern.tectonic.province.transform-boundary, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "0ca9d4f839fdd7ec" }
+- { record: planet-pattern.tectonic.strike-slip.offset-stream, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "28b938d1674c8cba" }
+- { record: planet-pattern.tectonic.strike-slip.sag-pond, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "9f8ebb446d6430e9" }
+- { record: planet-pattern.tectonic.strike-slip.shutter-ridge, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "aa338cd71774c8e0" }
+- { record: planet-pattern.tectonic.strike-slip.transform-valley, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "82e0df01e87964c4" }
+- { record: planet-pattern.tectonic.uplift.plateau, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "3777ec2197c745d9" }
+- { record: planet-pattern.volcanic.deposit.lahar-fan, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "afd86e87015d3bc8" }
+- { record: planet-pattern.volcanic.depression.caldera, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "265685d50db94ab4" }
+- { record: planet-pattern.volcanic.depression.maar, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "d111ffddb5462b27" }
+- { record: planet-pattern.volcanic.edifice.cinder-cone, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "15f75fd219095140" }
+- { record: planet-pattern.volcanic.edifice.resurgent-dome, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "7efdc5874363fea4" }
+- { record: planet-pattern.volcanic.edifice.shield-volcano, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "266c4e0beb944d33" }
+- { record: planet-pattern.volcanic.edifice.stratovolcano, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "08adfdc785158ecd" }
+- { record: planet-pattern.volcanic.edifice.tuff-ring, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "5f8a49a445edb3dd" }
+- { record: planet-pattern.volcanic.field.monogenetic-field, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "f5d49f69d89437d7" }
+- { record: planet-pattern.volcanic.flow.lava-flow-field, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "c770a24ebd411482" }
+- { record: planet-pattern.volcanic.flow.lava-tube, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "c1b0d1f2f61f88da" }
+- { record: planet-pattern.volcanic.flow.pressure-ridge, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "24e6e14f58ca7853" }
+- { record: planet-pattern.volcanic.flow.tumulus, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "b6affb9c248875f5" }
+- { record: planet-pattern.volcanic.intrusion.dike-ridge, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "e5f1e0cbb2263b41" }
+- { record: planet-pattern.volcanic.intrusion.volcanic-neck, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "9ea10a4adb7e4deb" }
+- { record: planet-pattern.volcanic.material.columnar-jointing, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "991a0fd3244c95b3" }
+- { record: planet-pattern.volcanic.province.flood-basalt, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "a84144e99f20fa21" }
+- { record: planet-pattern.volcanic.province.hotspot, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "33281cc2a4ec12a1" }
+- { record: planet-pattern.volcanic.province.ignimbrite-plateau, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "fadbe0b8c805e5ff" }
+- { record: planet-pattern.volcanic.province.volcanic-arc, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "c6f69129245795a8" }
+- { record: planet-pattern.volcanic.rift-zone, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "d3bd82649c168352" }
 - { record: planet-process.air-optics, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "0e862e019d4b43bb" }
 - { record: planet-process.arcs-and-margin-erosion, at: "2026-10-20T20:18:03Z", status: "", summary: "changed: basis", sha: "304510da3c1a4a3a" }
 - { record: planet-process.biosphere-box, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "7764979a3551d8f9" }
@@ -3194,32 +3260,36 @@
 - { record: settlement.treistun.port-weisonum, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "16f62e0c26df0155" }
 - { record: settlement.treistun.port-zaudalein, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "c2664d01238ddfc6" }
 - { record: settlement.treistun.treistun-e-station, at: "2026-10-07T01:43:50Z", status: "", summary: "changed", sha: "04ad7e61a074b351" }
+- { record: ship-artifact.assembly-state-plan, at: "2026-10-22T02:55:09Z", status: "", summary: "changed", sha: "9482e317eb2f464a" }
 - { record: ship-artifact.assumptions, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "10f44273ac583f9e" }
 - { record: ship-artifact.authoring-sidecar, at: "2026-10-22T01:24:47Z", status: "", summary: "changed: contents, rules", sha: "0f35630bd1a78f0d" }
 - { record: ship-artifact.build-inputs, at: "2026-10-22T01:24:47Z", status: "", summary: "changed: contents, rules", sha: "f2b96cfcbc4ae229" }
+- { record: ship-artifact.crew-route-plan, at: "2026-10-22T03:25:40Z", status: "", summary: "changed", sha: "071f5aa9c7b72faf" }
 - { record: ship-artifact.defect-record, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "6c44b01068c84b8c" }
-- { record: ship-artifact.evidence, at: "2026-10-22T01:31:11Z", status: "", summary: "changed: contents, checks", sha: "0670123a99f29a48" }
-- { record: ship-artifact.interfaces, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "ed21ded8665717d8" }
-- { record: ship-artifact.mechanism-spec, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "cb81a2c99894dd2b" }
-- { record: ship-artifact.module-inventory, at: "2026-10-22T01:31:11Z", status: "", summary: "changed: contents, checks", sha: "2040637852f76f3c" }
+- { record: ship-artifact.evidence, at: "2026-10-22T03:59:24Z", status: "", summary: "changed", sha: "c36ba17e71ea70ff" }
+- { record: ship-artifact.interfaces, at: "2026-10-22T01:54:38Z", status: "", summary: "changed: contents, checks", sha: "0b5567ab454f148a" }
+- { record: ship-artifact.mechanism-spec, at: "2026-10-22T02:55:09Z", status: "", summary: "changed", sha: "af3498f52b4aaf64" }
+- { record: ship-artifact.module-inventory, at: "2026-10-22T03:25:40Z", status: "", summary: "changed", sha: "3c7c521bdcfa7aa7" }
 - { record: ship-artifact.performance-budget, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "c5b46cc4bd9293fc" }
 - { record: ship-artifact.reference-atlas, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "3bdc91b42289d2b6" }
-- { record: ship-artifact.region-spec, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "a942ca84213d6aaa" }
+- { record: ship-artifact.region-spec, at: "2026-10-22T21:42:41Z", status: "", summary: "changed", sha: "9adc763ef5fee4cd" }
 - { record: ship-artifact.release-package, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "12c89bae115ef6d1" }
 - { record: ship-artifact.requirements, at: "2026-10-22T00:31:15Z", status: "", summary: "changed: contents", sha: "95f2a2b33d3d4b34" }
-- { record: ship-artifact.silhouette-study, at: "2026-10-22T00:31:15Z", status: "", summary: "changed: contents", sha: "1d9dd32186e36ce7" }
+- { record: ship-artifact.silhouette-study, at: "2026-10-22T04:04:05Z", status: "", summary: "changed", sha: "3737db7c25d5879d" }
 - { record: ship-artifact.sketch-prompt, at: "2026-10-22T00:31:15Z", status: "", summary: "changed: contents", sha: "4aceee9dbe82888f" }
-- { record: ship-artifact.spatial-layout, at: "2026-10-22T01:31:11Z", status: "", summary: "changed: contents, checks", sha: "e7d3660178cd1999" }
+- { record: ship-artifact.spatial-layout, at: "2026-10-22T02:55:09Z", status: "", summary: "changed", sha: "3d0eb2448fffe86b" }
 - { record: ship-artifact.task-packet, at: "2026-10-21T03:31:55Z", status: "", summary: "changed", sha: "670031c142bbaf9a" }
 - { record: ship-check.assembly, at: "2026-10-22T01:31:11Z", status: "", summary: "changed: method", sha: "858d4104081d8633" }
-- { record: ship-check.construction, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "cb093c9d05ed9408" }
+- { record: ship-check.assembly-state-coverage, at: "2026-10-22T02:55:09Z", status: "", summary: "changed", sha: "49c740af088b7df7" }
+- { record: ship-check.construction, at: "2026-10-22T21:42:41Z", status: "", summary: "changed", sha: "c0137ca95d29c10b" }
+- { record: ship-check.crew-routes, at: "2026-10-22T03:59:24Z", status: "", summary: "changed", sha: "a024a814a858ce55" }
 - { record: ship-check.hull-geometry, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "b4183fb69a6f413e" }
-- { record: ship-check.identity, at: "2026-10-22T00:34:36Z", status: "", summary: "changed: method", sha: "ed16ee4c1fb1f805" }
-- { record: ship-check.inhabitation, at: "2026-10-22T01:24:47Z", status: "", summary: "changed: method, artifacts, rules", sha: "5cd40d11f4513848" }
+- { record: ship-check.identity, at: "2026-10-22T21:42:41Z", status: "", summary: "changed", sha: "08e1087f9b0f4011" }
+- { record: ship-check.inhabitation, at: "2026-10-22T02:55:09Z", status: "", summary: "changed", sha: "c46bf0580247be69" }
 - { record: ship-check.material-export, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "6cb3acb2c6877492" }
 - { record: ship-check.mesh-integrity, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "32d01b1266f153d2" }
-- { record: ship-check.module-clearance, at: "2026-10-22T01:31:11Z", status: "", summary: "first tracked", sha: "7a1f3031f8acb170" }
-- { record: ship-check.motion-coverage, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "8020ed24e095d54c" }
+- { record: ship-check.module-clearance, at: "2026-10-22T03:59:24Z", status: "", summary: "changed", sha: "caa2e9704f95d4c3" }
+- { record: ship-check.motion-coverage, at: "2026-10-22T01:54:38Z", status: "", summary: "changed: method, artifacts", sha: "b5df9a0920f12e39" }
 - { record: ship-check.performance, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "7f25e11b3ed5bdf5" }
 - { record: ship-check.pilot-01, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "3fa46dd9fd324e0b" }
 - { record: ship-check.pilot-02, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "13cd7dcaee617dd9" }
@@ -3258,37 +3328,37 @@
 - { record: ship-rule.authority, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "c4aadcbc0baeb1d9" }
 - { record: ship-rule.capability-boundaries, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "a55e750bf4d003cd" }
 - { record: ship-rule.claim-boundaries, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "27dcc0468a11733a" }
-- { record: ship-rule.construction-and-detail, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "b71a24a1285d6597" }
+- { record: ship-rule.construction-and-detail, at: "2026-10-22T01:56:57Z", status: "", summary: "changed: sources, statement, verification, related", sha: "e0dbecf51144a6b9" }
 - { record: ship-rule.coordinate-profiles, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "da989b28760ad677" }
-- { record: ship-rule.evidence-invalidation, at: "2026-10-22T01:31:11Z", status: "", summary: "changed: statement", sha: "a66df7eb1c021add" }
+- { record: ship-rule.evidence-invalidation, at: "2026-10-22T03:59:24Z", status: "", summary: "changed", sha: "1fb44962ca0164d8" }
 - { record: ship-rule.existing-tools, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "c095c6beac2c8d06" }
 - { record: ship-rule.family-type-instance, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "767d304cce262994" }
 - { record: ship-rule.feature-intake, at: "2026-10-22T00:34:36Z", status: "", summary: "changed: statement", sha: "c423febdf6dab55d" }
-- { record: ship-rule.hull-sections, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "f758b445593a9995" }
+- { record: ship-rule.hull-sections, at: "2026-10-22T04:04:05Z", status: "", summary: "changed", sha: "52b1c0f137c32393" }
 - { record: ship-rule.immutable-release, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "19ed7960a494fbf2" }
 - { record: ship-rule.implementation-phases, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "74ea8c62778537d5" }
-- { record: ship-rule.lifecycle, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "834b03cce68af732" }
+- { record: ship-rule.lifecycle, at: "2026-10-22T03:59:24Z", status: "", summary: "changed", sha: "9f680c876218cb0b" }
 - { record: ship-rule.local-regeneration, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "4d965831bba62adb" }
-- { record: ship-rule.materials-and-surfaces, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "7ef942124902837e" }
+- { record: ship-rule.materials-and-surfaces, at: "2026-10-22T04:04:05Z", status: "", summary: "changed", sha: "edd0de5cf4aa68ee" }
 - { record: ship-rule.module-reuse, at: "2026-10-22T01:31:11Z", status: "", summary: "changed: statement, verification, related", sha: "12e1155a88c2327b" }
 - { record: ship-rule.pilot-scope, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "cafd22baad8b7614" }
 - { record: ship-rule.recovery, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "4dc98e3214e19a1e" }
-- { record: ship-rule.region-ownership, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "2334a8db20b8b5a1" }
-- { record: ship-rule.representations, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "1d266365bc542436" }
+- { record: ship-rule.region-ownership, at: "2026-10-22T21:42:41Z", status: "", summary: "changed", sha: "85658e871eba6b72" }
+- { record: ship-rule.representations, at: "2026-10-22T03:59:24Z", status: "", summary: "changed", sha: "d411b99a507c10bd" }
 - { record: ship-rule.research-basis, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "9d0c7c221ccd0158" }
 - { record: ship-rule.runtime-compatibility, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "ee6ee3ccf1d70a3b" }
 - { record: ship-rule.scope, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "dcef59f59edaa3a3" }
 - { record: ship-rule.specification-layers, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "445c9e221fcdee3a" }
 - { record: ship-rule.traceability, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "68ee0190820203dc" }
-- { record: ship-stage.architecture, at: "2026-10-22T01:31:11Z", status: "", summary: "changed: exit, checks", sha: "ab772ef47c701fcc" }
+- { record: ship-stage.architecture, at: "2026-10-22T21:42:41Z", status: "", summary: "changed", sha: "7fbfd0977af4525f" }
 - { record: ship-stage.brief, at: "2026-10-21T05:03:40Z", status: "", summary: "changed: exit, failure, rules", sha: "e141ef6facd16af0" }
-- { record: ship-stage.design-lock, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "071695eb13a48883" }
+- { record: ship-stage.design-lock, at: "2026-10-22T03:59:24Z", status: "", summary: "changed", sha: "de0e40d40b427d79" }
 - { record: ship-stage.integration, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "237d3f77f3b7ca44" }
-- { record: ship-stage.mechanisms, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "e1ecf0b7961ddc9a" }
-- { record: ship-stage.production, at: "2026-10-22T01:31:11Z", status: "", summary: "changed: exit, checks, rules", sha: "898df49e4fdf94bc" }
+- { record: ship-stage.mechanisms, at: "2026-10-22T03:59:24Z", status: "", summary: "changed", sha: "77c73df998175b86" }
+- { record: ship-stage.production, at: "2026-10-22T21:42:41Z", status: "", summary: "changed", sha: "3953072ad828d69c" }
 - { record: ship-stage.references, at: "2026-10-21T05:03:40Z", status: "", summary: "changed: exit, outputs, checks, rules", sha: "891a706fbc53537f" }
 - { record: ship-stage.release, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "8f0d0fbdd9325d26" }
-- { record: ship-stage.silhouette, at: "2026-10-22T00:34:36Z", status: "", summary: "changed: exit", sha: "b64dd5c1a7ad8c74" }
+- { record: ship-stage.silhouette, at: "2026-10-22T03:59:24Z", status: "", summary: "changed", sha: "74564265176655f9" }
 - { record: sight.cinder-great-basin, at: "2026-10-06T19:44:49Z", status: draft, summary: "first tracked", sha: "ced295b3ce1e6fcd" }
 - { record: sight.drum-rings, at: "2026-10-06T19:44:49Z", status: draft, summary: "first tracked", sha: "11166c53e865086e" }
 - { record: sight.heath-spire, at: "2026-10-06T19:48:07Z", status: draft, summary: "changed: identity, height, basis", sha: "a8256b0db7284a52" }

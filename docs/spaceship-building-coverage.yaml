@@ -74,10 +74,12 @@ coverage:
   - ship-artifact.module-inventory
   - ship-rule.module-reuse
   - ship-check.module-clearance
+  - ship-artifact.crew-route-plan
 - source_section: '3.6'
   source_title: Establish readable construction without false engineering claims
   records:
   - ship-rule.construction-and-detail
+  - ship-artifact.assembly-state-plan
 - source_section: '4.1'
   source_title: Use explicit local and global frames
   records:
@@ -154,6 +156,8 @@ coverage:
   - ship-check.assembly
   - ship-check.runtime
   - ship-check.release
+  - ship-check.assembly-state-coverage
+  - ship-check.crew-routes
 - source_section: '6.2'
   source_title: Store enough evidence to reproduce a result
   records:
@@ -224,10 +228,21 @@ refinements:
 source_document_in_registry: docs/spaceship-building-workflow-proposal.md
 source_sha256_basis: Original research proposal before normalization and subsequent owner refinements; normalized_document_sha256
   identifies the current archived proposal.
-normalized_document_sha256: 2ff53fee062bac2b0b8a4e33eb92eb764167b31c59356f5fc0d13f9e590a0d74
+normalized_document_sha256: c6f8eea98412488345c0aacb283031c499f84e56e8efcd412a556495c8af0fcf
 owner_refinements:
 - Feature-first intake; confirmed consolidated brief; derived prompt before whole-ship sketch.
 - Rehearsal provenance, exact prompt witnesses, hidden-feature limits and stale-input negative cases.
 - Discover existing modules and supported placement consumer before G3 sizing; no custom fit-out substitutes.
 - Audit inherited module substitutes and explicit per-instance occupied, attachment/tool, installation/removal,
   user, motion and service clearances with authority/provisional provenance.
+- Declare opening/closure, gear/bay, service/support and cockpit interfaces at G2/G3; require complete assembly
+  part/state/pair/view evidence at G4/G6 and reject subset-to-whole promotion.
+- Plan continuous state-bound crew routes and operable/recovery sequences before G2/G3 acceptance; G4/G6 require
+  exact fixture/criterion provenance and row-level current evidence without invented numerical compliance.
+- Route/module-envelope conflicts with hull space return QC to affected G2/G3 shaping; preserve required intent/envelopes,
+  escalate incompatibilities and invalidate dependent detail/export without discarding unchanged reusable sources.
+- Post-clearance reshaping repeats current side/top/front silhouette and clay identity review, original intent/landmark
+  witnesses and separate jointly required functional/visual decisions; no shrinking required envelopes or synthetic
+  aesthetic pass.
+- Aesthetic guidance and QC explicitly review primary/subordinate masses, cockpit/nose/neck/shoulders and deliberate
+  curve/plane transitions across comparable variants without universal ratios or mandatory angularity.

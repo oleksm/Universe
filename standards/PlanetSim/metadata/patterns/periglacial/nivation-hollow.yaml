@@ -8,24 +8,31 @@ factors:
 - factor: planet-factor.clim-precip
   weight: 3
   why: Snow supply for late-lying snowpatches
+  want: high
 - factor: planet-factor.clim-wind
   weight: 3
   why: Lee-side drift accumulation sets location
+  want: high
 - factor: planet-factor.aspect
   weight: 3
   why: Shaded slopes keep snowpatches longest
+  want: high
 - factor: planet-factor.clim-temp
   weight: 1
   why: Periglacial freeze-thaw at snowpatch margins
+  want: high
 - factor: planet-factor.rock-type
   weight: 1
   why: Best on weak or well-jointed rock or regolith
+  want: low
 - factor: planet-factor.slope-relief
   weight: 1
   why: Lee slopes and valley heads; may grow into cirques
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 1-100 kyr; 10-500 m across
+  want: high
 vocabulary_id: 111
 sources:
 - https://en.wikipedia.org/wiki/Nivation
@@ -39,10 +46,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: periglacial

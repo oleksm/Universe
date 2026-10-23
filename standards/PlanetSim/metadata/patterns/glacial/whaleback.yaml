@@ -8,21 +8,27 @@ factors:
 - factor: planet-factor.ice-thermal
   weight: 3
   why: warm-based ice abrading all sides
+  want: high
 - factor: planet-factor.ice-flow
   weight: 3
   why: 'thick ice/high overburden keeps contact on lee: no cavity, no quarrying'
+  want: high
 - factor: planet-factor.rock-fracture
   weight: 3
   why: sparse jointing prevents lee plucking
+  want: low
 - factor: planet-factor.rock-type
   weight: 1
   why: massive hard rock
+  want: high
 - factor: planet-factor.relief-inherited
   weight: 1
   why: pre-existing bedrock knobs
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 10-1000 kyr; abrasion is slow
+  want: high
 vocabulary_id: 78
 sources:
 - https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-erosional-landforms/roches-moutonnees/
@@ -36,10 +42,30 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
+- of:
+  - factors.want
+  tier: derived
+  review: true
+  source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
+  note: 'planet-factor.ice-flow: The text asks for thick ice/high overburden; no cavity is the effect. planet-factor.time:
+    Slow abrasion requires long duration, not low time.'
 status: draft
+look: glacial

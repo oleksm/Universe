@@ -8,39 +8,51 @@ factors:
 - factor: planet-factor.clim-precip
   weight: 3
   why: drainage density minimum at intermediate vegetated precipitation; peak near 280 mm/yr semi-arid
+  want: high
 - factor: planet-factor.clim-storm
   weight: 1
   why: intense storms raise overland flow, denser channels (badlands 48-464 km/km2)
+  want: high
 - factor: planet-factor.bio-veg
   weight: 1
   why: cover raises erosion threshold, sparser network; bare ground gives dense dissection
+  want: high
 - factor: planet-factor.rock-type
   weight: 1
   why: weak, erodible substrate gives dense network; resistant rock sparse
+  want: low
 - factor: planet-factor.rock-perm
   weight: 3
   why: permeable rock/regolith infiltrates, few channels; impermeable gives dense network
+  want: high
 - factor: planet-factor.regolith
   weight: 1
   why: soil thickness and cohesion set channel-head threshold and hillslope diffusion
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 3
   why: uplift sets relief, incision and basin elongation
+  want: high
 - factor: planet-factor.slope-relief
   weight: 1
   why: relief and slope set channel-head area (S=aA^-b) and valley spacing
+  want: high
 - factor: planet-factor.base-level
   weight: 1
   why: base-level falls propagate incision up the network
+  want: high
 - factor: planet-factor.relief-inherited
   weight: 1
   why: initial surface slope and structure template the basin shape
+  want: high
 - factor: planet-factor.tect-setting
   weight: 1
   why: orogen vs craton sets basin size and relief (up to 6000 km basins)
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: network extends and integrates over 10 yr to 100 Myr
+  want: high
 vocabulary_id: 51
 sources:
 - https://en.wikipedia.org/wiki/Drainage_system_(geomorphology)
@@ -57,10 +69,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: dendritic

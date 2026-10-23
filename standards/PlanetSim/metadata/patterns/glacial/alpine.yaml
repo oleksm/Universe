@@ -8,39 +8,51 @@ factors:
 - factor: planet-factor.ice-extent
   weight: 3
   why: ELA must intersect the range; summits cluster near ELA (buzz-saw); cycle count sets maturity
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 3
   why: uplift must raise range above ELA; fast uplift outpaces buzz-saw, leaves peaks far above ELA
+  want: high
 - factor: planet-factor.tect-setting
   weight: 1
   why: orogens and uplifted rift shoulders; relief 1000-4000 m
+  want: high
 - factor: planet-factor.relief-inherited
   weight: 3
   why: fluvial valley network becomes dendritic trough network; valley heads become cirques
+  want: high
 - factor: planet-factor.clim-temp
   weight: 1
   why: cold enough for ELA in range; frost shattering sharpens ridges above ice
+  want: high
 - factor: planet-factor.clim-precip
   weight: 1
   why: snowfall sets ELA height and glacier size; wet ranges glaciate lower
+  want: high
 - factor: planet-factor.clim-history
   weight: 1
   why: repeated Quaternary glacial-interglacial cycles (100 kyr) deepen and widen forms
+  want: high
 - factor: planet-factor.rock-type
   weight: 1
   why: jointed crystalline rock gives sharpest arêtes/horns; weak rock gives subdued forms
+  want: low
 - factor: planet-factor.rock-fracture
   weight: 1
   why: joint sets guide trough and cirque walls, frost quarrying of crests
+  want: high
 - factor: planet-factor.ice-thermal
   weight: 1
   why: warm-based valley glaciers erode; cold-based summit ice preserves
+  want: high
 - factor: planet-factor.aspect
   weight: 1
   why: cirques and glaciers biased to poleward/lee slopes
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 100-2600 kyr of glaciation for full alpine relief
+  want: high
 vocabulary_id: 81
 sources:
 - https://www.antarcticglaciers.org/glacial-geology/glacial-landforms/glacial-erosional-landforms/cirques/
@@ -56,10 +68,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: glacial

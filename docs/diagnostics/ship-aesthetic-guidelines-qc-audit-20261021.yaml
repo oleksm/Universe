@@ -1,0 +1,59 @@
+task: 20261021T225935-blender-4cc1
+scope: Finish explicit aesthetic guidelines and integrity QC in existing workflow; no selected exterior, automatic
+  visual judgment or actual fit result.
+base_integration:
+  fso: 64fa54da3
+  content: 99b1c191b
+  capability: Post-clearance identity gate linked at G3/G4/G6, separate fit/visual results and stale-evidence
+    blocking; prior full registry check and47 regressions passed.
+guidance_refinement:
+- Primary/subordinate mass hierarchy; cockpit/nose/neck/shoulder/body relationships and deliberate negative
+  spaces.
+- Independent crown/shoulder/belly controls; nose depth/termination relative to actual cockpit/module ingress,
+  not an assumed standing-height nose.
+- Intentional curved/planar transitions and major surface/chine continuity in silhouette and clay, without
+  forced angularity or universal ratios.
+- Comparable coherent variants before detail around the same applicable crew/module/access envelopes and real
+  product references.
+- Functional/visual decisions remain separate and jointly required for affected acceptance; stale or omitted
+  feature evidence cannot pass.
+records_refined:
+- ship-check.identity
+- ship-artifact.silhouette-study
+- ship-rule.hull-sections
+- ship-rule.materials-and-surfaces
+peer_review:
+  message: 20261021T230044-blender-bd7f
+  finding: Blender reviewed shipped gate coverage as good and asked explicit form guidance; current refinement
+    addresses those items.
+synthetic_integrity_audit:
+  report: external blender/ships/explorer-study/aesthetic-qc-tests.json
+  report_sha256: 6ebec3b791fde43ab2dce5b1a9b86559caf48464bc357c5449ed403ef0143b69
+  script_sha256: d77290eca98e286a142d57ef9631347ce5dc522a3ef8e383049b80d6a42148ad
+  authority_sha256: bb4d270e2ef5f7d3080dfdd64a9fdc625c19f5c267a871beb30e3467d57911da
+  cases: 39
+  result: pass, independently rerun
+  review: 'Read checker source: expectations are constants independent of submitted declaration, views bind
+    candidate/camera/render/pose, landmarks must be retained, and both scoped decisions require current candidate/status/reasons/declared
+    synthetic authority. Coverage only; no actual geometry/image or beauty evaluation.'
+  cases_include:
+  - Missing/stale/mismatched registered views, camera/state drift.
+  - Changed candidate/brief/envelopes/baseline/authority.
+  - Lost landmark, omitted judgment or old candidate decision.
+  - Fit pass conceals failed/unknown/unreviewed visual result, and converse.
+  - Panel polish or synthetic report promoted to actual acceptance.
+  actual_explorer: Owner rejected bloated body/tongue nose; G2 reopened. No selected replacement exterior.
+validation:
+  schema_validation: pass,0 misfits
+  registry_build: pass
+  workflow_and_page_regressions:
+    count: 9
+    result: pass
+  page_checks:
+    x:ship-checks:identity: 13
+    x:ship-artifacts:silhouette-study: 4
+    x:ship-rules:hull-sections: 3
+    x:ship-rules:materials-and-surfaces: 3
+  schemas_and_runtime: unchanged
+  workflow_definitions: 99
+  page_visually_inspected: x:ship-rules:hull-sections

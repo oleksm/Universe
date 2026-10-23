@@ -28,7 +28,7 @@ function:
   cycle: chemical
   thrust: 500000
   exhaust: 3290
-  efficiency: 0.54
+  efficiency: 0.541205
   burns: material.methalox
   throttle: 0.4
   gimbal: 0.26
@@ -66,7 +66,7 @@ visual:
 life: 473364000
 basis:
   - { of: [function.exhaust, function.thrust, physical.mass, function.throttle, function.gimbal], tier: invented, review: true, note: "between the RL10 and a Raptor by thrust. Not a Raptor's weight per thrust, as first written: that would be about 354 kg (the S4 engine's 1,630 kg for 2,300 kN); small engines run heavier per thrust, and 600 kg is kept until measured. Review" }
-  - { of: [function.efficiency], tier: derived, review: true, note: "Half the exhaust speed squared (5.4 MJ/kg) over the blend's 10 MJ/kg: 0.54." }
+  - { of: [function.efficiency], tier: derived, review: true, note: "Derived as function.exhaust squared / (2 x material.methalox.fuel.energy): 3290^2 / (2 x 10000000) = 0.541205. Keep full precision; rounding the efficiency to two significant figures understates the jet energy. Fuel energy remains the registry's provisional value; review." }
   - { of: [function.heat_to_hull], tier: invented, review: true, note: "A chemical engine's heat is its own, carried off by its propellant; a ten-thousandth of the jet soaks back into the mount. Chosen." }
   - { of: [function.exhaust, function.chamber, identity.description], tier: derived, review: true, note: "The earlier 3.6 km/s (invented) is out of reach in this size, as for the S4 engine: methalox would need an area ratio over 100. The S4 engine's chamber made smaller (30 MPa, mixture 3.6, area ratio 26.8, thrust coefficient 1.81 in vacuum and 1.72 at sea level, exhaust 3,290 and 3,120 m/s): for 500 kN in vacuum a throat of 0.00921 m2 (500 kN / (1.81 x 30 MPa)), 0.108 m across; an exit of 0.561 m; an 80% bell 0.677 m long. 152 kg/s, 119 of oxygen and 33 of methane. A chamber of 3 times the throat's area (0.188 m) holding S4's 1 m characteristic length (9.2 litres): a 0.29 m cylinder and a 0.07 m cone at about 30 degrees, 0.358 m injector face to throat. Exit gas at 105 kPa at full thrust, as S4: fires at sea level and up to about 250 kPa of air; at 40% throttle the limit is sea level." }
   - { of: [function.chamber.construction, function.chamber.wall, function.chamber.coolant_pressure, function.chamber.hot_wall_temperature, function.chamber.coolant_in, function.chamber.coolant_out, function.chamber.coolant_passes], tier: invented, review: true, note: "As the S4 engine: at 30 MPa a copper liner with milled channels under a steel jacket, methane in at 112 K and out at about 350 K, the gas side at about 800 K, coolant at 45 MPa. Chosen; review." }

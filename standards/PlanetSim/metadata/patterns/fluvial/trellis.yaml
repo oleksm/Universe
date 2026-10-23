@@ -8,24 +8,31 @@ factors:
 - factor: planet-factor.rock-layers
   weight: 3
   why: alternating hard/soft beds; subsequents follow soft beds, ridges on hard
+  want: high
 - factor: planet-factor.tect-fold
   weight: 3
   why: tilted or folded strata, strike-parallel outcrop belts; dip sets ridge asymmetry
+  want: high
 - factor: planet-factor.tect-setting
   weight: 1
   why: fold-thrust belts, eroded orogens (Valley and Ridge)
+  want: high
 - factor: planet-factor.rock-type
   weight: 1
   why: erodibility contrast sandstone vs shale/limestone sets valley-ridge relief
+  want: high
 - factor: planet-factor.relief-inherited
   weight: 1
   why: consequent streams on original surface become cross-strike trunks/water gaps
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 1
   why: renewed uplift/base-level fall deepens strike valleys and drives captures
+  want: high
 - factor: planet-factor.time
   weight: 3
   why: structural adjustment needs ~1-300 Myr of differential erosion
+  want: high
 vocabulary_id: 55
 sources:
 - https://ebooks.inflibnet.ac.in/geop11/chapter/drainage-pattern
@@ -41,10 +48,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: trellis

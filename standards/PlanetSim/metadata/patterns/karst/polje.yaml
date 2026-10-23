@@ -8,36 +8,47 @@ factors:
 - factor: planet-factor.rock-soluble
   weight: 1
   why: Limestone surroundings needed for karst drainage via ponors
+  want: high
 - factor: planet-factor.rock-layers
   weight: 3
   why: Impervious inliers (flysch, dolomite) on floor or border make structural/border poljes
+  want: high
 - factor: planet-factor.tect-fault
   weight: 3
   why: Grabens and fault-angle depressions host structural poljes; long axis follows fault trend
+  want: high
 - factor: planet-factor.tect-fold
   weight: 1
   why: Synclines can hold poljes along structural strike (NW-SE in Dinarides)
+  want: high
 - factor: planet-factor.groundwater
   weight: 3
   why: 'Floor at the epiphreatic zone: water table fluctuation does lateral planation (baselevel polje)'
+  want: high
 - factor: planet-factor.clim-season
   weight: 1
   why: 'Wet-season rise exceeds ponor capacity: seasonal lakes; Mediterranean seasonality typical'
+  want: high
 - factor: planet-factor.clim-precip
   weight: 1
   why: Humid recharge needed for flooding and lateral corrosion
+  want: high
 - factor: planet-factor.sed-supply
   weight: 1
   why: Alluvium/terra rossa fill flattens floor and seals it; inflow from non-karst catchments
+  want: high
 - factor: planet-factor.base-level
   weight: 1
   why: Regional karst base level sets floor height; lowered base level converts to dry poljes
+  want: high
 - factor: planet-factor.relief-inherited
   weight: 1
   why: Relict valleys or coalesced collapse dolines can seed baselevel poljes
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 100 kyr to 5 Myr
+  want: high
 vocabulary_id: 95
 sources:
 - https://en.wikipedia.org/wiki/Polje
@@ -52,10 +63,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: karst

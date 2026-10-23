@@ -31,6 +31,8 @@ contents:
 - 'Per-instance clearance matrix: occupied, mount/holder/fastener/tool, installation/removal, user/egress,
   motion and service access; each requirement/allowance has sourced, derived or provisional authority and explicit
   missing-data status.'
+- Fit failure disposition identifies whether hull/arrangement needs G2/G3 rework; required products stay unscaled,
+  product/consumer gaps and incompatible intent escalate explicitly.
 boundary: Project authoring evidence using existing equipment references; not a new runtime schema, module
   approval database or implicit installation.
 consumers:

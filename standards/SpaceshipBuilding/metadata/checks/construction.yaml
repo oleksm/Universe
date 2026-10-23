@@ -21,14 +21,26 @@ method:
 - Trace each component to a support and compatible interface.
 - Verify intended contact at joint surfaces separately from collision; check actual frame allocation and accounting
   ownership.
+- Check stern/cockpit closure, gear bays, service penetrations and supports in the actual state plan. Zero
+  collision hits cannot prove missing closure geometry or a supported installation.
+- 'Reconcile each claimed designed assembly against ship-artifact.region-spec: purpose, design controls, brief
+  links, actual source/object ownership and adjacent interface owners. Reject an object split presented as
+  completed design without these records and current geometric witnesses.'
+- Inspect declared junctions, mating frames, attachment/support and access obligations on the actual candidate;
+  label unmeasured or unavailable criteria unresolved. Keep this technical verdict separate from ship-check.identity
+  and block only detail/claims dependent on failed or missing required evidence.
 evidence:
 - Contact/access witnesses, interface references, BOM ownership and qualified/unqualified links.
+- Per-assembly intent/interface roster, current source/input hashes, actual local and assembled interface witnesses,
+  scoped observations and defect closure after repair. A valid declaration establishes coverage only, not geometric
+  qualification.
 failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
   or obtain the missing decision, then rerun affected checks.
 scope: construction
 artifacts:
 - ship-artifact.interfaces
 - ship-artifact.region-spec
+- ship-artifact.assembly-state-plan
 coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
   claim is inferred.
 rules:

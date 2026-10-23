@@ -8,24 +8,31 @@ factors:
 - factor: planet-factor.tect-fault
   weight: 3
   why: normal fault footwall truncates spurs; facet slope near fault dip when fresh
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 3
   why: high slip rate (>~0.1 mm/yr) keeps facets steep, tall, multi-tiered
+  want: high
 - factor: planet-factor.relief-inherited
   weight: 1
   why: range-front catchment spacing sets spur, hence facet, width
+  want: high
 - factor: planet-factor.rock-type
   weight: 3
   why: resistant bedrock footwall needed; weak rock degrades facets quickly
+  want: low
 - factor: planet-factor.rock-fracture
   weight: 1
   why: jointing controls facet planarity and degradation
+  want: high
 - factor: planet-factor.clim-precip
   weight: 1
   why: erosion rate relative to slip decides facet slope 20-45 deg
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 0.1-3 Myr; facets lower and round with age once slip stops
+  want: high
 vocabulary_id: 122
 sources:
 - https://WWW.ISPRS.org/proceedings/2011/ISRSE-34/211104015Final00629.pdf
@@ -39,10 +46,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: basin-range

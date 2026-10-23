@@ -2,8 +2,7 @@
 identity:
   key: ship-check.identity
   name: Reference and identity review
-  about: Reference and identity review for an exact candidate; this record defines the check, not its
-    result.
+  about: Reference and identity review for an exact candidate; this record defines the check, not its result.
 status: draft
 implementation: mixed
 owner: owner
@@ -20,26 +19,69 @@ sources:
 method:
 - Compare registered full-ship views and protected landmarks against the selected candidate.
 - Inspect thumbnail silhouette and declared camera distances; expose inferred reference regions.
-- Review each sketch against brief feature IDs and prompt variation limits; record met, missed, ambiguous
-  or intentionally varied without treating hidden geometry as observed.
+- Review each sketch against brief feature IDs and prompt variation limits; record met, missed, ambiguous or
+  intentionally varied without treating hidden geometry as observed.
 - Identify candidate image hash, current prompt hash and view/region witnesses for visual findings. Record
   hidden features as not observable; separate exterior identity from occupancy and engineering.
 - Review the current iteration independently and retain previous candidates, misses and bounded limitations;
   a passing text-coverage check is not visual acceptance.
 - Compare component counts, fore/aft positions, camera projection and mechanism poses across every labelled
-  view and the rough occupancy diagram. Labels and image captions cannot override visible contradictions;
-  a closed ramp witness must depict its closed pose.
+  view and the rough occupancy diagram. Labels and image captions cannot override visible contradictions; a
+  closed ramp witness must depict its closed pose.
+- After clearance-driven hull reshaping, review the current exterior again before dependent G3/G4/G6 acceptance;
+  retain functional clearance as a separate jointly required result. An envelope passing a probe is not a selected
+  exterior.
+- Use registered side/top/front black silhouettes and plain-clay orthographic before/after views, fixed camera/scale/projection/light
+  and declared mechanism state; include underside/three-quarter witnesses. Review thumbnail readability and
+  cockpit/neck/body hierarchy before panel detail.
+- Trace original brief/reference feature IDs and protected cockpit/brow/beak/neck/shoulder/beam/belly/ramp
+  landmarks relevant to this design. Distinguish observed current features, changed interpretation and omitted/unobservable
+  landmarks; no universal ratio or missing canopy accepted by proxy.
+- Bind current source/evaluated candidate, render hashes, camera/state set and comparison baseline. A prior
+  shape decision or old view cannot pass a changed hull; record owner/delegate judgment and current authority,
+  not merely a coverage count.
+- If fit and identity conflict, compare regional form/arrangement alternatives with applicable crew/module/access
+  envelopes unchanged. Retain failed witnesses and escalate incompatible requirements; do not shrink products/fixtures,
+  silently discard intent or decorate an unresolved silhouette.
+- 'Review primary and subordinate mass hierarchy in silhouette and clay: cockpit/nose/neck/shoulder/body relationships,
+  deliberate crown/shoulder/keel profiles, negative spaces and major chine continuity. Assess intentional curved-to-planar
+  transitions and shading consistency; more facets or sharper edges alone do not repair an unwanted proportion.
+  Use the actual brief, not universal beauty ratios.'
+- 'Before detailing a claimed designed assembly, independently critique its contribution in assembled silhouette/clay
+  views: primary/subordinate mass hierarchy, junction transitions, negative space and consistency with current
+  brief. Include local views but do not infer whole-ship success from isolated parts.'
+- Bind reviewer identity, actual view observations, candidate/brief/assembly-intent hashes and scoped verdict
+  to the existing checkpoint. Give failed findings an owning assembly or shared interface, concrete correction
+  and preservation constraints; re-inspect current assembled views after repair. Object counts, separated mesh
+  regions and synthetic integrity checks are not aesthetic judgments.
 evidence:
 - Decision packet, views, reference provenance and owner/delegate decision bound to candidate.
-failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair
-  or obtain the missing decision, then rerun affected checks.
+- Post-reshape side/top/front silhouette and clay comparison packet, original intent witnesses, current landmark
+  identity card, candidate/view/camera/state hashes and scoped visual decision.
+- Separate current functional and visual results; explicit unresolved omitted features and invalidation/recheck
+  status.
+- Comparable coherent variants around the same applicable envelopes and real module references, with an annotated
+  hierarchy/transition critique and specific visual reasons. No variant is selected merely because it was generated
+  first.
+failure: Retain the visual witness and prior candidates. Identity lost or unresolved after clearance-driven
+  reshaping returns the affected G2/G3 form/arrangement to review and blocks dependent architecture/detail/export
+  acceptance even if clearance passes. Preserve applicable required envelopes and original intent; escalate
+  genuine incompatibilities. A missing required feature, stale view or synthetic coverage pass cannot close
+  visual identity. Existing owner/delegate authority persists.
 scope: visual
 artifacts:
 - ship-artifact.reference-atlas
 - ship-artifact.silhouette-study
 - ship-artifact.sketch-prompt
+- ship-artifact.requirements
+- ship-artifact.region-spec
+- ship-artifact.crew-route-plan
+- ship-artifact.module-inventory
 coverage: Scope is the declared candidate, inputs, methods and consumer features. No engineering or unsampled/runtime
   claim is inferred.
 rules:
 - ship-rule.claim-boundaries
 - ship-rule.feature-intake
+- ship-rule.lifecycle
+- ship-rule.evidence-invalidation
+- ship-rule.representations

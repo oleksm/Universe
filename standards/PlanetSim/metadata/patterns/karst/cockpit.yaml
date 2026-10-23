@@ -8,30 +8,39 @@ factors:
 - factor: planet-factor.clim-precip
   weight: 3
   why: Very high rainfall (~2000+ mm/yr, Jamaica/Guilin) drives intense point recharge
+  want: high
 - factor: planet-factor.clim-temp
   weight: 1
   why: Tropical/subtropical warmth; high soil CO2; cone forms limited to these zones
+  want: low
 - factor: planet-factor.rock-soluble
   weight: 3
   why: Massive pure limestone, hundreds of m thick
+  want: high
 - factor: planet-factor.rock-fracture
   weight: 1
   why: Joint network locates star-shaped depressions; spacing sets polygon size
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 1
   why: Steady uplift keeps deep vadose zone; slower uplift lets cockpits evolve to towers
+  want: high
 - factor: planet-factor.groundwater
   weight: 3
   why: Deep water table (fengcong) versus shallow (fenglin); depressions drain vertically
+  want: high
 - factor: planet-factor.bio-veg
   weight: 1
   why: Dense rainforest and soil supply CO2; soils funnel water to depression floors
+  want: high
 - factor: planet-factor.slope-relief
   weight: 1
   why: Depressions 100-120 m deep, walls 30-40 deg
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 0.5 to 10 Myr
+  want: high
 vocabulary_id: 96
 sources:
 - https://en.wikipedia.org/wiki/Cockpit_Country
@@ -46,10 +55,30 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
+- of:
+  - factors.want
+  tier: derived
+  review: true
+  source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
+  note: 'planet-factor.clim-temp: The record asks for warmth; existing clim-temp strength rises toward cold
+    (283.15 to 263.15 K).'
 status: draft
+look: karst

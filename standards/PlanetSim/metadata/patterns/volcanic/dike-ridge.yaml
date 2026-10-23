@@ -8,24 +8,31 @@ factors:
 - factor: planet-factor.rock-type
   weight: 3
   why: 'dike harder than host: weathers into wall; softer dike gives trench instead'
+  want: high
 - factor: planet-factor.tect-setting
   weight: 1
   why: rifts/LIPs give parallel swarms; volcanic centres give radial swarms
+  want: high
 - factor: planet-factor.other-stress-field
   weight: 3
   why: regional least stress sets dike orientation; central load gives radial pattern
+  want: high
 - factor: planet-factor.time
   weight: 3
   why: Myr of erosion to strip host rock
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 1
   why: exhumation depth sets how much dike is exposed
+  want: high
 - factor: planet-factor.clim-arid
   weight: 1
   why: arid to semi-arid keeps walls standing
+  want: high
 - factor: planet-factor.volc-magma
   weight: 1
   why: magma pressure and supply set dike width 0.5-30 m and length
+  want: high
 vocabulary_id: 139
 sources:
 - https://en.wikipedia.org/wiki/Dike_(geology)
@@ -39,10 +46,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: volcanic

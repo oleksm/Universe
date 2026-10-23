@@ -8,30 +8,39 @@ factors:
 - factor: planet-factor.sed-supply
   weight: 3
   why: abundant sand/gravel supply (river mouth, drift) makes coast prograde; supply pulses set ridge spacing
+  want: high
 - factor: planet-factor.slope-relief
   weight: 3
   why: low offshore gradient needed for progradation
+  want: low
 - factor: planet-factor.waves-tides
   weight: 3
   why: swash builds ridges; wave energy sets ridge height; low tidal range favours
+  want: low
 - factor: planet-factor.clim-storm
   weight: 1
   why: storm ridges vs fair-weather swash ridges; storms truncate sets
+  want: high
 - factor: planet-factor.sea-level
   weight: 1
   why: not required, but stable or falling level sets ridge elevation and orientation
+  want: low
 - factor: planet-factor.tect-uplift
   weight: 1
   why: isostatic uplift strands ridge staircases (raised beach-ridge flights)
+  want: high
 - factor: planet-factor.bio-veg
   weight: 1
   why: vegetation and aeolian cap stabilise and preserve ridges
+  want: high
 - factor: planet-factor.clim-wind
   weight: 1
   why: onshore wind adds foredune cap to ridges
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: ridges every decades-centuries over 1-7 kyr
+  want: high
 vocabulary_id: 150
 sources:
 - https://en.wikipedia.org/wiki/Beach_ridge
@@ -46,10 +55,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: coastal

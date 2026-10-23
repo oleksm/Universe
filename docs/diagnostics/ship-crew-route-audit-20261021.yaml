@@ -1,0 +1,65 @@
+scope: Reusable crew route planning and QC definition audit; no geometry repairs, fixture selection, numerical
+  safety compliance or runtime acceptance.
+owner_trigger: Open ramp blocks crew pathways.
+new_definitions:
+- ship-artifact.crew-route-plan
+- ship-check.crew-routes
+stage_integration:
+  G2_G3: Plan state-bound connected cockpit/cabin/exit routes and operating/recovery sequence before selection
+    or arrangement acceptance.
+  G4_G6: Current row-level route/state/task/actor results with complete supported paths, safe operating/refuge
+    positions, declared recovery and fixture/criterion provenance.
+provenance_policy:
+- Exact source/revision/hash, units, applicability and authority for criteria and actor/suit/carry fixtures.
+- Derived criteria retain inputs and method; project assumptions remain provisional. No numerical aisle, height,
+  slope, envelope or regulatory requirement invented.
+- Missing/stale/failed/unknown required rows block affected claims. Independent fixed route roster and authoritative
+  input bindings prevent weakening the required envelope.
+- Geometric measurements, requirement comparison, task review and runtime walking/operation are independent
+  results. Synthetic cases test declaration handling only.
+actual_candidate:
+  evidence: external blender/ships/explorer-study/model-v03/review/pathway-review.json
+  evidence_sha256: 60ce6dec9a550ca9c32ce140afa3734689513aa9759617575ab6d6a08a2c333e
+  source_sha256: 3024620a5b02acbaa032d70b8b0e2fc18d2aecb10e1b779f571b02aeabc085ab
+  source_hash_current_at_audit: true
+  outcome: failed_arrangement_review
+  observations:
+  - Fixed cockpit transition ends near source X=-3.025 m; aft floor begins near X=+0.43 m. Authored central
+    connection is the moving ramp, with no fixed side walkway in the reviewed inventory.
+  - When open the ramp drops away from cockpit passage; review reports lost connection.
+  - Support-tower raw gap about 1.10 m and open ramp angle about 31.49 degrees are geometric observations,
+    not human-clearance/slope acceptance.
+  - Command-module placement, cockpit neck, human/suit/carry fixture and applicable criteria remain unresolved.
+  limits:
+  - No selected human or suit envelope; no numerical regulatory claim.
+  - No route flood-fill, human sweep or emergency egress qualification performed.
+  - No shape change authorized or implemented by this report.
+independent_synthetic_review:
+  initial_cases: 31
+  issues_sent_for_repair:
+  - Required envelope could be changed together with every row; requirement authority must be independently
+    fixed.
+  - current:true alone did not bind source, fixture or criterion hashes.
+  - A safe-sequence label must not conceal failed transition/recovery prerequisites.
+  actual_geometry_status: Failed arrangement review; no synthetic test result promotes it.
+  final_cases: 47
+  result: pass, independently rerun; declarations only
+  script_sha256: 6b7d4a0bbe67e3414406fada5bd9e55bd54d3092e63e353c8f32c86113ed93ae
+  authority_fixture_sha256: b7ce030a45dc868faaef3f36416f17009ae6b4130a9694d90b37716b4e25c07e
+  test_report_sha256: 196c553bcf5a4d4526c5b369b2040015b7b43852c1e62ee165efce3c93e3ba5f
+  resolution: Required envelope and roster independently pinned; source/measurement bytes and row criteria/input
+    hashes checked; transition/recovery prerequisite failures reject safe-sequence assertion.
+validation:
+  registry_regressions: 47
+  regression_result: pass
+  full_registry_checks: pass
+  page_checks:
+  - x:ship-artifacts:crew-route-plan
+  - x:ship-checks:crew-routes
+  - x:ship-stages:architecture
+  - x:ship-stages:mechanisms
+  - x:ship-stages:production
+  schemas_and_runtime: unchanged
+  workflow_definitions: 99
+  page_visually_inspected: x:ship-checks:crew-routes
+  existing_report_gaps: unchanged

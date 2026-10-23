@@ -8,24 +8,31 @@ factors:
 - factor: planet-factor.other-stream-capture
   weight: 3
   why: capture beheads the gap stream, leaving it dry
+  want: high
 - factor: planet-factor.rock-layers
   weight: 3
   why: subsequent on weak beds erodes headward faster
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 3
   why: uplift/tilting diverts drainage or outpaces incision
+  want: high
 - factor: planet-factor.ice-extent
   weight: 1
   why: glacial damming diverts rivers
+  want: high
 - factor: planet-factor.rock-soluble
   weight: 1
   why: karst subsurface piracy
+  want: high
 - factor: planet-factor.base-level
   weight: 1
   why: lower base level of the capturing stream
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: persists on divide Myr after capture
+  want: high
 vocabulary_id: 154
 sources:
 - https://en.wikipedia.org/wiki/Stream_capture
@@ -40,10 +47,30 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
+- of:
+  - factors.want
+  tier: derived
+  review: true
+  source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
+  note: 'planet-factor.rock-layers: Alternating strong/weak beds or caprock require layering contrast; flat/weak
+    does not request absence of layering.'
 status: draft
+look: trellis

@@ -17,21 +17,37 @@ entry:
 - Openings, owning structures, permitted states and frame contracts defined.
 exit:
 - Storyboard, supported joints, sample/combined-state evidence and limitations recorded.
+- Complete assembly closed/open/intermediate and permitted combined-state coverage includes stern, underside,
+  cockpit and interior witnesses; no partial sweep substitutes for required rows.
+- Required crew routes and reachable controls, staging and recovery remain usable through declared mechanism
+  states; zero mechanism collisions alone cannot establish operation or escape.
+- After clearance-driven reshaping, current silhouette/clay and protected-landmark identity review passes within
+  actual authority as well as functional checks; no old silhouette approval or provisional envelope supplies
+  visual acceptance.
 failure:
 - Rollback the mechanism candidate while retaining shell baseline and witnesses.
+- Required route/module envelope conflict with hull space returns affected G2/G3 shape and arrangement; preserve
+  design intent and applicable envelopes, escalate incompatible constraints, and invalidate dependent detail/export
+  evidence before resuming.
 inputs:
 - ship-artifact.interfaces
 - ship-artifact.spatial-layout
 - ship-artifact.region-spec
+- ship-artifact.assembly-state-plan
+- ship-artifact.crew-route-plan
 outputs:
 - ship-artifact.mechanism-spec
 - ship-artifact.evidence
 checks:
 - ship-check.motion-coverage
 - ship-check.construction
+- ship-check.assembly-state-coverage
+- ship-check.crew-routes
+- ship-check.identity
 rules:
 - ship-rule.lifecycle
 - ship-rule.authority
 - ship-rule.claim-boundaries
+- ship-rule.construction-and-detail
 decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
   forks; technical roles resolve routine repairs within those constraints.

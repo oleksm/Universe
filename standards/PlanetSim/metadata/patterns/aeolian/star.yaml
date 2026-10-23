@@ -8,21 +8,27 @@ factors:
 - factor: planet-factor.clim-wind
   weight: 3
   why: multidirectional or seasonally reversing winds; grows up, little net migration
+  want: high
 - factor: planet-factor.sed-supply
   weight: 3
   why: large sand accumulation; heights 50-300 m, to 500 m
+  want: high
 - factor: planet-factor.relief-inherited
   weight: 3
   why: topographic barriers at erg margins cause wind reversals
+  want: high
 - factor: planet-factor.clim-arid
   weight: 1
   why: arid
+  want: high
 - factor: planet-factor.groundwater
   weight: 1
   why: moist cores/lake-fed cementation help megadunes (Badain Jaran)
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: 10-1000 kyr
+  want: high
 vocabulary_id: 3
 sources:
 - https://en.wikipedia.org/wiki/Star_dune
@@ -37,10 +43,29 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
+- of:
+  - factors.want
+  tier: derived
+  review: true
+  source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
+  note: 'planet-factor.clim-wind: Strong multidirectional winds shape dunes; little describes net migration.'
 status: draft
+look: dunes

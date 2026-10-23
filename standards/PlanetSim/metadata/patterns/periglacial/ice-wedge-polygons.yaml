@@ -8,27 +8,35 @@ factors:
 - factor: planet-factor.clim-temp
   weight: 3
   why: MAAT about -6 to -8 C or colder; rapid winter cooling cracks ground
+  want: high
 - factor: planet-factor.permafrost
   weight: 3
   why: Continuous permafrost; ice wedges grow annually
+  want: high
 - factor: planet-factor.regolith
   weight: 3
   why: Fine sediment, peat or gravel; sand-filled wedges in dry cold deserts
+  want: high
 - factor: planet-factor.clim-arid
   weight: 1
   why: Meltwater needed for ice veins; very arid gives sand wedges
+  want: low
 - factor: planet-factor.slope-relief
   weight: 1
   why: Flat tundra, floodplains, drained lake basins; spacing 3-40 m
+  want: low
 - factor: planet-factor.sed-supply
   weight: 1
   why: Aggrading surfaces give syngenetic deep wedges
+  want: high
 - factor: planet-factor.bio-veg
   weight: 1
   why: Snow and vegetation cover insulate, limit cracking
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: Hundreds to thousands of years; wedges 1-10 m deep
+  want: high
 vocabulary_id: 105
 sources:
 - https://en.wikipedia.org/wiki/Ice_wedge
@@ -43,10 +51,30 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
+- of:
+  - factors.want
+  tier: derived
+  review: true
+  source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
+  note: 'planet-factor.clim-arid: The why text says aridity causes replacement, sand wedges, or lake drying;
+    lower aridity supports the named wet feature.'
 status: draft
+look: periglacial

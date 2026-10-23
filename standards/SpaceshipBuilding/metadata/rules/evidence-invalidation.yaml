@@ -72,12 +72,56 @@ statement: 'Invalidate evidence by dependency and changed hash, retaining indepe
   clearance, not applicable or pass by default. A reasoned not-applicable disposition needs evidence. Recheck
   affected clearances after placement, source/model, mount, route, ownership or export changes. Declaration
   counterexamples include an inherited pilot substitute, an unknown required clearance marked pass and scaled
-  reference geometry presented as unchanged equipment.'
+  reference geometry presented as unchanged equipment.
+
+
+  When a required crew route or actual reusable-module envelope does not fit the hull, QC returns the affected
+  region to G2 silhouette/G3 architecture shaping and arrangement. Retain the failure witness and identify
+  whether the cause is shell/profile, floor/route, placement or mechanism; do not keep detailing an incompatible
+  shell or treat every failure as a local mesh-polish task. Revise owned hull stations, sections, openings
+  or arrangement against the unchanged applicable envelope, then repeat route, module and combined-state checks
+  before dependent gates resume.
+
+
+  Keep the project''s required visual and functional intent as constraints during this return, such as a relatively
+  narrow cockpit passage, hawk-like cockpit and forward-opening belly ramp when required by its brief. Required
+  intent is not permission to preserve a failed exact contour. Do not shrink crew/suit/carry fixtures, scale
+  products, omit their access space, silently relax a requirement or declare clearance pass. A provisional
+  reservation can direct a labelled shape study but cannot establish compliance; missing criteria or fixtures
+  remain unknown.
+
+
+  Record changed region IDs, protected landmarks and alternatives with visual and functional consequences.
+  If the required intent, applicable envelopes and supported mechanism cannot coexist, record the incompatible
+  constraints and affected gates and escalate the material design tradeoff to the owner, with Registry/Ships
+  resolving product or consumer gaps. Existing authorization covers routine intent-preserving reshaping; escalate
+  actual incompatible scope/identity choices, not every repair.
+
+
+  Reopen dependent form/architecture/lock decisions whose premises changed. Mark affected detail, interfaces,
+  mechanism/route/module checks, previews, collision, mass inputs, exports and release/integration evidence
+  stale or withdrawn until regenerated and rechecked for exact new hashes. Preserve prior candidates as history
+  and unchanged reusable module sources and unrelated valid evidence. Do not overwrite an accepted package
+  or reuse its stale export as evidence for the new shape. This is a rework transition, not a cycle in prerequisite
+  dependencies.
+
+
+  A clearance-driven shape edit invalidates dependent identity decisions and visual witnesses as well as geometric
+  checks, detail and exports. Bind the new source/evaluated candidate, side/top/front silhouette/clay renders
+  and camera/state set to the original brief/reference landmark IDs and last selected baseline where one exists.
+  Old views, a coverage count or an omitted required canopy cannot pass the new shape. Preserve history and
+  unrelated results; record current functional and visual outcomes separately before resuming dependent claims.'
 applies_to:
 - Invalidate only evidence that depends on the change
 verification:
 - Test a source mutation and check expected stale results.
 - Port/mass-only changes do not mandate body rebuild without a geometric conflict.
+- A route/module containment failure returns to affected G2/G3 shape/arrangement; shrinking fixtures/products,
+  silent intent relaxation and stale dependent export/detail cannot resolve it. Unchanged module packages remain
+  valid.
+- 'Review counterexamples: headroom fix erases cockpit identity, broad generic-ring expansion claimed approved
+  without allocation, omitted canopy marked accepted, panels replace silhouette decision, or old views pass
+  new shape. Keep these manual visual findings separate from synthetic declaration tests.'
 limitations:
 - This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
 related: []

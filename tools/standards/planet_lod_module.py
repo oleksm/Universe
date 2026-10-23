@@ -15,7 +15,7 @@ import planet_lod  # noqa: E402
 
 TREE = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "standards")
 OUT = os.path.join(TREE, "PlanetSim", "generated", "planet_lod_words.py")
-FUNCS = ("_key", "_value", "_class", "holds", "classify", "strength", "match", "_refs", "context")
+FUNCS = ("_key", "_value", "_class", "holds", "classify", "strength", "preference", "match", "_refs", "context")
 
 
 def render():

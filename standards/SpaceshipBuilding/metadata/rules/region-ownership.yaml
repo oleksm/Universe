@@ -55,6 +55,18 @@ applies_to:
 verification:
 - Generated collections are the only allowed mutation targets.
 - Manual inputs and read-only neighbors retain their hashes unless a recorded design change reopens them.
+- Reconcile the intended assembly roster with actual objects and region contracts before claiming parts-designed.
+  Separating a monolithic surface into named objects, materials or collections cannot satisfy missing assembly
+  purpose, design controls or interfaces.
+- Review each assembly in the complete ship as well as locally. Repeated or mirrored assemblies may share a
+  design contract, but every placement and junction remains covered; one assembly may use several objects and
+  a coherent assembly may be a single mesh.
+- Before dependent detailing, record separate current construction/interface and independent assembled visual
+  verdicts in the existing candidate checkpoint. Missing, failed, stale or unresolved required evidence holds
+  that scope; continue reversible alternatives and unrelated authorized work.
+- After repair, regenerate affected assembly and whole-ship witnesses and have the relevant reviewer close
+  the named defect. A local visual pass, a builder declaration, a synthetic test pass or object splitting alone
+  cannot close an assembled visual failure.
 limitations:
 - This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
 related:

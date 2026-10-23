@@ -1,0 +1,68 @@
+scope: Reusable post-shape identity workflow audit; no new exterior selection, geometry repair or visual/fit
+  acceptance.
+task: 20261021T225410-blender-bc4c
+local_research:
+  path: external blender/research_notes/Spaceship silhouette and shape design/project_audit.md
+  sha256: accc08d5818050598ec95ed219ed995229de7b63451b3040205f585095a91462
+  finding: Existing silhouette principles were not applied to the clearance-driven shell. G3/G4/G6 had no explicit
+    identity-check invocation.
+  limits: No claim of wasted lateral volume or qualified downsizing; actual command/modules and human/suit
+    fixtures remain unresolved.
+  final_report:
+    path: external blender/reports/Spaceship silhouette and shape design.md
+    sha256: 07eb6c33d21bae64a978263922c7de7bb8f2f886b6d6050f0a097ec74a16e01c
+    review: Read supplied synthesis. Supports three comparable unselected compositions around unchanged applicable
+      reservations, regional form controls and separate visual/functional decisions. External design-process
+      claims are attributed to Blender research, not independently re-researched here.
+    candidate_directions:
+    - Narrow raised spine with lower shoulders where actual allocation permits.
+    - Compact articulated cockpit/beak, constrained by real command ingress and view needs.
+    - Occupied core with actual machinery masses; no invented modules to justify styling.
+  arithmetic_review:
+    near_level_crown_span_m: 7.1499999999999995
+    maximum_audited_beam_m: 6.3
+    derived_crown_width_m: 4.095
+    note: Arithmetic only; no proof of unused volume, selected proportions or correct downsizing.
+correction:
+  reuse:
+  - ship-check.identity
+  - ship-artifact.silhouette-study
+  - ship-rule.representations
+  - ship-rule.lifecycle
+  - ship-rule.evidence-invalidation
+  stage_links: G3/G4/G6 now explicitly include identity; G2/G5 failure/lock handling and current evidence reinforced.
+  views: Side/top/front black silhouettes and clay before/after, consistent camera/projection/scale/light/state;
+    underside and three-quarter witnesses retained.
+  provenance: Current source/evaluated candidate, view hashes, camera/state set and original brief/reference
+    landmark IDs; no stale visual packet or unobservable required feature promoted.
+  judgment: Actual owner/delegate judgment and functional results separately recorded and jointly required;
+    no generic numeric aesthetic pass.
+  envelopes: Preserve applicable required crew/module/access/motion envelopes and intent. Regional alternatives
+    and explicit incompatibility handling, not shrink-to-fit or automatic global expansion.
+manual_counterexamples:
+- Clearance probe passes after hawk cockpit/neck identity is erased -> visual review remains failed or unresolved.
+- Generic ring raises whole crown/shoulders without actual allocation -> study remains unselected, not approved
+  styling or evidence of wasted volume.
+- Canopy omitted -> required cockpit feature remains not observable, not accepted.
+- Panel detail or hero render hides missing silhouette decision -> cannot close primary-form review.
+- Old side/top/front renders after hull change -> stale until current comparison packet.
+- Preferred slim exterior achieved by shrinking crew or product -> invalid functional evidence, not jointly
+  accepted.
+validation:
+  registry_regressions:
+    count: 47
+    result: pass
+  full_registry_checks: pass
+  page_checks:
+    x:ship-checks:identity: 13
+    x:ship-artifacts:silhouette-study: 4
+    x:ship-stages:architecture: 23
+    x:ship-stages:mechanisms: 18
+    x:ship-stages:production: 25
+    x:ship-rules:representations: 1
+  workflow_definitions: 99
+  schemas_and_runtime: unchanged
+  page_visually_inspected: x:ship-checks:identity
+  existing_report_gaps: unchanged
+  limits: Manual counterexamples describe review behavior; automated definition checks do not establish an
+    aesthetic verdict or actual fit.

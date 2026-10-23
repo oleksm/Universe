@@ -34,15 +34,23 @@ method:
   needs evidence.
 - Invalidate dependent clearance results after model/pose, ownership, mount, route, fixture, motion or export
   changes; demonstrate failure for inherited substitutes, unknown clearances claimed pass and scale-to-fit.
+- Classify a demonstrated fit/route failure by owning shell/profile, floor/route, placement or mechanism. If
+  hull space is incompatible, return affected G2/G3 shaping and arrangement with unchanged required envelope
+  and protected intent; retain provisional/unknown criterion limits. Do not prescribe global enlargement or
+  weaken a fixture/product to force a pass.
 evidence:
 - Per-instance clearance matrix with requirement/allowance provenance, actual model/record/consumer/frame hashes,
   poses, geometry and fixtures.
 - Worst-case measurements, intersections or failed routes, views and motion/path samples; separate declared
   tests from geometry/export/runtime evidence.
 - Source-object ownership roster, retired substitute/export exclusions and fresh preview/export hashes.
-failure: Keep the witness and mark the affected module, route and release claim failed or unresolved; repair
-  or obtain missing data before dependent acceptance. Continue independent work without substituting an invented
-  module or clearance.
+failure: Retain failed/unknown witnesses and block dependent claims. A demonstrated route or module envelope
+  conflict with hull space returns the affected region to G2/G3 hull shaping and arrangement, not further detail
+  polish. Preserve required intent and unscaled products/crew fixtures; escalate incompatible constraints for
+  a material design decision. Missing fixture/criterion/consumer data stays unresolved. Mark affected downstream
+  detail, checks, previews and exports stale; regenerate and rerun exact-input evidence before resuming. Preserve
+  unchanged module sources, unrelated results and prior candidates as history. After shape repair, rerun ship-check.identity
+  with current silhouette/clay and intent witnesses; functional fit alone does not select the exterior.
 scope: assembly
 artifacts:
 - ship-artifact.module-inventory
@@ -56,6 +64,7 @@ rules:
 - ship-rule.module-reuse
 - ship-rule.claim-boundaries
 - ship-rule.evidence-invalidation
+- ship-rule.lifecycle
 limitations:
 - The check definition does not implement a generic clearance engine or supply missing module, holder, human-fixture
   or consumer data.

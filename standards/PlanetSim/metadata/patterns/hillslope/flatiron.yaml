@@ -8,27 +8,35 @@ factors:
 - factor: planet-factor.tect-fold
   weight: 3
   why: Steep dip of strata (roughly >30-40 deg), e.g. range-flank monocline
+  want: high
 - factor: planet-factor.rock-layers
   weight: 3
   why: Resistant bed (sandstone, conglomerate) over weak shale; strong contrast needed
+  want: high
 - factor: planet-factor.rock-type
   weight: 1
   why: Cap bed must resist weathering; underlying shale erodes faster
+  want: high
 - factor: planet-factor.water-discharge
   weight: 3
   why: Regularly spaced cross-strike streams cut hogback into a row of triangles
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 1
   why: Uplift of range exposes and tilts beds, sets incision
+  want: high
 - factor: planet-factor.slope-relief
   weight: 1
   why: Sits on mountain flank; facet steeper than flank
+  want: high
 - factor: planet-factor.clim-arid
   weight: 1
   why: Semi-arid climates preserve bare facets
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: Facets degrade as streams lower base; age of exposure sets height
+  want: high
 vocabulary_id: 160
 sources:
 - https://en.wikipedia.org/wiki/Flatiron_(geomorphology)
@@ -43,10 +51,30 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
+- of:
+  - factors.want
+  tier: derived
+  review: true
+  source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
+  note: 'planet-factor.rock-layers: Alternating strong/weak beds or caprock require layering contrast; flat/weak
+    does not request absence of layering.'
 status: draft
+look: trellis

@@ -1,0 +1,129 @@
+scope: Independent workflow/coverage and visual-witness audit; no geometry repair, release or full assembly certification.
+request: 20261021T205006-blender-2c7a
+candidate: explorer-study/model-v02
+candidate_state: failed_review_candidate
+source_sha256: e80314056b04846d1a918136c50bfcacb6f6de0cc6a2d4b480cd150b1f6c7aea
+workflow_changes:
+  new_definitions:
+  - ship-artifact.assembly-state-plan
+  - ship-check.assembly-state-coverage
+  G2_G3: Opening/closure ownership, requested gear states/bays, services/supports and cockpit/module boundaries
+    are direction inputs, not deferred surface detail.
+  G4_G6: Complete expected/actual component, interaction-pair, state and view coverage; required rows need actual
+    current results before aggregate pass.
+  closure_caveat: Material mesh manifoldness, zero intersections or an annular wall cap do not establish closure
+    of the occupied enclosure.
+  gear_caveat: Requested stowage cannot be relabelled fixed. Any limited static prototype scope requires explicit
+    authorization and cannot satisfy retractability.
+  partial_evidence: Prior ramp-only zero-hit sweep remains valid only for its measured subset, never the complete
+    assembly.
+  runtime_schema: Unchanged; no generic geometry engine or consumer feature is implemented by these definitions.
+actual_witnesses:
+  owner_defects_sha256: d4b7d45bf35329cafdfd8913d10f0deb7f3701634c1ca48ddf2a71a7afebc208
+  prior_checker: blender:ships/explorer-study/model-v02/source/check_model.py
+  prior_checker_sha256: b285a49c229cfc04462abda5e2e365fd0772b27f508b3c9db0a256d608b3a07d
+  prior_scope: Ramp_Hinge mesh children versus selected Hull and Cabin floor/aperture/narrow/passage names; actuator
+    meshes, gear/bays and closure proofs excluded.
+  stern: Closed-pose local stern-centre ray has no closure hit; rear render shows an open central tunnel.
+  cockpit: Aft ray reaches passage floor rather than a roof/closure; close-up shows canopy-to-skin discontinuity.
+  actuators: Blender reports actuator rod/hull intersections in all 33 sampled poses; registry checked report/source
+    hashes and visually reviewed the belly witness, not rerun Blender mesh queries.
+  gear: 15 fixed deployed objects; no bays, stowed mechanism or retractability authored.
+  protrusions: Blender picking identifies an actuator rod and cockpit sill rail; they are not both verified service
+    pipes.
+  underside: Rectangular underside discontinuity remains unclassified and needs geometric investigation; not assumed
+    intentional.
+independent_visual_review:
+  reviewer: registry
+  images:
+    defect-stern.png: 41e1235ca5054a2d8b7536dd1e786ffb69dabc3acc8d1837d8774f37439ced73
+    defect-cockpit.png: 196e9592d9a8ed9841080a026355a9fdc3cdb7da93240239f8f111f5241423c7
+    defect-belly.png: a26e04849b120d36eda2e4d870ef0d0be1ff715c6202e9946f4a231f70f99015
+  findings:
+  - Open central stern tunnel visible between nacelles.
+  - Canopy rear/sill border does not meet adjoining hull surface cleanly.
+  - Belly view shows rod entering shell and an additional rectangular discontinuity.
+  limits: Three local renders are defect witnesses, not exhaustive enclosure, pose coverage, pressure or structural
+    proof.
+project_declaration_tests:
+  script_sha256: 6ea5d3cf08c1348927593fdd9b7b6900d18c940855c4246a3fa995a9d5462f22
+  report_sha256: 53b3c29093b34352f0841b6f17bfed762bdf95e541ed968fbc05dbf8cf617b19
+  cases_passed: 33
+  independently_rerun: true
+  scope: Synthetic declarations only; known-good rows supplied by fixture, not measured assembly acceptance.
+  strengthened_after_review: Pair/state/view labels alone previously ignored failed child results. Required row
+    maps now reject absent, failed, unknown or stale results even when part summaries pass.
+  additional_cases:
+  - Annular manifold shell with unclosed cabin
+  - Requested retractability silently relabelled fixed
+  - Omitted actuator/gear/external-run roles and critical views/pairs
+  - Ramp-only sweep promoted to whole-assembly result
+  expected_coverage:
+    parts:
+    - actuators
+    - cockpit_interface
+    - external_runs
+    - gear
+    - gear_bays
+    - ramp_leaf
+    - shell
+    pairs:
+    - actuators:floors
+    - actuators:shell
+    - cockpit_interface:shell
+    - external_runs:shell
+    - gear:gear_bays
+    views:
+    - bottom
+    - cockpit_closeup
+    - front
+    - interior
+    - left
+    - rear
+    - right
+    - top
+    states:
+    - closed
+    - open
+    - intermediate
+    - combined
+  actual_incomplete_coverage:
+    parts:
+    - ramp_leaf (prior partial check)
+    - actuators versus shell/floors (new failed audit)
+    states:
+    - closed
+    - open
+    - intermediate
+    views:
+    - hero
+    - side
+    - interior cutaway
+    - owner viewport
+    missing:
+    - gear stowage/bays
+    - combined states
+    - complete view and pair roster
+    - support/interface validation
+remaining:
+- Blender must repair closures, cockpit interfaces, actuator/support routing and requested gear/bay mechanism in
+  a new current candidate.
+- Reconcile full source/model ownership and all required pair/state/view rows, including actual modules and services
+  where applicable.
+- Retest source, evaluated geometry, export and consumer separately, preserving valid subset evidence and invalidating
+  affected claims.
+- Do not present the failed model as polish-ready, G4/G6 complete, accepted or installed.
+validation:
+  registry_regressions_passed: 47
+  full_registry_checks: pass
+  final_build_and_latest_qualifiers: pass
+  page_checks:
+    x:ship-artifacts:assembly-state-plan: 7
+    x:ship-checks:assembly-state-coverage: 9
+    x:ship-stages:silhouette: 13
+    x:ship-stages:mechanisms: 15
+    x:ship-stages:production: 22
+    x:ship-rules:construction-and-detail: 3
+  page_visually_inspected: x:ship-checks:assembly-state-coverage
+  workflow_definitions: 97
+  existing_report_gaps: unchanged

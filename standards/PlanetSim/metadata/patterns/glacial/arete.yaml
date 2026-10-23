@@ -8,24 +8,31 @@ factors:
 - factor: planet-factor.ice-extent
   weight: 3
   why: needs adjacent cirques/troughs actively eroding near the ELA
+  want: high
 - factor: planet-factor.relief-inherited
   weight: 3
   why: divide between back-to-back or side-by-side cirques
+  want: high
 - factor: planet-factor.rock-type
   weight: 3
   why: hard rock holds steep 48-68 deg flanks
+  want: high
 - factor: planet-factor.rock-fracture
   weight: 1
   why: jointing sets crest serration and gendarmes
+  want: high
 - factor: planet-factor.clim-temp
   weight: 1
   why: frost shattering above ice sharpens crest
+  want: high
 - factor: planet-factor.time
   weight: 1
   why: headwall retreat over many cycles thins the ridge
+  want: high
 - factor: planet-factor.tect-uplift
   weight: 1
   why: uplift keeps crests above the ice surface
+  want: high
 vocabulary_id: 71
 sources:
 - https://en.wikipedia.org/wiki/Cirque
@@ -40,10 +47,23 @@ basis:
   - factors
   - sources
   tier: derived
-  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+  note: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted
+    3.'
 - of:
   - when
   tier: invented
   review: true
   note: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+- of:
+  - factors.want
+  - look
+  tier: invented
+  review: true
+  source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs
+    arch_of
+  note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
+    corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
+    use explicit fields, never repeat prose/key inference.
 status: draft
+look: glacial

@@ -17,34 +17,61 @@ entry:
 - Selected silhouette, declared fixtures and reusable-equipment choices.
 - Module discovery and consumer contract lookup completed before aisle/cabin/cockpit sizing; candidate versus
   selected equipment and geometry ownership recorded.
+- Opening/closure owners, gear states and bay reservations, services/supports and cockpit/module interfaces
+  are identified before detailed arrangement.
 exit:
 - Sections, task routes, pilot space and equipment allocation satisfy the declared scope.
 - Actual reusable module allocations, supported poses, mounts/services and access paths are validated; no custom
   fit-out substitute or exported reservation proxy fills a gap.
 - Inherited product substitutes are retired and all required module occupied, attachment/tool, install/removal,
   user, motion and service clearances have current scoped evidence; missing data remains unresolved.
+- Assembly direction resolves required closures and installations; unknown gear bays, service penetrations
+  or cockpit boundaries cannot be hidden as later surface detail.
+- Required cockpit/cabin/exit routes, support/landing/turn/headroom and operating/recovery sequences have current
+  state-bound evidence and applicable fixture/criterion provenance; missing or provisional criteria cannot
+  become compliance.
+- After a route/module-driven reshape, dependent form, fit, mechanisms, detail and export evidence is regenerated
+  for current hashes; preserved history or unchanged module packages do not pass changed hull geometry.
+- After clearance-driven reshaping, current silhouette/clay and protected-landmark identity review passes within
+  actual authority as well as functional checks; no old silhouette approval or provisional envelope supplies
+  visual acceptance.
+- Each claimed designed assembly has a current region-spec intent/interface contract, actual object mapping
+  and scoped construction evidence plus independent assembled visual critique. Mesh separation alone does not
+  establish parts-designed; unresolved required interfaces or whole-ship visual failures hold dependent detail.
 failure:
 - Reopen the affected shape/arrangement only; keep approved unrelated regions.
 - Missing inventory, product, model or consumer support blocks dependent arrangement/release; record the gap
   with Registry/Ships rather than fabricate a module.
+- Required route/module envelope conflict with hull space returns affected G2/G3 shape and arrangement; preserve
+  design intent and applicable envelopes, escalate incompatible constraints, and invalidate dependent detail/export
+  evidence before resuming.
+- If clearance-driven shape changes erase protected identity, return affected G2/G3 alternatives with unchanged
+  applicable envelopes; no detail, shrink-to-fit or stale visual packet closes the conflict.
 inputs:
 - ship-artifact.silhouette-study
 - ship-artifact.requirements
 - ship-artifact.module-inventory
+- ship-artifact.assembly-state-plan
+- ship-artifact.crew-route-plan
 outputs:
 - ship-artifact.region-spec
 - ship-artifact.interfaces
 - ship-artifact.spatial-layout
 - ship-artifact.build-inputs
+- ship-artifact.crew-route-plan
 checks:
 - ship-check.hull-geometry
 - ship-check.inhabitation
 - ship-check.assembly
 - ship-check.module-clearance
+- ship-check.crew-routes
+- ship-check.identity
+- ship-check.construction
 rules:
 - ship-rule.lifecycle
 - ship-rule.authority
 - ship-rule.claim-boundaries
 - ship-rule.module-reuse
+- ship-rule.construction-and-detail
 decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
   forks; technical roles resolve routine repairs within those constraints.
