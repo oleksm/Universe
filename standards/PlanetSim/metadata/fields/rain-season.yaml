@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.rain-season
+  name: Dry season category
+  about: 'Calendar three-month precipitation contrast: +1 if summer total is less than one third of winter; -1 if
+    winter is less than one third of summer;0 if neither. JJA is summer in the north, DJF in the south; equator
+    follows the north convention.'
+unit: '1'
+per: sample
+producer:
+  where: planet-forge tools/earth_fields.py
+  file: checkpoint fields/*.npy
+  key: planet-field.rain-season
+  epoch: Earth fixture; WorldClim1970-2000 climatology
+missing: NaN on unobserved land and sea; no synthetic fill. Temperature/rain seasonal eligibility requires all12months
+  of both tavg and prec finite.
+cautions:
+- Earth fixture field; generated planets currently model seasons internally rather than storing this observation
+  field.
+- Observed seasonal climate alone is not proof of vegetation, permafrost duration or a complete biome predicate.
+- Only exact -1,0,+1 values are categories; NaN is unknown and cannot become neither. This ratio is the fixture
+  rule, not a complete seasonal climate classification.
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - missing
+  tier: derived
+  note: Source audit planet-forge3c06390 tools/earth_fields.py; WorldClim2.1 monthly tavg/prec,10arc-minute cells,
+    nearest-cell sampling. Seasonal source coverage is not a live weather observation.
+range:
+- -1
+- 1

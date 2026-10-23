@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.temperature-cold-month
+  name: Coldest calendar month mean air temperature
+  about: Minimum of the twelve WorldClim2.1 monthly mean air temperatures (1970-2000 climatology), sampled to the
+    Earth fixture; not a quarter mean or daily minimum.
+unit: K
+per: sample
+producer:
+  where: planet-forge tools/earth_fields.py
+  file: checkpoint fields/*.npy
+  key: planet-field.temperature-cold-month
+  epoch: Earth fixture; WorldClim1970-2000 climatology
+missing: NaN on unobserved land and sea; no synthetic fill. Temperature/rain seasonal eligibility requires all12months
+  of both tavg and prec finite.
+cautions:
+- Earth fixture field; generated planets currently model seasons internally rather than storing this observation
+  field.
+- Observed seasonal climate alone is not proof of vegetation, permafrost duration or a complete biome predicate.
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - missing
+  tier: derived
+  note: Source audit planet-forge3c06390 tools/earth_fields.py; WorldClim2.1 monthly tavg/prec,10arc-minute cells,
+    nearest-cell sampling. Seasonal source coverage is not a live weather observation.
