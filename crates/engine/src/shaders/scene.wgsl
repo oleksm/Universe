@@ -755,7 +755,9 @@ fn shade(in: MeshOut, tile: TileSample) -> vec4<f32> {
             nv = normalize(mix(normalize(in.data.xyz), n, smoothstep(2.0, 6.0, span)));
         }
         var shade = g.view_shade.y + g.view_shade.z * max(dot(nv, in.sun_dir), 0.0);
-        if (length(in.at - g.view_world.xyz) < g.view_world.w) {
+        // (Sea floor by its depth under the sea level: the base's. A pyramid tile is ground (its mask keeps no sea),
+        // low plains near or under 0 m too: no sea rule there.)
+        if (!tile_on && length(in.at - g.view_world.xyz) < g.view_world.w) {
             shade = 1.0 + g.view_shade.w * (shade - 1.0);
         }
         let shown = clamp(linear_to_srgb(albedo.rgb) * shade, vec3<f32>(0.0), vec3<f32>(1.0));

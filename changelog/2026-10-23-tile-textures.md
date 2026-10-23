@@ -50,5 +50,8 @@ app's). The cube's normals carry the package's ×13 (land) and ×3 (sea).
 
 forge_e124s43-mesh from 10,000 km: detail (a 2 px high-pass's spread) 1.52 → 6.25 (`far_cmp2.png`).
 
-Open: a faint honeycomb of darker dots on some pyramid land, in the tiles' own pixels (not the base, not the colour
-rasters, which are clean; there before the textures too).
+The honeycomb of darker dots on some pyramid land: the view shade's sea rule (sea floor where a pixel lies under the
+sea level's radius) caught low coastal plains near or under 0 m in patches of the tile meshes' triangles, pulling
+their shade toward 1. A pyramid tile is ground (its mask keeps no sea): the rule now only for the base. Found by
+splitting colour from shade (colour clean, the dots all in the shade). Left: much fainter, lighter hexagonal
+specks in the sunlit land.
