@@ -121,14 +121,15 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     let frame_mass = recorded.map_or(FRAME_PER_AREA * shape.solid.volume.powf(2.0 / 3.0), |h| h.mass);
     let price = recorded.map_or(PRICE_PER_KG * frame_mass + PRICE_PER_SLOT_SIZE * slots.iter().map(|s| f64::from(s.2)).sum::<f64>(), |h| h.price);
     // (Fitted as its record says, with its own hold, where the registry describes it: an
-    // ore bay, not racks. Any other: the cheapest that fits each slot.)
+    // ore bay, not racks; an empty fit stays empty, nothing made up for it. Any other: the cheapest that fits each
+    // slot.)
     let fit = match record {
-        Some(h) if !h.fit.is_empty() => h.fit.iter().filter(|f| slots.iter().any(|s| s.0 == f.slot)).filter(|f| {
+        Some(h) => h.fit.iter().filter(|f| slots.iter().any(|s| s.0 == f.slot)).filter(|f| {
             let available = content().handle::<Module>(&f.item).is_some();
             if !available { log::warn!("{} slot {}: {} is not in the playable module catalogue; fitting held", h.identity.key, f.slot, f.item); }
             available
         }).map(|f| (f.slot.clone(), f.item.clone())).collect(),
-        _ => stock_fit(&slots)?,
+        None => stock_fit(&slots)?,
     };
     let bay = record.filter(|h| !h.fit.iter().any(|f| f.slot == "cargo")).map_or((0.0, 0.0), |h| (h.capacity.hold.unwrap_or(0.0), h.capacity.hold_volume.unwrap_or(0.0)));
     // (Its flight figures its record's, where it has them; any other's, by its size.)
@@ -143,7 +144,17 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     let shape = std::sync::Arc::new(shape);
     let any = content().shapes.iter().next().map(|(h, _)| h).expect("the content has shapes");
     let module = |k: &str| content().handle::<Module>(k).map(|h| (h, content().get(h)));
-    let mut spec = def.build(any, &shape, module)?;
+    // (A registered hull whose record's fit can't fly yet (no drive, too little power, a base block missing) is its
+    // stage before that: built, not commissioned, the reason first in its limits; never fitted by guess.)
+    let mut spec = match def.clone().build(any, &shape, &module) {
+        Ok(s) => s,
+        Err(why) if record.is_some() => {
+            let mut s = def.build_uncommissioned(any, &shape, &module)?;
+            s.limits.insert(0, format!("not commissioned: {why}"));
+            s
+        }
+        Err(e) => return Err(e),
+    };
     spec.shape_own = Some(shape);
     spec.visual = Some(visual.to_string());
     Ok(spec)
@@ -348,6 +359,19 @@ mod tests {
         let at = h.fit.iter().position(|f| f.slot == "gear_0").unwrap();
         h.fit[at].pose = Some(crate::registry::HullFitItemPose::Rest);
         assert_eq!(crate::ship::rest_slots(&h), vec![("gear_0".to_string(), h.fit[at].item.clone())]);
+    }
+
+    /// A registered hull's empty fit stays empty (nothing made up): it can't fly (a base block missing), so it's
+    /// its stage before that, built uncommissioned, not refused and not stock-fitted.
+    #[test]
+    fn import_empty_fit_is_an_uncommissioned_stage() {
+        let any = content().shapes.iter().next().map(|(h, _)| h).unwrap();
+        let shape = crate::shape::ShapeDef::made("shape.test-stage".into(), (0..8).map(|i| DVec3::new(if i & 1 == 0 { -2.0 } else { 2.0 }, if i & 2 == 0 { -2.0 } else { 2.0 }, if i & 4 == 0 { -6.0 } else { 6.0 })).collect(), vec![], vec![], vec![]).build().unwrap();
+        let def = crate::ship::HullDef::made("hull.test-stage".into(), "STAGE".into(), shape.key.clone(), 8000.0, 1.0, vec![("power".into(), crate::modules::SlotKind::Power, 1)], vec![], vec![], 10.0, 10.0, 1e6);
+        let module = |k: &str| content().handle::<Module>(k).map(|h| (h, content().get(h)));
+        assert!(def.clone().build(any, &shape, &module).is_err_and(|e| e.contains("every ship must carry")));
+        let spec = def.build_uncommissioned(any, &shape, &module).unwrap();
+        assert!(!spec.commissioned && spec.fit.is_empty() && spec.dry_mass == 8000.0);
     }
 
     /// A hull's engines as its record binds them: exactly, or refused (a missing nozzle or slot, twice, a share

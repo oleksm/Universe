@@ -107,6 +107,9 @@ pub struct ClassSpec {
     /// What its modules are rated for that the game doesn't simulate (an engine's throttle floor, its gimbal, its
     /// starts): stated, so an acceptance can hold on them; none for a ship of the old drives.
     pub limits: Vec<String>,
+    /// Built to fly: its base blocks there and its power enough (false: a stage before that, shown and walked, not
+    /// flown; `limits` says why).
+    pub commissioned: bool,
     /// Propellants of its own, apart from its fuel (cold nitrogen beside hydrolox): a ship of this class draws
     /// them through its device state (`Ship::own_propellants`).
     pub propellants: Vec<crate::ship_devices::Propellant>,
@@ -167,7 +170,7 @@ pub struct Thruster {
 }
 
 /// A hull as the registry has it: its thrusters by nozzle name.
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub(crate) struct HullDef {
     key: String,
     name: String,
@@ -192,7 +195,7 @@ pub(crate) struct HullDef {
     rest: Vec<(String, String)>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 struct ThrusterDef {
     nozzle: String,
     slot: String,
@@ -333,6 +336,27 @@ impl HullDef {
         shape: &crate::shape::Shape,
         module: impl Fn(&str) -> Option<(crate::content::Handle<crate::modules::Module>, &'m crate::modules::Module)>,
     ) -> Result<ClassSpec, String> {
+        self.build_install(shape_ref, shape, module, true)
+    }
+
+    /// `build`, without a commissioned ship's base blocks and power (see `ClassSpec::commissioned`): a registered
+    /// hull's stage before it can fly.
+    pub(crate) fn build_uncommissioned<'m>(
+        self,
+        shape_ref: crate::content::Handle<crate::shape::Shape>,
+        shape: &crate::shape::Shape,
+        module: impl Fn(&str) -> Option<(crate::content::Handle<crate::modules::Module>, &'m crate::modules::Module)>,
+    ) -> Result<ClassSpec, String> {
+        self.build_install(shape_ref, shape, module, false)
+    }
+
+    fn build_install<'m>(
+        self,
+        shape_ref: crate::content::Handle<crate::shape::Shape>,
+        shape: &crate::shape::Shape,
+        module: impl Fn(&str) -> Option<(crate::content::Handle<crate::modules::Module>, &'m crate::modules::Module)>,
+        validate_install: bool,
+    ) -> Result<ClassSpec, String> {
         if !(self.frame_mass.is_finite() && self.frame_mass > 0.0) {
             return Err(format!("frame_mass must be positive ({})", self.frame_mass));
         }
@@ -358,7 +382,7 @@ impl HullDef {
         }
         let frame = HullFrame { frame_mass: self.frame_mass, price: self.price, slots, nozzles, radius: self.radius, drag_area: self.drag_area, hull_strength: self.hull_strength, bay: self.bay };
         let (brand, rest) = (self.brand.clone(), self.rest.clone());
-        ClassSpec::assemble(self.key, self.name, self.shape, shape_ref, shape, frame, fit, |h| found[&h]).map(|mut s| {
+        ClassSpec::assemble_install(self.key, self.name, self.shape, shape_ref, shape, frame, fit, |h| found[&h], validate_install).map(|mut s| {
             s.brand = brand;
             s.rest = rest;
             s
@@ -815,6 +839,7 @@ impl ClassSpec {
             placed,
             crowded,
             limits,
+            commissioned: validate_install,
             propellants,
             rest: Vec::new(),
             radius: frame.radius,
