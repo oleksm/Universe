@@ -800,3 +800,148 @@ remaining_consumer_inputs:
 - Battery native capacity/rate/depletion consumer or selected adequate generator.
 - Thermal fit retained with mass; no heat simulation qualification.
 - Inline mechanism/exits schema and posed walking/contact consumer agreed with Engine before formal node binding.
+conditional_ships_allocation:
+  source: /home/alexm/.agents/reviews/ships/explorer-functional-20261023/proposal.yaml
+  source_sha256: 1ba669e124e3114a4ed89ef72ca0fe7fa7a4afce8819977a157b799f54e61a25
+  status: Conditional proposal, not selected/installed fit or a registry hull/equipment record. Preserve current
+    owner-authored geometry and deferred command. Counts and values are traceable catalogue screens; no old craft
+    mass/QC transfer.
+  frozen_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  recommendation:
+    preferred_next_fit_study: 'B: small hydrolox catalogue candidates with Camera/Altimeter consumer work, conditional
+      airless operation only. No native radar-survey/contact-range claim. Review compact comm and radiator/tank
+      footprint before selection.'
+    why: Avoid adding3fuelcells and100kWradar solely to meet native base-block semantics. Existing camera and altimeter
+      retain their own recorded functions, not copied radar performance. All missing hardware and thermal storage
+      remain unresolved.
+    catalogue_only_reference: A:100kWradar+3fuelcells with real large thermal loop/store. Can screen native electrical
+      power after thermal retention but not a proven fit or human/mission design; not recommended as default.
+    stage_route: Engine0ac7c987f preserves registered empty fit and exposes uncommissioned stage; whole mass still
+      required. Earlier unconditional main-nozzle guard remains a blocker for an actual no-nozzle GLB (ships632b
+      task). No dummy nozzle or inferred stock equipment.
+  candidates:
+    A_catalogue_reference:
+      budget:
+        instances: 32
+        catalogue_equipment_mass_kg: 6570.9
+        mass_scope: 'Equipment only: excludes hull/current edited gear and mechanisms, adapters, mounts, stock/wires/plumbing,
+          extra coolant/insulation, person/suit/cargo. No craft dry/wet mass can be claimed.'
+        hydrolox_capacity_kg: 1000
+        nitrogen_capacity_kg: 100
+        electrical_nominal_known_w: 103280.0
+        plant_rated_w: 150000
+        plant_margin_known_w: 46720.0
+        missing_needs: Absent fields are unknown auxiliary allowance, not confirmed zero. Current mechanisms/lights
+          and coolant_loop.s1 pump needs not closed.
+        baseline_heat_screen_w: 188181.81818181818
+        heat_assumptions: Conservative all known electrical draw eventually to heat, fuelcell efficiency.55; add
+          life-support400W lifted. No engine inefficiency term added to hull beyond heat_to_hull. Actual RF/optical
+          export, temperatures and topology need separate accounting.
+        main_pair_thrust_n: 50000
+        lift_pair_thrust_n: 220000
+        engine_main_full_heat_w: 11000
+        engine_lift_full_heat_w: 48400
+        engine_all_full_heat_w: 59400
+        radiator_nominal_w: 19200.0
+        radiator_panel_area_m2: 16
+        coolant_capacity_sum_w: 5000000.0
+        main_only_heat_screen_w: 199181.81818181818
+        hover_heat_function: baseline_heat + 0.5*4400*0.0001*M_loaded_kg*g_m_s2; M/g unselected
+        all_engine_heat_screen_w: 247581.81818181818
+        steady_all_engine_heat_deficit_w: 228381.81818181818
+        steady_lift_heat_deficit_w: 217381.81818181818
+        flow_main_full_kg_s: 11.363636363636363
+        flow_lift_full_kg_s: 50.0
+        flow_all_full_kg_s: 61.36363636363637
+        fuel_only_seconds_main_full: 88.0
+        fuel_only_seconds_lift_full: 20
+        fuel_only_seconds_all_full: 16.296296296296294
+        hydrolox_cell_kg_h_at_nominal_electrical: 52.00111888111887
+        operational_limits: Burn durations ignore reserve, cell use, settling, unusable propellant, boiloff, steering
+          and braking; not mission endurance. Native cold-gas full tank100kg is included in native dry_mass, unlike
+          physical empty dry mass.
+        throttle_hover_1g_mass_window_kg:
+        - 4485.219164118246
+        - 22426.095820591232
+        lift_engine_out_1g_max_mass_kg: 11213.047910295616
+        minimum_lift_throttle: Record20% each; current native allocator does not enforce. Below44kN total requires
+          pulsing/shutdown strategy not accepted.
+        nitrogen_ideal_impulse_ns: 70000
+        rcs_share_rule: Each block500N TOTAL across4exits, candidate equal.25 each=125N/exhaust,16exits total; per-block
+          sum1. No500N per exit or duplicated device mass. Geometry and actual manifold constraints must be agreed.
+        thermal_acceptance: false
+      thermal_store:
+        product: equipment.thermal.heat.sink
+        capacity_j: 1000000000.0
+        mass_kg: 3017.5
+        temperature_compatibility: unproven; no assumption a nominal capacity can absorb330Kloop heat
+        ideal_all_engines_buffer_time_s_if_compatible: 4378.632274500438
+        limitations: Buffer timing is ideal capacity/rate arithmetic only. Actual temperature window/transfer power/initial
+          state and cooldown must be established; huge model envelope, no fit approval.
+    B_recommended_fit_study:
+      budget:
+        instances: 32
+        catalogue_equipment_mass_kg: 2177.8
+        mass_scope: 'Equipment only: excludes hull/current edited gear and mechanisms, adapters, mounts, stock/wires/plumbing,
+          extra coolant/insulation, person/suit/cargo. No craft dry/wet mass can be claimed.'
+        hydrolox_capacity_kg: 1000
+        nitrogen_capacity_kg: 100
+        electrical_nominal_known_w: 4230.0
+        plant_rated_w: 50000
+        plant_margin_known_w: 45770.0
+        missing_needs: Absent fields are unknown auxiliary allowance, not confirmed zero. Current mechanisms/lights
+          and coolant_loop.s1 pump needs not closed.
+        baseline_heat_screen_w: 8090.90909090909
+        heat_assumptions: Conservative all known electrical draw eventually to heat, fuelcell efficiency.55; add
+          life-support400W lifted. No engine inefficiency term added to hull beyond heat_to_hull. Actual RF/optical
+          export, temperatures and topology need separate accounting.
+        main_pair_thrust_n: 50000
+        lift_pair_thrust_n: 220000
+        engine_main_full_heat_w: 11000
+        engine_lift_full_heat_w: 48400
+        engine_all_full_heat_w: 59400
+        radiator_nominal_w: 19200.0
+        radiator_panel_area_m2: 16
+        coolant_capacity_sum_w: 60000.0
+        main_only_heat_screen_w: 19090.90909090909
+        hover_heat_function: baseline_heat + 0.5*4400*0.0001*M_loaded_kg*g_m_s2; M/g unselected
+        all_engine_heat_screen_w: 67490.90909090909
+        steady_all_engine_heat_deficit_w: 48290.90909090909
+        steady_lift_heat_deficit_w: 37290.90909090909
+        flow_main_full_kg_s: 11.363636363636363
+        flow_lift_full_kg_s: 50.0
+        flow_all_full_kg_s: 61.36363636363637
+        fuel_only_seconds_main_full: 88.0
+        fuel_only_seconds_lift_full: 20
+        fuel_only_seconds_all_full: 16.296296296296294
+        hydrolox_cell_kg_h_at_nominal_electrical: 2.1297902097902095
+        operational_limits: Burn durations ignore reserve, cell use, settling, unusable propellant, boiloff, steering
+          and braking; not mission endurance. Native cold-gas full tank100kg is included in native dry_mass, unlike
+          physical empty dry mass.
+        throttle_hover_1g_mass_window_kg:
+        - 4485.219164118246
+        - 22426.095820591232
+        lift_engine_out_1g_max_mass_kg: 11213.047910295616
+        minimum_lift_throttle: Record20% each; current native allocator does not enforce. Below44kN total requires
+          pulsing/shutdown strategy not accepted.
+        nitrogen_ideal_impulse_ns: 70000
+        rcs_share_rule: Each block500N TOTAL across4exits, candidate equal.25 each=125N/exhaust,16exits total; per-block
+          sum1. No500N per exit or duplicated device mass. Geometry and actual manifold constraints must be agreed.
+        thermal_acceptance: false
+        main_only_thermal_margin_w: 109.09090909091174
+      thermal_gap:
+        example_duty_not_mission_requirement: One20s full lift pair screen only
+        required_net_heat_storage_j_at20s_full_lift: 745818.1818181818
+        additional_heat_storage: No compact catalogue store selected. Existing1GJheat sink is3017.5kg/5.25m3 and
+          a separately bounded fallback; do not invent a smaller accepted buffer. Define actual mission pulse/cooldown,
+          storage material/temp/mass, interfaces.
+        routing: 3x20kWloop capacities cannot be treated as one guaranteed60kW system. Per-engine24.2kW exceeds
+          one20kWloop; split transfer topology/heat exchanger or larger real loop needed. Full-all engine screen
+          exceeds aggregate loop capacity.
+        radiator: 8fixed2x1mpanels require both faces exposed at330K to meet19.2kW. No flush-to-hull or cabin-temperature1000K
+          substitution; geometry/view-factor/solar/ground/environment remain open.
+        small_cruise_margin: At full main pair, only109W gross nominal radiator margin before unknown mechanisms/lights/auxiliaries;
+          no thermal closure even for cruise is claimed. Rate or duty must be selected from actual mission and measured
+          routed hardware.
+  validation: Registry verified32rows per candidate, sum of equipment mass/known draw and row masses against current
+    catalogue. Unknown auxiliary draw remains unknown. No geometry, routing, material or operational acceptance.
