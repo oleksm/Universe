@@ -15,6 +15,10 @@ sources:
   section: 6.1 Use a complete evidence checklist
   note: 'Owner gear-integration correction, 2026-10-22: review whole-ship deployed/stowed bay/support silhouette
     and ground height before detail; rejected packaging returns to G2/G3.'
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: 'Owner gear-shape correction,2026-10-22: review unsupported volume/blank bulk so local gear packaging
+    cannot pass by inflating the whole hull.'
 purpose: Declare closure and installation ownership early, then bind complete assembly QC to actual parts,
   states, pairs and views.
 contents:
@@ -33,6 +37,9 @@ contents:
 - Integrated early hull/gear/bay/support blockout, deployed/stowed/transition side/front/underside silhouettes
   and clay, declared ground plane, extension/compression contact heights and ramp relationship; current whole-ship
   visual verdict and shape-feedback disposition before detail.
+- 'Volume-purpose map and longitudinal/transverse sections for gear-driven hull changes: actual cabin, referenced
+  products, folded/deployed sweeps, support/closure depth, required clearance and deliberate aesthetic mass.
+  Mark unsupported or undecided blank volumes; do not turn them into fictional equipment or cabin requirements.'
 boundary: An early plan may contain bounded unknowns; it does not pass architecture, mechanism, pressure, assembly
   or runtime acceptance.
 consumers:

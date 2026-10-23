@@ -14,6 +14,10 @@ sources:
   section: 6.1 Use a complete evidence checklist
   note: 'Owner gear-integration correction, 2026-10-22: review whole-ship deployed/stowed bay/support silhouette
     and ground height before detail; rejected packaging returns to G2/G3.'
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: 'Owner gear-shape correction,2026-10-22: review unsupported volume/blank bulk so local gear packaging
+    cannot pass by inflating the whole hull.'
 order: 3
 depends_on:
 - ship-stage.silhouette
@@ -45,6 +49,10 @@ exit:
 - Integrated gear bays, doors and supports have current whole-ship deployed/stowed/transition silhouette and
   clay review, with actual ground plane, extended/compressed contact heights and ramp relation. A clearance
   reservation is not final exterior geometry; unresolved load, mount or mechanism data stays explicit.
+- Map changed external volume to actual occupied cabin, referenced equipment, required access/motion, pressure/structure
+  or explicitly declared aesthetic intent. Compare local bay/support alternatives before extending a full cabin
+  cross-section along the hull; invented future equipment, relabelled empty boxes and unsupported space reservations
+  cannot justify arrangement acceptance.
 failure:
 - Reopen the affected shape/arrangement only; keep approved unrelated regions.
 - Missing inventory, product, model or consumer support blocks dependent arrangement/release; record the gap
@@ -58,6 +66,9 @@ failure:
   to G2/G3 blockout before detail. Invalidate dependent views, fit, mechanism and export results for changed
   inputs; recolour alone cannot close a shape or packaging rejection. Preserve applicable unscaled products,
   crew routes and ground/load requirements.
+- A packaging fix that introduces rejected unsupported bulk returns the affected hull sections and gear interfaces
+  to G2/G3. Preserve required unscaled products and crew/ground/load envelopes, test local placement/support/profile
+  alternatives and rerun dependent fit and visual evidence; do not shrink necessities to recover appearance.
 inputs:
 - ship-artifact.silhouette-study
 - ship-artifact.requirements

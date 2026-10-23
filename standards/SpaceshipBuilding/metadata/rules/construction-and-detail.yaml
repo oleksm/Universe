@@ -22,6 +22,10 @@ sources:
   section: 6.1 Use a complete evidence checklist
   note: 'Owner gear-integration correction, 2026-10-22: review whole-ship deployed/stowed bay/support silhouette
     and ground height before detail; rejected packaging returns to G2/G3.'
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: 'Owner gear-shape correction,2026-10-22: review unsupported volume/blank bulk so local gear packaging
+    cannot pass by inflating the whole hull.'
 statement: 'Resolve structural masses and openings before surface detail; detail must explain use or construction.
 
 
@@ -94,7 +98,20 @@ statement: 'Resolve structural masses and openings before surface detail; detail
   review passes; neither an isolated assembly render nor recolouring rejected hanging boxes changes the shape
   finding. Return the affected hull/bay/support arrangement to G2/G3, preserve applicable unscaled products
   and required crew/ground/load envelopes, and invalidate dependent detail, mechanism, fit and export evidence
-  until repaired inputs are rechecked.'
+  until repaired inputs are rechecked.
+
+
+  A local fit repair must also be reviewed for the external volume it creates. Before promoting a gear-driven
+  hull reshape, compare longitudinal and transverse sections and whole-ship silhouettes/clay showing actual
+  cabin, folded/deployed products, motion/access clearances, support and closure thickness separately. Check
+  whether a full cabin section has been extended over a local reservation, producing an unnecessary crown,
+  stern block or blank underside. Trace enlarged volumes to independent functional requirements, a real support/pressure
+  role or explicit aesthetic intent; do not invent equipment, future storage or false occupancy to excuse rejected
+  bulk. There is no universal occupancy percentage: deliberate empty space can be valid, but its purpose and
+  visual judgment must be explicit. Preserve required product and crew/ground/load envelopes and compare local
+  bay, support, placement and profile alternatives. A rejected mass hierarchy returns affected G2/G3 form and
+  arrangement and invalidates dependent evidence; recolour, successful collision checks and a renamed cabin
+  cannot close it.'
 applies_to:
 - Establish readable construction without false engineering claims
 verification:
@@ -107,6 +124,8 @@ verification:
 - Require integrated hull/gear/bay/support silhouette and clay review with ground height before detail; reopen
   G2/G3 packaging on a rejected hanging/protruding mass, rather than accepting recolour or an isolated clearance
   pass.
+- Review shape inflation and unsupported blank bulk after local clearance changes; section-based volume purpose
+  and independent assembled critique are required before detail, without shrinking actual gear/crew envelopes.
 limitations:
 - This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
 related:
