@@ -51,3 +51,25 @@ this level. Motion later interpolates the same transforms, with sweep checks.
    verbatim?
 2. The toe and ladder ends need named empties: the export doesn't have them. Blender's to add.
 3. Mechanisms as hull-record fields, or as their own records the hull lists?
+
+## Agreed (registry `docs/ships/hull-mechanism-state-proposal.yaml`, 2026-10-23)
+
+Engine accepts the registry's form over the draft above: inline hull fields; typed `states[{key, poses[{node, kind:
+rest|rigid, translation_m, rotation_xyzw}]}]`; rigid = absolute parent-local TR replacing the export's, no scale;
+all poses applied once, then the hierarchy once; `exits[].requires[{mechanism, state}]`; `model_sha256` required
+when mechanisms or exits exist, the importer refusing a mismatch; explicit `*_Toe`, `*_Top`, `*_Foot` markers.
+
+## The consumer decisions (engine policy; the limits are engine choices, not sourced)
+
+1. **Ground contact.** The contact marker is evaluated in the candidate deployed pose, at the ship's current
+   attitude, in world space. The terrain datum is the same ground query the walker stands on. Accepted where the
+   marker's gap to the ground along the planet's down is between −0.05 m (slight embed) and the walker's step
+   (0.45 m), and the ground there is standable (the walker's slope rule). Otherwise refused with the gap or slope.
+2. **Initial gear state.** Placed landed or parked: deployed. Spawned in flight: stowed, where the gear has states.
+   A deploy whose contact fails keeps its previous state and says why. Nothing is forced.
+3. **Sequencing.** Opening an exit sets its `requires` in listed order; closing reverts in reverse. Each step is
+   checked (contact, where it has one) before the next. The crew's exit is the nearest open one whose top or entry
+   the walker can reach on the posed floors, not the nearest by distance. With exits declared and none open: no
+   teleport fallback.
+4. **Scale.** Mechanism nodes and their ancestors must be unit scale (within 1e-4). Otherwise the import is refused,
+   never baked or rescaled.
