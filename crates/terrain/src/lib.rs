@@ -401,6 +401,8 @@ pub struct BuildData {
     /// The package's base cube is bound (`Ground::cube`): the base tiles' corners carry their directions on it,
     /// and it gives their colour and normal per pixel.
     pub cube: bool,
+    /// Each vertex is sea (a corner of one of the package's sea tiles), for the view shade's sea floor.
+    pub sea: Vec<bool>,
 }
 
 /// A point as the package lights it: lifted by `light`'s land or sea factor on its height over its radius.
@@ -425,9 +427,15 @@ fn flat_data(t: [DVec3; 3], light: Option<(f64, f64, f64)>) -> [f32; 4] {
 }
 
 /// A base vertex's `data` on the planet cube: its direction in the package's frame, and the marker.
-fn cube_data(p: DVec3) -> [f32; 4] {
+fn cube_data(p: DVec3, sea: bool) -> [f32; 4] {
     let d = p.normalize();
-    [d.x as f32, d.y as f32, d.z as f32, universe_engine::PLANET_CUBE_DATA]
+    [d.x as f32, d.y as f32, d.z as f32, sea_mark(sea)]
+}
+
+/// A base vertex's `data.w`: on the planet cube's marker, doubled where it is sea (one of the package's sea tiles'):
+/// the view shade's sea floor is what the package calls sea, not land under the sea level (a basin, a salt pan).
+fn sea_mark(sea: bool) -> f32 {
+    universe_engine::PLANET_CUBE_DATA * if sea { 2.0 } else { 1.0 }
 }
 
 /// The package's base cube, if it ships one (`base_cube.json`: `n`, its faces' centres and u, v axes; `base_color.u8`
@@ -552,7 +560,7 @@ pub fn build_mesh(bd: &BuildData, on: &[u8], c: usize, view: View) -> (Mesh, usi
             m.colors.extend(t.iter().map(|&v| package_colour(bd.col[v as usize], 1.0)));
             m.normals.extend(t.iter().map(|&v| bd.normals[v as usize]));
             if bd.cube {
-                m.data.extend(t.iter().map(|&v| cube_data(bd.pos[v as usize])));
+                m.data.extend(t.iter().map(|&v| cube_data(bd.pos[v as usize], bd.sea[v as usize])));
             } else {
                 m.data.extend([flat_data(t.map(|v| bd.pos[v as usize]), bd.light); 3]);
             }
@@ -564,6 +572,7 @@ pub fn build_mesh(bd: &BuildData, on: &[u8], c: usize, view: View) -> (Mesh, usi
     let mut at = |v: u32, m: &mut WireModel| -> u32 {
         *local.entry(v).or_insert_with(|| {
             m.positions.push((bd.pos[v as usize] - origin).as_vec3());
+            m.data.push([0.0, 0.0, 0.0, sea_mark(bd.sea[v as usize])]);
             m.positions.len() as u32 - 1
         })
     };
@@ -995,6 +1004,15 @@ impl Ground {
             light,
             normals: vertex_normals(&d.pos, &d.ft, light),
             cube: cube.is_some(),
+            sea: {
+                let mut sea = vec![false; d.pos.len()];
+                for g in tiles.iter().filter(|g| g.sea) {
+                    for &v in g.tris.iter().flatten() {
+                        sea[v as usize] = true;
+                    }
+                }
+                sea
+            },
         });
         let (jobs, inbox) = std::sync::mpsc::channel::<Job>();
         let (outbox, done) = std::sync::mpsc::channel::<Built>();
@@ -1239,7 +1257,7 @@ impl Ground {
             g.mesh = None;
         }
         let old = self.bd.clone();
-        self.bd = Arc::new(BuildData { pos: self.d.pos.clone(), col: old.col.clone(), ft: old.ft.clone(), fe: old.fe.clone(), stand_in: old.stand_in.clone(), chunk_tris: old.chunk_tris.clone(), chunk_edges: old.chunk_edges.clone(), origin: old.origin.clone(), light: old.light, normals: vertex_normals(&self.d.pos, &self.d.ft, old.light), cube: old.cube });
+        self.bd = Arc::new(BuildData { pos: self.d.pos.clone(), col: old.col.clone(), ft: old.ft.clone(), fe: old.fe.clone(), stand_in: old.stand_in.clone(), chunk_tris: old.chunk_tris.clone(), chunk_edges: old.chunk_edges.clone(), origin: old.origin.clone(), light: old.light, normals: vertex_normals(&self.d.pos, &self.d.ft, old.light), cube: old.cube, sea: old.sea.clone() });
         self.generation += 1;
         *self.built.lock().unwrap() = None;
     }
@@ -1349,7 +1367,7 @@ impl Ground {
                 m.colors.extend(t.iter().map(|&v| package_colour(d.col[v as usize], 1.0)));
                 m.normals.extend(t.iter().map(|&v| self.bd.normals[v as usize]));
                 if self.bd.cube {
-                    m.data.extend(t.iter().map(|&v| cube_data(d.pos[v as usize])));
+                    m.data.extend(t.iter().map(|&v| cube_data(d.pos[v as usize], self.bd.sea[v as usize])));
                 } else {
                     m.data.extend([flat_data(t.map(|v| d.pos[v as usize]), self.bd.light); 3]);
                 }
@@ -1360,6 +1378,7 @@ impl Ground {
         let mut at = |v: u32, m: &mut WireModel| -> u32 {
             *local.entry(v).or_insert_with(|| {
                 m.positions.push((d.pos[v as usize] - origin).as_vec3());
+                m.data.push([0.0, 0.0, 0.0, sea_mark(self.bd.sea[v as usize])]);
                 m.positions.len() as u32 - 1
             })
         };

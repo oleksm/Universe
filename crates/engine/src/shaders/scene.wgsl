@@ -492,7 +492,7 @@ fn shade(in: MeshOut, tile: TileSample) -> vec4<f32> {
     let px = dpdx(in.at);
     let py = dpdy(in.at);
     // (A planet cube's mesh: its direction on the cube, and its steps across the screen, taken in uniform flow.)
-    let cube_on = in.data.w < -1.0e5 && in.globe.x < 0.5 && !tile.on;
+    let cube_on = in.data.w < -1.0e5 && in.globe.x < 0.5 && !tile.on && dot(in.data.xyz, in.data.xyz) > 0.5;
     let cube_dir = in.data.xyz;
     let cube_dx = dpdx(cube_dir);
     let cube_dy = dpdy(cube_dir);
@@ -773,7 +773,11 @@ fn shade(in: MeshOut, tile: TileSample) -> vec4<f32> {
         var shade = g.view_shade.y + g.view_shade.z * max(dot(nv, in.sun_dir), 0.0);
         // (Sea floor by its depth under the sea level: the base's. A pyramid tile is ground (its mask keeps no sea),
         // low plains near or under 0 m too: no sea rule there.)
-        if (!tile_on && length(in.at - g.view_world.xyz) < g.view_world.w) {
+        // (A base vertex marked says whether it's sea (doubled marker, -2e6): what the package calls sea, not land
+        // under the sea level (basins); unmarked, by its depth.)
+        let marked = in.data.w < -1.0e5;
+        let sea_here = select(length(in.at - g.view_world.xyz) < g.view_world.w, in.data.w < -1.5e6, marked);
+        if (!tile_on && sea_here) {
             shade = 1.0 + g.view_shade.w * (shade - 1.0);
         }
         let shown = clamp(linear_to_srgb(albedo.rgb) * shade, vec3<f32>(0.0), vec3<f32>(1.0));
