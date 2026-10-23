@@ -616,10 +616,10 @@
 - { record: equipment.engine.ca.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "d65081d0b1101e52" }
 - { record: equipment.engine.cg.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "36106cff07e69fe4" }
 - { record: equipment.engine.cg.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "0c3184a35b5722ec" }
-- { record: equipment.engine.ch.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "4953dcc5d17754ff" }
-- { record: equipment.engine.ch.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "cf6610b99d71ad8b" }
-- { record: equipment.engine.ch.s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "8c91e18a8da962fe" }
-- { record: equipment.engine.ch.s4, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "fc649b765372d064" }
+- { record: equipment.engine.ch.s1, at: "2026-10-23T00:34:57Z", status: draft, summary: "changed: function, basis", sha: "e444108a156f73da" }
+- { record: equipment.engine.ch.s2, at: "2026-10-23T00:34:57Z", status: draft, summary: "changed: function, basis", sha: "28e7c78e8cadef0f" }
+- { record: equipment.engine.ch.s3, at: "2026-10-23T00:34:57Z", status: draft, summary: "changed: function, basis", sha: "cceeff5cd621e5ac" }
+- { record: equipment.engine.ch.s4, at: "2026-10-23T00:34:57Z", status: draft, summary: "changed: function, basis", sha: "578d866ab62101f6" }
 - { record: equipment.engine.fan.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "1b9b90efe95a3fb0" }
 - { record: equipment.engine.fan.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "2541fb14913bf787" }
 - { record: equipment.engine.fan.s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "24e903208b9ea540" }
