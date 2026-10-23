@@ -16,10 +16,11 @@ trigger_params:
   unit: K
   meaning: Warmest-month tree-limit screening value; growing-season/cover evidence still required.
   open: true
-  used: false
+  used: true
   source: docs/planet-feature-trigger-rules-2026-10-22.md
   note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
     this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
+    Planet-forge042215e now consults this warmest-month value; seasonal provenance still requires independent validation.
 - name: EDGE_WIDTH_M
   value: 10000.0
   unit: m
