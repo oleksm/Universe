@@ -97,6 +97,12 @@ pub struct PlanetLodApp {
     flight_reference: flight::Reference,
     /// The wheel's target altitude, eased to.
     alt_target: f64,
+    /// `pitch=` (deg down; `nadir`: 90) held at every altitude, else by altitude (`pitch_down`); `fov=` (deg,
+    /// vertical); `sun=e,n,u`: the sun fixed to the planet, a direction in the east-north-up frame at the start's
+    /// place (else from the north-west, 35° up, wherever the eye is).
+    pitch: Option<f64>,
+    fov: f64,
+    sun: Option<DVec3>,
     easing: bool,
     /// UNIVERSE_PLANETLOD_FLY: the camera descends and drifts by itself (captures ignore the keys);
     /// =pan: it slides sideways at its altitude instead.
@@ -214,6 +220,9 @@ impl PlanetLodApp {
             heading: 0.0,
             flight_reference: flight::Reference::default(),
             alt_target: 20_000.0,
+            pitch: None,
+            fov: 50.0,
+            sun: None,
             easing: false,
             fly: crate::devenv::var_os("UNIVERSE_PLANETLOD_FLY").is_some(),
             pan: crate::devenv::var("UNIVERSE_PLANETLOD_FLY").is_ok_and(|v| v == "pan"),
@@ -237,6 +246,7 @@ impl PlanetLodApp {
             log: [0.0; 7],
 
         };
+        let mut sun_enu: Option<DVec3> = None;
         if let Ok(at) = crate::devenv::var("UNIVERSE_PLANETLOD_AT") {
             for kv in at.split('&') {
                 let mut p = kv.splitn(2, '=');
@@ -246,6 +256,15 @@ impl PlanetLodApp {
                     ("lat", Some(v)) => app.lat = v,
                     ("lon", Some(v)) => app.lon = v,
                     ("heading", Some(v)) => app.heading = v,
+                    ("pitch", _) if kv.ends_with("nadir") => app.pitch = Some(90.0),
+                    ("pitch", Some(v)) => app.pitch = Some(v.clamp(-90.0, 90.0)),
+                    ("fov", Some(v)) => app.fov = v.clamp(1.0, 170.0),
+                    ("sun", _) => {
+                        let enu: Vec<f64> = kv[4..].split(',').filter_map(|x| x.trim().parse().ok()).collect();
+                        if let [e, n, u] = enu[..] {
+                            sun_enu = Some(DVec3::new(e, n, u));
+                        }
+                    }
                     ("ex", Some(v)) => app.g.ex = v.clamp(1.0, 50.0),
                     ("feat", Some(v)) => app.show_feat = v > 0.0,
                     ("peaks", Some(v)) => app.show_peaks = v > 0.0,
@@ -268,6 +287,13 @@ impl PlanetLodApp {
             }
         }
         app.alt_target = app.alt;
+        // (The sun's east-north-up at the start's place, fixed to the planet from then on.)
+        if let Some(enu) = sun_enu.and_then(|v| v.try_normalize()) {
+            let up = unit(app.lon, app.lat);
+            let east = DVec3::Y.cross(up).normalize_or(DVec3::X);
+            let north = up.cross(east);
+            app.sun = Some((east * enu.x + north * enu.y + up * enu.z).normalize());
+        }
         if app.g.ex != 1.0 {
             app.set_ex(app.g.ex);
         }
@@ -518,7 +544,10 @@ impl App for PlanetLodApp {
         let fwd = ahead * p.cos() - up * p.sin();
         let cam_up = up * p.cos() + ahead * p.sin();
         let position = self.eye();
-        let mut camera = Camera { position, fov_y: 50f32.to_radians(), near: (0.2 * self.alt).clamp(0.3, 2000.0) as f32, ..Default::default() };
+        // (The near plane well inside the ground's reach: by the altitude, or half the clearance over the ground
+        // below where that is less, so a peak beside the eye isn't cut, looking down most of all.)
+        let clearance = self.ground_h.map_or(f64::INFINITY, |h| position.length() - self.g.d.r - h * self.g.ex);
+        let mut camera = Camera { position, fov_y: (self.fov as f32).to_radians(), near: (0.2 * self.alt.min(0.5 * clearance)).clamp(0.3, 2000.0) as f32, ..Default::default() };
         camera.look_at(position + fwd, cam_up.as_vec3());
         camera
     }
@@ -527,10 +556,11 @@ impl App for PlanetLodApp {
         let cam = frame.camera;
         let eye = cam.position;
         let up = eye.normalize();
-        // Light for reading shape: the sun from the north-west 35 degrees up, wherever the eye is.
+        // Light for reading shape: the sun set at the start (`sun=`, fixed to the planet), else from the north-west
+        // 35 degrees up, wherever the eye is.
         let east = DVec3::Y.cross(up).normalize_or(DVec3::X);
         let north = up.cross(east);
-        let sun = (up * 0.574 + north * 0.579 - east * 0.579).normalize();
+        let sun = self.sun.unwrap_or_else(|| (up * 0.574 + north * 0.579 - east * 0.579).normalize());
         frame.light = Some(Light { position: eye + sun * 1.5e11, color: [1.0, 0.98, 0.94], luminosity: 1.0, reference: 1.5e11, radius: 7e8 });
         let size = frame.size();
         let LandDrawn { drawn, sent, chunks_drawn, tiles_drawn, pattern_tris, drawn_clusters, cl_data, aspect } = self.g.draw(frame, &cam, &Transform::default());
@@ -716,7 +746,7 @@ fn view_box_count(cam: &Camera, aspect: f32, drawn: &[(&Mesh, DVec3)]) -> usize 
 
 impl PlanetLodApp {
     fn pitch_down(&self) -> f64 {
-        90.0 * (self.alt / TILT_HI).clamp(0.0, 1.0)
+        self.pitch.unwrap_or(90.0 * (self.alt / TILT_HI).clamp(0.0, 1.0))
     }
 
     /// The page's panel.

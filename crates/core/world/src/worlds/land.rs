@@ -202,6 +202,27 @@ pub struct Meta {
     pub tiles: Vec<Tile>,
     #[serde(default)]
     pub holes: Vec<Hole>,
+    /// How much steeper the ground is lit than it stands (`light_exaggeration`): heights over 0 by `land`,
+    /// under by `sea`, for the normals only (the geometry stays at its own height x). None: 1 and 1.
+    #[serde(default)]
+    pub light_exaggeration: Option<LightExaggeration>,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize)]
+pub struct LightExaggeration {
+    pub land: f64,
+    pub sea: f64,
+}
+
+impl Meta {
+    /// A height (m) as it is lit: scaled by `light_exaggeration`'s land or sea.
+    pub fn lit_height(&self, z: f64) -> f64 {
+        match self.light_exaggeration {
+            Some(l) if z >= 0.0 => z * l.land,
+            Some(l) => z * l.sea,
+            None => z,
+        }
+    }
 }
 
 fn default_branch() -> usize {

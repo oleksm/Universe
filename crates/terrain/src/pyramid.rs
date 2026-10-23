@@ -406,9 +406,10 @@ fn build_version(
             model.positions.push((p - origin).as_vec3());
             let (left, right) = (gi.saturating_sub(1), (gi + 1).min(data.n - 1));
             let (down, up) = (gj.saturating_sub(1), (gj + 1).min(data.n - 1));
-            let dx =
-                point(right, gj, t.k, data.z(right, gj)) - point(left, gj, t.k, data.z(left, gj));
-            let dy = point(gi, up, t.k, data.z(gi, up)) - point(gi, down, t.k, data.z(gi, down));
+            // (Lit as the package says: its heights scaled by its light exaggeration for the normals only.)
+            let lit = |i: usize, j: usize| point(i, j, t.k, source.m.lit_height(data.z(i, j)));
+            let dx = lit(right, gj) - lit(left, gj);
+            let dy = lit(gi, up) - lit(gi, down);
             model
                 .normals
                 .push(dx.cross(dy).normalize_or(p.normalize()).as_vec3());
@@ -1486,6 +1487,26 @@ mod tests {
         // (Drawn, a flat triangle's chord under this 1 km sphere: a 40 m tile's sags 40² / 8 R = 0.2 m, its
         // corners to its middle more; on a world's radius, millimetres.)
         assert!(drawn < plane && plane - drawn < 1.0, "{drawn} vs {plane}");
+    }
+    /// A package's light exaggeration steepens the normals, never the ground: positions as they were.
+    #[test]
+    fn pyramid_light_exaggeration_lights_steeper_at_true_height() {
+        let f = fixture_branch(2, 4);
+        let p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
+        let id = p.source.index[&(0, 0, 0)];
+        let (plain, ..) = build_model(&p.source, id, 1., true).unwrap();
+        let path = f.0.join("pyramid/pyramid.json");
+        let mut meta: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(&path).unwrap()).unwrap();
+        meta["light_exaggeration"] = serde_json::json!({"land": 13.0, "sea": 3.0});
+        std::fs::write(&path, meta.to_string()).unwrap();
+        let p = Pyramid::open(&f.0, 1000.).unwrap().unwrap();
+        let (lit, ..) = build_model(&p.source, id, 1., true).unwrap();
+        assert_eq!(plain.positions, lit.positions);
+        // (How far a normal leans from straight up, at a vertex in the middle of the tile.)
+        let lean = |m: &PoolModel, v: usize| m.normals[v].angle_between((m.positions[v].as_dvec3() + p.source.inverse(0.0, 0.0) * 1000.0).normalize().as_vec3());
+        let v = 2 * 5 + 2;
+        // (The fixture's ground is steep already, ~66°: lit thirteen times steeper, it leans close to level.)
+        assert!(lean(&lit, v) > lean(&plain, v) + 0.25 && lean(&lit, v) > 1.4, "{} vs {}", lean(&lit, v), lean(&plain, v));
     }
     #[test]
     fn pyramid_windowed_rows_mask_and_boundary_cover() {
