@@ -52,6 +52,10 @@ the engine's to edit (ships: diagnostics only, as now).
     (cold gas beside hydrolox) on the studio path, but the import path doesn't build a device fit. That is a step 7
     of this route if chosen.
   - CGS1's four named nozzles share 500 N a block: bind with record shares summing to the block, never 4 × 500 N.
+  - Nozzle orientation (`20261022T192447-ships-5373`): the importer reads a nozzle empty's glTF −Z (Blender +Y) as
+    its exhaust. CHS2 v2's `nozzle_CHS2_exit` sits at (0, −2.3, 0) with identity rotation and its bell along −Y,
+    so copying that marker's rotation into the hull would aim its exhaust along −Z, not −Y. Each hull nozzle empty
+    is placed at the real exit and turned so its −Z is the bell's axis outward.
 - Power and tanks sized for hydrolox (fuel cell or batteries; hydrolox tanks).
 
 ## Limits, stated
