@@ -10,6 +10,10 @@ sources:
 - document: docs/spaceship-building-workflow-proposal.md
   section: 5.1 Use the existing release state machine
   note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: 'Owner gear-integration correction, 2026-10-22: review whole-ship deployed/stowed bay/support silhouette
+    and ground height before detail; rejected packaging returns to G2/G3.'
 order: 2
 depends_on:
 - ship-stage.references
@@ -26,6 +30,10 @@ exit:
   or state requirements remain explicit before selection.
 - Direction includes connected crew routes and operating/staging space across intended ramp/door states before
   shape selection; unresolved human/suit/carry fixtures and recovery scope remain explicit.
+- Before gear or bay detail, review the integrated hull with deployed, stowed and transition gear/support/bay
+  reservations in registered side/front/underside silhouette and clay views at declared ground height. Explicitly
+  judge bay protrusion, belly continuity and mass hierarchy; isolated clearance envelopes cannot establish
+  whole-ship appearance.
 failure:
 - Keep alternatives; do not erase prior source or mix incompatible features silently.
 - Required route/module envelope conflict with hull space returns affected G2/G3 shape and arrangement; preserve
