@@ -29,8 +29,8 @@ sources:
     are not executed tests or ship acceptance.
 - document: docs/requests/ship-support-removal-orphan-20261023.yaml
   section: case_specifications
-  note: Owner support-removal/orphan correction,2026-10-23. One rejection and one permitted-scope specification;
-    no executed geometry test or ship acceptance.
+  note: Owner support-removal/orphan correction, 2026-10-23, followed by retained-panel correction5ee2. Two rejection
+    and one permitted-scope specifications; no executed geometry test or ship acceptance.
 method:
 - Reconcile expected versus actual component, state, interaction-pair and view rosters independently of checker
   name/parent filters; preserve hashes and classify every exclusion with a bounded reason.
@@ -79,6 +79,10 @@ method:
 - 'Required rejection case: a bridge support is removed while covers and duplicated markings remain floating, but
   a zero-hit moving-versus-fixed sweep is promoted to complete assembly acceptance. Reject the unsupported static/deletion-dependency
   claim. This is a case specification, not an executed result.'
+- 'Required intent-rejection case: an inspection panel is still required, but the repair deletes it to eliminate
+  an orphan. Retain and seat the intended panel and markings on each side against the current host; remove only
+  genuinely unwanted duplicates. Support disappearance alone does not make the panel obsolete. This is a review
+  specification, not an executed result.'
 evidence:
 - Assembly-state plan with independent expected/actual component/state/pair/view reconciliation and reasoned
   exclusions.
@@ -92,6 +96,9 @@ evidence:
 - Before/after support-host dependency roster, current source/build/export object dispositions including both sides
   and duplicate/hidden copies, replacement closure/function ownership and current static attachment witnesses. Keep
   moving-clash, static attachment and complete-assembly verdicts distinct.
+- Current owner/delivery retention intent and disposition per panel/marking, with replacement-host attachment/access
+  witnesses. Historical removal reports are explicitly withdrawn where superseded by a retained-and-seated repair;
+  no project seating/load acceptance follows from this definition.
 failure: Keep the candidate in failed or incomplete assembly review for the affected scope; retain witnesses and
   repair the owning geometry or missing coverage before dependent G4/G6 and release acceptance. Required failed
   or unknown intent, geometry or presentation prevents an overall completion claim. A correctly annotated target

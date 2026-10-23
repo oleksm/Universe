@@ -19,8 +19,8 @@ sources:
   note: Owner-authorized workflow definition; project values and results are not instantiated.
 - document: docs/requests/ship-support-removal-orphan-20261023.yaml
   section: case_specifications
-  note: Owner support-removal/orphan correction,2026-10-23. One rejection and one permitted-scope specification;
-    no executed geometry test or ship acceptance.
+  note: Owner support-removal/orphan correction, 2026-10-23, followed by retained-panel correction5ee2. Two rejection
+    and one permitted-scope specifications; no executed geometry test or ship acceptance.
 method:
 - Trace each component to a support and compatible interface.
 - Verify intended contact at joint surfaces separately from collision; check actual frame allocation and accounting
@@ -43,6 +43,10 @@ method:
 - 'Required rejection case: a bridge support is removed while covers and duplicated markings remain floating, but
   a zero-hit moving-versus-fixed sweep is promoted to complete assembly acceptance. Reject the unsupported static/deletion-dependency
   claim. This is a case specification, not an executed result.'
+- 'Required intent-rejection case: an inspection panel is still required, but the repair deletes it to eliminate
+  an orphan. Retain and seat the intended panel and markings on each side against the current host; remove only
+  genuinely unwanted duplicates. Support disappearance alone does not make the panel obsolete. This is a review
+  specification, not an executed result.'
 evidence:
 - Contact/access witnesses, interface references, BOM ownership and qualified/unqualified links.
 - Per-assembly intent/interface roster, current source/input hashes, actual local and assembled interface witnesses,
@@ -51,6 +55,9 @@ evidence:
 - Before/after support-host dependency roster, current source/build/export object dispositions including both sides
   and duplicate/hidden copies, replacement closure/function ownership and current static attachment witnesses. Keep
   moving-clash, static attachment and complete-assembly verdicts distinct.
+- Current owner/delivery retention intent and disposition per panel/marking, with replacement-host attachment/access
+  witnesses. Historical removal reports are explicitly withdrawn where superseded by a retained-and-seated repair;
+  no project seating/load acceptance follows from this definition.
 failure: Retain the failing witness and last passing candidate. Block only dependent claims/stages; repair or obtain
   the missing decision, then rerun affected checks. Missing, stale or unsupported required static attachments after
   support removal block the affected construction/assembly claim even when moving-part clearance passes. Preserve
