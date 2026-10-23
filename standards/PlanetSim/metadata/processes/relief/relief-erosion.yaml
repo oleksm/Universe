@@ -279,6 +279,38 @@ params:
   meaning: KREEP basalt (potassium, rare earths, phosphorus, thorium, uranium)
   source: ~/git/planet-sim-landform/src/planet_sim/stages/geology.py:23-51
   note: 'unit as the code says it: ''relative''; SI conversion unverified'
+- name: persistence.great-escarpment
+  value: 4.0
+  unit: '1'
+  meaning: 'Provisional dimensionless multiplier on the passive relief e-folding time for planet-feature.great-escarpment: tau = TAU0_MYR * persistence / max(erodibility * wetness, rate floor). Other kinds default to1; this is slower
+    modeled feature-relief decay, not a measured erosion law, active renewal or terrain feedback.'
+  source: 'planets, 22 Oct 2026: plan part C2 (e124 s44: 14 shoulders, 28 scarps, 8 escarpments made, all worn before today)'
+  open: true
+  note: Invented recognition/persistence setting from planet-forge b6ba0a2; review required. Does not itself prove active-suture passive-decay exclusion.
+- name: persistence.rift-shoulder
+  value: 2.5
+  unit: '1'
+  meaning: 'Provisional dimensionless multiplier on the passive relief e-folding time for planet-feature.rift-shoulder: tau = TAU0_MYR * persistence / max(erodibility * wetness, rate floor). Other kinds default to1; this is slower modeled
+    feature-relief decay, not a measured erosion law, active renewal or terrain feedback.'
+  source: 'planets, 22 Oct 2026: plan part C2 (e124 s44: 14 shoulders, 28 scarps, 8 escarpments made, all worn before today)'
+  open: true
+  note: Invented recognition/persistence setting from planet-forge b6ba0a2; review required. Does not itself prove active-suture passive-decay exclusion.
+- name: persistence.rift-floor-axis
+  value: 2.0
+  unit: '1'
+  meaning: 'Provisional dimensionless multiplier on the passive relief e-folding time for planet-feature.rift-floor-axis: tau = TAU0_MYR * persistence / max(erodibility * wetness, rate floor). Other kinds default to1; this is slower
+    modeled feature-relief decay, not a measured erosion law, active renewal or terrain feedback.'
+  source: 'planets, 22 Oct 2026: plan part C2 (e124 s44: 14 shoulders, 28 scarps, 8 escarpments made, all worn before today)'
+  open: true
+  note: Invented recognition/persistence setting from planet-forge b6ba0a2; review required. Does not itself prove active-suture passive-decay exclusion.
+- name: persistence.normal-fault-scarp
+  value: 1.5
+  unit: '1'
+  meaning: 'Provisional dimensionless multiplier on the passive relief e-folding time for planet-feature.normal-fault-scarp: tau = TAU0_MYR * persistence / max(erodibility * wetness, rate floor). Other kinds default to1; this is slower
+    modeled feature-relief decay, not a measured erosion law, active renewal or terrain feedback.'
+  source: 'planets, 22 Oct 2026: plan part C2 (e124 s44: 14 shoulders, 28 scarps, 8 escarpments made, all worn before today)'
+  open: true
+  note: Invented recognition/persistence setting from planet-forge b6ba0a2; review required. Does not itself prove active-suture passive-decay exclusion.
 invariants:
 - landmarks (marks) are never eroded here
 - worn lines are skipped thereafter
@@ -305,5 +337,13 @@ basis:
   - params
   tier: derived
   note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform 9747f0d-c437724.'
+- of:
+  - params
+  tier: invented
+  review: true
+  note: Four persistence.<kind> settings from planet-forge b6ba0a2 (e125), chosen to retain rift-relief features. Not calibrated to Earth lifetimes; other existing parameters unchanged. Planets reports terrain-identical e125/e124 and
+    retained s44relief; Registry reviewed the source formula but did not rerun those experiments.
 cautions:
 - 'the Python''s reads were its line store''s internals: geology.ERODIBILITY (per unit); w.hydro[''P''] (rain, m/yr); line meta relief0_m/relief_m'
+- 'The active-suture exclusion described above requires producer/consumer verification against b6ba0a2: its passive loop has no explicit FORMING exclusion. A persistence multiplier is not evidence that double decay is prevented. Registry
+  audit sent to Planets; no accepted fix is claimed here.'
