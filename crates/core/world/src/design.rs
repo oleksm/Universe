@@ -389,7 +389,9 @@ impl Design {
                 SlotKind::Drive => at(self.engines_at + 0.05),
                 SlotKind::Tank => at(self.tank_at),
                 SlotKind::Cargo => at(self.hold_at),
-                SlotKind::Computer | SlotKind::Transponder | SlotKind::Sensors | SlotKind::Comm | SlotKind::Avionics | SlotKind::LifeSupport => at(self.bridge_at),
+                SlotKind::Computer | SlotKind::Transponder | SlotKind::Sensors | SlotKind::Comm | SlotKind::Avionics | SlotKind::LifeSupport | SlotKind::Command => at(self.bridge_at),
+                // (A design's slots never include gear: its legs are its gear nodes.)
+                SlotKind::Gear => 0.0,
                 SlotKind::Thrusters => at(self.quads_at),
                 SlotKind::Lift => at(self.lift_at),
                 SlotKind::Hardpoint => at(-0.42),
@@ -470,7 +472,8 @@ pub(crate) fn stock_fit(slots: &[(String, SlotKind, u8)]) -> Result<Vec<(String,
     // (The tank must hold what the drive burns: the registry has propellant tanks for other engines (SFO 22), and the cheapest tank is a nitrogen bottle.)
     let mut fuel: Option<String> = None;
     for (name, kind, size) in slots {
-        if matches!(kind, SlotKind::Power | SlotKind::Hardpoint | SlotKind::Utility) {
+        // (Command and gear: fitted as a record says, never by default.)
+        if matches!(kind, SlotKind::Power | SlotKind::Hardpoint | SlotKind::Utility | SlotKind::Command | SlotKind::Gear) {
             continue;
         }
         let m = match (kind, &fuel) {

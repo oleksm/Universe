@@ -110,6 +110,12 @@ pub enum SlotKind {
     Utility,
     /// Nav computers.
     Avionics,
+    /// The command station (SFO 20, crewing): where the ship is flown from. Its fit is carried (mass, model);
+    /// nothing in the game works it yet.
+    Command,
+    /// Landing gear (SFO 15): a leg's product. Its fit is carried (mass, model); the legs the ground meets are
+    /// the hull's (`ground::struts`), its motion not made.
+    Gear,
 }
 
 impl SlotKind {
@@ -119,8 +125,9 @@ impl SlotKind {
         use SlotKind as G;
         match k {
             // (Fittings, SFO 20: ways in and out, bulk handling, heat. No game slot kind for them yet: not made.)
-            // (The command station's slot (SFO 20, crewing): where the ship is flown from. No game slot kind for it yet: not made.)
-            R::Gear | R::Access | R::Handling | R::Thermal | R::Command | R::Engine => None,
+            R::Access | R::Handling | R::Thermal | R::Engine => None,
+            R::Gear => Some(G::Gear),
+            R::Command => Some(G::Command),
             R::Power => Some(G::Power),
             R::Drive => Some(G::Drive),
             R::Thrusters => Some(G::Thrusters),
@@ -286,7 +293,12 @@ impl Module {
     }
 
     pub(crate) fn check(&self) -> Result<(), String> {
+        // (A carried command station or leg, unpriced, is at 0: never sold.)
+        let carried = matches!(self.does, Does::Inert { slot: SlotKind::Command | SlotKind::Gear });
         for (what, v) in [("mass", self.mass), ("volume", self.volume), ("price", self.price)] {
+            if what == "price" && carried && v == 0.0 {
+                continue;
+            }
             if !(v.is_finite() && v > 0.0) {
                 return Err(format!("{what} must be positive ({v})"));
             }

@@ -220,6 +220,59 @@ pub fn item(key: &str) -> Option<usize> {
 /// One unit of ore (kg).
 pub const TONNE: f64 = 1000.0;
 
+/// Where a registered hull's bare mass comes from: its record's `physical.mass`; its parts' (`built_of`, every
+/// one weighed, by itself or by its own parts); its parts' with some unweighed (those named: the sum is short); or
+/// nothing. Stock building falls back to a tonne for the last two (`TONNE`): no measurement, not for commissioning.
+#[derive(Clone, Debug, PartialEq)]
+pub enum HullMass {
+    Recorded(f64),
+    Parts(f64),
+    Partial { weighed: f64, unweighed: Vec<String> },
+    None,
+}
+
+impl HullMass {
+    /// The mass, if it is a whole one.
+    pub fn whole(&self) -> Option<f64> {
+        match self {
+            HullMass::Recorded(m) | HullMass::Parts(m) => Some(*m),
+            _ => None,
+        }
+    }
+}
+
+/// Hull `key`'s bare mass and where it comes from (None: no such hull).
+pub fn hull_mass(reg: &crate::registry::Registry, key: &str) -> Option<HullMass> {
+    let h = reg.hull(key)?;
+    if let Some(m) = h.physical.mass.filter(|m| *m > 0.0) {
+        return Some(HullMass::Recorded(m));
+    }
+    // (A part's mass: its own, else its parts' if every one of them is weighed; the unweighed named.)
+    fn weigh(reg: &crate::registry::Registry, key: &str, unweighed: &mut Vec<String>) -> f64 {
+        reg.built_of(key)
+            .iter()
+            .map(|(p, n)| {
+                let m = match p.physical.mass.filter(|m| *m > 0.0) {
+                    Some(m) => m,
+                    None if reg.built_of(&p.identity.key).is_empty() => {
+                        unweighed.push(p.identity.key.clone());
+                        0.0
+                    }
+                    None => weigh(reg, &p.identity.key, unweighed),
+                };
+                m * *n as f64
+            })
+            .sum()
+    }
+    let mut unweighed = Vec::new();
+    let weighed = weigh(reg, key, &mut unweighed);
+    Some(match (weighed > 0.0, unweighed.is_empty()) {
+        (true, true) => HullMass::Parts(weighed),
+        (false, true) => HullMass::None,
+        _ => HullMass::Partial { weighed, unweighed },
+    })
+}
+
 /// An ore the game's excavators dig: a stock item some rock class yields (`yields` or
 /// `rich_yields` on the registry's rock classes), by its index in the catalogue.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]

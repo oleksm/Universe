@@ -97,6 +97,18 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     // (A hull the registry describes by this model weighs what its parts do, at its price;
     // any other, by its size.)
 
+    // (A registered hull is commissioned at its measured mass only: never the tonne stock building falls back to.)
+    if let Some(h) = record {
+        match crate::goods::hull_mass(crate::registry::registry(), &h.identity.key) {
+            Some(crate::goods::HullMass::Partial { weighed, unweighed }) => {
+                return Err(format!("{}: its mass is partial ({weighed:.0} kg weighed; no mass for {})", h.identity.key, unweighed.join(", ")));
+            }
+            Some(crate::goods::HullMass::None) => {
+                return Err(format!("{}: no mass (neither physical.mass nor weighed parts)", h.identity.key));
+            }
+            _ => {}
+        }
+    }
     let recorded = record.and_then(|h| crate::goods::item(&h.identity.key)).map(|i| &content().stock[i]);
     let frame_mass = recorded.map_or(FRAME_PER_AREA * shape.solid.volume.powf(2.0 / 3.0), |h| h.mass);
     let price = recorded.map_or(PRICE_PER_KG * frame_mass + PRICE_PER_SLOT_SIZE * slots.iter().map(|s| f64::from(s.2)).sum::<f64>(), |h| h.price);
@@ -258,5 +270,29 @@ fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, ramp: bool, read:
     }
     for child in node.children() {
         walk(&child, m, blob, ramp, read);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// The MC-07 (its record names its model): its mass whole from its parts; its gear fit entries carried
+    /// (inert modules: their mass in its dry mass), not dropped; gear and command never fitted by default.
+    #[test]
+    fn import_keeps_recorded_gear_fit_and_its_mass() {
+        let reg = crate::registry::registry();
+        assert!(matches!(crate::goods::hull_mass(reg, "hull.mc-07"), Some(crate::goods::HullMass::Parts(m)) if m > 0.0));
+        let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../../assets/models/mc07.glb");
+        let Ok(bytes) = std::fs::read(path) else { return };
+        let spec = hull_from_gltf(&bytes, "assets/models/mc07.glb").unwrap();
+        let gear: Vec<(&str, &Module)> = spec.fit.iter().map(|(s, h)| (s.as_str(), content().get(*h))).filter(|(_, m)| m.does.slot() == crate::modules::SlotKind::Gear).collect();
+        let mut keys: Vec<&str> = gear.iter().map(|(_, m)| m.key.as_str()).collect();
+        keys.sort();
+        assert_eq!(keys, ["equipment.gear.front.mc07", "equipment.gear.front.mc07-right", "equipment.gear.rear.mc07", "equipment.gear.rear.mc07-right"]);
+        let modules: f64 = spec.fit.iter().map(|(_, h)| content().get(*h).mass).sum();
+        assert!((spec.dry_mass - spec.frame_mass - modules).abs() < 1e-6 && gear.iter().map(|g| g.1.mass).sum::<f64>() == 3972.0);
+        let slots = vec![("command".to_string(), crate::modules::SlotKind::Command, 1), ("gear_0".to_string(), crate::modules::SlotKind::Gear, 3)];
+        assert!(crate::design::stock_fit(&slots).is_err_and(|e| e.contains("power")), "nothing fitted to them; only the plant missing");
     }
 }

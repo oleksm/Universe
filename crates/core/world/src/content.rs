@@ -321,6 +321,7 @@ impl Content {
         }
         inherit_renamed_prices(&mut prices, &aliases)?;
         let price = |key: &str| prices.get(key).copied().ok_or_else(|| format!("prices.ron: no price for {key}"));
+        let carried = |d: &crate::modules::Does| matches!(d, crate::modules::Does::Inert { slot: crate::modules::SlotKind::Command | crate::modules::SlotKind::Gear });
         // Unimplemented equipment enters the playable catalogue only when explicitly
         // priced by game content. Do not invent prices for the registry's prototypes.
         // Modules: the registry's ship equipment, at the game's prices.
@@ -329,9 +330,17 @@ impl Content {
                 .equipment
                 .iter()
                 .filter_map(|e| Some((e, crate::modules::Module::from_record(e, 0.0)?)))
+                // (Command stations and landing gear are carried as a hull's record fits them, priced or not:
+                // unpriced at 0, never sold for that (what is sold is stock, at prices.ron's).)
                 .filter(|(e, m)| !matches!(m.does, crate::modules::Does::Inert { .. })
-                    || prices.contains_key(&e.identity.key))
-                .map(|(e, m)| Ok(crate::modules::Module { price: price(&e.identity.key)?, ..m }))
+                    || prices.contains_key(&e.identity.key)
+                    || (carried(&m.does) && {
+                        // (Unweighed or unsized, it can't be carried: its fit entries are held, as unpriced others are.)
+                        let whole = m.mass > 0.0 && m.volume > 0.0;
+                        if !whole { log::warn!("{}: carried, but no mass or volume; not in the catalogue", e.identity.key); }
+                        whole
+                    }))
+                .map(|(e, m)| Ok(crate::modules::Module { price: if carried(&m.does) && !prices.contains_key(&e.identity.key) { 0.0 } else { price(&e.identity.key)? }, ..m }))
                 .collect::<Result<Vec<_>, String>>()?,
         )?;
         // Structures: the registry's stations, ports, outposts, orbital sites and gate rings.
