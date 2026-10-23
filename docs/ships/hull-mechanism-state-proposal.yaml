@@ -1,0 +1,59 @@
+status: proposal-awaiting-engine-agreement
+request: 20261023T183305-engine-7c6f
+scope: Hull-owned mechanisms and exits in the hull record; product motion stays in its existing visual package.
+units:
+  translation: m
+  rotation: unit quaternion [x, y, z, w], x-unit 1
+pose_semantics:
+  kind_rest: Restore the immutable exported local transform; never the current posed transform.
+  kind_rigid: Absolute local translation and rotation relative to the exported node's parent, replacing its exported local TR.
+  scale: No scale or shear in state records. Exported scale must be compatible with rigid parent/child posing; importer checks it.
+  hierarchy: Apply all chosen local node targets once, then evaluate the scene hierarchy once. Parent movement carries children normally; do not apply a parent delta again to child world matrices.
+  capture: Convert authored target world matrices through inverse target-parent world matrix, then extract local TR in formal exported coordinates. Source-world matrices cannot be copied as local transforms.
+  timing: Discrete state changes only at this level; neither animation interpolation nor sweep/load safety is implied.
+hull_fields:
+  model_sha256: Exact GLB sha256; required with mechanism or exit declarations. Reject replaced bytes even at same path.
+  mechanisms:
+  - key: rear_ramp
+    kind: ramp
+    nodes: [RearRamp_Pivot, RearRamp_ExtensionPivot]
+    states:
+    - key: closed
+      poses:
+      - {node: RearRamp_Pivot, kind: rest}
+      - {node: RearRamp_ExtensionPivot, kind: rest}
+    - key: deployed
+      poses: []
+      note: Omitted here because no formal-export local TR measurements exist yet; this proposal is not a valid installed mechanism record.
+    default: closed
+    deploys_when: landed
+    contact: {node: RearRamp_Toe, ground: required}
+  exits:
+  - key: rear
+    kind: walk
+    requires: [{mechanism: rear_ramp, state: deployed}]
+  - key: belly
+    kind: climb
+    requires:
+    - {mechanism: crew_hatch, state: open}
+    - {mechanism: crew_ladder, state: deployed}
+    top: CrewLadder_Top
+    foot: CrewLadder_Foot
+registry_validation:
+- Keys unique within mechanisms, exits and each mechanism's states; default names an existing state.
+- Each declared node belongs to one mechanism; each state provides exactly one rest or rigid pose for every declared node and no undeclared node.
+- Translation components finite; quaternion components finite and norm one within a stated representation tolerance, never silently normalized from a bad declaration.
+- Each exit requirement names an existing mechanism and state, with no duplicate contradictory requirement.
+- A climb exit needs distinct top and foot marker names. Walk uses actual posed floors; no teleport fallback when its route is absent.
+- Mechanism declarations bind exact model path and hash. No active hull-instance mechanism claim is made by an illustrative declaration.
+consumer_validation:
+- Exact named nodes/markers exist once in the actual selected scene. Reject ambiguous duplicate names and incompatible transforms.
+- Check actual hierarchy and contacts/standable posed walk surfaces; record schema validity alone cannot establish attachment, boarding, containment or load rating.
+- Contact must be checked on a candidate deployed pose before committing it, with explicit terrain/clearance semantics agreed by Engine; do not evaluate the rest toe then call it deployed contact.
+- When exits exist but none is open/valid, do not restore the legacy hatch teleport. Legacy fallback is for hulls without explicit exit declarations.
+- Edited gear contact nodes belong to the actual deployed geometry and cannot inherit source catalogue load limits.
+open_consumer_decisions:
+- Exact ground-contact distance/slope/tolerance policy, terrain datum and tilted ground handling; no invented compliance value supplied here.
+- Gear default versus landed/deployed state selection at initial placement, and failure disposition when deployment contact is invalid.
+- Control sequencing for hatch/ladder, deployment recovery and refusal reasons; nearest open exit also needs a reachable route, not just distance.
+- Whether nonunit exported scale is refused or baked before capturing target-local TR; no hidden scaling of crew/modules.

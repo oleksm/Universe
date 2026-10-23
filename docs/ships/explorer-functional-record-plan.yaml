@@ -104,6 +104,8 @@ current_release:
     fit: Exact recorded fit, including explicitly empty; no cheapest-fit fallback for registered hull.
     stage: 'Uncommissioned if required fit/power/drive missing: shown/walked, not flown; whole mass remains mandatory.'
     evidence: /home/alexm/git/universe/changelog/2026-10-23-registered-stage.md
+    remaining_guard: Ships found hull_from_gltf still rejects a model with no main nozzle before stage assembly.
+      Engine fix and exact current-GLB regression pending; no fake nozzle allowed.
 catalogue_candidates:
 - key: equipment.engine.ch.s1
   source: standards/SFO/metadata/equipment/engine-ch-s1.yaml
