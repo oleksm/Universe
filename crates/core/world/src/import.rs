@@ -369,9 +369,8 @@ mod tests {
     fn import_engines_drive_as_they_point() {
         use crate::modules::SlotKind;
         use crate::ship::{ClassSpec, HullFrame, NozzleLink, Slot, ThrusterRole};
-        // (The methalox CA S1. The CH records' jets carry a little more than their fuel gives at their efficiency
-        // (S1 and S2 hydrolox, S3 and S4 methalox): held out of the catalogue until the registry mends them.)
-        assert!(["ch.s1", "ch.s2", "ch.s3", "ch.s4"].iter().all(|k| content().handle::<Module>(&format!("equipment.engine.{k}")).is_none()));
+        // (The CH records carried too, since their efficiencies were derived exactly from their jets (fso e35bd2cb3).)
+        assert!(["ch.s1", "ch.s2", "ch.s3", "ch.s4"].iter().all(|k| content().handle::<Module>(&format!("equipment.engine.{k}")).is_some()));
         let engine = content().handle::<Module>("equipment.engine.ca.s1").expect("the ca s1 engine is carried");
         let slot = |name: &str| Slot { name: name.into(), kind: SlotKind::Engine, size: 2, mount: None };
         // (A nozzle's push is opposite its exhaust: aft-firing pushes along the nose, −Z; down-firing pushes up.)
