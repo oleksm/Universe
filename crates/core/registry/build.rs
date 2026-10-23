@@ -311,11 +311,22 @@ impl Gen {
     fn reference(&mut self, r: &str, file: &Path) -> Ty {
         let (path, def) = r.split_once('#').unwrap_or((r, ""));
         let target = if path.is_empty() { file.to_path_buf() } else { file.parent().unwrap().join(path).canonicalize().unwrap_or_else(|e| panic!("{}: $ref {r}: {e}", file.display())) };
-        let def = def.trim_start_matches("/definitions/").to_string();
-        let node = self.files.get(&target).unwrap_or_else(|| panic!("{}: $ref {r}: no such schema", file.display()))["definitions"][def.as_str()].clone();
+        let schema = self.files.get(&target).unwrap_or_else(|| panic!("{}: $ref {r}: no such schema", file.display()));
+        // (A definition by its name, as most are; any other JSON pointer, `#/properties/signal`, by its path, typed
+        // under its last step's name.)
+        let (def, node) = match def.strip_prefix("/definitions/") {
+            Some(name) => (name.to_string(), schema["definitions"][name].clone()),
+            None => {
+                let mut at = schema;
+                for step in def.trim_start_matches('/').split('/') {
+                    at = &at[step.replace("~1", "/").replace("~0", "~").as_str()];
+                }
+                (def.rsplit('/').next().unwrap_or_default().to_string(), at.clone())
+            }
+        };
         assert!(!node.is_null(), "{}: $ref {r}: no such definition", file.display());
         // (A definition is typed once; a plain one, as what it is.)
-        let key = (target.clone(), def.clone());
+        let key = (target.clone(), r.split_once('#').map_or(String::new(), |x| x.1.to_string()));
         if let Some(name) = self.defs.get(&key).cloned() {
             return self.ty_of_named(&name, &node, &target);
         }
