@@ -11,6 +11,10 @@ sources:
   section: 3.5 Co-design cockpit, routes and hull
   note: Owner crew-pathway correction, 2026-10-21; state-bound traversal and operation, with requirement and
     fixture provenance.
+- document: docs/requests/ship-design-feedback-20261023.yaml
+  section: changes.access-before-mechanism
+  note: Owner-authorized earlier-decision/intent-first amendment, 2026-10-23. The 16 supplied case specifications
+    are not executed tests or ship acceptance.
 purpose: Plan continuous task routes and safe operating positions before hull and mechanism arrangement acceptance.
 contents:
 - 'Independent required origin/destination, task, actor/envelope and state roster: cockpit, cabin and exterior/exit;
@@ -36,6 +40,13 @@ contents:
   human/task review and runtime walking/operation status.
 - When required route space conflicts with hull shape, retain a region-bound G2/G3 reshape action, protected
   intent, unchanged envelope and stale downstream claims; unresolved criteria remain unknown.
+- 'Access location and complete opening finish: Compare access locations with plans and open/closed sections before
+  mechanism detail. Identify landing, loading route, branch/turn, operating space, ground connection and neighboring
+  compartments. Treat each opening as clear passage plus sill, jambs, header, thickness return and exterior closure.
+  Inspect at crew eye level for leftover strips, knife-like converging walls, abrupt steps and unfinished edges;
+  manifold meshes and zero collision samples alone do not establish usable or finished access.'
+- 'Required evidence for access location and complete opening finish: Opening sections, inside/outside eye-level
+  views and applicable geometry/route checks.'
 boundary: Planning may retain unknowns; no numerical compliance, population coverage, continuous motion or
   runtime route acceptance follows from this definition. Required unknowns block dependent acceptance.
 consumers:

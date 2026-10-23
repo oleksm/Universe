@@ -19,6 +19,14 @@ sources:
   section: 6.1 Use a complete evidence checklist
   note: 'Owner gear-integration correction, 2026-10-22: review whole-ship deployed/stowed bay/support silhouette
     and ground height before detail; rejected packaging returns to G2/G3.'
+- document: docs/requests/ship-design-feedback-20261023.yaml
+  section: changes.paired-symmetry
+  note: Owner-authorized earlier-decision/intent-first amendment, 2026-10-23. The 16 supplied case specifications
+    are not executed tests or ship acceptance.
+- document: docs/requests/ship-design-feedback-20261023.yaml
+  section: changes.three-outcomes
+  note: Owner-authorized earlier-decision/intent-first amendment, 2026-10-23. The 16 supplied case specifications
+    are not executed tests or ship acceptance.
 method:
 - Reconcile expected versus actual component, state, interaction-pair and view rosters independently of checker
   name/parent filters; preserve hashes and classify every exclusion with a bounded reason.
@@ -44,6 +52,19 @@ method:
 - Confirm early integrated gear/bay/support silhouette and ground-height review in the whole assembly before
   dependent detail. Recheck actual deployed, stowed and transition ground contacts, support junctions and ramp
   relation after arrangement changes; keep visual, clearance and load results separately required.
+- 'Assembly symmetry and exceptions: Declare symmetry by assembly and exceptions by intent. A symmetric feature
+  correction includes its counterpart, closures and dependent trim. Check mirrored world geometry and both visible
+  sides; legitimate asymmetric equipment must not be mirrored merely because the hull is symmetric.'
+- 'Separate intent, geometry and presentation: Report intent, geometry and presentation separately. Intent asks
+  whether the requested feature changed in the specified direction; geometry checks the affected closures, contacts
+  and applicable motion; presentation judges the close view and assembled ship. A technical pass cannot substitute
+  for either intent or visual judgment. Unknown or failed required outcomes prevent an overall completion claim.'
+- 'Required rejection example: One side repaired while declared symmetric counterpart and closure remain unchanged.
+  This is a review case specification, not an executed result.'
+- 'Required rejection example: Manifold knife-like opening edge accepted without passage-eye-level review. This
+  is a review case specification, not an executed result.'
+- 'Permitted scoped example: Explicit asymmetric feature retained while symmetric hull opening is repaired on both
+  sides. This is a review case specification, not an executed result.'
 evidence:
 - Assembly-state plan with independent expected/actual component/state/pair/view reconciliation and reasoned
   exclusions.
@@ -51,8 +72,14 @@ evidence:
   measurements and worst-case poses.
 - Aggregate result explicitly bounded to measured coverage; partial results and unresolved consumer/continuous-motion
   claims retained.
-failure: Keep the candidate in failed or incomplete assembly review for the affected scope; retain witnesses
-  and repair the owning geometry or missing coverage before dependent G4/G6 and release acceptance.
+- Named counterpart roster, declared plane and paired before/after inspection.
+- Separate current intent/geometry/presentation outcomes with exact target, source, camera/state, measured change,
+  applicable scope and reviewer authority. Manual visual judgments are not synthetic beauty scores.
+failure: Keep the candidate in failed or incomplete assembly review for the affected scope; retain witnesses and
+  repair the owning geometry or missing coverage before dependent G4/G6 and release acceptance. Required failed
+  or unknown intent, geometry or presentation prevents an overall completion claim. A correctly annotated target
+  whose actual changed/exported geometry affects another feature remains an intent failure. Preserve authorized
+  limited-study scope and existing owner/delegate authority.
 scope: assembly
 artifacts:
 - ship-artifact.assembly-state-plan

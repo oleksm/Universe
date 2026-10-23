@@ -16,84 +16,93 @@ sources:
   section: 3.5 Co-design cockpit, routes and hull
   note: 'Owner deferred-module correction,2026-10-22: correct reuse/ownership does not authorize current inclusion;
     defer geometry from source/render/export while retaining future clearance data.'
+- document: docs/requests/ship-design-feedback-20261023.yaml
+  section: changes.delivery-scope
+  note: Owner-authorized earlier-decision/intent-first amendment, 2026-10-23. The 16 supplied case specifications
+    are not executed tests or ship acceptance.
 statement: 'Before G3 aisle, cabin or cockpit sizing, discover reusable modules for the agreed functions. Search
-  the current registry and the actual Studio/runtime catalogue; inspect installed model availability and the
-  supported placement consumer. Record candidate keys, record revision/hash, real envelope, mass, mount/port
-  frames, service and removal clearances, model manifest/version/hash and consumer revision. Discovery is not
-  selection: draft, outdated, held or missing models remain explicit limitations. Do not infer an endurance
-  or habitation requirement from the existence of a module.
+  the current registry and the actual Studio/runtime catalogue; inspect installed model availability and the supported
+  placement consumer. Record candidate keys, record revision/hash, real envelope, mass, mount/port frames, service
+  and removal clearances, model manifest/version/hash and consumer revision. Discovery is not selection: draft,
+  outdated, held or missing models remain explicit limitations. Do not infer an endurance or habitation requirement
+  from the existence of a module.
 
 
-  For each selected product, keep one stable instance ID linked to its existing equipment record and installed
-  model, with its supported transform and one BOM entry. Pilot seats and command consoles are included in this
-  reuse rule. Do not author furniture substitutes, bake model copies into the hull, shrink modules to fit,
-  or count the same physical instance in both hull and module BOMs. A displayed copy for authoring is a reference
-  instance with retained provenance, not newly owned hull geometry. Use the actual consumer origin/bounds-centre
-  and mount frame; an editor envelope does not rescale or qualify the model.
+  For each selected product, keep one stable instance ID linked to its existing equipment record and installed model,
+  with its supported transform and one BOM entry. Pilot seats and command consoles are included in this reuse rule.
+  Do not author furniture substitutes, bake model copies into the hull, shrink modules to fit, or count the same
+  physical instance in both hull and module BOMs. A displayed copy for authoring is a reference instance with retained
+  provenance, not newly owned hull geometry. Use the actual consumer origin/bounds-centre and mount frame; an editor
+  envelope does not rescale or qualify the model.
 
 
-  Declare ownership before modelling: hull shell, ribs, apertures and hull mechanisms remain hull geometry;
-  equipment remains reusable product instances. Floors, linings, doors and fixtures require an explicit ownership
-  and consumer decision. Current editable deck floor/wall polygons are walking architecture, not proof of stocked
-  panel, shoe, clamp or lining installation. Stock-built structure and modular deck products keep their own
-  identities and quantities. Avoid coincident hull/deck floors, double collision surfaces and duplicated BOM
-  items. Do not rename a built-in module as hull lining to bypass reuse.
+  Declare ownership before modelling: hull shell, ribs, apertures and hull mechanisms remain hull geometry; equipment
+  remains reusable product instances. Floors, linings, doors and fixtures require an explicit ownership and consumer
+  decision. Current editable deck floor/wall polygons are walking architecture, not proof of stocked panel, shoe,
+  clamp or lining installation. Stock-built structure and modular deck products keep their own identities and quantities.
+  Avoid coincident hull/deck floors, double collision surfaces and duplicated BOM items. Do not rename a built-in
+  module as hull lining to bypass reuse.
 
 
-  If selection is unresolved, use clearly labelled non-exported space and motion reservations only. A proxy
-  cannot count as installed equipment, satisfy its function or supply mass, power, service or capacity ratings.
-  If no suitable product, installed model or consumer placement exists, record a gap, affected requirement
-  and owner; escalate to Registry/Ships for reuse alternatives or a separately authorized new-module proposal.
-  A missing module is not permission to fabricate one. Continue independent hull/access work without passing
-  dependent arrangement or release gates.
+  If selection is unresolved, use clearly labelled non-exported space and motion reservations only. A proxy cannot
+  count as installed equipment, satisfy its function or supply mass, power, service or capacity ratings. If no suitable
+  product, installed model or consumer placement exists, record a gap, affected requirement and owner; escalate
+  to Registry/Ships for reuse alternatives or a separately authorized new-module proposal. A missing module is not
+  permission to fabricate one. Continue independent hull/access work without passing dependent arrangement or release
+  gates.
 
 
   Before G3 acceptance, validate the selected instance inventory against the actual consumer: registry equipment
   keys, poses, slot/fit restrictions, model frames, mounts, ports, services, access and removal paths. A hull-free
   layout study and a hull-bound fit have different consumer prerequisites. The maintained ship schema is unchanged;
-  schema success does not prove catalogue lookup, physical installation or load transfer. Test rejection of
-  unsearched inventory, duplicate baked mesh/BOM ownership, a reservation promoted to installed equipment and
-  a missing-module gap used to justify fabrication. Label declaration tests separately from actual geometry,
-  placement and runtime checks.
+  schema success does not prove catalogue lookup, physical installation or load transfer. Test rejection of unsearched
+  inventory, duplicate baked mesh/BOM ownership, a reservation promoted to installed equipment and a missing-module
+  gap used to justify fabrication. Label declaration tests separately from actual geometry, placement and runtime
+  checks.
 
 
-  Apply the reuse audit to inherited geometry as well as new builds. Before continuing a resumed candidate,
-  inventory every source object, linked asset, collection and build-script output by semantic owner: hull construction,
-  referenced product instance or non-exported helper/reservation. Include the inherited pilot seat/console,
-  hidden objects and disabled export collections; a name-prefix check is not a complete ownership audit. Retire
-  custom substitutes from the active source and build path, prevent regeneration, and mark their renders/exports
-  withdrawn. Preserve history, but invalidate dependent previews, exports, mass/BOM, arrangement and clearance
-  evidence until regenerated from the corrected inputs.
+  Apply the reuse audit to inherited geometry as well as new builds. Before continuing a resumed candidate, inventory
+  every source object, linked asset, collection and build-script output by semantic owner: hull construction, referenced
+  product instance or non-exported helper/reservation. Include the inherited pilot seat/console, hidden objects
+  and disabled export collections; a name-prefix check is not a complete ownership audit. Retire custom substitutes
+  from the active source and build path, prevent regeneration, and mark their renders/exports withdrawn. Preserve
+  history, but invalidate dependent previews, exports, mass/BOM, arrangement and clearance evidence until regenerated
+  from the corrected inputs.
 
 
-  For every selected module, including the command station, QC uses the actual referenced model and record
-  in the supported consumer frame, without scale-to-fit. Assess occupied volume and interference; mount, holder
-  and fastener/tool space; installation and removal paths; user approach, reach and emergency egress; full
-  required motion and combined states; and maintenance/service access, connectors and flexible runs. Envelope
-  boxes alone do not prove containment, clearance or a usable path. Test actual geometry and relevant swept
-  volumes, and retain worst-case pose/region witnesses and sampling limits.
+  For every selected module, including the command station, QC uses the actual referenced model and record in the
+  supported consumer frame, without scale-to-fit. Assess occupied volume and interference; mount, holder and fastener/tool
+  space; installation and removal paths; user approach, reach and emergency egress; full required motion and combined
+  states; and maintenance/service access, connectors and flexible runs. Envelope boxes alone do not prove containment,
+  clearance or a usable path. Test actual geometry and relevant swept volumes, and retain worst-case pose/region
+  witnesses and sampling limits.
 
 
   Each clearance requirement and allowance records its source and authority: a published record/consumer requirement,
   a derived value with method or an explicitly provisional project assumption. Do not invent universal clearance
   distances or promote a provisional figure into a certified requirement. Missing model, frame, holder, fastener,
-  human/suit fixture, motion or service data remains unresolved and blocks the dependent claim; it is not zero
-  clearance, not applicable or pass by default. A reasoned not-applicable disposition needs evidence. Recheck
-  affected clearances after placement, source/model, mount, route, ownership or export changes. Declaration
-  counterexamples include an inherited pilot substitute, an unknown required clearance marked pass and scaled
-  reference geometry presented as unchanged equipment.
+  human/suit fixture, motion or service data remains unresolved and blocks the dependent claim; it is not zero clearance,
+  not applicable or pass by default. A reasoned not-applicable disposition needs evidence. Recheck affected clearances
+  after placement, source/model, mount, route, ownership or export changes. Declaration counterexamples include
+  an inherited pilot substitute, an unknown required clearance marked pass and scaled reference geometry presented
+  as unchanged equipment.
 
 
-  Treat module discovery, future arrangement selection and current delivery inclusion as separate decisions.
-  For each candidate, record a per-delivery ledger of included/installed versus deferred instances and the
-  authority for that scope. Correctly reusing an existing catalogue seat, dash or other product does not authorize
-  displaying or installing it now. If the delivery defers it, remove its geometry and copies/proxies from the
-  active delivered source, render scene and export, including hidden objects, linked instances and disabled
-  collections, and prevent the build from regenerating them. Keep immutable library assets intact; retain product
-  identity, dimensions, hashes, tentative poses and required future clearance data separately. Do not render
-  a reservation as installed equipment or infer future fit/function from its absence. Reconcile actual source/build/render/export
-  and BOM/fit rosters against the ledger, invalidate withdrawn previews and preserve unresolved future module/operational
-  gates. A limited hull study may proceed in its stated scope while deferred equipment remains uninstalled.'
+  Treat module discovery, future arrangement selection and current delivery inclusion as separate decisions. For
+  each candidate, record a per-delivery ledger of included/installed versus deferred instances and the authority
+  for that scope. Correctly reusing an existing catalogue seat, dash or other product does not authorize displaying
+  or installing it now. If the delivery defers it, remove its geometry and copies/proxies from the active delivered
+  source, render scene and export, including hidden objects, linked instances and disabled collections, and prevent
+  the build from regenerating them. Keep immutable library assets intact; retain product identity, dimensions, hashes,
+  tentative poses and required future clearance data separately. Do not render a reservation as installed equipment
+  or infer future fit/function from its absence. Reconcile actual source/build/render/export and BOM/fit rosters
+  against the ledger, invalidate withdrawn previews and preserve unresolved future module/operational gates. A limited
+  hull study may proceed in its stated scope while deferred equipment remains uninstalled.
+
+
+  Current delivery inclusion scope: Enforce the existing included/deferred ledger on actual inherited, hidden, generated,
+  rendered and exported objects. Future command seat/dashboard and other deferred equipment stay absent; preserve
+  reference clearance data separately. Catalogue reuse alone is not permission to include a module.'
 applies_to:
 - G3 arrangement, cockpit and interior fit-out, and material revisions affecting module allocation.
 verification:
@@ -108,6 +117,10 @@ verification:
 - Reconcile per-delivery installed/deferred scope with actual source objects, build outputs, renders, export
   and BOM/fit roster. Catalogue ownership, selection for a future arrangement or correct reuse does not authorize
   current inclusion; hidden/disabled geometry still counts as present in the source.
+- Verify current delivery inclusion scope against the current declared source, scope, required states and applicable
+  evidence; unknowns do not establish the dependent claim.
+- 'Required rejection example: Deferred command seat exists as a hidden inherited object or procedural substitute.
+  This is a review case specification, not an executed result.'
 limitations:
 - A definition or declaration check does not allocate a module, prove geometric fit or implement an unsupported
   placement/holder layer.

@@ -24,6 +24,26 @@ sources:
   section: 6.1 Use a complete evidence checklist
   note: 'Owner gear-shape correction,2026-10-22: review unsupported volume/blank bulk so local gear packaging
     cannot pass by inflating the whole hull.'
+- document: docs/requests/ship-design-feedback-20261023.yaml
+  section: changes.exact-edit-target
+  note: Owner-authorized earlier-decision/intent-first amendment, 2026-10-23. The 16 supplied case specifications
+    are not executed tests or ship acceptance.
+- document: docs/requests/ship-design-feedback-20261023.yaml
+  section: changes.profile-operation
+  note: Owner-authorized earlier-decision/intent-first amendment, 2026-10-23. The 16 supplied case specifications
+    are not executed tests or ship acceptance.
+- document: docs/requests/ship-design-feedback-20261023.yaml
+  section: changes.gear-derived-bays
+  note: Owner-authorized earlier-decision/intent-first amendment, 2026-10-23. The 16 supplied case specifications
+    are not executed tests or ship acceptance.
+- document: docs/requests/ship-design-feedback-20261023.yaml
+  section: changes.early-finish-sample
+  note: Owner-authorized earlier-decision/intent-first amendment, 2026-10-23. The 16 supplied case specifications
+    are not executed tests or ship acceptance.
+- document: docs/requests/ship-design-feedback-20261023.yaml
+  section: changes.three-outcomes
+  note: Owner-authorized earlier-decision/intent-first amendment, 2026-10-23. The 16 supplied case specifications
+    are not executed tests or ship acceptance.
 method:
 - Compare registered full-ship views and protected landmarks against the selected candidate.
 - Inspect thumbnail silhouette and declared camera distances; expose inferred reference regions.
@@ -70,6 +90,42 @@ method:
   sections annotated with actual cabin, gear and support reservations. Identify blank bulk, oversized closure
   faces and needless repetition of a full section; distinguish required functional volume, deliberate aesthetic
   mass and unsupported padding. A local gear fit does not pass whole-body hierarchy.
+- 'Viewport-directed correction: For viewport-directed corrections, capture the current camera/state, identify the
+  actual object and feature by picking geometry, and bind the proposed operation to that feature. Show an annotated
+  target or selected outline when ambiguous. After an owner correction reveals a misunderstanding, resolve the target
+  before any further speculative cut. Do not demand confirmation for every routine edit.'
+- 'Profile operation and baseline: Establish assembled nose, glazing, belly and shoulder profiles before detail.
+  Record accepted and rejected examples as project preferences, not universal style laws. For prolong/shorten/raise
+  edits, identify axis, fixed landmarks, preserved slopes or tangencies, intersection and percentage baseline. Incremental
+  percentages use the stated current or selected baseline; never silently change it.'
+- 'Actual gear-derived local bays: Derive local bay candidates from actual unscaled deployed/stowed/swept gear with
+  explicit clearance allowances. Review belly continuity, protrusion and ground height in the assembled hull before
+  detail. Existing gear-state and volume-purpose rules remain authoritative; do not inflate the whole cabin or treat
+  a compressed demonstration pose as qualified powered stowage.'
+- 'Early assembled finish sample: Before design lock and repeated surface detail, show a small coherent sample on
+  the current assembled hull covering glazing, paint blocks, lights, seams and edge treatment. Carry accepted choices
+  into production. A finish sample is not permission to polish a rejected primary shape. No mandatory angularity,
+  headlight ratio or universal colour scheme is implied.'
+- 'Separate intent, geometry and presentation: Report intent, geometry and presentation separately. Intent asks
+  whether the requested feature changed in the specified direction; geometry checks the affected closures, contacts
+  and applicable motion; presentation judges the close view and assembled ship. A technical pass cannot substitute
+  for either intent or visual judgment. Unknown or failed required outcomes prevent an overall completion claim.'
+- 'Required rejection example: Correctly capped floor sill offered as completion of a vertical-jamb trim. This is
+  a review case specification, not an executed result.'
+- 'Required rejection example: Target annotation identifies the jamb but measured/exported edits affect only the
+  sill. This is a review case specification, not an executed result.'
+- 'Required rejection example: Geometry matches but before/after camera changed enough to hide the untouched target.
+  This is a review case specification, not an executed result.'
+- 'Required rejection example: Prolong nose by changing the protected windshield slope instead of extending it.
+  This is a review case specification, not an executed result.'
+- 'Required rejection example: Bay sized from compressed demo gear while retraction authority remains unresolved.
+  This is a review case specification, not an executed result.'
+- 'Required rejection example: Finish judged on an isolated light while its complete-ship proportions remain unreviewed.
+  This is a review case specification, not an executed result.'
+- 'Required rejection example: Intent failed or presentation unknown but summary declares all-clear from geometry
+  checks. This is a review case specification, not an executed result.'
+- 'Permitted scoped example: Owner-authorized limited visual study with technical qualifications explicitly unresolved.
+  This is a review case specification, not an executed result.'
 evidence:
 - Decision packet, views, reference provenance and owner/delegate decision bound to candidate.
 - Post-reshape side/top/front silhouette and clay comparison packet, original intent witnesses, current landmark
@@ -85,12 +141,18 @@ evidence:
 - Before/after section and assembled-view packet with changed volumes traced to independent requirements or
   explicit aesthetic intent, alternatives considered and scoped reviewer judgment. No universal fill fraction
   or minimum occupied-volume ratio substitutes for that review.
-failure: Retain the visual witness and prior candidates. Identity lost or unresolved after clearance-driven
-  reshaping returns the affected G2/G3 form/arrangement to review and blocks dependent architecture/detail/export
-  acceptance even if clearance passes. Preserve applicable required envelopes and original intent; escalate
-  genuine incompatibilities. A missing required feature, stale view or synthetic coverage pass cannot close
-  visual identity. Existing owner/delegate authority persists. Rejected integrated gear/bay/support shape or
-  ground-height appearance returns affected G2/G3 packaging; recolour does not close it.
+- Same-camera before/after plus target object/feature and measured change.
+- Construction-line profile and before/after landmark coordinates.
+- Separate current intent/geometry/presentation outcomes with exact target, source, camera/state, measured change,
+  applicable scope and reviewer authority. Manual visual judgments are not synthetic beauty scores.
+failure: Retain the visual witness and prior candidates. Identity lost or unresolved after clearance-driven reshaping
+  returns the affected G2/G3 form/arrangement to review and blocks dependent architecture/detail/export acceptance
+  even if clearance passes. Preserve applicable required envelopes and original intent; escalate genuine incompatibilities.
+  A missing required feature, stale view or synthetic coverage pass cannot close visual identity. Existing owner/delegate
+  authority persists. Rejected integrated gear/bay/support shape or ground-height appearance returns affected G2/G3
+  packaging; recolour does not close it. Required failed or unknown intent, geometry or presentation prevents an
+  overall completion claim. A correctly annotated target whose actual changed/exported geometry affects another
+  feature remains an intent failure. Preserve authorized limited-study scope and existing owner/delegate authority.
 scope: visual
 artifacts:
 - ship-artifact.reference-atlas

@@ -1,0 +1,96 @@
+title: Earlier ship design decisions and intent-first local QC
+authority: Owner approved the proposed workflow changes on 2026-10-23.
+status: ready-for-registry-integration
+scope: Amend existing SpaceshipBuilding definitions; no new approval system, runtime schema or ship acceptance.
+problem: Geometry checks repeatedly passed edits to the wrong feature; paired changes were missed and visual decisions arrived after detail.
+sequence:
+  - Brief and delivery inclusion/deferment scope
+  - Profile and assembled-part proposals
+  - Access, gear and module-reservation blockout
+  - Integrated visual review
+  - Finish and detail sample on the actual hull
+  - Detailed geometry
+  - Local and whole-ship QC
+changes:
+  - id: exact-edit-target
+    records: [ship-rule.local-regeneration, ship-check.identity]
+    requirement: >-
+      For viewport-directed corrections, capture the current camera/state, identify the actual object and
+      feature by picking geometry, and bind the proposed operation to that feature. Show an annotated
+      target or selected outline when ambiguous. After an owner correction reveals a misunderstanding,
+      resolve the target before any further speculative cut. Do not demand confirmation for every routine edit.
+    evidence: Same-camera before/after plus target object/feature and measured change.
+  - id: profile-operation
+    records: [ship-artifact.silhouette-study, ship-check.identity, ship-rule.local-regeneration]
+    requirement: >-
+      Establish assembled nose, glazing, belly and shoulder profiles before detail. Record accepted and
+      rejected examples as project preferences, not universal style laws. For prolong/shorten/raise edits,
+      identify axis, fixed landmarks, preserved slopes or tangencies, intersection and percentage baseline.
+      Incremental percentages use the stated current or selected baseline; never silently change it.
+    evidence: Construction-line profile and before/after landmark coordinates.
+  - id: paired-symmetry
+    records: [ship-rule.local-regeneration, ship-check.assembly-state-coverage]
+    requirement: >-
+      Declare symmetry by assembly and exceptions by intent. A symmetric feature correction includes its
+      counterpart, closures and dependent trim. Check mirrored world geometry and both visible sides;
+      legitimate asymmetric equipment must not be mirrored merely because the hull is symmetric.
+    evidence: Named counterpart roster, declared plane and paired before/after inspection.
+  - id: access-before-mechanism
+    records: [ship-artifact.crew-route-plan, ship-artifact.assembly-state-plan, ship-rule.construction-and-detail]
+    requirement: >-
+      Compare access locations with plans and open/closed sections before mechanism detail. Identify
+      landing, loading route, branch/turn, operating space, ground connection and neighboring compartments.
+      Treat each opening as clear passage plus sill, jambs, header, thickness return and exterior closure.
+      Inspect at crew eye level for leftover strips, knife-like converging walls, abrupt steps and unfinished
+      edges; manifold meshes and zero collision samples alone do not establish usable or finished access.
+    evidence: Opening sections, inside/outside eye-level views and applicable geometry/route checks.
+  - id: gear-derived-bays
+    records: [ship-artifact.assembly-state-plan, ship-check.identity]
+    requirement: >-
+      Derive local bay candidates from actual unscaled deployed/stowed/swept gear with explicit clearance
+      allowances. Review belly continuity, protrusion and ground height in the assembled hull before detail.
+      Existing gear-state and volume-purpose rules remain authoritative; do not inflate the whole cabin or
+      treat a compressed demonstration pose as qualified powered stowage.
+  - id: delivery-scope
+    records: [ship-rule.module-reuse, ship-artifact.module-inventory]
+    requirement: >-
+      Enforce the existing included/deferred ledger on actual inherited, hidden, generated, rendered and
+      exported objects. Future command seat/dashboard and other deferred equipment stay absent; preserve
+      reference clearance data separately. Catalogue reuse alone is not permission to include a module.
+  - id: early-finish-sample
+    records: [ship-stage.design-lock, ship-rule.construction-and-detail, ship-check.identity]
+    requirement: >-
+      Before design lock and repeated surface detail, show a small coherent sample on the current assembled
+      hull covering glazing, paint blocks, lights, seams and edge treatment. Carry accepted choices into
+      production. A finish sample is not permission to polish a rejected primary shape. No mandatory
+      angularity, headlight ratio or universal colour scheme is implied.
+  - id: three-outcomes
+    records: [ship-check.identity, ship-check.assembly-state-coverage, ship-rule.local-regeneration]
+    requirement: >-
+      Report intent, geometry and presentation separately. Intent asks whether the requested feature changed
+      in the specified direction; geometry checks the affected closures, contacts and applicable motion;
+      presentation judges the close view and assembled ship. A technical pass cannot substitute for either
+      intent or visual judgment. Unknown or failed required outcomes prevent an overall completion claim.
+    authority: Existing owner/delegate authority persists; manual visual judgments are not synthetic beauty scores.
+counterexamples:
+  reject:
+    - Correctly capped floor sill offered as completion of a vertical-jamb trim.
+    - Target annotation identifies the jamb but measured/exported edits affect only the sill.
+    - One side repaired while declared symmetric counterpart and closure remain unchanged.
+    - Geometry matches but before/after camera changed enough to hide the untouched target.
+    - Prolong nose by changing the protected windshield slope instead of extending it.
+    - Percentage adjustment uses an unstated or stale baseline.
+    - Manifold knife-like opening edge accepted without passage-eye-level review.
+    - Bay sized from compressed demo gear while retraction authority remains unresolved.
+    - Deferred command seat exists as a hidden inherited object or procedural substitute.
+    - Finish judged on an isolated light while its complete-ship proportions remain unreviewed.
+    - Intent failed or presentation unknown but summary declares all-clear from geometry checks.
+    - Repeated wrong-target edits proceed after owner correction without target disambiguation.
+  allow:
+    - Scoped routine change with unambiguous target, paired counterpart and current local evidence.
+    - Explicit asymmetric feature retained while symmetric hull opening is repaired on both sides.
+    - Owner-authorized limited visual study with technical qualifications explicitly unresolved.
+    - Finish sample accepted within its scope while unrelated production gates remain pending.
+validation_scope: >-
+  Counterexamples above are test specifications, not executed tests or acceptance evidence. Registry should
+  integrate them into existing checks where applicable and report actual executed checks separately.
