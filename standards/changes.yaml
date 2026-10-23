@@ -2790,7 +2790,7 @@
 - { record: planet-process.recent-rivers, at: "2026-10-17T22:25:37Z", status: "", summary: "changed: reads, writes, params, implementations, basis, cautions", sha: "6c14fd5a025b9899" }
 - { record: planet-process.recent-shorelines, at: "2026-10-17T22:25:37Z", status: "", summary: "changed: reads, implementations, basis", sha: "dbd7af9426ba36cd" }
 - { record: planet-process.region-rock-map, at: "2026-10-17T19:32:13Z", status: "", summary: "changed: reads", sha: "f46a82e0e4c1413d" }
-- { record: planet-process.relief-erosion, at: "2026-10-20T13:25:24Z", status: "", summary: "changed", sha: "9696f0fbf5a6f5ac" }
+- { record: planet-process.relief-erosion, at: "2026-10-23T04:57:03Z", status: "", summary: "changed: params, basis, cautions", sha: "1ff82467efe23293" }
 - { record: planet-process.relief-feature-record, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "d24386122f374c34" }
 - { record: planet-process.relief-field, at: "2026-10-18T05:21:37Z", status: "", summary: "changed: params", sha: "56310df36a16deda" }
 - { record: planet-process.relief-folds, at: "2026-10-18T04:31:28Z", status: "", summary: "changed: params", sha: "6239f9c88bcdbdf3" }
