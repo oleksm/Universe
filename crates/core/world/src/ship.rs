@@ -110,6 +110,9 @@ pub struct ClassSpec {
     /// Built to fly: its base blocks there and its power enough (false: a stage before that, shown and walked, not
     /// flown; `limits` says why).
     pub commissioned: bool,
+    /// Its record's mechanisms and exits, bound to its model's exact bytes (`mechanisms::bind`); None: it declares
+    /// none (the legacy ramp and hatch, read by name).
+    pub mechanisms: Option<std::sync::Arc<crate::mechanisms::Bound>>,
     /// Propellants of its own, apart from its fuel (cold nitrogen beside hydrolox): a ship of this class draws
     /// them through its device state (`Ship::own_propellants`).
     pub propellants: Vec<crate::ship_devices::Propellant>,
@@ -841,6 +844,7 @@ impl ClassSpec {
             crowded,
             limits,
             commissioned: validate_install,
+            mechanisms: None,
             propellants,
             rest: Vec::new(),
             radius: frame.radius,

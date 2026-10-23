@@ -35,6 +35,7 @@ pub mod hyperdrive;
 pub mod hypernet;
 pub mod import;
 pub mod materials;
+pub mod mechanisms;
 pub mod legs;
 pub mod mining;
 pub mod missiles;

@@ -157,6 +157,9 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
         }
         Err(e) => return Err(e),
     };
+    // (Its mechanisms and exits bound to these exact bytes, or the import refused: no pose attaches to a model it
+    // wasn't authored on.)
+    spec.mechanisms = record.map(|h| crate::mechanisms::bind(bytes, h)).transpose()?.flatten().map(std::sync::Arc::new);
     spec.shape_own = Some(shape);
     spec.visual = Some(visual.to_string());
     Ok(spec)
