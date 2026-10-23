@@ -105,8 +105,9 @@ pub struct PlanetLodApp {
     pitch: Option<f64>,
     fov: f64,
     sun: Option<DVec3>,
-    /// `look=raw`: the screen without the film curve (AgX and its look), the light gamma-encoded as it is: for
-    /// comparing with the lab's views, which have none.
+    /// The screen without the film curve (AgX and its look: its lifted darks read as a blue haze over a far world),
+    /// the light gamma-encoded as it is, as the lab's views are: the default (the owner, 2026-10-23); `look=film`
+    /// puts the game's curve back.
     raw_look: bool,
     easing: bool,
     /// UNIVERSE_PLANETLOD_FLY: the camera descends and drifts by itself (captures ignore the keys);
@@ -228,7 +229,7 @@ impl PlanetLodApp {
             pitch: None,
             fov: 50.0,
             sun: None,
-            raw_look: false,
+            raw_look: true,
             easing: false,
             fly: crate::devenv::var_os("UNIVERSE_PLANETLOD_FLY").is_some(),
             pan: crate::devenv::var("UNIVERSE_PLANETLOD_FLY").is_ok_and(|v| v == "pan"),
@@ -266,6 +267,7 @@ impl PlanetLodApp {
                     ("pitch", Some(v)) => app.pitch = Some(v.clamp(-90.0, 90.0)),
                     ("fov", Some(v)) => app.fov = v.clamp(1.0, 170.0),
                     ("look", _) if kv.ends_with("raw") => app.raw_look = true,
+                    ("look", _) if kv.ends_with("film") => app.raw_look = false,
                     ("sun", _) => {
                         let enu: Vec<f64> = kv[4..].split(',').filter_map(|x| x.trim().parse().ok()).collect();
                         if let [e, n, u] = enu[..] {

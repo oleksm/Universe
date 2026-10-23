@@ -16,3 +16,6 @@ so the pyramid's tiles were lit too bright and pale.
 lod_e124s43_v3 from 22,635 km, nadir, the reference sun, disc means: film 11.6, 14.7, 15.0; raw 17.4, 20.7, 21.9.
 Light exaggeration on/off (raw): detail 3.44 against 3.02 (stddev of a 3 px high-pass): the base mesh at that height
 is coarse, so its relief is its triangles'. The workspace's library tests pass.
+
+Then (the owner, "Left is still looking right"): the planet LOD app draws without the film curve by default (`look=film`
+puts it back), so its far view is the lab's look, haze-free; beside the reference prediction, the colours match.
