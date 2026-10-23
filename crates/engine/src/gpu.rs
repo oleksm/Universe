@@ -65,7 +65,8 @@ impl Gpu {
         let mut config = surface
             .get_default_config(&adapter, size.width.max(1), size.height.max(1))
             .expect("surface not supported by adapter");
-        // Prefer a non-sRGB swapchain so palette colors pass through exactly as authored.
+        // Prefer a non-sRGB swapchain: the blit's film curve encodes the scene's linear light for the screen
+        // (`blit.wgsl`), and the HUD's colours pass through as authored.
         let caps = surface.get_capabilities(&adapter);
         if let Some(f) = caps.formats.iter().find(|f| !f.is_srgb()) {
             config.format = *f;

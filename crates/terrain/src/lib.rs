@@ -407,10 +407,15 @@ fn lit_normal(t: [DVec3; 3], light: Option<(f64, f64, f64)>) -> Option<Vec3> {
     Some((b - a).cross(c - a).normalize_or_zero().as_vec3())
 }
 
-/// A package colour (sRGB bytes) as the renderer takes it: authored values pass through as they are (its target
-/// is not sRGB-encoding: `engine::gpu`), as the pyramid's tiles do.
+/// A package colour (sRGB bytes) as the renderer takes it: linear, as the scene is lit (the screen's encoding is
+/// the film curve's, at the end: `blit.wgsl`), as the pool's tiles are decoded in their shader.
 pub fn package_colour(c: [u8; 3], alpha: f32) -> [f32; 4] {
-    [c[0] as f32 / 255.0, c[1] as f32 / 255.0, c[2] as f32 / 255.0, alpha]
+    [srgb_to_linear(c[0]), srgb_to_linear(c[1]), srgb_to_linear(c[2]), alpha]
+}
+
+pub fn srgb_to_linear(c: u8) -> f32 {
+    let c = c as f32 / 255.0;
+    if c <= 0.04045 { c / 12.92 } else { ((c + 0.055) / 1.055).powf(2.4) }
 }
 
 pub struct Job {

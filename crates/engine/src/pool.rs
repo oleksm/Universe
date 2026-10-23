@@ -33,7 +33,8 @@ pub struct PoolModel {
     /// Per vertex (empty: none). Shaded smooth by them; edges are lit by them. A smooth mesh, or
     /// one with edges, given none gets its faces' (area-weighted).
     pub normals: Vec<Vec3>,
-    /// Per vertex, sRGB as given (empty: white). Edges take them; faces too unless `face_colors`.
+    /// Per vertex, sRGB as given (empty: white), decoded to linear in the shader. Edges take them; faces too unless
+    /// `face_colors`.
     pub colors: Vec<[u8; 4]>,
     /// Per face (empty: none): each face one colour (the flat look).
     pub face_colors: Vec<[u8; 4]>,

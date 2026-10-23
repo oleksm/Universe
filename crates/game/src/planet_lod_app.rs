@@ -105,6 +105,9 @@ pub struct PlanetLodApp {
     pitch: Option<f64>,
     fov: f64,
     sun: Option<DVec3>,
+    /// `look=raw`: the screen without the film curve (AgX and its look), the light gamma-encoded as it is: for
+    /// comparing with the lab's views, which have none.
+    raw_look: bool,
     easing: bool,
     /// UNIVERSE_PLANETLOD_FLY: the camera descends and drifts by itself (captures ignore the keys);
     /// =pan: it slides sideways at its altitude instead.
@@ -225,6 +228,7 @@ impl PlanetLodApp {
             pitch: None,
             fov: 50.0,
             sun: None,
+            raw_look: false,
             easing: false,
             fly: crate::devenv::var_os("UNIVERSE_PLANETLOD_FLY").is_some(),
             pan: crate::devenv::var("UNIVERSE_PLANETLOD_FLY").is_ok_and(|v| v == "pan"),
@@ -261,6 +265,7 @@ impl PlanetLodApp {
                     ("pitch", _) if kv.ends_with("nadir") => app.pitch = Some(90.0),
                     ("pitch", Some(v)) => app.pitch = Some(v.clamp(-90.0, 90.0)),
                     ("fov", Some(v)) => app.fov = v.clamp(1.0, 170.0),
+                    ("look", _) if kv.ends_with("raw") => app.raw_look = true,
                     ("sun", _) => {
                         let enu: Vec<f64> = kv[4..].split(',').filter_map(|x| x.trim().parse().ok()).collect();
                         if let [e, n, u] = enu[..] {
@@ -566,6 +571,9 @@ impl App for PlanetLodApp {
         // (Lit as the planet lab's views are, `0.3 + 0.95 max(0, n·l)`: the frame's ambient 0.3, and a white sun whose
         // adapted brightness, `luminosity^ADAPT`, makes the rest 0.95: 0.95 / 0.7 of full.)
         frame.ambient = VIEW_AMBIENT;
+        if self.raw_look {
+            frame.graphics.tone_map = false;
+        }
         let luminosity = (0.95 / (1.0 - VIEW_AMBIENT as f64)).powf(1.0 / universe_engine::ADAPT as f64);
         frame.light = Some(Light { position: eye + sun * 1.5e11, color: [1.0, 1.0, 1.0], luminosity, reference: 1.5e11, radius: 7e8 });
         let size = frame.size();

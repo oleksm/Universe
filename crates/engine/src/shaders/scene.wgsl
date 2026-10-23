@@ -896,12 +896,21 @@ fn pool_normal(h: u32, flags: u32, i: u32) -> vec3<f32> {
     return oct_normal(pool[h + 8u + i * (3u + 1u + ((flags >> 1u) & 1u)) + 3u]);
 }
 
+// A pool mesh's colour bytes are sRGB as given (`PoolModel::colors`): to the scene's linear light (the
+// screen's encoding is the film curve's, at the end: blit.wgsl), as every other model's colours are.
+fn pool_srgb(packed: u32) -> vec4<f32> {
+    let c = unpack4x8unorm(packed);
+    let lo = c.rgb / 12.92;
+    let hi = pow((c.rgb + vec3<f32>(0.055)) / 1.055, vec3<f32>(2.4));
+    return vec4<f32>(select(hi, lo, c.rgb <= vec3<f32>(0.04045)), c.a);
+}
+
 fn pool_color(h: u32, flags: u32, i: u32) -> vec4<f32> {
     if ((flags & 2u) == 0u) {
         return vec4<f32>(1.0);
     }
     let stride = 3u + (flags & 1u) + 1u;
-    return unpack4x8unorm(pool[h + 8u + i * stride + stride - 1u]);
+    return pool_srgb(pool[h + 8u + i * stride + stride - 1u]);
 }
 
 @vertex
@@ -928,7 +937,7 @@ fn vs_pool(@builtin(vertex_index) c: u32, @builtin(instance_index) layer: u32) -
     }
     var color = pool_color(h, flags, i);
     if ((flags & 4u) != 0u) {
-        color = unpack4x8unorm(pool[h + pool[h + 6u] + face]);
+        color = pool_srgb(pool[h + pool[h + 6u] + face]);
     }
     return mesh_vertex(pool_in(d, p, n, color));
 }
