@@ -364,6 +364,57 @@ def workflow_dependencies(records):
     return found
 
 
+def hull_fit_poses(records, assets_home=None):
+    """Explicit rest scope requires the fitted product's pinned motion package."""
+    import hashlib, json
+    from pathlib import Path
+    from assets import store
+    home = Path(assets_home or store()).resolve()
+    equipment = {key: rec for key, _, rec, _ in records if key.startswith("equipment.")}
+    found = []
+    for key, path, hull, _ in records:
+        if not key.startswith("hull."):
+            continue
+        fits = hull.get("fit") or []
+        if not isinstance(fits, list):
+            continue  # schema reports malformed fit collections
+        for i, fit in enumerate(fits):
+            if not isinstance(fit, dict) or "pose" not in fit:
+                continue
+            where = f"fit[{i}].pose"
+            if fit["pose"] != "rest":
+                continue  # schema reports unsupported values
+            visual = (equipment.get(fit.get("item"), {}).get("visual") or {})
+            try:
+                folder = (home / visual["path"]).resolve()
+                if not folder.is_relative_to(home):
+                    raise ValueError("visual package escapes asset store")
+                raw = (folder / "manifest.json").read_bytes()
+                if hashlib.sha256(raw).hexdigest() != visual.get("manifest_sha256"):
+                    raise ValueError("visual manifest hash mismatch")
+                manifest = json.loads(raw)
+                if not isinstance(manifest, dict):
+                    raise ValueError("visual manifest must be an object")
+                if manifest.get("key") != fit["item"]:
+                    raise ValueError("visual manifest names a different product")
+                motion = manifest.get("motion")
+                if not isinstance(motion, dict) or not motion.get("file"):
+                    raise ValueError("fitted visual package has no motion")
+                file = (folder / motion["file"]).resolve()
+                if not file.is_relative_to(folder):
+                    raise ValueError("motion file escapes visual package")
+                data = file.read_bytes()
+                files = manifest.get("files")
+                if not isinstance(files, dict) or not isinstance(files.get(motion["file"]), dict):
+                    raise ValueError("motion file is absent from manifest inventory")
+                entry = files[motion["file"]]
+                if entry.get("sha256") != hashlib.sha256(data).hexdigest() or entry.get("size") != len(data):
+                    raise ValueError("motion file size or hash mismatch")
+            except (OSError, ValueError, KeyError, TypeError) as exc:
+                found.append((path, f"{where}: rest requires a verified motion visual for {fit.get('item')}: {exc}"))
+    return found
+
+
 def check_all():
     """Every record against its schema: (file, what does not fit)."""
     found, unheld, named, labels = [], [], [], {}
@@ -425,6 +476,7 @@ def check_all():
         elif key.split(".")[0] not in kinds:
             found.append((full, f"{at}: {key} is not {' or '.join(('an ' if k[0] in 'aeiou' else 'a ') + k for k in kinds)}"))
     found += workflow_dependencies(SEEN)
+    found += hull_fit_poses(SEEN)
     # (A record the tracker holds as complete may not have changed: standards/changes.yaml.)
     import tracker
     found += list(tracker.check(SEEN))
