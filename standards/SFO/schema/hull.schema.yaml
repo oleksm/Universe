@@ -26,6 +26,15 @@ properties:
       hold: { type: number, x-unit: "kg", description: "kg, the most cargo it is rated to carry" }
       fuel: { type: number, x-unit: "kg", description: "kg of fuel its tanks hold, as fitted" }
   model: { type: string, description: "Its model: a file of the game's (assets/models/<name>.glb). Its nozzles, mounts, gear and hatch are named nodes in it." }
+  model_sha256: { type: string, pattern: '^[a-f0-9]{64}$', description: "Exact model bytes to which authored mechanism poses and exit markers bind; required with mechanisms or exits. Import refuses a mismatch." }
+  mechanisms:
+    type: array
+    description: "Hull-owned rigid node states, in the exact exported model frame. Discrete poses only; no swept-motion or load qualification."
+    items: { $ref: "#/definitions/mechanism" }
+  exits:
+    type: array
+    description: "Explicit crew exits. Requirements are opened in order and closed in reverse. No legacy teleport fallback when explicit exits exist but none is usable."
+    items: { $ref: "#/definitions/exit" }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   model_requests: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/model_request" }, description: "Work asked of its installed model, open until a later version answers it." }
   shape: { type: string, description: "For a hull with no model file: its shape, a key in the game's shapes.ron." }
@@ -106,3 +115,80 @@ properties:
     $ref: "../../common.schema.yaml#/definitions/record_revision"
     default: { status: draft, owner: registry, on_conflict: propose, because: "An early rough hull, unless its record says otherwise.", ask: docs/registry-ssot-request.md }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }
+definitions:
+  local_key:
+    type: string
+    pattern: '^[a-z][a-z0-9_]*$'
+  node_name:
+    type: string
+    minLength: 1
+    description: Exact unique node name in the selected exported scene.
+  node_pose:
+    oneOf:
+    - type: object
+      additionalProperties: false
+      required: [node, kind]
+      properties:
+        node: { $ref: "#/definitions/node_name" }
+        kind: { const: rest }
+    - type: object
+      additionalProperties: false
+      required: [node, kind, translation_m, rotation_xyzw]
+      properties:
+        node: { $ref: "#/definitions/node_name" }
+        kind: { const: rigid }
+        translation_m: { type: array, minItems: 3, maxItems: 3, items: { type: number }, x-unit: m, description: "Absolute parent-local target translation, replacing exported local translation; not a delta or world position." }
+        rotation_xyzw: { type: array, minItems: 4, maxItems: 4, items: { type: number }, x-unit: "1", description: "Absolute parent-local unit quaternion [x,y,z,w], replacing exported local rotation. Norm tolerance 1e-6 is representation tolerance only; no silent normalization. No scale or shear." }
+  mechanism:
+    type: object
+    additionalProperties: false
+    required: [key, kind, nodes, states, default, deploys_when]
+    properties:
+      key: { $ref: "#/definitions/local_key" }
+      kind: { type: string, enum: [ramp, hatch, ladder, gear, door] }
+      nodes:
+        type: array
+        minItems: 1
+        items: { $ref: "#/definitions/node_name" }
+        description: "Owned nodes; no node belongs to two mechanisms. Each state poses each node once; hierarchy evaluates once after all local targets are applied."
+      states:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          additionalProperties: false
+          required: [key, poses]
+          properties:
+            key: { $ref: "#/definitions/local_key" }
+            poses:
+              type: array
+              minItems: 1
+              items: { $ref: "#/definitions/node_pose" }
+      default: { $ref: "#/definitions/local_key" }
+      deploys_when: { type: string, enum: [landed, always, pilot], description: "Automatic policies target deployed. Gear uses deployed on landed placement and stowed in flight. A refused contact keeps the preceding state." }
+      contact:
+        type: object
+        additionalProperties: false
+        required: [node, ground]
+        properties:
+          node: { $ref: "#/definitions/node_name" }
+          ground: { type: string, enum: [required], description: "Engine checks this marker in the candidate deployed pose against standable terrain at current attitude before committing state. Engine gap/slope rules are gameplay limits, not engineering compliance." }
+  exit:
+    type: object
+    additionalProperties: false
+    required: [key, kind, requires, top]
+    properties:
+      key: { $ref: "#/definitions/local_key" }
+      kind: { type: string, enum: [walk, climb, step] }
+      requires:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          additionalProperties: false
+          required: [mechanism, state]
+          properties:
+            mechanism: { $ref: "#/definitions/local_key" }
+            state: { $ref: "#/definitions/local_key" }
+      top: { $ref: "#/definitions/node_name" }
+      foot: { $ref: "#/definitions/node_name" }
