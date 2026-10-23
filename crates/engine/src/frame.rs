@@ -124,6 +124,9 @@ pub struct Frame {
     pub studio: bool,
     /// Lit faces shaded on the screen's colours, as a map shades relief (see `ViewShade`); None: by the scene's light.
     pub view_shade: Option<ViewShade>,
+    /// A planet's colour and lit normal by direction (see `PlanetCube`), for meshes whose vertices carry their
+    /// directions in `data` (w: `PLANET_CUBE_DATA`). None: a blank one.
+    pub planet_cube: Option<std::sync::Arc<crate::worldmaps::PlanetCube>>,
     /// Ask how much of the sun is hidden by what's drawn: a point just this
     /// side of it (world) and its disc's radius on screen (pixels). The
     /// answer, a frame or two on: `sun_seen`.
@@ -298,6 +301,9 @@ pub struct Light {
 /// Lit faces shaded on the screen's colours (`colour × (ambient + diffuse max(0, n·l))`, under a world's sea
 /// level its departure from 1 times `sea`), not lit in linear light: the planet lab's views. Exact with the tone
 /// map off (`Graphics::tone_map`), where the screen is the light gamma-encoded.
+/// A vertex's `data.w` saying its `data.xyz` is its direction on the planet cube (`Frame::planet_cube`).
+pub const PLANET_CUBE_DATA: f32 = -1.0e6;
+
 #[derive(Clone, Copy, Debug)]
 pub struct ViewShade {
     pub ambient: f32,
@@ -454,6 +460,7 @@ impl Frame {
             size: hud_size,
             studio: false,
             view_shade: None,
+            planet_cube: None,
             sun_probe: None,
             shadow_focus: 0.0,
             ambient: SHADE_AMBIENT,

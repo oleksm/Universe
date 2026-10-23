@@ -30,13 +30,13 @@ pub mod worldmaps;
 pub use app::{run, run_prepared, Config, Context, Game, Perf, Resources, HISTORY, HITCH};
 pub use camera::Camera;
 pub use audio::{Audio, Jet};
-pub use frame::{CanvasAlpha, disc_covered, text_size, Color, Frame, Graphics, Light, PoolGroup, Reflector, ViewShade, ADAPT, GLYPH};
+pub use frame::{CanvasAlpha, disc_covered, text_size, Color, Frame, Graphics, Light, PoolGroup, Reflector, ViewShade, ADAPT, GLYPH, PLANET_CUBE_DATA};
 pub use glam;
 pub use input::{Input, KeyCode, MouseButton};
 pub use model::{GlobeMap, Mesh, Transform, WireModel};
 pub use pbr::PbrModel;
 pub use sunprobe::sun_seen;
-pub use worldmaps::WorldMaps;
+pub use worldmaps::{PlanetCube, WorldMaps};
 
 pub mod clipboard;
 pub mod text_editor;

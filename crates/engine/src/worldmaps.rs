@@ -193,6 +193,120 @@ pub(crate) struct WorldBind {
     pending: Option<Pending>,
     /// The bound set's bytes.
     bound_bytes: u64,
+    /// The views bound now (for binding again with another planet cube).
+    views: Vec<wgpu::TextureView>,
+    /// The planet cube bound now (bindings 19 to 21; see `PlanetCube`).
+    cube: PlanetCubeGpu,
+}
+
+/// A planet's colour and lit normal by direction, a cube of `n` × `n` faces (the base of the planet LOD's ground:
+/// its tiles sample it per pixel by the direction their vertices carry). Faces in wgpu's cube order (+x, −x, +y,
+/// −y, +z, −z), each row by row as the cube samples it. Colour sRGB; normal in the planet's own frame, encoded
+/// (x, y, z) × 0.5 + 0.5.
+#[derive(Debug)]
+pub struct PlanetCube {
+    id: u64,
+    pub n: u32,
+    pub colour: Vec<[u8; 4]>,
+    pub normal: Vec<[u8; 4]>,
+}
+
+impl PlanetCube {
+    pub fn new(n: u32, colour: Vec<[u8; 4]>, normal: Vec<[u8; 4]>) -> Self {
+        static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
+        assert!(colour.len() == 6 * (n * n) as usize && normal.len() == colour.len());
+        Self { id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), n, colour, normal }
+    }
+}
+
+/// A planet cube on the GPU (or a blank one).
+struct PlanetCubeGpu {
+    id: u64,
+    colour: wgpu::TextureView,
+    normal: wgpu::TextureView,
+    sampler: wgpu::Sampler,
+    bytes: u64,
+}
+
+impl PlanetCubeGpu {
+    fn blank(device: &wgpu::Device, queue: &wgpu::Queue) -> Self {
+        Self::make(device, queue, 0, 1, &[[0; 4]; 6], &[[128, 128, 255, 255]; 6])
+    }
+
+    fn make(device: &wgpu::Device, queue: &wgpu::Queue, id: u64, n: u32, colour: &[[u8; 4]], normal: &[[u8; 4]]) -> Self {
+        let levels = n.ilog2() + 1;
+        let cube = |label, format, texels: &[[u8; 4]]| {
+            let t = device.create_texture(&wgpu::TextureDescriptor {
+                label: Some(label),
+                size: wgpu::Extent3d { width: n, height: n, depth_or_array_layers: 6 },
+                mip_level_count: levels,
+                sample_count: 1,
+                dimension: wgpu::TextureDimension::D2,
+                format,
+                usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+                view_formats: &[],
+            });
+            let face = (n * n) as usize;
+            for f in 0..6u32 {
+                let mut side = n as usize;
+                let mut level: Vec<[u8; 4]> = texels[f as usize * face..(f as usize + 1) * face].to_vec();
+                for l in 0..levels {
+                    queue.write_texture(
+                        wgpu::TexelCopyTextureInfo { texture: &t, mip_level: l, origin: wgpu::Origin3d { x: 0, y: 0, z: f }, aspect: wgpu::TextureAspect::All },
+                        bytemuck::cast_slice(&level),
+                        wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(side as u32 * 4), rows_per_image: Some(side as u32) },
+                        wgpu::Extent3d { width: side as u32, height: side as u32, depth_or_array_layers: 1 },
+                    );
+                    if side == 1 {
+                        break;
+                    }
+                    let half = side / 2;
+                    level = (0..half * half)
+                        .map(|k| {
+                            let (x, y) = (2 * (k % half), 2 * (k / half));
+                            let at = |dx: usize, dy: usize| level[(y + dy) * side + x + dx];
+                            std::array::from_fn(|c| ((at(0, 0)[c] as u32 + at(1, 0)[c] as u32 + at(0, 1)[c] as u32 + at(1, 1)[c] as u32 + 2) / 4) as u8)
+                        })
+                        .collect();
+                    side = half;
+                }
+            }
+            t.create_view(&wgpu::TextureViewDescriptor { dimension: Some(wgpu::TextureViewDimension::Cube), ..Default::default() })
+        };
+        let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
+            label: Some("planet cube"),
+            mag_filter: wgpu::FilterMode::Linear,
+            min_filter: wgpu::FilterMode::Linear,
+            mipmap_filter: wgpu::MipmapFilterMode::Linear,
+            ..Default::default()
+        });
+        Self {
+            id,
+            colour: cube("planet colour", wgpu::TextureFormat::Rgba8UnormSrgb, colour),
+            normal: cube("planet normal", wgpu::TextureFormat::Rgba8Unorm, normal),
+            sampler,
+            bytes: 2 * 6 * (n as u64).pow(2) * 4 * 4 / 3,
+        }
+    }
+}
+
+impl WorldBind {
+    /// Bind `cube` (None: a blank one) in place of the one bound, if it's another: made on the GPU whole, once.
+    pub fn bind_cube(&mut self, device: &wgpu::Device, queue: &wgpu::Queue, cube: Option<&std::sync::Arc<PlanetCube>>) {
+        if cube.map_or(0, |c| c.id) == self.cube.id {
+            return;
+        }
+        self.cube = match cube {
+            Some(c) => PlanetCubeGpu::make(device, queue, c.id, c.n, &c.colour, &c.normal),
+            None => PlanetCubeGpu::blank(device, queue),
+        };
+        self.bind = Self::group(device, &self.layout, &self.views, &self.linear, &self.nearest, &self.air, &self.clamped, &self.clouds, &self.cache, &self.cube);
+    }
+
+    /// The planet cube's bytes on the GPU.
+    pub fn cube_bytes(&self) -> u64 {
+        self.cube.bytes
+    }
 }
 
 impl WorldBind {
@@ -213,7 +327,13 @@ impl WorldBind {
             ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::D2Array, multisampled: false },
             count: None,
         };
-        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor { label: Some("world maps"), entries: &[tex(0), tex(1), tex(2), tex(3), tex(4), samp(5), samp(6), air_entry, tex(8), tex(9), tex(10), samp(11), tex(12), tex(13), tex(14), clouds_entry, cache_entry, array(17), array(18)] });
+        let cube = |binding: u32| wgpu::BindGroupLayoutEntry {
+            binding,
+            visibility: wgpu::ShaderStages::FRAGMENT,
+            ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::Cube, multisampled: false },
+            count: None,
+        };
+        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor { label: Some("world maps"), entries: &[tex(0), tex(1), tex(2), tex(3), tex(4), samp(5), samp(6), air_entry, tex(8), tex(9), tex(10), samp(11), tex(12), tex(13), tex(14), clouds_entry, cache_entry, array(17), array(18), cube(19), cube(20), samp(21)] });
         let cache = crate::cloudcache::CloudCache::new(device);
         let clouds = device.create_buffer(&wgpu::BufferDescriptor { label: Some("world clouds"), size: 16, usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST, mapped_at_creation: false });
         let clamped = device.create_sampler(&wgpu::SamplerDescriptor { label: Some("world air tables"), mag_filter: wgpu::FilterMode::Linear, min_filter: wgpu::FilterMode::Linear, ..Default::default() });
@@ -232,8 +352,9 @@ impl WorldBind {
         let nearest = device.create_sampler(&wgpu::SamplerDescriptor { label: Some("world maps, exact"), address_mode_u: wgpu::AddressMode::Repeat, address_mode_v: wgpu::AddressMode::ClampToEdge, ..Default::default() });
         let blank = Self::blank(device, queue);
         let views: Vec<wgpu::TextureView> = (0..VIEWS).map(|_| blank.clone()).collect();
-        let bind = Self::group(device, &layout, &views, &linear, &nearest, &air, &clamped, &clouds, &cache);
-        WorldBind { layout, bind, linear, nearest, air, clamped, clouds, current: None, cloud_maps: None, cache, since: 0, blank, pending: None, bound_bytes: 0 }
+        let cube = PlanetCubeGpu::blank(device, queue);
+        let bind = Self::group(device, &layout, &views, &linear, &nearest, &air, &clamped, &clouds, &cache, &cube);
+        WorldBind { layout, bind, linear, nearest, air, clamped, clouds, current: None, cloud_maps: None, cache, since: 0, blank, pending: None, bound_bytes: 0, views, cube }
     }
 
     /// A texel of nothing (alpha 0: no map).
@@ -260,7 +381,8 @@ impl WorldBind {
     /// `views`: the maps by slot, then the air's two tables (bindings 9 and 10), then the
     /// clouds' three maps (12 to 14).
     #[allow(clippy::too_many_arguments)]
-    fn group(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, views: &[wgpu::TextureView], linear: &wgpu::Sampler, nearest: &wgpu::Sampler, air: &wgpu::Buffer, clamped: &wgpu::Sampler, clouds: &wgpu::Buffer, cache: &crate::cloudcache::CloudCache) -> wgpu::BindGroup {
+    #[allow(clippy::too_many_arguments)]
+    fn group(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, views: &[wgpu::TextureView], linear: &wgpu::Sampler, nearest: &wgpu::Sampler, air: &wgpu::Buffer, clamped: &wgpu::Sampler, clouds: &wgpu::Buffer, cache: &crate::cloudcache::CloudCache, cube: &PlanetCubeGpu) -> wgpu::BindGroup {
         let binding = |k: usize| match k {
             k if k < SLOTS => BINDINGS[k],
             k if k < SLOTS + 2 => 9 + (k - SLOTS) as u32,
@@ -275,6 +397,9 @@ impl WorldBind {
         entries.push(wgpu::BindGroupEntry { binding: 16, resource: cache.uniform.as_entire_binding() });
         entries.push(wgpu::BindGroupEntry { binding: 17, resource: wgpu::BindingResource::TextureView(&cache.new_view) });
         entries.push(wgpu::BindGroupEntry { binding: 18, resource: wgpu::BindingResource::TextureView(&cache.old_view) });
+        entries.push(wgpu::BindGroupEntry { binding: 19, resource: wgpu::BindingResource::TextureView(&cube.colour) });
+        entries.push(wgpu::BindGroupEntry { binding: 20, resource: wgpu::BindingResource::TextureView(&cube.normal) });
+        entries.push(wgpu::BindGroupEntry { binding: 21, resource: wgpu::BindingResource::Sampler(&cube.sampler) });
         device.create_bind_group(&wgpu::BindGroupDescriptor { label: Some("world maps"), layout, entries: &entries })
     }
 
@@ -372,7 +497,8 @@ impl WorldBind {
         let views: Vec<wgpu::TextureView> = p.textures.iter().map(|t| t.as_ref().map_or_else(|| self.blank.clone(), |t| t.create_view(&Default::default()))).collect();
         queue.write_buffer(&self.air, 0, bytemuck::cast_slice(&p.maps.air));
         self.cloud_maps = p.maps.clouds.as_ref().map(|_| [views[SLOTS + 2].clone(), views[SLOTS + 3].clone(), views[SLOTS + 4].clone()]);
-        self.bind = Self::group(device, &self.layout, &views, &self.linear, &self.nearest, &self.air, &self.clamped, &self.clouds, &self.cache);
+        self.bind = Self::group(device, &self.layout, &views, &self.linear, &self.nearest, &self.air, &self.clamped, &self.clouds, &self.cache, &self.cube);
+        self.views = views;
         self.current = Some(p.maps.id);
         self.bound_bytes = p.bytes;
         self.since = 0;

@@ -398,6 +398,9 @@ pub struct BuildData {
     /// `light`, weighted by their size. Every drawn triangle takes its corners': smooth close in (no 15 km facets),
     /// and far off each vertex keeps the relief of the finest ground round it.
     pub normals: Vec<Vec3>,
+    /// The package's base cube is bound (`Ground::cube`): the base tiles' corners carry their directions on it,
+    /// and it gives their colour and normal per pixel.
+    pub cube: bool,
 }
 
 /// A point as the package lights it: lifted by `light`'s land or sea factor on its height over its radius.
@@ -419,6 +422,61 @@ fn flat_data(t: [DVec3; 3], light: Option<(f64, f64, f64)>) -> [f32; 4] {
     let n = (b - a).cross(c - a).normalize_or_zero();
     let edge = (t[0].distance(t[1]) + t[1].distance(t[2]) + t[2].distance(t[0])) / 3.0;
     [n.x as f32, n.y as f32, n.z as f32, edge as f32]
+}
+
+/// A base vertex's `data` on the planet cube: its direction in the package's frame, and the marker.
+fn cube_data(p: DVec3) -> [f32; 4] {
+    let d = p.normalize();
+    [d.x as f32, d.y as f32, d.z as f32, universe_engine::PLANET_CUBE_DATA]
+}
+
+/// The package's base cube, if it ships one (`base_cube.json`: `n`, its faces' centres and u, v axes; `base_color.u8`
+/// sRGB, `base_height.f32` m, row by row): its colour, and each texel's normal as the package lights it (its height
+/// lifted by `light`'s land or sea factor), in the package's frame. Faces as the engine samples a cube (+x, −x, +y,
+/// −y, +z, −z), which the package's axes are.
+fn planet_cube(dir: &Path, r: f64, light: Option<(f64, f64)>) -> Result<Option<universe_engine::PlanetCube>, String> {
+    if !dir.join("base_cube.json").exists() {
+        return Ok(None);
+    }
+    let meta = json(dir, "base_cube.json")?;
+    let n = meta["n"].as_u64().ok_or("base_cube.json: n")? as usize;
+    let rgb: Vec<u8> = read(dir, "base_color.u8")?;
+    let height: Vec<f32> = read(dir, "base_height.f32")?;
+    if rgb.len() != 6 * n * n * 3 || height.len() != 6 * n * n {
+        return Err(format!("base cube: {} colour bytes and {} heights for 6 x {n} x {n}", rgb.len(), height.len()));
+    }
+    let v3 = |v: &serde_json::Value| -> Result<DVec3, String> {
+        let a = v.as_array().filter(|a| a.len() == 3).ok_or("base_cube.json: a face's axis")?;
+        Ok(DVec3::new(a[0].as_f64().unwrap_or(0.0), a[1].as_f64().unwrap_or(0.0), a[2].as_f64().unwrap_or(0.0)))
+    };
+    let faces = meta["faces"].as_array().filter(|f| f.len() == 6).ok_or("base_cube.json: six faces")?;
+    let lift = |h: f64| match light {
+        Some((land, sea)) => h * if h >= 0.0 { land } else { sea },
+        None => h,
+    };
+    let mut normal = Vec::with_capacity(6 * n * n);
+    for (f, face) in faces.iter().enumerate() {
+        let (c, u, v) = (v3(&face["centre"])?, v3(&face["u"])?, v3(&face["v"])?);
+        let at = |i: usize, j: usize| {
+            let (a, b) = ((i as f64 + 0.5) * 2.0 / n as f64 - 1.0, 1.0 - (j as f64 + 0.5) * 2.0 / n as f64);
+            (c + u * a + v * b).normalize() * (r + lift(height[f * n * n + j * n + i] as f64))
+        };
+        for j in 0..n {
+            for i in 0..n {
+                let (l, rr) = (i.saturating_sub(1), (i + 1).min(n - 1));
+                let (up, down) = (j.saturating_sub(1), (j + 1).min(n - 1));
+                let p = at(i, j);
+                let mut nn = (at(rr, j) - at(l, j)).cross(at(i, up) - at(i, down)).normalize_or(p.normalize());
+                if nn.dot(p) < 0.0 {
+                    nn = -nn;
+                }
+                let enc = |x: f64| ((x * 0.5 + 0.5).clamp(0.0, 1.0) * 255.0).round() as u8;
+                normal.push([enc(nn.x), enc(nn.y), enc(nn.z), 255]);
+            }
+        }
+    }
+    let colour = rgb.chunks_exact(3).map(|c| [c[0], c[1], c[2], 255]).collect();
+    Ok(Some(universe_engine::PlanetCube::new(n as u32, colour, normal)))
 }
 
 /// Every vertex's lit normal (see `BuildData::normals`): the finest triangles `ft` over `pos`, their corners
@@ -493,7 +551,11 @@ pub fn build_mesh(bd: &BuildData, on: &[u8], c: usize, view: View) -> (Mesh, usi
             // (Each corner its own colour: blended across the face, no mosaic of faces close in.)
             m.colors.extend(t.iter().map(|&v| package_colour(bd.col[v as usize], 1.0)));
             m.normals.extend(t.iter().map(|&v| bd.normals[v as usize]));
-            m.data.extend([flat_data(t.map(|v| bd.pos[v as usize]), bd.light); 3]);
+            if bd.cube {
+                m.data.extend(t.iter().map(|&v| cube_data(bd.pos[v as usize])));
+            } else {
+                m.data.extend([flat_data(t.map(|v| bd.pos[v as usize]), bd.light); 3]);
+            }
         }
         let n = tris.len();
         return (Mesh::new(m), n);
@@ -731,6 +793,9 @@ pub struct Ground {
     pub pyramid: Option<Mutex<Pyramid>>,
     /// The layers keep their meshes (a slider is being dragged).
     pub hold_layers: bool,
+    /// The package's base colour and lit normal by direction (`base_cube.json`, `base_color.u8`, `base_height.f32`),
+    /// if it ships them: the base tiles sample it per pixel (see `BuildData::cube`).
+    pub cube: Option<Arc<universe_engine::PlanetCube>>,
 }
 
 impl Ground {
@@ -912,6 +977,11 @@ impl Ground {
             features,
         };
         let queued = vec![false; cells.len()];
+        let cube = planet_cube(&dir, r, info.get("light_exaggeration").and_then(|l| Some((l["land"].as_f64()?, l["sea"].as_f64()?))))
+            .map_err(|e| log::warn!("planet LOD: base cube: {e}"))
+            .ok()
+            .flatten()
+            .map(Arc::new);
         let light = info.get("light_exaggeration").and_then(|l| Some((r, l["land"].as_f64()?, l["sea"].as_f64()?)));
         let bd = Arc::new(BuildData {
             pos: d.pos.clone(),
@@ -924,6 +994,7 @@ impl Ground {
             origin: chunks.iter().map(|c| c.origin).collect(),
             light,
             normals: vertex_normals(&d.pos, &d.ft, light),
+            cube: cube.is_some(),
         });
         let (jobs, inbox) = std::sync::mpsc::channel::<Job>();
         let (outbox, done) = std::sync::mpsc::channel::<Built>();
@@ -976,7 +1047,7 @@ impl Ground {
             dir, d, chunks, grid, clusters, vel: DVec3::ZERO, last_eye: None, to_decider, from_decider: Mutex::new(from_decider), on_snap, tiles,
             view: View::Real, screen_px: Default::default(), stats: Stats::default(), jobs, done: Mutex::new(done), busy: false, bd, generation: 0, last_view: View::Real, built: Mutex::new(None),
             max_draw: std::env::var("UNIVERSE_PLANETLOD_MAXDRAW").ok().and_then(|v| v.parse().ok()).unwrap_or(usize::MAX),
-            meta, ex: 1.0, show_edges: true, show_faces: true, lvl_count: vec![0; 256], risen: (0, 0), layers, pyramid, hold_layers: false,
+            meta, ex: 1.0, show_edges: true, show_faces: true, lvl_count: vec![0; 256], risen: (0, 0), layers, pyramid, hold_layers: false, cube,
         };
         log::info!(
             "planet LOD: {} vertices ({} collapsed), {} finest triangles in {} chunks, {} tile groups, read in {:.1} s from {}",
@@ -1159,7 +1230,7 @@ impl Ground {
             g.mesh = None;
         }
         let old = self.bd.clone();
-        self.bd = Arc::new(BuildData { pos: self.d.pos.clone(), col: old.col.clone(), ft: old.ft.clone(), fe: old.fe.clone(), stand_in: old.stand_in.clone(), chunk_tris: old.chunk_tris.clone(), chunk_edges: old.chunk_edges.clone(), origin: old.origin.clone(), light: old.light, normals: vertex_normals(&self.d.pos, &self.d.ft, old.light) });
+        self.bd = Arc::new(BuildData { pos: self.d.pos.clone(), col: old.col.clone(), ft: old.ft.clone(), fe: old.fe.clone(), stand_in: old.stand_in.clone(), chunk_tris: old.chunk_tris.clone(), chunk_edges: old.chunk_edges.clone(), origin: old.origin.clone(), light: old.light, normals: vertex_normals(&self.d.pos, &self.d.ft, old.light), cube: old.cube });
         self.generation += 1;
         *self.built.lock().unwrap() = None;
     }
@@ -1268,7 +1339,11 @@ impl Ground {
                 m.faces.push([k, k + 1, k + 2]);
                 m.colors.extend(t.iter().map(|&v| package_colour(d.col[v as usize], 1.0)));
                 m.normals.extend(t.iter().map(|&v| self.bd.normals[v as usize]));
-                m.data.extend([flat_data(t.map(|v| d.pos[v as usize]), self.bd.light); 3]);
+                if self.bd.cube {
+                    m.data.extend(t.iter().map(|&v| cube_data(d.pos[v as usize])));
+                } else {
+                    m.data.extend([flat_data(t.map(|v| d.pos[v as usize]), self.bd.light); 3]);
+                }
             }
             return Mesh::new(m);
         }
@@ -1459,6 +1534,7 @@ impl Ground {
         let eye = cam.position;
         let size = frame.size();
         let aspect = (size.x / size.y.max(1.0)) as f64;
+        frame.planet_cube = self.cube.clone();
         self.screen_px.store((size.y as f64).to_bits(), std::sync::atomic::Ordering::Relaxed);
         let mesh_view = self.view == View::Mesh;
         let clear = Color([0.0; 4]);

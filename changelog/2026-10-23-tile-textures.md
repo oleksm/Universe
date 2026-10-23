@@ -20,3 +20,21 @@ forge_e124s43-mesh over its pyramid (0.94° N 13.16° E, nadir, the view shade):
 vertex shading gives way to the ground's own relief per texel; at 300 km about the same, smoother
 (`out/review/tile-textures/`). Base tiles next, from the package's new `base_color`/`base_height` cube. The
 workspace's library tests pass.
+
+## The base tiles: the package's base cube
+
+Then the base, from the cube the planets session shipped (`base_cube.json`, `base_color.u8`, `base_height.f32`: six
+faces of 1,024, as wgpu samples a cube):
+
+- `engine::PlanetCube` (colour, and lit normal in the planet's frame) set on `Frame::planet_cube`; the world-maps group
+  binds it (19 to 21; a blank one otherwise), made whole on the GPU once with its mips (~67 MB here, counted with
+  the world maps), bound again when another comes.
+- Base tile corners carry their direction on it in `data` (w: `PLANET_CUBE_DATA`); `shade` samples colour, and under
+  the view shade the normal, by that direction. The normals are the planet's frame: right for a planet drawn
+  unturned, as the planet LOD app's is.
+- `terrain::Ground` loads the cube when the package ships one (`planet_cube`: colour, normals from the light-
+  exaggerated heights) and hands it to each frame; the base tiles' vertex colours stay as the fallback.
+
+forge_e124s43-mesh from 10,000 km: the vertices' blotches (angular coasts, patchy shelves) give way to the cube's
+smooth coasts (`out/review/tile-textures/far_cmp.png`). A faint honeycomb of dots on some land is in both, before and
+after: not this.

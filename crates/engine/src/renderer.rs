@@ -1101,7 +1101,7 @@ impl Renderer {
             (Kind::Pool, pool),
             (Kind::Pbr, self.pbr.resident_bytes() as u64),
             (Kind::Globes, self.globes.bytes()),
-            (Kind::WorldMaps, self.world.bytes()),
+            (Kind::WorldMaps, self.world.bytes() + self.world.cube_bytes()),
         ];
         for (k, b) in held {
             self.residency.hold(k, b);
@@ -1156,6 +1156,9 @@ impl Renderer {
         // this frame: its globe map isn't up yet).
         // (Uploaded for the frame itself; a view shows the set bound if it's the same, else its globes' maps:
         // two worlds in turn would each take the one bound set from the other, again and again.)
+        if present {
+            self.world.bind_cube(&gpu.device, &gpu.queue, frame.planet_cube.as_ref());
+        }
         let world_ready = frame.world_maps.as_ref().is_some_and(|(maps, ..)| {
             if !present {
                 return self.world.ready_for(maps);

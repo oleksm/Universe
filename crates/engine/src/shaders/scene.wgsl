@@ -85,6 +85,11 @@ fn linear_to_srgb(c: vec3<f32>) -> vec3<f32> {
 @group(2) @binding(16) var<uniform> world_cc: CloudCache;
 @group(2) @binding(17) var world_cct: texture_2d_array<f32>;
 @group(2) @binding(18) var world_cct_old: texture_2d_array<f32>;
+// A planet's colour and lit normal by direction (Frame::planet_cube): for meshes whose vertices carry their
+// direction on it in data.xyz (data.w: PLANET_CUBE_DATA, -1e6).
+@group(2) @binding(19) var planet_colour: texture_cube<f32>;
+@group(2) @binding(20) var planet_normal: texture_cube<f32>;
+@group(2) @binding(21) var planet_smp: sampler;
 
 /// How many times a world drawn from its lines has its slopes steepened in its shading.
 const LINES_SLOPE_SHADE: f32 = 30.0;
@@ -484,6 +489,11 @@ fn shade(in: MeshOut, tile: TileSample) -> vec4<f32> {
     let dir = normalize(in.local);
     let px = dpdx(in.at);
     let py = dpdy(in.at);
+    // (A planet cube's mesh: its direction on the cube, and its steps across the screen, taken in uniform flow.)
+    let cube_on = in.data.w < -1.0e5 && in.globe.x < 0.5 && !tile.on;
+    let cube_dir = in.data.xyz;
+    let cube_dx = dpdx(cube_dir);
+    let cube_dy = dpdy(cube_dir);
     // (A pool tile's texture: whether it has one, and its steps across the screen.)
     let tile_on = tile.on;
     let tile_dx = dpdx(in.data.xy);
@@ -562,6 +572,8 @@ fn shade(in: MeshOut, tile: TileSample) -> vec4<f32> {
     var albedo = in.color;
     if (tile_on) {
         albedo = vec4<f32>(tile.colour, in.color.a);
+    } else if (cube_on) {
+        albedo = vec4<f32>(textureSampleGrad(planet_colour, planet_smp, cube_dir, cube_dx, cube_dy).rgb, in.color.a);
     }
     if (in.globe.x > 0.5) {
         // Slopes from the height (surface gradient: no tangents needed).
@@ -717,6 +729,13 @@ fn shade(in: MeshOut, tile: TileSample) -> vec4<f32> {
             if (dot(along, along) > 1e-20 && dot(t, t) > 0.01) {
                 let e = normalize(along);
                 nv = normalize(e * t.x + cross(up, e) * t.y + up * t.z);
+            }
+        } else if (cube_on) {
+            // (Its lit normal per texel, in the planet's own frame: right for a planet drawn unturned, as the
+            // view shade's are.)
+            let t = textureSampleGrad(planet_normal, planet_smp, cube_dir, cube_dx, cube_dy).xyz * 2.0 - 1.0;
+            if (dot(t, t) > 0.01) {
+                nv = normalize(t);
             }
         } else if (in.data.w > 0.0 && dot(in.data.xyz, in.data.xyz) > 0.25) {
             let span = in.data.w / max(0.5 * (length(px) + length(py)), 1e-6);
