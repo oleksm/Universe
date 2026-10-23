@@ -110,6 +110,9 @@ pub struct ClassSpec {
     /// Propellants of its own, apart from its fuel (cold nitrogen beside hydrolox): a ship of this class draws
     /// them through its device state (`Ship::own_propellants`).
     pub propellants: Vec<crate::ship_devices::Propellant>,
+    /// The fitted motion packages drawn at rest, held still, as (slot, item) (`pose: rest` on its record's fit:
+    /// that item in that slot only; nothing moves them, nothing physical is claimed). Any other is refused.
+    pub rest: Vec<(String, String)>,
     /// Collision radius (m).
     pub radius: f64,
     /// Drag coefficient × frontal area (m²).
@@ -185,6 +188,8 @@ pub(crate) struct HullDef {
     bay: (f64, f64),
     /// The mount each slot offers (SFO 19: slot, mount key), where its record says.
     mounts: Vec<(String, String)>,
+    /// What its record fits at rest (`pose: rest`), as (slot, item): drawn at rest, held still.
+    rest: Vec<(String, String)>,
 }
 
 #[derive(Debug, PartialEq)]
@@ -261,13 +266,19 @@ impl HullDef {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn made(key: String, name: String, shape: String, frame_mass: f64, price: f64, slots: Vec<(String, crate::modules::SlotKind, u8)>, fit: Vec<(String, String)>, thrusters: Vec<(String, String, f64)>, radius: f64, drag_area: f64, hull_strength: f64) -> Self {
         let thrusters = thrusters.into_iter().map(|(nozzle, slot, share)| ThrusterDef { nozzle, slot, share }).collect();
-        HullDef { key, name, brand: String::new(), shape, frame_mass, price, slots, fit, thrusters, radius, drag_area, hull_strength, bay: (0.0, 0.0), mounts: Vec::new() }
+        HullDef { key, name, brand: String::new(), shape, frame_mass, price, slots, fit, thrusters, radius, drag_area, hull_strength, bay: (0.0, 0.0), mounts: Vec::new(), rest: Vec::new() }
     }
 
     /// With a hold of its own built into the frame (kg, m³).
     /// The mount each slot offers (slot, mount key).
     pub(crate) fn with_mounts(mut self, mounts: Vec<(String, String)>) -> Self {
         self.mounts = mounts;
+        self
+    }
+
+    /// What's fitted at rest (see `rest_slots`).
+    pub(crate) fn with_rest(mut self, rest: Vec<(String, String)>) -> Self {
+        self.rest = rest;
         self
     }
 
@@ -301,6 +312,7 @@ impl HullDef {
             hull_strength: flight.hull_strength.unwrap_or(0.0),
             bay: (0.0, 0.0),
             mounts: h.slots.iter().filter_map(|s| s.mount.clone().map(|m| (s.name.clone(), m))).collect(),
+            rest: rest_slots(h),
         })
     }
 
@@ -345,12 +357,18 @@ impl HullDef {
             fit.push((slot.clone(), h));
         }
         let frame = HullFrame { frame_mass: self.frame_mass, price: self.price, slots, nozzles, radius: self.radius, drag_area: self.drag_area, hull_strength: self.hull_strength, bay: self.bay };
-        let brand = self.brand.clone();
+        let (brand, rest) = (self.brand.clone(), self.rest.clone());
         ClassSpec::assemble(self.key, self.name, self.shape, shape_ref, shape, frame, fit, |h| found[&h]).map(|mut s| {
             s.brand = brand;
+            s.rest = rest;
             s
         })
     }
+}
+
+/// What a hull's record fits at rest (`pose: rest`), as (slot, item).
+pub(crate) fn rest_slots(h: &crate::registry::Hull) -> Vec<(String, String)> {
+    h.fit.iter().filter(|f| f.pose == Some(crate::registry::HullFitItemPose::Rest)).map(|f| (f.slot.clone(), f.item.clone())).collect()
 }
 
 /// A nozzle of a hull, driven by a slot's module at a share of its rating
@@ -798,6 +816,7 @@ impl ClassSpec {
             crowded,
             limits,
             propellants,
+            rest: Vec::new(),
             radius: frame.radius,
             drag_area: frame.drag_area,
             hull_strength: frame.hull_strength,

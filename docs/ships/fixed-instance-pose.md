@@ -22,7 +22,13 @@ fit:
 - It claims nothing physical: gimbal stays "not simulated" in `ClassSpec::limits`; no thrust vectoring, no
   turbulence or startup playback. The record's mass, dimensions and identity are the item's own.
 - Only for an item whose package has motion: `pose: rest` on one without motion is a record error (a check in the
-  registry's validator; the engine refuses it on import too).
+  registry's validator; the game refuses to draw it, with a warning, where the package is read).
+
+## Status
+
+In (2026-10-22): fso 32e8d6d0d's `pose` field; `HullDef`/`ClassSpec::rest` as (slot, item) pairs, so a refit
+putting another item there loses it; `mounted` draws a motion package only for a pair in it
+(`drawable`). Tests: `import_rest_pose_is_per_slot_and_item`, `mounted_motion_package_drawn_only_at_declared_rest`.
 
 ## Who does what
 

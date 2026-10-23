@@ -139,7 +139,7 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     let name = read.name.unwrap_or_else(|| stem.to_uppercase());
     // (The mount each slot offers, where its record says.)
     let mounts = record.map_or_else(Vec::new, |h| h.slots.iter().filter_map(|s| s.mount.clone().map(|m| (s.name.clone(), m))).collect());
-    let def = crate::ship::HullDef::made(key, name, shape.key.clone(), frame_mass, price, slots, fit, thrusters, radius, drag, strength).with_bay(bay.0, bay.1).with_mounts(mounts);
+    let def = crate::ship::HullDef::made(key, name, shape.key.clone(), frame_mass, price, slots, fit, thrusters, radius, drag, strength).with_bay(bay.0, bay.1).with_mounts(mounts).with_rest(record.map_or_else(Vec::new, crate::ship::rest_slots));
     let shape = std::sync::Arc::new(shape);
     let any = content().shapes.iter().next().map(|(h, _)| h).expect("the content has shapes");
     let module = |k: &str| content().handle::<Module>(k).map(|h| (h, content().get(h)));
@@ -338,6 +338,16 @@ mod tests {
         assert!((spec.dry_mass - spec.frame_mass - modules).abs() < 1e-6 && gear.iter().map(|g| g.1.mass).sum::<f64>() == 3972.0);
         let slots = vec![("command".to_string(), crate::modules::SlotKind::Command, 1), ("gear_0".to_string(), crate::modules::SlotKind::Gear, 3)];
         assert!(crate::design::stock_fit(&slots).is_err_and(|e| e.contains("power")), "nothing fitted to them; only the plant missing");
+    }
+
+    /// `pose: rest` on a record's fit entry: that slot and that item, and nothing else, at rest.
+    #[test]
+    fn import_rest_pose_is_per_slot_and_item() {
+        let mut h = crate::registry::registry().hull("hull.mc-07").unwrap().clone();
+        assert!(crate::ship::rest_slots(&h).is_empty());
+        let at = h.fit.iter().position(|f| f.slot == "gear_0").unwrap();
+        h.fit[at].pose = Some(crate::registry::HullFitItemPose::Rest);
+        assert_eq!(crate::ship::rest_slots(&h), vec![("gear_0".to_string(), h.fit[at].item.clone())]);
     }
 
     /// A hull's engines as its record binds them: exactly, or refused (a missing nozzle or slot, twice, a share

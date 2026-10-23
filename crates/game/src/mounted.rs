@@ -77,13 +77,12 @@ impl Cache {
         &mut self,
         key: &str,
         slot: &str,
+        at_rest: bool,
     ) -> Option<(Arc<crate::visual_assets::Visual>, DMat4)> {
         // A pending result is not a rejection. Poll the common service next frame.
         let m = crate::equipment_visual::get(key)?;
-        if m.has_motion {
-            self.warn(format!(
-                "{key} at {slot}: motion contract requires articulated mounted consumer"
-            ));
+        if let Err(why) = drawable(m.has_motion, at_rest) {
+            self.warn(format!("{key} at {slot}: {why}"));
             return None;
         }
         match assets::mounts::placement(DMat4::IDENTITY, &m.nodes, slot) {
@@ -93,6 +92,16 @@ impl Cache {
                 None
             }
         }
+    }
+}
+
+/// Whether a fitted visual is drawn: a motion package only where its hull's record fits it at rest
+/// (`ClassSpec::rest`: its default scene, held still); `pose: rest` on a package without motion is a record error.
+fn drawable(has_motion: bool, at_rest: bool) -> Result<(), &'static str> {
+    match (has_motion, at_rest) {
+        (true, false) => Err("motion contract requires articulated mounted consumer"),
+        (false, true) => Err("pose: rest, but its package declares no motion"),
+        _ => Ok(()),
     }
 }
 
@@ -164,7 +173,7 @@ pub fn for_ship(ship: &Ship) -> Mounted {
             cache.warn(format!("{slot}: {e}"));
             continue;
         }
-        let Some((model, primary)) = cache.item(key, slot) else {
+        let Some((model, primary)) = cache.item(key, slot, ship.spec().rest.iter().any(|(s, k)| s == slot && k == key)) else {
             continue;
         };
         let matrix = mount * primary;
@@ -184,4 +193,17 @@ pub fn for_ship(ship: &Ship) -> Mounted {
     }
 
     result
+}
+
+#[cfg(test)]
+mod tests {
+    /// A motion package is drawn only at rest where declared; everything else as before; rest on a still package
+    /// refused.
+    #[test]
+    fn mounted_motion_package_drawn_only_at_declared_rest() {
+        assert!(super::drawable(false, false).is_ok());
+        assert!(super::drawable(true, true).is_ok());
+        assert!(super::drawable(true, false).is_err_and(|e| e.contains("articulated")));
+        assert!(super::drawable(false, true).is_err_and(|e| e.contains("declares no motion")));
+    }
 }
