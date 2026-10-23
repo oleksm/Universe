@@ -665,7 +665,14 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     // (Shaded as the planet lab's views are: on the screen's colours, a map's relief shading, under the sea level
     // its departure from 1 the sea's share; written so the plain gamma at the end (the tone map off) gives that.)
     if (g.view_shade.x > 0.5 && in.globe.x < 0.5) {
-        var shade = g.view_shade.y + g.view_shade.z * max(dot(n, in.sun_dir), 0.0);
+        // (A face that carries its own flat normal and size (data: the planet LOD's base tiles) is shaded flat
+        // while it spans a pixel or two (each its own relief), smooth by its corners once it spans several.)
+        var nv = n;
+        if (dot(in.data.xyz, in.data.xyz) > 0.25) {
+            let span = in.data.w / max(0.5 * (length(px) + length(py)), 1e-6);
+            nv = normalize(mix(normalize(in.data.xyz), n, smoothstep(2.0, 6.0, span)));
+        }
+        var shade = g.view_shade.y + g.view_shade.z * max(dot(nv, in.sun_dir), 0.0);
         if (length(in.at - g.view_world.xyz) < g.view_world.w) {
             shade = 1.0 + g.view_shade.w * (shade - 1.0);
         }

@@ -394,17 +394,46 @@ pub struct BuildData {
     /// The package's light exaggeration (`info.json` `light_exaggeration`): the radius, and how much steeper land
     /// (over the radius) and sea floor (under) are lit than they stand. None: lit as they stand.
     pub light: Option<(f64, f64, f64)>,
+    /// Each vertex's normal as the package lights it (`vertex_normals`): its finest triangles round it, lifted by
+    /// `light`, weighted by their size. Every drawn triangle takes its corners': smooth close in (no 15 km facets),
+    /// and far off each vertex keeps the relief of the finest ground round it.
+    pub normals: Vec<Vec3>,
 }
 
-/// A triangle's normal as the package lights it: its corners lifted by `light` (its land or sea factor on their
-/// height over `light`'s radius); None without one (the faces' own).
-fn lit_normal(t: [DVec3; 3], light: Option<(f64, f64, f64)>) -> Option<Vec3> {
-    let (r, land, sea) = light?;
-    let [a, b, c] = t.map(|p| {
-        let h = p.length() - r;
-        p.normalize() * (r + h * if h >= 0.0 { land } else { sea })
-    });
-    Some((b - a).cross(c - a).normalize_or_zero().as_vec3())
+/// A point as the package lights it: lifted by `light`'s land or sea factor on its height over its radius.
+fn lifted(p: DVec3, light: Option<(f64, f64, f64)>) -> DVec3 {
+    match light {
+        Some((r, land, sea)) => {
+            let h = p.length() - r;
+            p.normalize() * (r + h * if h >= 0.0 { land } else { sea })
+        }
+        None => p,
+    }
+}
+
+/// A drawn triangle's own lit normal and its mean edge (m), for its corners' `data` (see `scene.wgsl`'s view shade:
+/// shaded flat while it spans a pixel or two, its corners' smooth normals once it spans several). In the mesh's own
+/// frame: right for a world drawn unturned, as the planet LOD app's is.
+fn flat_data(t: [DVec3; 3], light: Option<(f64, f64, f64)>) -> [f32; 4] {
+    let [a, b, c] = t.map(|p| lifted(p, light));
+    let n = (b - a).cross(c - a).normalize_or_zero();
+    let edge = (t[0].distance(t[1]) + t[1].distance(t[2]) + t[2].distance(t[0])) / 3.0;
+    [n.x as f32, n.y as f32, n.z as f32, edge as f32]
+}
+
+/// Every vertex's lit normal (see `BuildData::normals`): the finest triangles `ft` over `pos`, their corners
+/// lifted by `light` (land or sea factor on their height over its radius; None: as they stand).
+fn vertex_normals(pos: &[DVec3], ft: &[[u32; 3]], light: Option<(f64, f64, f64)>) -> Vec<Vec3> {
+    let lift = |p: DVec3| lifted(p, light);
+    let mut sum = vec![DVec3::ZERO; pos.len()];
+    for t in ft {
+        let [a, b, c] = t.map(|v| lift(pos[v as usize]));
+        let n = (b - a).cross(c - a);
+        for &v in t {
+            sum[v as usize] += n;
+        }
+    }
+    sum.iter().zip(pos).map(|(n, p)| n.try_normalize().unwrap_or(p.normalize()).as_vec3()).collect()
 }
 
 /// A package colour (sRGB bytes) as the renderer takes it: linear, as the scene is lit (the screen's encoding is
@@ -461,10 +490,10 @@ pub fn build_mesh(bd: &BuildData, on: &[u8], c: usize, view: View) -> (Mesh, usi
                 m.positions.push((bd.pos[v as usize] - origin).as_vec3());
             }
             m.faces.push([k, k + 1, k + 2]);
-            m.colors.extend([package_colour(bd.col[t[2] as usize], 1.0); 3]);
-            if let Some(n) = lit_normal(t.map(|v| bd.pos[v as usize]), bd.light) {
-                m.normals.extend([n; 3]);
-            }
+            // (Each corner its own colour: blended across the face, no mosaic of faces close in.)
+            m.colors.extend(t.iter().map(|&v| package_colour(bd.col[v as usize], 1.0)));
+            m.normals.extend(t.iter().map(|&v| bd.normals[v as usize]));
+            m.data.extend([flat_data(t.map(|v| bd.pos[v as usize]), bd.light); 3]);
         }
         let n = tris.len();
         return (Mesh::new(m), n);
@@ -883,6 +912,7 @@ impl Ground {
             features,
         };
         let queued = vec![false; cells.len()];
+        let light = info.get("light_exaggeration").and_then(|l| Some((r, l["land"].as_f64()?, l["sea"].as_f64()?)));
         let bd = Arc::new(BuildData {
             pos: d.pos.clone(),
             col: d.col.clone(),
@@ -892,7 +922,8 @@ impl Ground {
             chunk_tris: chunks.iter().map(|c| c.tris.clone()).collect(),
             chunk_edges: chunks.iter().map(|c| c.edges.clone()).collect(),
             origin: chunks.iter().map(|c| c.origin).collect(),
-            light: info.get("light_exaggeration").and_then(|l| Some((r, l["land"].as_f64()?, l["sea"].as_f64()?))),
+            light,
+            normals: vertex_normals(&d.pos, &d.ft, light),
         });
         let (jobs, inbox) = std::sync::mpsc::channel::<Job>();
         let (outbox, done) = std::sync::mpsc::channel::<Built>();
@@ -1128,7 +1159,7 @@ impl Ground {
             g.mesh = None;
         }
         let old = self.bd.clone();
-        self.bd = Arc::new(BuildData { pos: self.d.pos.clone(), col: old.col.clone(), ft: old.ft.clone(), fe: old.fe.clone(), stand_in: old.stand_in.clone(), chunk_tris: old.chunk_tris.clone(), chunk_edges: old.chunk_edges.clone(), origin: old.origin.clone(), light: old.light });
+        self.bd = Arc::new(BuildData { pos: self.d.pos.clone(), col: old.col.clone(), ft: old.ft.clone(), fe: old.fe.clone(), stand_in: old.stand_in.clone(), chunk_tris: old.chunk_tris.clone(), chunk_edges: old.chunk_edges.clone(), origin: old.origin.clone(), light: old.light, normals: vertex_normals(&self.d.pos, &self.d.ft, old.light) });
         self.generation += 1;
         *self.built.lock().unwrap() = None;
     }
@@ -1235,10 +1266,9 @@ impl Ground {
                     m.positions.push((d.pos[v as usize] - origin).as_vec3());
                 }
                 m.faces.push([k, k + 1, k + 2]);
-                m.colors.extend([package_colour(d.col[t[2] as usize], 1.0); 3]);
-                if let Some(n) = lit_normal(t.map(|v| d.pos[v as usize]), self.bd.light) {
-                    m.normals.extend([n; 3]);
-                }
+                m.colors.extend(t.iter().map(|&v| package_colour(d.col[v as usize], 1.0)));
+                m.normals.extend(t.iter().map(|&v| self.bd.normals[v as usize]));
+                m.data.extend([flat_data(t.map(|v| d.pos[v as usize]), self.bd.light); 3]);
             }
             return Mesh::new(m);
         }

@@ -267,6 +267,7 @@ impl PlanetLodApp {
                     ("pitch", Some(v)) => app.pitch = Some(v.clamp(-90.0, 90.0)),
                     ("fov", Some(v)) => app.fov = v.clamp(1.0, 170.0),
                     ("look", _) if kv.ends_with("raw") => app.raw_look = true,
+                    ("hud", Some(v)) => app.hud = v > 0.0,
                     ("look", _) if kv.ends_with("film") => app.raw_look = false,
                     ("sun", _) => {
                         let enu: Vec<f64> = kv[4..].split(',').filter_map(|x| x.trim().parse().ok()).collect();
