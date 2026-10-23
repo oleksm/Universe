@@ -58,6 +58,9 @@ struct Globals {
     /// The ground cascade (see `GROUND_HALF`): camera-relative world → it; its
     /// texel and in use are `shadow2`'s z and w.
     shadow_ground: [[f32; 4]; 4],
+    /// `Frame::view_shade`: on (x), ambient, diffuse, sea; the world's centre from the eye and its sea level (m).
+    view_shade: [f32; 4],
+    view_world: [f32; 4],
 }
 
 /// The shadow map's side (texels), each of its four cascades (see `Shadows`).
@@ -1187,6 +1190,11 @@ impl Renderer {
             shadow_tight: shadow_tight.to_cols_array_2d(),
             shadow2: [tight.map_or(0.0, texel), if tight.is_some() && sun.is_some() { 1.0 } else { 0.0 }, texel(GROUND_HALF), if ground_on { 1.0 } else { 0.0 }],
             shadow_ground: shadow_ground.to_cols_array_2d(),
+            view_shade: frame.view_shade.map_or([0.0; 4], |v| [1.0, v.ambient, v.diffuse, v.sea]),
+            view_world: frame.view_shade.map_or([0.0; 4], |v| {
+                let c = (v.centre - frame.camera.position).as_vec3();
+                [c.x, c.y, c.z, v.radius as f32]
+            }),
             // (w: UNIVERSE_SHADOW_DEBUG tints what's in shadow red, to check them.)
             shadow: [texel(near), texel(far), if sun.is_some() { 1.0 } else { 0.0 }, if crate::devflags::get().shadow_debug { 1.0 } else { 0.0 }],
             look: [on(gr.textures), on(gr.normal_maps), on(gr.occlusion), on(gr.emission)],

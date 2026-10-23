@@ -122,6 +122,8 @@ pub struct Frame {
     pub shadow_focus: f64,
     /// The environment is a studio's (soft boxes), not space round the eye.
     pub studio: bool,
+    /// Lit faces shaded on the screen's colours, as a map shades relief (see `ViewShade`); None: by the scene's light.
+    pub view_shade: Option<ViewShade>,
     /// Ask how much of the sun is hidden by what's drawn: a point just this
     /// side of it (world) and its disc's radius on screen (pixels). The
     /// answer, a frame or two on: `sun_seen`.
@@ -293,6 +295,19 @@ pub struct Light {
     pub radius: f64,
 }
 
+/// Lit faces shaded on the screen's colours (`colour × (ambient + diffuse max(0, n·l))`, under a world's sea
+/// level its departure from 1 times `sea`), not lit in linear light: the planet lab's views. Exact with the tone
+/// map off (`Graphics::tone_map`), where the screen is the light gamma-encoded.
+#[derive(Clone, Copy, Debug)]
+pub struct ViewShade {
+    pub ambient: f32,
+    pub diffuse: f32,
+    pub sea: f32,
+    /// The world's centre (world) and its sea level's radius (m): below it is sea floor.
+    pub centre: DVec3,
+    pub radius: f64,
+}
+
 /// A sphere reflecting the light: a planet or moon. What it gives a point
 /// near it is the light falling on the ground beneath (by the sun's height
 /// there), times the share it reflects (`albedo`), times how much of the sky
@@ -438,6 +453,7 @@ impl Frame {
             scene_size,
             size: hud_size,
             studio: false,
+            view_shade: None,
             sun_probe: None,
             shadow_focus: 0.0,
             ambient: SHADE_AMBIENT,

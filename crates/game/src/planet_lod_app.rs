@@ -575,6 +575,8 @@ impl App for PlanetLodApp {
         frame.ambient = VIEW_AMBIENT;
         if self.raw_look {
             frame.graphics.tone_map = false;
+            // (And shaded as the lab's views are, on the screen's colours: exact with the tone map off.)
+            frame.view_shade = Some(universe_engine::ViewShade { ambient: VIEW_AMBIENT, diffuse: 0.95, sea: 0.6, centre: DVec3::ZERO, radius: self.g.d.r });
         }
         let luminosity = (0.95 / (1.0 - VIEW_AMBIENT as f64)).powf(1.0 / universe_engine::ADAPT as f64);
         frame.light = Some(Light { position: eye + sun * 1.5e11, color: [1.0, 1.0, 1.0], luminosity, reference: 1.5e11, radius: 7e8 });

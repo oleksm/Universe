@@ -33,9 +33,23 @@ struct Globals {
     // The ground cascade (the ground's patches alone, tens of kilometres round the eye);
     // shadow2.z: a texel of it (metres), shadow2.w: in use.
     shadow_ground: mat4x4<f32>,
+    // Faces shaded on the screen's colours (Frame::view_shade): on, ambient, diffuse, sea; the world's centre
+    // from the eye and its sea level (m).
+    view_shade: vec4<f32>,
+    view_world: vec4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> g: Globals;
+
+// The film's exposure with the tone map off (blit.wgsl's EXPOSURE): kept equal to it.
+const EXPOSURE_RAW: f32 = 0.9;
+
+// Linear light to sRGB's encoding (exact: the inverse of the decode colours take on their way in).
+fn linear_to_srgb(c: vec3<f32>) -> vec3<f32> {
+    let lo = c * 12.92;
+    let hi = 1.055 * pow(max(c, vec3<f32>(0.0)), vec3<f32>(1.0 / 2.4)) - 0.055;
+    return select(hi, lo, c <= vec3<f32>(0.0031308));
+}
 @group(1) @binding(0) var shadow_map: texture_depth_2d_array;
 @group(1) @binding(1) var shadow_cmp: sampler_comparison;
 // Worlds' surfaces (see `GlobeMap`): height (in relief units) and crater-ness.
@@ -648,6 +662,16 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
         return vec4<f32>(0.8, 0.0, 0.0, in.color.a);
     }
     var c = albedo.rgb * (vec3<f32>(in.ambient) + (1.0 - in.ambient) * light);
+    // (Shaded as the planet lab's views are: on the screen's colours, a map's relief shading, under the sea level
+    // its departure from 1 the sea's share; written so the plain gamma at the end (the tone map off) gives that.)
+    if (g.view_shade.x > 0.5 && in.globe.x < 0.5) {
+        var shade = g.view_shade.y + g.view_shade.z * max(dot(n, in.sun_dir), 0.0);
+        if (length(in.at - g.view_world.xyz) < g.view_world.w) {
+            shade = 1.0 + g.view_shade.w * (shade - 1.0);
+        }
+        let shown = clamp(linear_to_srgb(albedo.rgb) * shade, vec3<f32>(0.0), vec3<f32>(1.0));
+        return vec4<f32>(pow(shown, vec3<f32>(2.2)) / EXPOSURE_RAW, albedo.a);
+    }
     // The sun's glint: where the surface turns the light to the eye (Blinn).
     if (in.material.x > 0.0 && dot(n, in.sun_dir) > 0.0) {
         let h = normalize(in.sun_dir + eye_direction(in.at));
