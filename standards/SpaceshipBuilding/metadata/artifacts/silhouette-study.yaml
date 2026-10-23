@@ -10,6 +10,10 @@ sources:
 - document: docs/spaceship-building-workflow-proposal.md
   section: 3.2 Compare a small set of coherent silhouettes
   note: Owner-authorized workflow definition; project values and results are not instantiated.
+- document: docs/requests/ship-design-feedback-20261023.yaml
+  section: changes.profile-operation
+  note: Owner-authorized earlier-decision/intent-first amendment, 2026-10-23. The 16 supplied case specifications
+    are not executed tests or ship acceptance.
 purpose: Which coherent whole-ship identity is selected?
 contents:
 - Comparable top, side, front, underside and three-quarter views with fixed cameras/light/scale.
@@ -47,6 +51,11 @@ contents:
   equipment.
 - Explicit primary/subordinate mass hierarchy and cockpit/nose/neck/shoulder/body composition; silhouette and
   clay critique of deliberate curve/plane transitions, not a demand that every surface be angular.
+- 'Profile operation and baseline: Establish assembled nose, glazing, belly and shoulder profiles before detail.
+  Record accepted and rejected examples as project preferences, not universal style laws. For prolong/shorten/raise
+  edits, identify axis, fixed landmarks, preserved slopes or tangencies, intersection and percentage baseline. Incremental
+  percentages use the stated current or selected baseline; never silently change it.'
+- 'Required evidence for profile operation and baseline: Construction-line profile and before/after landmark coordinates.'
 boundary: A metric flags visual drift; owner or delegate judges identity.
 consumers:
 - blender

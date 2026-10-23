@@ -15,6 +15,10 @@ sources:
   section: 3.5 Co-design cockpit, routes and hull
   note: 'Owner deferred-module correction,2026-10-22: correct reuse/ownership does not authorize current inclusion;
     defer geometry from source/render/export while retaining future clearance data.'
+- document: docs/requests/ship-design-feedback-20261023.yaml
+  section: changes.delivery-scope
+  note: Owner-authorized earlier-decision/intent-first amendment, 2026-10-23. The 16 supplied case specifications
+    are not executed tests or ship acceptance.
 purpose: Discover existing reusable modules before G3 sizing and retain explicit selection, ownership and consumer
   gaps.
 contents:
@@ -40,6 +44,9 @@ contents:
 - 'Per-delivery inclusion ledger for every discovered/selected instance: included/installed in this candidate
   or explicitly deferred, authority and scope, future clearance-data reference and current source/render/export/BOM
   disposition. Future selection and current delivery inclusion are separate decisions.'
+- 'Current delivery inclusion scope: Enforce the existing included/deferred ledger on actual inherited, hidden,
+  generated, rendered and exported objects. Future command seat/dashboard and other deferred equipment stay absent;
+  preserve reference clearance data separately. Catalogue reuse alone is not permission to include a module.'
 boundary: Project authoring evidence using existing equipment references; not a new runtime schema, module
   approval database or implicit installation.
 consumers:
