@@ -13,6 +13,10 @@ factors:
   weight: 3
   why: 'andesite-dacite, viscous and gas-rich: short lavas plus tephra give steep concave cone, H/W 0.1-0.33'
   want: high
+  signal:
+    features:
+    - planet-feature.stratovolcano-shasta-rainier
+    radius_m: 50000
 - factor: planet-factor.volc-vent
   weight: 1
   why: long-lived central vent, polygenetic over 10-1000 kyr; vent migration gives twin or elongate edifice
@@ -76,7 +80,16 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors
+  tier: invented
+  review: true
+  note: '2026-10-22 category-specific magma screening override: only the named edifice/flow kind, within provisional50000m
+    of its pin/line points. This is association with a classified feature, not measured chemistry, viscosity or
+    gas. Never share one union of silicic and basaltic category evidence. Proxy outputs excluded by consumer7645f03;
+    missing listed kinds remain unknown. Other patterns with ambiguous or unsupported composition retain unresolved
+    evidence; no why-text inference or weight/threshold retuning.'
 status: draft
 look: volcanic

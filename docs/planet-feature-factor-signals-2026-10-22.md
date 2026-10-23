@@ -1,0 +1,9 @@
+# Feature proximity factor signals
+
+The phase2 shape is `signal: {features: [planet-feature keys], radius_m: positive metres}` on a factor or a pattern factor entry. An entry overrides the global signal. Reference validation uses the feature registry; paired fields, positive finite radius, nonempty unique keys and exclusive feature-vs-field/layer/landmark mode are required.
+
+Draft associations: volcanic vent uses stratovolcano, caldera, shield and lava-flow-field within50000m. Inherited drainage uses water-gap, river-capture, dry-valley and wind-gap within25000m. Four explicit magma entries use their own matching category only: stratovolcano, caldera, shield-volcano, lava-flow-field. Remaining magma entries retain unresolved evidence; no prose heuristic or weight adjustment was applied. All radii are invented reviewable screening defaults, not physical occurrence boundaries or Earth calibration.
+
+Planet-forge7645f03 reads current feature pins and sampled span points after frame rotation, skips worn/replaced and trigger.proxy. No listed confirmed kinds anywhere means unknown, not0; otherwise points outside the radius get0 in the model. This does not establish complete survey coverage, distance to the whole continuous line/region, magma chemistry, eruption history or independent geological corroboration. Classified features may derive from the same source evidence as a pattern; proximity is not independent proof. Consumers must not turn an unavailable/proxy-only category into a satisfied low preference.
+
+Registry's offline matcher lacks checkpoint geometry and treats feature proximity as unknown. Per-entry field/class overrides are supported there, and cannot fall back to an unrelated global given score. The generated matcher shares that behavior. No physical process parameters, feature trigger values or pattern weights change.

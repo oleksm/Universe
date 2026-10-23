@@ -72,14 +72,18 @@ def classify(R, layer, sig):
     return next((i for i, c in sorted(classes.items()) if ok(c)), None)
 
 
-def strength(R, factor, sig, missing=0.0):
+def strength(R, factor, sig, missing=0.0, signal=None):
     """A deciding factor's strength (0 to 1) at a place: given outright, else by its signal (a field ramped, a class
     among some, a landmark nearby), else missing (0 by default)."""
     d = R["planet-factor"][factor]
     given = sig.get("factors") or {}
-    if d.get("source") in given:
+    if signal is None and d.get("source") in given:
         return max(0.0, min(1.0, float(given[d["source"]])))
-    s = d.get("signal") or {}
+    s = signal if signal is not None else (d.get("signal") or {})
+    # The offline signature has no spatial feature census: do not reuse a global or landmark score.
+    # Spatial evidence is evaluated by planet-forge against exact checkpoint geometry/provenance.
+    if s.get("features"):
+        return missing
     if s.get("field"):
         v = _value(sig, s["field"])
         if v is not None and s["to"] != s["from"]:
@@ -122,7 +126,7 @@ def match(R, sig, top=10, family=None):
             continue
         tw = sum(f["weight"] for f in p["factors"]) or 1.0
         fired = [(R["planet-factor"][f["factor"]]["source"], f["weight"],
-                  round(preference(f, strength(R, f["factor"], sig, missing=None)), 3)) for f in p["factors"]]
+                  round(preference(f, strength(R, f["factor"], sig, missing=None, signal=f.get("signal"))), 3)) for f in p["factors"]]
         score = sum(w * s for _, w, s in fired) / tw
         out.append({"key": k, "name": p["identity"]["name"], "family": p["family"], "score": round(score, 4),
                     "fired": sorted([x for x in fired if x[2] > 0], key=lambda x: -x[1] * x[2])})

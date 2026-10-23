@@ -1991,7 +1991,7 @@
 - { record: planet-factor.other-welding, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "a90d99e0af6e5c75" }
 - { record: planet-factor.permafrost, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "ee6c57f3173db5c0" }
 - { record: planet-factor.regolith, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "dc53b2235838e2d5" }
-- { record: planet-factor.relief-inherited, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e04fd6224cac7d68" }
+- { record: planet-factor.relief-inherited, at: "2026-10-23T01:32:41Z", status: "", summary: "changed: signal, basis", sha: "e57936558a039a82" }
 - { record: planet-factor.rock-fracture, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "1940018085ece097" }
 - { record: planet-factor.rock-layers, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "32e0ae89492c9f49" }
 - { record: planet-factor.rock-perm, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "9b13a457600a459e" }
@@ -2006,7 +2006,7 @@
 - { record: planet-factor.tect-uplift, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "6ed2e4c5e73a1f74" }
 - { record: planet-factor.time, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "694728efb39069e3" }
 - { record: planet-factor.volc-magma, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "b2637bbd5a62391f" }
-- { record: planet-factor.volc-vent, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "57891197e94bb237" }
+- { record: planet-factor.volc-vent, at: "2026-10-23T01:32:41Z", status: "", summary: "changed: signal, basis", sha: "b64f488c76ba130e" }
 - { record: planet-factor.water-discharge, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "9df27befeb5d401c" }
 - { record: planet-factor.waves-tides, at: "2026-10-21T14:23:11Z", status: "", summary: "changed: levels", sha: "e0f911291637cf30" }
 - { record: planet-feature.abyssal-hills, at: "2026-10-23T01:18:15Z", status: "", summary: "changed: trigger_params", sha: "bbf435926dd93460" }
@@ -2697,15 +2697,15 @@
 - { record: planet-pattern.tectonic.strike-slip.transform-valley, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "82e0df01e87964c4" }
 - { record: planet-pattern.tectonic.uplift.plateau, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "3777ec2197c745d9" }
 - { record: planet-pattern.volcanic.deposit.lahar-fan, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "afd86e87015d3bc8" }
-- { record: planet-pattern.volcanic.depression.caldera, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "265685d50db94ab4" }
+- { record: planet-pattern.volcanic.depression.caldera, at: "2026-10-23T01:32:41Z", status: "", summary: "changed: factors, basis", sha: "48e91154a8fc5d2e" }
 - { record: planet-pattern.volcanic.depression.maar, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "d111ffddb5462b27" }
 - { record: planet-pattern.volcanic.edifice.cinder-cone, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "15f75fd219095140" }
 - { record: planet-pattern.volcanic.edifice.resurgent-dome, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "7efdc5874363fea4" }
-- { record: planet-pattern.volcanic.edifice.shield-volcano, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "266c4e0beb944d33" }
-- { record: planet-pattern.volcanic.edifice.stratovolcano, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "08adfdc785158ecd" }
+- { record: planet-pattern.volcanic.edifice.shield-volcano, at: "2026-10-23T01:32:41Z", status: "", summary: "changed: factors, basis", sha: "06402bc4553a7c73" }
+- { record: planet-pattern.volcanic.edifice.stratovolcano, at: "2026-10-23T01:32:41Z", status: "", summary: "changed: factors, basis", sha: "70732cce1e3b216e" }
 - { record: planet-pattern.volcanic.edifice.tuff-ring, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "5f8a49a445edb3dd" }
 - { record: planet-pattern.volcanic.field.monogenetic-field, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "f5d49f69d89437d7" }
-- { record: planet-pattern.volcanic.flow.lava-flow-field, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "c770a24ebd411482" }
+- { record: planet-pattern.volcanic.flow.lava-flow-field, at: "2026-10-23T01:32:41Z", status: "", summary: "changed: factors, basis", sha: "10d464cf968303a9" }
 - { record: planet-pattern.volcanic.flow.lava-tube, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "c1b0d1f2f61f88da" }
 - { record: planet-pattern.volcanic.flow.pressure-ridge, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "24e6e14f58ca7853" }
 - { record: planet-pattern.volcanic.flow.tumulus, at: "2026-10-22T22:36:13Z", status: "", summary: "changed", sha: "b6affb9c248875f5" }

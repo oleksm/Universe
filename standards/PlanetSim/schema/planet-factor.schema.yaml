@@ -35,5 +35,19 @@ properties:
       layer: { type: string, x-ref: [planet-layer] }
       classes: { type: array, items: { type: integer, minimum: 1, x-unit: "1" } }
       landmarks: { type: array, items: { type: string, x-ref: [planet-landmark] } }
+      features: { type: array, minItems: 1, uniqueItems: true, items: { type: string, x-ref: [planet-feature] } }
+      radius_m: { type: number, exclusiveMinimum: 0, x-unit: m }
+    dependencies:
+      features: [radius_m]
+      radius_m: [features]
+    allOf:
+      - if: { required: [features] }
+        then:
+          not:
+            anyOf:
+              - { required: [field] }
+              - { required: [layer] }
+              - { required: [landmarks] }
+
   status: { enum: [draft, published, retired] }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

@@ -13,9 +13,12 @@ reads:
   - planet-landmark.hotspot-volcano
   - planet-landmark.flood-basalt-province
 signal:
-  landmarks:
-  - planet-landmark.arc-volcano
-  - planet-landmark.hotspot-volcano
+  features:
+  - planet-feature.stratovolcano-shasta-rainier
+  - planet-feature.caldera-crater-lake
+  - planet-feature.shield-volcano
+  - planet-feature.lava-flow-field
+  radius_m: 50000
 levels:
 - planet-level.1000-km
 - planet-level.100-km
@@ -29,5 +32,14 @@ basis:
   - signal
   tier: invented
   review: true
-  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17): for planets to correct.'
+  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17):
+    for planets to correct.'
+- of:
+  - signal
+  tier: invented
+  review: true
+  note: 2026-10-22 screening association, radius 50000m is provisional, not calibrated. planet-forge 7645f03 uses
+    confirmed non-worn/non-replaced feature pins and sampled line points only, excludes trigger.proxy. No matching
+    kinds => unknown, not known absence; away from points =>0 only within this screening model. Not an origin/composition/history
+    measurement; avoid independent corroboration claims when feature and pattern share source rules.
 status: draft
