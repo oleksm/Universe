@@ -1,0 +1,1538 @@
+scope: Measured top-level model-owned assembly inputs. Pending evidence keeps these outside active product registry;
+  not a commissioned hull or accepted BOM.
+source_reports:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/review/functional-record-geometry.json: 4810d669f4c83802f092989777d3bdaa707dd5743b89e2f1c2025606bd37028e
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/review/functional-ownership-proposal.json: 99bf6b97f146290fcff1c0cbb5f312d1be263d3f170e870d8662ea24cf13660a
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/review/functional-mechanism-frames.json: 653b50e4020cc560e7ad0167a3c74fd6fa1bbda6351725994147093c84af6eb9
+coverage:
+  geometry_objects: 954
+  mapped_exactly_once: 954
+  assemblies: 17
+  nonmanifold_objects: 19
+gear_provenance:
+  source_build: source/build.py:245 imports gear-strut-180kn/v1
+  note: Earlier S0 labels in release audits are stale for this current source. Product-derived assembly is owner
+    edited, no automatic qualification.
+deferred:
+- key: equipment.command.s1
+  scope: chair/dashboard/command module; not included
+- key: propulsion-systems
+  scope: not selected or installed
+parts:
+- reserved_key: part.expl-01
+  code: EXPL-01
+  name: Access panels and frame returns
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-01.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 5.884506940841675
+    width: 6.534205675125122
+    height: 1.6139543056488037
+  shape:
+    surface_area: 19.711213845989732
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - -1.1765644550323486
+    - -3.2671074867248535
+    - 2.4603264331817627
+    max:
+    - 4.707942485809326
+    - 3.2670981884002686
+    - 4.074280738830566
+  exact_objects:
+  - Aft housing -1 service panel 1-3 access backing lip 0
+  - Aft housing -1 service panel 1-3 access backing lip 1
+  - Aft housing -1 service panel 1-3 access backing lip 2
+  - Aft housing -1 service panel 1-3 access backing lip 3
+  - Aft housing -1 service panel 1-3 access gasket
+  - Aft housing -1 service panel 1-3 access identifier
+  - Aft housing -1 service panel 1-3 handle
+  - Aft housing -1 service panel 1-3 handle foot -1
+  - Aft housing -1 service panel 1-3 handle foot 1
+  - Aft housing -1 service panel 1-3 quarter-turn catch 0
+  - Aft housing -1 service panel 1-3 quarter-turn catch 1
+  - Aft housing -1 service panel 1-3 quarter-turn catch 2
+  - Aft housing -1 service panel 1-3 quarter-turn catch 3
+  - Aft housing -1 service panel 1-3 removable access leaf
+  - Aft housing -1 service panel 1-5 access backing lip 0
+  - Aft housing -1 service panel 1-5 access backing lip 1
+  - Aft housing -1 service panel 1-5 access backing lip 2
+  - Aft housing -1 service panel 1-5 access backing lip 3
+  - Aft housing -1 service panel 1-5 access gasket
+  - Aft housing -1 service panel 1-5 access identifier
+  - Aft housing -1 service panel 1-5 handle
+  - Aft housing -1 service panel 1-5 handle foot -1
+  - Aft housing -1 service panel 1-5 handle foot 1
+  - Aft housing -1 service panel 1-5 quarter-turn catch 0
+  - Aft housing -1 service panel 1-5 quarter-turn catch 1
+  - Aft housing -1 service panel 1-5 quarter-turn catch 2
+  - Aft housing -1 service panel 1-5 quarter-turn catch 3
+  - Aft housing -1 service panel 1-5 removable access leaf
+  - Aft housing 1 service panel 1-1 access backing lip 0
+  - Aft housing 1 service panel 1-1 access backing lip 1
+  - Aft housing 1 service panel 1-1 access backing lip 2
+  - Aft housing 1 service panel 1-1 access backing lip 3
+  - Aft housing 1 service panel 1-1 access gasket
+  - Aft housing 1 service panel 1-1 access identifier
+  - Aft housing 1 service panel 1-1 handle
+  - Aft housing 1 service panel 1-1 handle foot -1
+  - Aft housing 1 service panel 1-1 handle foot 1
+  - Aft housing 1 service panel 1-1 quarter-turn catch 0
+  - Aft housing 1 service panel 1-1 quarter-turn catch 1
+  - Aft housing 1 service panel 1-1 quarter-turn catch 2
+  - Aft housing 1 service panel 1-1 quarter-turn catch 3
+  - Aft housing 1 service panel 1-1 removable access leaf
+  - Aft housing 1 service panel 1-3 access backing lip 0
+  - Aft housing 1 service panel 1-3 access backing lip 1
+  - Aft housing 1 service panel 1-3 access backing lip 2
+  - Aft housing 1 service panel 1-3 access backing lip 3
+  - Aft housing 1 service panel 1-3 access gasket
+  - Aft housing 1 service panel 1-3 access identifier
+  - Aft housing 1 service panel 1-3 handle
+  - Aft housing 1 service panel 1-3 handle foot -1
+  - Aft housing 1 service panel 1-3 handle foot 1
+  - Aft housing 1 service panel 1-3 quarter-turn catch 0
+  - Aft housing 1 service panel 1-3 quarter-turn catch 1
+  - Aft housing 1 service panel 1-3 quarter-turn catch 2
+  - Aft housing 1 service panel 1-3 quarter-turn catch 3
+  - Aft housing 1 service panel 1-3 removable access leaf
+  - Shoulder -1 service panel 1-3 access backing lip 0
+  - Shoulder -1 service panel 1-3 access backing lip 1
+  - Shoulder -1 service panel 1-3 access backing lip 2
+  - Shoulder -1 service panel 1-3 access backing lip 3
+  - Shoulder -1 service panel 1-3 access gasket
+  - Shoulder -1 service panel 1-3 access identifier
+  - Shoulder -1 service panel 1-3 handle
+  - Shoulder -1 service panel 1-3 handle foot -1
+  - Shoulder -1 service panel 1-3 handle foot 1
+  - Shoulder -1 service panel 1-3 quarter-turn catch 0
+  - Shoulder -1 service panel 1-3 quarter-turn catch 1
+  - Shoulder -1 service panel 1-3 quarter-turn catch 2
+  - Shoulder -1 service panel 1-3 quarter-turn catch 3
+  - Shoulder -1 service panel 1-3 removable access leaf
+  - Shoulder -1 service panel 1-5 access backing lip 0
+  - Shoulder -1 service panel 1-5 access backing lip 1
+  - Shoulder -1 service panel 1-5 access backing lip 2
+  - Shoulder -1 service panel 1-5 access backing lip 3
+  - Shoulder -1 service panel 1-5 access gasket
+  - Shoulder -1 service panel 1-5 access identifier
+  - Shoulder -1 service panel 1-5 handle
+  - Shoulder -1 service panel 1-5 handle foot -1
+  - Shoulder -1 service panel 1-5 handle foot 1
+  - Shoulder -1 service panel 1-5 quarter-turn catch 0
+  - Shoulder -1 service panel 1-5 quarter-turn catch 1
+  - Shoulder -1 service panel 1-5 quarter-turn catch 2
+  - Shoulder -1 service panel 1-5 quarter-turn catch 3
+  - Shoulder -1 service panel 1-5 removable access leaf
+  - Shoulder 1 service panel 1-1 access backing lip 0
+  - Shoulder 1 service panel 1-1 access backing lip 1
+  - Shoulder 1 service panel 1-1 access backing lip 2
+  - Shoulder 1 service panel 1-1 access backing lip 3
+  - Shoulder 1 service panel 1-1 access gasket
+  - Shoulder 1 service panel 1-1 access identifier
+  - Shoulder 1 service panel 1-1 handle
+  - Shoulder 1 service panel 1-1 handle foot -1
+  - Shoulder 1 service panel 1-1 handle foot 1
+  - Shoulder 1 service panel 1-1 quarter-turn catch 0
+  - Shoulder 1 service panel 1-1 quarter-turn catch 1
+  - Shoulder 1 service panel 1-1 quarter-turn catch 2
+  - Shoulder 1 service panel 1-1 quarter-turn catch 3
+  - Shoulder 1 service panel 1-1 removable access leaf
+  - Shoulder 1 service panel 1-3 access backing lip 0
+  - Shoulder 1 service panel 1-3 access backing lip 1
+  - Shoulder 1 service panel 1-3 access backing lip 2
+  - Shoulder 1 service panel 1-3 access backing lip 3
+  - Shoulder 1 service panel 1-3 access gasket
+  - Shoulder 1 service panel 1-3 access identifier
+  - Shoulder 1 service panel 1-3 handle
+  - Shoulder 1 service panel 1-3 handle foot -1
+  - Shoulder 1 service panel 1-3 handle foot 1
+  - Shoulder 1 service panel 1-3 quarter-turn catch 0
+  - Shoulder 1 service panel 1-3 quarter-turn catch 1
+  - Shoulder 1 service panel 1-3 quarter-turn catch 2
+  - Shoulder 1 service panel 1-3 quarter-turn catch 3
+  - Shoulder 1 service panel 1-3 removable access leaf
+  nonmanifold_objects: []
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.
+- reserved_key: part.expl-02
+  code: EXPL-02
+  name: Aft equipment housings
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-02.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 4.420000076293945
+    width: 6.50346565246582
+    height: 1.9032740592956543
+  shape:
+    surface_area: 117.90981900368803
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - 1.5
+    - -3.25173282623291
+    - 2.0799999237060547
+    max:
+    - 5.920000076293945
+    - 3.25173282623291
+    - 3.983273983001709
+  exact_objects:
+  - Aft housing -1 aft interface blind cover
+  - Aft housing -1 aft interface blind cover captive fixing 0
+  - Aft housing -1 aft interface blind cover captive fixing 1
+  - Aft housing -1 aft interface blind cover captive fixing 2
+  - Aft housing -1 aft interface blind cover captive fixing 3
+  - Aft housing -1 aft interface blind cover captive fixing 4
+  - Aft housing -1 aft interface blind cover captive fixing 5
+  - Aft housing -1 aft interface blind cover captive fixing 6
+  - Aft housing -1 aft interface blind cover captive fixing 7
+  - Aft housing -1 casing 0-2
+  - Aft housing -1 casing 0-3
+  - Aft housing -1 casing 0-4
+  - Aft housing -1 casing 0-5
+  - Aft housing -1 casing 0-6
+  - Aft housing -1 casing 0-7
+  - Aft housing -1 casing 1-1
+  - Aft housing -1 casing 1-2
+  - Aft housing -1 casing 1-3
+  - Aft housing -1 casing 1-4
+  - Aft housing -1 casing 1-5
+  - Aft housing -1 casing 1-6
+  - Aft housing -1 casing 1-7
+  - Aft housing -1 casing 2-0
+  - Aft housing -1 casing 2-1
+  - Aft housing -1 casing 2-2
+  - Aft housing -1 casing 2-3
+  - Aft housing -1 casing 2-4
+  - Aft housing -1 casing 2-5
+  - Aft housing -1 casing 2-6
+  - Aft housing -1 casing 2-7
+  - Aft housing -1 end closure -1
+  - Aft housing -1 end closure 0
+  - Aft housing -1 restored exterior lower chamfer
+  - Aft housing -1 service panel 0-3
+  - Aft housing -1 service panel 0-3 captive fixing 0
+  - Aft housing -1 service panel 0-3 captive fixing 1
+  - Aft housing -1 service panel 0-3 captive fixing 2
+  - Aft housing -1 service panel 0-3 captive fixing 3
+  - Aft housing -1 service panel 0-4
+  - Aft housing -1 service panel 0-4 captive fixing 0
+  - Aft housing -1 service panel 0-4 captive fixing 1
+  - Aft housing -1 service panel 0-4 captive fixing 2
+  - Aft housing -1 service panel 0-4 captive fixing 3
+  - Aft housing -1 service panel 0-5
+  - Aft housing -1 service panel 0-5 captive fixing 0
+  - Aft housing -1 service panel 0-5 captive fixing 1
+  - Aft housing -1 service panel 0-5 captive fixing 2
+  - Aft housing -1 service panel 0-5 captive fixing 3
+  - Aft housing -1 service panel 1-3
+  - Aft housing -1 service panel 1-3 captive fixing 0
+  - Aft housing -1 service panel 1-3 captive fixing 1
+  - Aft housing -1 service panel 1-3 captive fixing 2
+  - Aft housing -1 service panel 1-3 captive fixing 3
+  - Aft housing -1 service panel 1-4
+  - Aft housing -1 service panel 1-4 captive fixing 0
+  - Aft housing -1 service panel 1-4 captive fixing 1
+  - Aft housing -1 service panel 1-4 captive fixing 2
+  - Aft housing -1 service panel 1-4 captive fixing 3
+  - Aft housing -1 service panel 1-5
+  - Aft housing -1 service panel 1-5 captive fixing 0
+  - Aft housing -1 service panel 1-5 captive fixing 1
+  - Aft housing -1 service panel 1-5 captive fixing 2
+  - Aft housing -1 service panel 1-5 captive fixing 3
+  - Aft housing -1 service panel 2-3
+  - Aft housing -1 service panel 2-3 captive fixing 0
+  - Aft housing -1 service panel 2-3 captive fixing 1
+  - Aft housing -1 service panel 2-3 captive fixing 2
+  - Aft housing -1 service panel 2-3 captive fixing 3
+  - Aft housing -1 service panel 2-4
+  - Aft housing -1 service panel 2-4 captive fixing 0
+  - Aft housing -1 service panel 2-4 captive fixing 1
+  - Aft housing -1 service panel 2-4 captive fixing 2
+  - Aft housing -1 service panel 2-4 captive fixing 3
+  - Aft housing -1 service panel 2-5
+  - Aft housing -1 service panel 2-5 captive fixing 0
+  - Aft housing -1 service panel 2-5 captive fixing 1
+  - Aft housing -1 service panel 2-5 captive fixing 2
+  - Aft housing -1 service panel 2-5 captive fixing 3
+  - Aft housing 1 aft interface blind cover
+  - Aft housing 1 aft interface blind cover captive fixing 0
+  - Aft housing 1 aft interface blind cover captive fixing 1
+  - Aft housing 1 aft interface blind cover captive fixing 2
+  - Aft housing 1 aft interface blind cover captive fixing 3
+  - Aft housing 1 aft interface blind cover captive fixing 4
+  - Aft housing 1 aft interface blind cover captive fixing 5
+  - Aft housing 1 aft interface blind cover captive fixing 6
+  - Aft housing 1 aft interface blind cover captive fixing 7
+  - Aft housing 1 casing 0-0
+  - Aft housing 1 casing 0-1
+  - Aft housing 1 casing 0-2
+  - Aft housing 1 casing 0-3
+  - Aft housing 1 casing 0-4
+  - Aft housing 1 casing 0-7
+  - Aft housing 1 casing 1-0
+  - Aft housing 1 casing 1-1
+  - Aft housing 1 casing 1-2
+  - Aft housing 1 casing 1-3
+  - Aft housing 1 casing 1-4
+  - Aft housing 1 casing 1-5
+  - Aft housing 1 casing 1-7
+  - Aft housing 1 casing 2-0
+  - Aft housing 1 casing 2-1
+  - Aft housing 1 casing 2-2
+  - Aft housing 1 casing 2-3
+  - Aft housing 1 casing 2-4
+  - Aft housing 1 casing 2-5
+  - Aft housing 1 casing 2-6
+  - Aft housing 1 casing 2-7
+  - Aft housing 1 end closure -1
+  - Aft housing 1 end closure 0
+  - Aft housing 1 restored exterior lower chamfer
+  - Aft housing 1 service panel 0-1
+  - Aft housing 1 service panel 0-1 captive fixing 0
+  - Aft housing 1 service panel 0-1 captive fixing 1
+  - Aft housing 1 service panel 0-1 captive fixing 2
+  - Aft housing 1 service panel 0-1 captive fixing 3
+  - Aft housing 1 service panel 0-2
+  - Aft housing 1 service panel 0-2 captive fixing 0
+  - Aft housing 1 service panel 0-2 captive fixing 1
+  - Aft housing 1 service panel 0-2 captive fixing 2
+  - Aft housing 1 service panel 0-2 captive fixing 3
+  - Aft housing 1 service panel 0-3
+  - Aft housing 1 service panel 0-3 captive fixing 0
+  - Aft housing 1 service panel 0-3 captive fixing 1
+  - Aft housing 1 service panel 0-3 captive fixing 2
+  - Aft housing 1 service panel 0-3 captive fixing 3
+  - Aft housing 1 service panel 1-1
+  - Aft housing 1 service panel 1-1 captive fixing 0
+  - Aft housing 1 service panel 1-1 captive fixing 1
+  - Aft housing 1 service panel 1-1 captive fixing 2
+  - Aft housing 1 service panel 1-1 captive fixing 3
+  - Aft housing 1 service panel 1-2
+  - Aft housing 1 service panel 1-2 captive fixing 0
+  - Aft housing 1 service panel 1-2 captive fixing 1
+  - Aft housing 1 service panel 1-2 captive fixing 2
+  - Aft housing 1 service panel 1-2 captive fixing 3
+  - Aft housing 1 service panel 1-3
+  - Aft housing 1 service panel 1-3 captive fixing 0
+  - Aft housing 1 service panel 1-3 captive fixing 1
+  - Aft housing 1 service panel 1-3 captive fixing 2
+  - Aft housing 1 service panel 1-3 captive fixing 3
+  - Aft housing 1 service panel 2-1
+  - Aft housing 1 service panel 2-1 captive fixing 0
+  - Aft housing 1 service panel 2-1 captive fixing 1
+  - Aft housing 1 service panel 2-1 captive fixing 2
+  - Aft housing 1 service panel 2-1 captive fixing 3
+  - Aft housing 1 service panel 2-2
+  - Aft housing 1 service panel 2-2 captive fixing 0
+  - Aft housing 1 service panel 2-2 captive fixing 1
+  - Aft housing 1 service panel 2-2 captive fixing 2
+  - Aft housing 1 service panel 2-2 captive fixing 3
+  - Aft housing 1 service panel 2-3
+  - Aft housing 1 service panel 2-3 captive fixing 0
+  - Aft housing 1 service panel 2-3 captive fixing 1
+  - Aft housing 1 service panel 2-3 captive fixing 2
+  - Aft housing 1 service panel 2-3 captive fixing 3
+  - Aft housing capped interface -1
+  - Aft housing capped interface 1
+  - Aft roof | sealed shell-to-compartment join -1
+  - Aft roof | sealed shell-to-compartment join 1
+  - Aft slope | closed jamb end -1
+  - Aft slope | closed jamb end 1
+  - Blind cover raised rib (-1, -0.19)
+  - Blind cover raised rib (-1, 0.19)
+  - Blind cover raised rib (1, -0.19)
+  - Blind cover raised rib (1, 0.19)
+  - Bridge inspection closure -1
+  - Bridge inspection closure 1
+  - Bridge orange access marking -1
+  - Bridge orange access marking 1
+  nonmanifold_objects:
+  - Aft housing 1 casing 0-4
+  - Aft housing 1 casing 1-4
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.
+- reserved_key: part.expl-03
+  code: EXPL-03
+  name: Cockpit core
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-03.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 9.077499866485596
+    width: 3.867861032485962
+    height: 2.482796788215637
+  shape:
+    surface_area: 229.6715156475675
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - -4.147500038146973
+    - -1.933930516242981
+    - 1.590000033378601
+    max:
+    - 4.929999828338623
+    - 1.933930516242981
+    - 4.072796821594238
+  exact_objects:
+  - Canopy aft frame -1
+  - Canopy aft frame 1
+  - Cockpit glazing 01-2 bonded perimeter 0-0
+  - Cockpit glazing 01-2 bonded perimeter 0-1
+  - Cockpit glazing 01-2 bonded perimeter 0-2
+  - Cockpit glazing 01-2 bonded perimeter 1-1
+  - Cockpit glazing 01-2 bonded perimeter 1-2
+  - Cockpit glazing 01-2 pane 0
+  - Cockpit glazing 01-2 pane 1
+  - Cockpit glazing 01-4 bonded perimeter 0-0
+  - Cockpit glazing 01-4 bonded perimeter 0-1
+  - Cockpit glazing 01-4 bonded perimeter 0-2
+  - Cockpit glazing 01-4 bonded perimeter 1-1
+  - Cockpit glazing 01-4 pane 0
+  - Cockpit glazing 01-4 pane 1
+  - Cockpit glazing 02-2 bonded perimeter 0-1
+  - Cockpit glazing 02-2 bonded perimeter 0-2
+  - Cockpit glazing 02-2 bonded perimeter 1-1
+  - Cockpit glazing 02-2 bonded perimeter 1-2
+  - Cockpit glazing 02-2 pane 0
+  - Cockpit glazing 02-2 pane 1
+  - Cockpit glazing 02-4 bonded perimeter 0-1
+  - Cockpit glazing 02-4 bonded perimeter 0-2
+  - Cockpit glazing 02-4 bonded perimeter 1-1
+  - Cockpit glazing 02-4 pane 0
+  - Cockpit glazing 02-4 pane 1
+  - Cockpit glazing 03-2 bonded perimeter 0-1
+  - Cockpit glazing 03-2 bonded perimeter 0-2
+  - Cockpit glazing 03-2 bonded perimeter 1-1
+  - Cockpit glazing 03-2 bonded perimeter 1-2
+  - Cockpit glazing 03-2 pane 0
+  - Cockpit glazing 03-2 pane 1
+  - Cockpit glazing 03-3 bonded perimeter 0-1
+  - Cockpit glazing 03-3 bonded perimeter 0-2
+  - Cockpit glazing 03-3 pane 0
+  - Cockpit glazing 03-4 bonded perimeter 0-1
+  - Cockpit glazing 03-4 bonded perimeter 0-2
+  - Cockpit glazing 03-4 bonded perimeter 1-1
+  - Cockpit glazing 03-4 pane 0
+  - Cockpit glazing 03-4 pane 1
+  - Cockpit supported sill -1
+  - Cockpit supported sill 1
+  - Core pressure skin 01-0
+  - Core pressure skin 01-1
+  - Core pressure skin 01-5
+  - Core pressure skin 01-6
+  - Core pressure skin 01-7
+  - Core pressure skin 02-0
+  - Core pressure skin 02-1
+  - Core pressure skin 02-5
+  - Core pressure skin 02-6
+  - Core pressure skin 02-7
+  - Core pressure skin 03-0
+  - Core pressure skin 03-1
+  - Core pressure skin 03-5
+  - Core pressure skin 03-6
+  - Core pressure skin 03-7
+  - Core pressure skin 04-0
+  - Core pressure skin 04-1
+  - Core pressure skin 04-2
+  - Core pressure skin 04-3
+  - Core pressure skin 04-4
+  - Core pressure skin 04-5
+  - Core pressure skin 04-6
+  - Core pressure skin 04-7
+  - Core pressure skin 05-0
+  - Core pressure skin 05-1
+  - Core pressure skin 05-2
+  - Core pressure skin 05-3
+  - Core pressure skin 05-4
+  - Core pressure skin 05-5
+  - Core pressure skin 05-6
+  - Core pressure skin 05-7
+  - Core pressure skin 06-0
+  - Core pressure skin 06-1
+  - Core pressure skin 06-2
+  - Core pressure skin 06-3
+  - Core pressure skin 06-4
+  - Core pressure skin 06-5
+  - Core pressure skin 06-6
+  - Core pressure skin 06-7
+  - Core removable outer cover 01-1
+  - Core removable outer cover 01-1 captive fixing 0
+  - Core removable outer cover 01-1 captive fixing 1
+  - Core removable outer cover 01-1 captive fixing 2
+  - Core removable outer cover 01-1 captive fixing 3
+  - Core removable outer cover 01-5
+  - Core removable outer cover 01-5 captive fixing 0
+  - Core removable outer cover 01-5 captive fixing 1
+  - Core removable outer cover 01-5 captive fixing 2
+  - Core removable outer cover 01-5 captive fixing 3
+  - Core removable outer cover 02-1
+  - Core removable outer cover 02-1 captive fixing 0
+  - Core removable outer cover 02-1 captive fixing 1
+  - Core removable outer cover 02-1 captive fixing 2
+  - Core removable outer cover 02-1 captive fixing 3
+  - Core removable outer cover 02-5
+  - Core removable outer cover 02-5 captive fixing 0
+  - Core removable outer cover 02-5 captive fixing 1
+  - Core removable outer cover 02-5 captive fixing 2
+  - Core removable outer cover 02-5 captive fixing 3
+  - Core removable outer cover 03-1
+  - Core removable outer cover 03-1 captive fixing 0
+  - Core removable outer cover 03-1 captive fixing 1
+  - Core removable outer cover 03-1 captive fixing 2
+  - Core removable outer cover 03-1 captive fixing 3
+  - Core removable outer cover 03-5
+  - Core removable outer cover 03-5 captive fixing 0
+  - Core removable outer cover 03-5 captive fixing 1
+  - Core removable outer cover 03-5 captive fixing 2
+  - Core removable outer cover 03-5 captive fixing 3
+  - Core removable outer cover 04-1
+  - Core removable outer cover 04-1 captive fixing 0
+  - Core removable outer cover 04-1 captive fixing 1
+  - Core removable outer cover 04-2
+  - Core removable outer cover 04-2 captive fixing 0
+  - Core removable outer cover 04-2 captive fixing 1
+  - Core removable outer cover 04-2 captive fixing 2
+  - Core removable outer cover 04-2 captive fixing 3
+  - Core removable outer cover 04-3
+  - Core removable outer cover 04-3 captive fixing 0
+  - Core removable outer cover 04-3 captive fixing 1
+  - Core removable outer cover 04-3 captive fixing 2
+  - Core removable outer cover 04-3 captive fixing 3
+  - Core removable outer cover 04-4
+  - Core removable outer cover 04-4 captive fixing 0
+  - Core removable outer cover 04-4 captive fixing 1
+  - Core removable outer cover 04-4 captive fixing 2
+  - Core removable outer cover 04-4 captive fixing 3
+  - Core removable outer cover 04-5
+  - Core removable outer cover 04-5 captive fixing 0
+  - Core removable outer cover 04-5 captive fixing 1
+  - Core removable outer cover 05-1
+  - Core removable outer cover 05-1 captive fixing 3
+  - Core removable outer cover 05-2
+  - Core removable outer cover 05-2 captive fixing 0
+  - Core removable outer cover 05-2 captive fixing 1
+  - Core removable outer cover 05-2 captive fixing 2
+  - Core removable outer cover 05-2 captive fixing 3
+  - Core removable outer cover 05-3
+  - Core removable outer cover 05-3 captive fixing 0
+  - Core removable outer cover 05-3 captive fixing 1
+  - Core removable outer cover 05-3 captive fixing 2
+  - Core removable outer cover 05-3 captive fixing 3
+  - Core removable outer cover 05-4
+  - Core removable outer cover 05-4 captive fixing 0
+  - Core removable outer cover 05-4 captive fixing 1
+  - Core removable outer cover 05-4 captive fixing 2
+  - Core removable outer cover 05-4 captive fixing 3
+  - Core removable outer cover 05-5
+  - Core removable outer cover 05-5 captive fixing 2
+  - Core removable outer cover 06-1
+  - Core removable outer cover 06-1 captive fixing 0
+  - Core removable outer cover 06-1 captive fixing 2
+  - Core removable outer cover 06-1 captive fixing 3
+  - Core removable outer cover 06-2
+  - Core removable outer cover 06-2 captive fixing 0
+  - Core removable outer cover 06-2 captive fixing 1
+  - Core removable outer cover 06-2 captive fixing 2
+  - Core removable outer cover 06-2 captive fixing 3
+  - Core removable outer cover 06-3
+  - Core removable outer cover 06-3 captive fixing 0
+  - Core removable outer cover 06-3 captive fixing 1
+  - Core removable outer cover 06-3 captive fixing 2
+  - Core removable outer cover 06-3 captive fixing 3
+  - Core removable outer cover 06-4
+  - Core removable outer cover 06-4 captive fixing 0
+  - Core removable outer cover 06-4 captive fixing 1
+  - Core removable outer cover 06-4 captive fixing 2
+  - Core removable outer cover 06-4 captive fixing 3
+  - Core removable outer cover 06-5
+  - Core removable outer cover 06-5 captive fixing 1
+  - Core removable outer cover 06-5 captive fixing 2
+  - Core removable outer cover 06-5 captive fixing 3
+  nonmanifold_objects: []
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.
+- reserved_key: part.expl-04
+  code: EXPL-04
+  name: Cockpit front visor
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-04.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 1.3448283672332764
+    width: 2.240000009536743
+    height: 0.9639391899108887
+  shape:
+    surface_area: 9.113467572261243
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - -4.1539387702941895
+    - -1.1200000047683716
+    - 2.746060848236084
+    max:
+    - -2.809110403060913
+    - 1.1200000047683716
+    - 3.7100000381469727
+  exact_objects:
+  - Visor | chamfer frame (-1, 0)
+  - Visor | chamfer frame (-1, 1)
+  - Visor | chamfer frame (-1, 2)
+  - Visor | chamfer frame (1, 0)
+  - Visor | chamfer frame (1, 1)
+  - Visor | chamfer frame (1, 2)
+  - Visor | chamfered roof brow
+  - Visor | faceted surround -1
+  - Visor | faceted surround 1
+  - Visor | glazing side seal (-1, 0)
+  - Visor | glazing side seal (-1, 1)
+  - Visor | glazing side seal (-1, 2)
+  - Visor | glazing side seal (1, 0)
+  - Visor | glazing side seal (1, 1)
+  - Visor | glazing side seal (1, 2)
+  - Visor | lower sill
+  - Visor | slender centre mullion
+  - Visor | upper seat
+  - Visor | windshield -1
+  - Visor | windshield 1
+  nonmanifold_objects: []
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.
+- reserved_key: part.expl-05
+  code: EXPL-05
+  name: Cockpit nose
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-05.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 0.9679179191589355
+    width: 2.1000001430511475
+    height: 0.8999998569488525
+  shape:
+    surface_area: 9.515859602950513
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - -5.087917804718018
+    - -1.0500000715255737
+    - 1.880000114440918
+    max:
+    - -4.119999885559082
+    - 1.0500000715255737
+    - 2.7799999713897705
+  exact_objects:
+  - Wedge nose | continuous pressure skin
+  nonmanifold_objects: []
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.
+- reserved_key: part.expl-06
+  code: EXPL-06
+  name: Compact landing gear cover
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-06.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 6.778000354766846
+    width: 2.7280004024505615
+    height: 0.653999924659729
+  shape:
+    surface_area: 15.228022904717363
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - -3.064000129699707
+    - -1.3640000820159912
+    - 1.1800000667572021
+    max:
+    - 3.7140002250671387
+    - 1.3640003204345703
+    - 1.8339999914169312
+  exact_objects:
+  - Nose gear compact cover end wall
+  - Nose gear compact cover front wall
+  - Nose gear compact cover left wall
+  - Nose gear compact cover right wall
+  - Nose gear compact cover roof
+  - Nose gear compact door -1
+  - Nose gear compact door 1
+  - Port aft gear compact cover end wall
+  - Port aft gear compact cover front wall
+  - Port aft gear compact cover left wall
+  - Port aft gear compact cover right wall
+  - Port aft gear compact cover roof
+  - Port aft gear compact door -1
+  - Port aft gear compact door 1
+  - Starboard aft gear compact cover end wall
+  - Starboard aft gear compact cover front wall
+  - Starboard aft gear compact cover left wall
+  - Starboard aft gear compact cover right wall
+  - Starboard aft gear compact cover roof
+  - Starboard aft gear compact door -1
+  - Starboard aft gear compact door 1
+  nonmanifold_objects: []
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.
+- reserved_key: part.expl-07
+  code: EXPL-07
+  name: Crew hatch and folding ladder
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-07.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 8.029999732971191
+    width: 3.7431198358535767
+    height: 0.9780000448226929
+  shape:
+    surface_area: 71.83306345809797
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - -3.0999999046325684
+    - -1.871559977531433
+    - 1.590000033378601
+    max:
+    - 4.929999828338623
+    - 1.8715598583221436
+    - 2.568000078201294
+  exact_objects:
+  - Crew access belly | round opening
+  - Crew access floor | round opening
+  - Crew hatch belly carrier ear -1
+  - Crew hatch belly carrier ear 1
+  - Crew hatch belly carrier seat -1
+  - Crew hatch belly carrier seat 1
+  - Crew hatch belly slide shoe -1
+  - Crew hatch belly slide shoe 1
+  - Crew hatch circular coaming
+  - Crew hatch floor carrier ear -1
+  - Crew hatch floor carrier ear 1
+  - Crew hatch floor carrier seat -1
+  - Crew hatch floor carrier seat 1
+  - Crew hatch floor slide shoe -1
+  - Crew hatch floor slide shoe 1
+  - Crew hatch front lower slot closure
+  - Crew hatch front upper slot closure
+  - Crew hatch handhold top -1
+  - Crew hatch handhold top 1
+  - Crew hatch handhold upright (-1, 1.1099999999999999)
+  - Crew hatch handhold upright (-1, 1.23)
+  - Crew hatch handhold upright (1, 1.1099999999999999)
+  - Crew hatch handhold upright (1, 1.23)
+  - Crew hatch latch recess -1
+  - Crew hatch latch recess 1
+  - Crew hatch lower rim
+  - Crew hatch pocket guide -1
+  - Crew hatch pocket guide 1
+  - Crew hatch quarter turn -1
+  - Crew hatch quarter turn 1
+  - Crew hatch round belly leaf
+  - Crew hatch round floor leaf
+  - Crew hatch safety rim
+  - Crew hatch track floor bracket (-1, 0.10999999999999999)
+  - Crew hatch track floor bracket (-1, 1.01)
+  - Crew hatch track floor bracket (-1, 1.9)
+  - Crew hatch track floor bracket (1, 0.10999999999999999)
+  - Crew hatch track floor bracket (1, 1.01)
+  - Crew hatch track floor bracket (1, 1.9)
+  - Crew hatch upper rim
+  - Crew ladder fold cheek (-1, -0.23500000000000001)
+  - Crew ladder fold cheek (-1, -0.28500000000000003)
+  - Crew ladder fold cheek (1, 0.23500000000000001)
+  - Crew ladder fold cheek (1, 0.28500000000000003)
+  - Crew ladder fold pin -1
+  - Crew ladder fold pin 1
+  - Crew ladder fold stop -1
+  - Crew ladder fold stop 1
+  - Crew ladder foot cap -1
+  - Crew ladder foot cap 1
+  - Crew ladder lower grip (0, -0.012)
+  - Crew ladder lower grip (0, 0)
+  - Crew ladder lower grip (0, 0.012)
+  - Crew ladder lower grip (1, -0.012)
+  - Crew ladder lower grip (1, 0)
+  - Crew ladder lower grip (1, 0.012)
+  - Crew ladder lower grip (2, -0.012)
+  - Crew ladder lower grip (2, 0)
+  - Crew ladder lower grip (2, 0.012)
+  - Crew ladder lower rail -1
+  - Crew ladder lower rail 1
+  - Crew ladder lower tread 0
+  - Crew ladder lower tread 1
+  - Crew ladder lower tread 2
+  - Crew ladder top bracket -1
+  - Crew ladder top bracket 1
+  - Crew ladder top pivot -1
+  - Crew ladder top pivot 1
+  - Crew ladder upper grip (0, -0.012)
+  - Crew ladder upper grip (0, 0)
+  - Crew ladder upper grip (0, 0.012)
+  - Crew ladder upper grip (1, -0.012)
+  - Crew ladder upper grip (1, 0)
+  - Crew ladder upper grip (1, 0.012)
+  - Crew ladder upper grip (2, -0.012)
+  - Crew ladder upper grip (2, 0)
+  - Crew ladder upper grip (2, 0.012)
+  - Crew ladder upper rail -1
+  - Crew ladder upper rail 1
+  - Crew ladder upper tread 0
+  - Crew ladder upper tread 1
+  - Crew ladder upper tread 2
+  nonmanifold_objects:
+  - Crew access belly | round opening
+  - Crew access floor | round opening
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.
+- reserved_key: part.expl-08
+  code: EXPL-08
+  name: Edited landing gear assembly
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-08.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 6.75
+    width: 2.700000047683716
+    height: 1.600000023841858
+  shape:
+    surface_area: 10.017515829713915
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - -3.049999952316284
+    - -1.350000023841858
+    - 0.2200000286102295
+    max:
+    - 3.700000047683716
+    - 1.350000023841858
+    - 1.8200000524520874
+  exact_objects:
+  - Nose gear | LandingLeg180_fixed
+  - Nose gear | LandingLeg180_leg
+  - Nose gear | LandingLeg180_slider
+  - Nose gear | ankle rib -1
+  - Nose gear | ankle rib 1
+  - Nose gear | clipped trapezoid pad
+  - Nose gear | dark sole
+  - Nose gear | raised perimeter
+  - Port aft gear | LandingLeg180_fixed
+  - Port aft gear | LandingLeg180_leg
+  - Port aft gear | LandingLeg180_slider
+  - Port aft gear | ankle rib -1
+  - Port aft gear | ankle rib 1
+  - Port aft gear | clipped trapezoid pad
+  - Port aft gear | dark sole
+  - Port aft gear | raised perimeter
+  - Starboard aft gear | LandingLeg180_fixed
+  - Starboard aft gear | LandingLeg180_leg
+  - Starboard aft gear | LandingLeg180_slider
+  - Starboard aft gear | ankle rib -1
+  - Starboard aft gear | ankle rib 1
+  - Starboard aft gear | clipped trapezoid pad
+  - Starboard aft gear | dark sole
+  - Starboard aft gear | raised perimeter
+  nonmanifold_objects:
+  - Nose gear | LandingLeg180_fixed
+  - Nose gear | LandingLeg180_leg
+  - Nose gear | LandingLeg180_slider
+  - Port aft gear | LandingLeg180_fixed
+  - Port aft gear | LandingLeg180_leg
+  - Port aft gear | LandingLeg180_slider
+  - Starboard aft gear | LandingLeg180_fixed
+  - Starboard aft gear | LandingLeg180_leg
+  - Starboard aft gear | LandingLeg180_slider
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.
+- reserved_key: part.expl-09
+  code: EXPL-09
+  name: Forward shoulders
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-09.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 5.997999906539917
+    width: 6.165250778198242
+    height: 2.3339998722076416
+  shape:
+    surface_area: 125.96223537247783
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - -2.497999906539917
+    - -3.082625389099121
+    - 1.8459999561309814
+    max:
+    - 3.5
+    - 3.082625389099121
+    - 4.179999828338623
+  exact_objects:
+  - Lamp guard (-1, -0.05)
+  - Lamp guard (-1, 0.05)
+  - Lamp guard (1, -0.05)
+  - Lamp guard (1, 0.05)
+  - Shoulder -1 aft interface blind cover
+  - Shoulder -1 aft interface blind cover captive fixing 0
+  - Shoulder -1 aft interface blind cover captive fixing 3
+  - Shoulder -1 aft interface blind cover captive fixing 4
+  - Shoulder -1 aft interface blind cover captive fixing 5
+  - Shoulder -1 aft interface blind cover captive fixing 6
+  - Shoulder -1 aft interface blind cover captive fixing 7
+  - Shoulder -1 casing 0-0
+  - Shoulder -1 casing 0-1
+  - Shoulder -1 casing 0-2
+  - Shoulder -1 casing 0-3
+  - Shoulder -1 casing 0-4
+  - Shoulder -1 casing 0-5
+  - Shoulder -1 casing 0-6
+  - Shoulder -1 casing 0-7
+  - Shoulder -1 casing 1-0
+  - Shoulder -1 casing 1-1
+  - Shoulder -1 casing 1-2
+  - Shoulder -1 casing 1-3
+  - Shoulder -1 casing 1-4
+  - Shoulder -1 casing 1-5
+  - Shoulder -1 casing 1-6
+  - Shoulder -1 casing 1-7
+  - Shoulder -1 casing 2-0
+  - Shoulder -1 casing 2-1
+  - Shoulder -1 casing 2-2
+  - Shoulder -1 casing 2-3
+  - Shoulder -1 casing 2-4
+  - Shoulder -1 casing 2-5
+  - Shoulder -1 casing 2-6
+  - Shoulder -1 casing 2-7
+  - Shoulder -1 end closure -1
+  - Shoulder -1 end closure 0
+  - Shoulder -1 service panel 0-3
+  - Shoulder -1 service panel 0-3 captive fixing 0
+  - Shoulder -1 service panel 0-3 captive fixing 1
+  - Shoulder -1 service panel 0-3 captive fixing 2
+  - Shoulder -1 service panel 0-3 captive fixing 3
+  - Shoulder -1 service panel 0-4
+  - Shoulder -1 service panel 0-4 captive fixing 0
+  - Shoulder -1 service panel 0-4 captive fixing 1
+  - Shoulder -1 service panel 0-4 captive fixing 2
+  - Shoulder -1 service panel 0-4 captive fixing 3
+  - Shoulder -1 service panel 0-5
+  - Shoulder -1 service panel 0-5 captive fixing 0
+  - Shoulder -1 service panel 0-5 captive fixing 1
+  - Shoulder -1 service panel 0-5 captive fixing 2
+  - Shoulder -1 service panel 0-5 captive fixing 3
+  - Shoulder -1 service panel 1-3
+  - Shoulder -1 service panel 1-3 captive fixing 0
+  - Shoulder -1 service panel 1-3 captive fixing 1
+  - Shoulder -1 service panel 1-3 captive fixing 2
+  - Shoulder -1 service panel 1-3 captive fixing 3
+  - Shoulder -1 service panel 1-4
+  - Shoulder -1 service panel 1-4 captive fixing 0
+  - Shoulder -1 service panel 1-4 captive fixing 1
+  - Shoulder -1 service panel 1-4 captive fixing 2
+  - Shoulder -1 service panel 1-4 captive fixing 3
+  - Shoulder -1 service panel 1-5
+  - Shoulder -1 service panel 1-5 captive fixing 0
+  - Shoulder -1 service panel 1-5 captive fixing 1
+  - Shoulder -1 service panel 1-5 captive fixing 2
+  - Shoulder -1 service panel 1-5 captive fixing 3
+  - Shoulder -1 service panel 2-3
+  - Shoulder -1 service panel 2-3 captive fixing 0
+  - Shoulder -1 service panel 2-3 captive fixing 1
+  - Shoulder -1 service panel 2-3 captive fixing 2
+  - Shoulder -1 service panel 2-3 captive fixing 3
+  - Shoulder -1 service panel 2-4
+  - Shoulder -1 service panel 2-4 captive fixing 0
+  - Shoulder -1 service panel 2-4 captive fixing 1
+  - Shoulder -1 service panel 2-4 captive fixing 2
+  - Shoulder -1 service panel 2-4 captive fixing 3
+  - Shoulder -1 service panel 2-5
+  - Shoulder -1 service panel 2-5 captive fixing 0
+  - Shoulder -1 service panel 2-5 captive fixing 1
+  - Shoulder -1 service panel 2-5 captive fixing 2
+  - Shoulder -1 service panel 2-5 captive fixing 3
+  - Shoulder 1 aft interface blind cover
+  - Shoulder 1 aft interface blind cover captive fixing 0
+  - Shoulder 1 aft interface blind cover captive fixing 1
+  - Shoulder 1 aft interface blind cover captive fixing 2
+  - Shoulder 1 aft interface blind cover captive fixing 3
+  - Shoulder 1 aft interface blind cover captive fixing 4
+  - Shoulder 1 aft interface blind cover captive fixing 7
+  - Shoulder 1 casing 0-0
+  - Shoulder 1 casing 0-1
+  - Shoulder 1 casing 0-2
+  - Shoulder 1 casing 0-3
+  - Shoulder 1 casing 0-4
+  - Shoulder 1 casing 0-5
+  - Shoulder 1 casing 0-6
+  - Shoulder 1 casing 0-7
+  - Shoulder 1 casing 1-0
+  - Shoulder 1 casing 1-1
+  - Shoulder 1 casing 1-2
+  - Shoulder 1 casing 1-3
+  - Shoulder 1 casing 1-4
+  - Shoulder 1 casing 1-5
+  - Shoulder 1 casing 1-6
+  - Shoulder 1 casing 1-7
+  - Shoulder 1 casing 2-0
+  - Shoulder 1 casing 2-1
+  - Shoulder 1 casing 2-2
+  - Shoulder 1 casing 2-3
+  - Shoulder 1 casing 2-4
+  - Shoulder 1 casing 2-5
+  - Shoulder 1 casing 2-6
+  - Shoulder 1 casing 2-7
+  - Shoulder 1 end closure -1
+  - Shoulder 1 end closure 0
+  - Shoulder 1 service panel 0-1
+  - Shoulder 1 service panel 0-1 captive fixing 0
+  - Shoulder 1 service panel 0-1 captive fixing 1
+  - Shoulder 1 service panel 0-1 captive fixing 2
+  - Shoulder 1 service panel 0-1 captive fixing 3
+  - Shoulder 1 service panel 0-2
+  - Shoulder 1 service panel 0-2 captive fixing 0
+  - Shoulder 1 service panel 0-2 captive fixing 1
+  - Shoulder 1 service panel 0-2 captive fixing 2
+  - Shoulder 1 service panel 0-2 captive fixing 3
+  - Shoulder 1 service panel 0-3
+  - Shoulder 1 service panel 0-3 captive fixing 0
+  - Shoulder 1 service panel 0-3 captive fixing 1
+  - Shoulder 1 service panel 0-3 captive fixing 2
+  - Shoulder 1 service panel 0-3 captive fixing 3
+  - Shoulder 1 service panel 1-1
+  - Shoulder 1 service panel 1-1 captive fixing 0
+  - Shoulder 1 service panel 1-1 captive fixing 1
+  - Shoulder 1 service panel 1-1 captive fixing 2
+  - Shoulder 1 service panel 1-1 captive fixing 3
+  - Shoulder 1 service panel 1-2
+  - Shoulder 1 service panel 1-2 captive fixing 0
+  - Shoulder 1 service panel 1-2 captive fixing 1
+  - Shoulder 1 service panel 1-2 captive fixing 2
+  - Shoulder 1 service panel 1-2 captive fixing 3
+  - Shoulder 1 service panel 1-3
+  - Shoulder 1 service panel 1-3 captive fixing 0
+  - Shoulder 1 service panel 1-3 captive fixing 1
+  - Shoulder 1 service panel 1-3 captive fixing 2
+  - Shoulder 1 service panel 1-3 captive fixing 3
+  - Shoulder 1 service panel 2-1
+  - Shoulder 1 service panel 2-1 captive fixing 0
+  - Shoulder 1 service panel 2-1 captive fixing 1
+  - Shoulder 1 service panel 2-1 captive fixing 2
+  - Shoulder 1 service panel 2-1 captive fixing 3
+  - Shoulder 1 service panel 2-2
+  - Shoulder 1 service panel 2-2 captive fixing 0
+  - Shoulder 1 service panel 2-2 captive fixing 1
+  - Shoulder 1 service panel 2-2 captive fixing 2
+  - Shoulder 1 service panel 2-2 captive fixing 3
+  - Shoulder 1 service panel 2-3
+  - Shoulder 1 service panel 2-3 captive fixing 0
+  - Shoulder 1 service panel 2-3 captive fixing 1
+  - Shoulder 1 service panel 2-3 captive fixing 2
+  - Shoulder 1 service panel 2-3 captive fixing 3
+  - Shoulder floor | sealed inner return -1 0
+  - Shoulder floor | sealed inner return -1 1
+  - Shoulder floor | sealed inner return -1 2
+  - Shoulder floor | sealed inner return 1 0
+  - Shoulder floor | sealed inner return 1 1
+  - Shoulder floor | sealed inner return 1 2
+  - Shoulder forward lamp housing -1
+  - Shoulder forward lamp housing 1
+  - Shoulder forward task lens -1
+  - Shoulder forward task lens 1
+  - Shoulder front | lower corner closure -1
+  - Shoulder front | lower corner closure 1
+  - Shoulder interior | level raised deck -1
+  - Shoulder interior | level raised deck 1
+  - Shoulder rear threshold | wall seam closure -1
+  - Shoulder rear threshold | wall seam closure 1
+  - Shoulder underside | floor-to-core seam -1
+  - Shoulder underside | floor-to-core seam 1
+  nonmanifold_objects:
+  - Shoulder -1 aft interface blind cover
+  - Shoulder -1 casing 2-2
+  - Shoulder -1 end closure -1
+  - Shoulder 1 aft interface blind cover
+  - Shoulder 1 casing 2-4
+  - Shoulder 1 end closure -1
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.
+- reserved_key: part.expl-10
+  code: EXPL-10
+  name: Interior floor and trim
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-10.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 8.89494514465332
+    width: 4.101667642593384
+    height: 0.3860069513320923
+  shape:
+    surface_area: 12.2891722045606
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - -3.9649453163146973
+    - -2.0051677227020264
+    - 1.7380000352859497
+    max:
+    - 4.929999828338623
+    - 2.0964999198913574
+    - 2.124006986618042
+  exact_objects:
+  - Cabin trim | continuous height -1
+  - Cabin trim | continuous height 1
+  - Cockpit floor | continuous forward deck
+  - Raised floor | perimeter return 0
+  - Raised floor | perimeter return 1
+  - Raised floor | perimeter return 2
+  - Raised floor | perimeter return 3
+  - Raised floor | perimeter return 5
+  - Raised floor | perimeter return 6
+  - Raised floor | perimeter return 7
+  - Raised floor | perimeter return 8
+  - Raised floor | perimeter return 9
+  - Starboard aft threshold | forward floor closure
+  nonmanifold_objects: []
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.
+- reserved_key: part.expl-11
+  code: EXPL-11
+  name: Interior lighting
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-11.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 7.028716087341309
+    width: 4.965000152587891
+    height: 2.124095916748047
+  shape:
+    surface_area: 2.3581134658397787
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - -2.333907127380371
+    - -2.4825000762939453
+    - 1.8750412464141846
+    max:
+    - 4.6948089599609375
+    - 2.4825000762939453
+    - 3.9991371631622314
+  exact_objects:
+  - Interior compartment roof strip bezel -1
+  - Interior compartment roof strip bezel 1
+  - Interior compartment roof strip diffuser -1
+  - Interior compartment roof strip diffuser 1
+  - Interior forward toekick strip bezel -1
+  - Interior forward toekick strip bezel 1
+  - Interior forward toekick strip diffuser -1
+  - Interior forward toekick strip diffuser 1
+  - Interior rear lower bezel -1
+  - Interior rear lower bezel 1
+  - Interior rear lower diffuser -1
+  - Interior rear lower diffuser 1
+  - Interior rear upper bezel -1
+  - Interior rear upper bezel 1
+  - Interior rear upper diffuser -1
+  - Interior rear upper diffuser 1
+  - Interior shoulder roof strip bezel -1
+  - Interior shoulder roof strip bezel 1
+  - Interior shoulder roof strip diffuser -1
+  - Interior shoulder roof strip diffuser 1
+  - Interior toekick strip bezel -1 0
+  - Interior toekick strip bezel -1 1
+  - Interior toekick strip bezel -1 2
+  - Interior toekick strip bezel -1 3
+  - Interior toekick strip bezel -1 4
+  - Interior toekick strip bezel -1 5
+  - Interior toekick strip bezel 1 0
+  - Interior toekick strip bezel 1 1
+  - Interior toekick strip bezel 1 2
+  - Interior toekick strip bezel 1 3
+  - Interior toekick strip bezel 1 4
+  - Interior toekick strip bezel 1 5
+  - Interior toekick strip diffuser -1 0
+  - Interior toekick strip diffuser -1 1
+  - Interior toekick strip diffuser -1 2
+  - Interior toekick strip diffuser -1 3
+  - Interior toekick strip diffuser -1 4
+  - Interior toekick strip diffuser -1 5
+  - Interior toekick strip diffuser 1 0
+  - Interior toekick strip diffuser 1 1
+  - Interior toekick strip diffuser 1 2
+  - Interior toekick strip diffuser 1 3
+  - Interior toekick strip diffuser 1 4
+  - Interior toekick strip diffuser 1 5
+  - Interior upper side strip bezel -1 0
+  - Interior upper side strip bezel -1 1
+  - Interior upper side strip bezel -1 2
+  - Interior upper side strip bezel -1 3
+  - Interior upper side strip bezel -1 4
+  - Interior upper side strip bezel -1 5
+  - Interior upper side strip bezel 1 0
+  - Interior upper side strip bezel 1 1
+  - Interior upper side strip bezel 1 2
+  - Interior upper side strip bezel 1 3
+  - Interior upper side strip bezel 1 4
+  - Interior upper side strip bezel 1 5
+  - Interior upper side strip diffuser -1 0
+  - Interior upper side strip diffuser -1 1
+  - Interior upper side strip diffuser -1 2
+  - Interior upper side strip diffuser -1 3
+  - Interior upper side strip diffuser -1 4
+  - Interior upper side strip diffuser -1 5
+  - Interior upper side strip diffuser 1 0
+  - Interior upper side strip diffuser 1 1
+  - Interior upper side strip diffuser 1 2
+  - Interior upper side strip diffuser 1 3
+  - Interior upper side strip diffuser 1 4
+  - Interior upper side strip diffuser 1 5
+  nonmanifold_objects: []
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.
+- reserved_key: part.expl-12
+  code: EXPL-12
+  name: Internal side compartment access
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-12.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 6.609999775886536
+    width: 4.088738441467285
+    height: 1.510404109954834
+  shape:
+    surface_area: 1.7141745444969274
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - -1.159999966621399
+    - -2.0443692207336426
+    - 1.9140000343322754
+    max:
+    - 5.449999809265137
+    - 2.0443692207336426
+    - 3.4244041442871094
+  exact_objects:
+  - Aft compartment flush corner return (-1, 0)
+  - Aft compartment flush corner return (-1, 1)
+  - Aft compartment flush corner return (-1, 2)
+  - Aft compartment flush corner return (-1, 3)
+  - Aft compartment flush corner return (-1, 4)
+  - Aft compartment flush corner return (1, 0)
+  - Aft compartment flush corner return (1, 1)
+  - Aft compartment flush corner return (1, 2)
+  - Aft compartment flush corner return (1, 3)
+  - Aft compartment flush corner return (1, 4)
+  - Aft compartment | underfloor seam closure -1
+  - Aft compartment | underfloor seam closure 1
+  - Forward compartment jamb | closed flat end -1
+  - Forward compartment jamb | closed flat end 1
+  - Opening jamb | port flat end cap
+  - Opening jamb | starboard flat end cap
+  nonmanifold_objects: []
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.
+- reserved_key: part.expl-13
+  code: EXPL-13
+  name: Nose headlights
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-13.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 0.026000499725341797
+    width: 1.1600000858306885
+    height: 0.06300020217895508
+  shape:
+    surface_area: 0.2414669170975685
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - -5.111917972564697
+    - -0.5800000429153442
+    - 2.1644999980926514
+    max:
+    - -5.0859174728393555
+    - 0.5800000429153442
+    - 2.2275002002716064
+  exact_objects:
+  - Headlight -1 | edge bezel -0.037
+  - Headlight -1 | edge bezel 0.037
+  - Headlight -1 | recessed lens
+  - Headlight -1 | seated backplate
+  - Headlight -1 | side bezel -0.142
+  - Headlight -1 | side bezel 0.142
+  - Headlight 1 | edge bezel -0.037
+  - Headlight 1 | edge bezel 0.037
+  - Headlight 1 | recessed lens
+  - Headlight 1 | seated backplate
+  - Headlight 1 | side bezel -0.142
+  - Headlight 1 | side bezel 0.142
+  nonmanifold_objects: []
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.
+- reserved_key: part.expl-14
+  code: EXPL-14
+  name: Port aft threshold
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-14.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 0.6700000762939453
+    width: 0.18249988555908203
+    height: 0.04400491714477539
+  shape:
+    surface_area: 0.1465466406662017
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - 2.359999895095825
+    - -2.0964999198913574
+    - 2.0800020694732666
+    max:
+    - 3.0299999713897705
+    - -1.9140000343322754
+    - 2.124006986618042
+  exact_objects:
+  - Port aft threshold | forward floor closure
+  nonmanifold_objects: []
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.
+- reserved_key: part.expl-15
+  code: EXPL-15
+  name: Rear boarding ramp
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-15.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 0.3299999237060547
+    width: 2.9600000381469727
+    height: 1.774999976158142
+  shape:
+    surface_area: 19.46023366584916
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - 4.704999923706055
+    - -1.4800000190734863
+    - 1.665000081062317
+    max:
+    - 5.034999847412109
+    - 1.4800000190734863
+    - 3.440000057220459
+  exact_objects:
+  - Extension compact plate housing -1
+  - Extension compact plate housing 1
+  - Extension compact underside seat -1
+  - Extension compact underside seat 1
+  - Extension fixed geared hinge -1
+  - Extension fixed geared hinge 1
+  - Extension plate recessed fixing (-1, 1.445)
+  - Extension plate recessed fixing (-1, 1.628)
+  - Extension plate recessed fixing (1, 1.445)
+  - Extension plate recessed fixing (1, 1.628)
+  - Folding hinge compact cheek -1
+  - Folding hinge compact cheek 1
+  - Folding hinge moving ear -1
+  - Folding hinge moving ear 1
+  - Folding hinge output shaft -1
+  - Folding hinge output shaft 1
+  - Folding hinge rim tie -1
+  - Folding hinge rim tie 1
+  - Folding ramp anti-slip strip 0
+  - Folding ramp anti-slip strip 1
+  - Folding ramp anti-slip strip 2
+  - Folding ramp anti-slip strip 3
+  - Folding ramp anti-slip strip 4
+  - Folding ramp anti-slip strip 5
+  - Folding ramp anti-slip strip 6
+  - Folding ramp boxed side rim -1
+  - Folding ramp boxed side rim 1
+  - Folding ramp toe rim
+  - Folding ramp underside rib 0.23
+  - Folding ramp underside rib 0.66
+  - Folding ramp underside rib 1.1
+  - Folding rim orange inset -1
+  - Folding rim orange inset 1
+  - Rear closure fixed journal -1
+  - Rear closure fixed journal 1
+  - Rear ramp anti-slip strip 0
+  - Rear ramp anti-slip strip 1
+  - Rear ramp anti-slip strip 2
+  - Rear ramp anti-slip strip 3
+  - Rear ramp anti-slip strip 4
+  - Rear ramp anti-slip strip 5
+  - Rear ramp anti-slip strip 6
+  - Rear ramp anti-slip strip 7
+  - Rear ramp edge reinforcement -1
+  - Rear ramp edge reinforcement 1
+  - Rear ramp folding tread
+  - Rear ramp main leaf
+  - Rear ramp pivot pin -1
+  - Rear ramp pivot pin 1
+  nonmanifold_objects: []
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.
+- reserved_key: part.expl-16
+  code: EXPL-16
+  name: Rear opening fixed frame
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-16.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 0.16000032424926758
+    width: 3.184000015258789
+    height: 1.9130902290344238
+  shape:
+    surface_area: 3.5252067814529937
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - 4.771999835968018
+    - -1.5920000076293945
+    - 1.6389098167419434
+    max:
+    - 4.932000160217285
+    - 1.5920000076293945
+    - 3.552000045776367
+  exact_objects:
+  - Rear opening frame | section 0
+  - Rear opening frame | section 1
+  - Rear opening frame | section 2
+  - Rear opening frame | section 3
+  - Rear opening frame | section 4
+  - Rear opening frame | section 5
+  - Rear opening frame | section 6
+  nonmanifold_objects: []
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.
+- reserved_key: part.expl-17
+  code: EXPL-17
+  name: Service hardware
+  record_target: standards/SFO/metadata/parts/explorer-study/EXPL-17.yaml
+  status: geometry evidence populated; not an active physical product record
+  physical:
+    length: 1.8001421689987183
+    width: 0.9599999785423279
+    height: 0.053689002990722656
+  shape:
+    surface_area: 6.752227662916994
+  fit:
+    count: 1
+  drawing_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/explorer.blend
+  drawing_source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  source_frame_bounds_m:
+    min:
+    - 0.8999999761581421
+    - -0.47999998927116394
+    - 4.023000240325928
+    max:
+    - 2.7001421451568604
+    - 0.47999998927116394
+    - 4.07668924331665
+  exact_objects:
+  - Dorsal gasket
+  - Dorsal maintenance cover
+  - Dorsal maintenance cover captive fixing 0
+  - Dorsal maintenance cover captive fixing 1
+  - Dorsal maintenance cover captive fixing 2
+  - Dorsal maintenance cover captive fixing 3
+  nonmanifold_objects: []
+  pending:
+  - Physical stock/material and density provenance
+  - Overlap/solid reconciliation and whole mass
+  - Actual joining/interface and load/pressure criteria where relevant
+  limits: No mass, material volume, strength or catalogue gear rating inferred. Surface area is sum of evaluated
+    objects, including overlapping/internal surfaces.

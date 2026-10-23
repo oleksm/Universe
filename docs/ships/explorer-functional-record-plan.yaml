@@ -1,0 +1,800 @@
+identity:
+  project: explorer-study
+  reserved_hull_key: hull.explorer-study
+  stage: record evidence and conditional allocation
+  request: 20261023T182845-blender-b844
+authority: Owner authorizes collaborative missing-record work toward a functional Explorer. No selected mission,
+  installed equipment or qualification is implied.
+source:
+  packet: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/install-20261023/packet.json
+  blend_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  geometry_report: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/review/functional-record-geometry.json
+  geometry_report_sha256: 4810d669f4c83802f092989777d3bdaa707dd5743b89e2f1c2025606bd37028e
+  geometry_scope: Evaluated visible mesh bounds/areas/absolute signed mesh volumes only. Not union volume, enclosed
+    cabin volume, accepted mass, structure or ownership. Paint names are not material specifications. Overlapping
+    repairs remain in individual figures.
+  frame: 'Blender source: nose -X, +Z up; metres'
+  pose: 657 with explicit closed rear leaf rotations 0/-pi
+supported_values:
+  crew:
+    persons: 1
+    source: explorer-study/intake/brief.yaml crew-01; owner-confirmed
+  command:
+    scope: deferred
+    installed: false
+    source: current brief form-01 and frozen packet inventory
+  physical_bounds_m:
+    length: 11.031918048858643
+    width: 6.534205675125122
+    height: 3.9599997997283936
+    meaning: Closed visible assembly bounds in source frame; not pressure volume, material volume, collision volume
+      or mass
+  geometry_counts:
+    meshes: 954
+    nonmanifold_meshes: 19
+    unresolved_owner: 3
+  ownership_review:
+    all_objects_mapped_once: 954
+    assemblies: 17
+    source_roster: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/review/functional-ownership-proposal.json
+    source_roster_sha256: 99bf6b97f146290fcff1c0cbb5f312d1be263d3f170e870d8662ea24cf13660a
+    current_gear: Edited assembly derived from gear-strut-180kn/v1; old S0 label is historical. No source-product
+      mass/rating transfer.
+remaining_owner_design_inputs:
+- 'Environment: atmosphere and surfaces versus airless/space. Chemical CH S1/S2 catalogue chamber is vacuum_only.'
+- Mission and delta-v/acceleration/landing gravity; short samples, long expedition or rover remain unanswered options.
+- Endurance, consumables and duty cycle.
+- Payload/cargo allowance and landing empty versus loaded.
+- Pressure-boundary and boarding isolation design.
+- Future command scope and pilot station/controls before operational flight; no seat or dashboard installed now.
+record_plan:
+- kind: hull
+  key: hull.explorer-study
+  path: standards/SFO/metadata/hulls/explorer-study.yaml
+  status: not created until required geometry volume and truthful installed allocation are available
+  populate_when_supported:
+  - physical dimensions from current accepted geometric bounds
+  - physical volume with explicit definition and derivation; never substitute summed overlapping mesh volumes
+  - whole bare mass from current weighed owned parts or separately justified complete measurement
+  - model exact canonical path after formal frame/marker export
+  - slots,fit,thrusters from selected real products and matching mounts/markers
+  - basis and open_questions; draft, no inferred design ratings
+  exclusions:
+  - No old production-v01 mass
+  - No guessed density from paint names
+  - No stock_fit or guessed nozzle workaround
+  - No operating exit/gear claim from static showcase
+- kind: part
+  folder: standards/SFO/metadata/parts/explorer-study/
+  code_family: EXPL-01 etc.; model-owned assemblies first, explicit children after stock/ownership reconciliation
+  status: awaiting stable nonoverlapping ownership and geometry roster
+  populate_when_supported:
+  - exact source object drawing map and source hash
+  - actual per-part length,width,height and surface area
+  - material/stock references and mass only when physical material and geometry are justified
+  - fit count and actual interface/attachment evidence
+  requirements:
+  - All954 names now mapped exactly once into17 model-owned assemblies. Corrected edited-180kN-derived gear ownership
+    is retained in evidence; exact stock/material/overlap and mass remain open.
+  - Separate repaired overlapping meshes, nonmanifold solid ambiguity and visual-only finishes.
+  - Count every owned physical object once. Catalogue instances in fit are excluded from bare hull mass; authored
+    gear belongs in owned parts unless separately registered as a new product.
+  - Preserve physical mesh/component identity rather than treating material colour groups as parts.
+- kind: equipment
+  status: reuse catalogue; no new product until actual functional gap is specified
+  rules:
+  - Catalogue candidates below are existing values, not selected installations.
+  - Unchanged equipment retains catalogue mass/limits. Modified gear does not inherit S0 or 180kN limits.
+  - New gear/ramp/hatch products need geometry ownership, exact mounts, mass, supported function and stated limitations;
+    visual pose is not load rating.
+  - Per-instance rest is only for an existing motion package and freezes drawing; not a working mechanism.
+owners:
+  registry: hull/parts/equipment registry semantics, evidence ledger, schema/page validation and integration
+  blender: geometry ownership, current solid/material measurements, mounts/frames and formal export
+  ships: conditional installed functional allocation, mass/power/fuel/thermal budgets and exact import diagnostic
+  engine: consumer support and truthful staged import without fallback equipment
+current_release:
+  installed: static showcase at main03c0044a7, no push
+  commissioned: false
+  schema_change_required_for_ledger: false
+  no_runtime_acceptance: Compound rear ramp, alternate hatch+exterior ladder and edited folding gear remain unsupported;
+    static display is separate.
+  registered_stage_consumer:
+    commit: 0ac7c987f
+    fit: Exact recorded fit, including explicitly empty; no cheapest-fit fallback for registered hull.
+    stage: 'Uncommissioned if required fit/power/drive missing: shown/walked, not flown; whole mass remains mandatory.'
+    evidence: /home/alexm/git/universe/changelog/2026-10-23-registered-stage.md
+catalogue_candidates:
+- key: equipment.engine.ch.s1
+  source: standards/SFO/metadata/equipment/engine-ch-s1.yaml
+  source_sha256: e444108a156f73da59f38598a30355016577193008b2bfeb4337bf05d0f3158a
+  status: catalogue candidate only; not selected, placed or installed
+  slot_kind: engine
+  size_class: 1
+  fits: mount.engine-s1
+  physical:
+    mass: 80
+    volume: 0.513
+    length: 1.29
+    width: 0.63
+    height: 0.63
+  function:
+    kind: engine
+    cycle: chemical
+    thrust: 25000
+    exhaust: 4400
+    efficiency: 0.7446153846153846
+    burns: material.hydrolox
+    throttle: 0.2
+    gimbal: 0.07
+    isotropic_loss: 0
+    shield_pass: 1
+    reaction_offset: 0.6
+    heat_to_hull: 0.0001
+    chamber:
+      feed: expander
+      pressure: 4200000.0
+      mixture_ratio: 5.5
+      thrust_coefficient: 1.9
+      throat_diameter: 0.063
+      exit_diameter: 0.579
+      expansion_ratio: 84
+      chamber_diameter: 0.126
+      chamber_length: 0.367
+      nozzle_length: 0.77
+      cooling: regenerative
+      wall: material.stainless-steel-304
+      construction: tubes
+      tubes: 90
+      tubes_lower: 180
+      splice_expansion: 20
+      tube_wall: 0.0003
+      coolant_passes: 2
+      coolant_pressure: 7000000.0
+      hot_wall_temperature: 830
+      coolant_in: 25
+      coolant_out: 200
+      exit_manifold: 0.024
+      vacuum_only: true
+  needs: {}
+  basis:
+  - of:
+    - function.exhaust
+    - function.thrust
+    - physical.mass
+    - function.throttle
+    - function.gimbal
+    tier: invented
+    review: true
+    note: scaled from the RL10 by thrust; review
+  - of:
+    - function.efficiency
+    tier: derived
+    review: true
+    note: 'Derived as function.exhaust squared / (2 x material.hydrolox.fuel.energy): 4400^2 / (2 x 13000000) =
+      0.7446153846153846. Keep full precision; rounding the efficiency to two significant figures understates the
+      jet energy. Fuel energy remains the registry''s provisional value; review.'
+  - of:
+    - function.heat_to_hull
+    tier: invented
+    review: true
+    note: A chemical engine's heat is its own, carried off by its propellant; a ten-thousandth of the jet soaks
+      back into the mount. Chosen.
+  - of:
+    - function.chamber
+    - physical.length
+    - physical.width
+    - physical.height
+    - physical.volume
+    - built_of.list
+    tier: derived
+    review: true
+    note: 'The S2 engine''s chamber (an RL10-class expander at 42 bar, mixture 5.5, expansion 84) for this record''s
+      25 kN at 4.4 km/s (5.7 kg/s): a throat of 0.00313 m2 (25 kN / (1.9 x 4.2 MPa)), 63 mm across; an exit 84 times
+      that, 0.579 m; an 80% bell 0.77 m long. The chamber keeps S2''s 4 to 1 contraction and its 1.35 m characteristic
+      length (the gas needs the same time to burn), so 0.126 m across: a 0.297 m cylinder and a 0.07 m cone to the
+      throat hold 0.0042 m3 (the modeller measured a straight 0.34 m with S2''s taper at only 1.0 m and lengthened
+      it). It does not shrink with the throat. 1.14 m with the bell, about 0.156 m of pump, valves and injector
+      ahead: 1.29 m. The rim, 0.58 m plus the torus, 0.63 m across: wider than the first box''s 0.6. At 0.07 rad
+      of gimbal the rim swings about 0.08 m to each side.'
+  - of:
+    - function.chamber.tubes
+    - function.chamber.tubes_lower
+    - function.chamber.vacuum_only
+    tier: derived
+    review: true
+    note: 'Half S2''s tubes keep its tube sizes: 90 at the throat are 2.2 mm wide; 9.9 mm at the splice (area ratio
+      20), 180 at the exit 10.1 mm: at 7 MPa over a 0.3 mm wall, 118 MPa at worst, a margin of 1.75 on 304''s yield.
+      Expansion 84 leaves about 3.4 kPa at the exit; sea-level air on its 0.263 m2 pushes back 27 kN, more than
+      its 25 kN: vacuum or air thinner than about 3 kPa only, like S2. Feeds (invented speed 5 m/s in the pump inlets):
+      hydrogen 0.87 kg/s, 12.3 L/s, a 56 mm bore; oxygen 4.8 kg/s, 4.2 L/s, a 33 mm bore.'
+  - of:
+    - built_of
+    - making
+    rule: rule.first-design-parts
+  - of:
+    - life
+    rule: rule.life-ship-system
+- key: equipment.engine.ch.s2
+  source: standards/SFO/metadata/equipment/engine-ch-s2.yaml
+  source_sha256: 28e7c78e8cadef0fd8a0b516daff707a7199fc7eb877315d8db6e6aab8e174f0
+  status: catalogue candidate only; not selected, placed or installed
+  slot_kind: engine
+  size_class: 2
+  fits: mount.engine-s2
+  physical:
+    mass: 300
+    volume: 5.17
+    length: 2.3
+    width: 1.5
+    height: 1.5
+  function:
+    kind: engine
+    cycle: chemical
+    thrust: 110000
+    exhaust: 4400
+    efficiency: 0.7446153846153846
+    burns: material.hydrolox
+    throttle: 0.2
+    gimbal: 0.07
+    isotropic_loss: 0
+    shield_pass: 1
+    reaction_offset: 1.15
+    heat_to_hull: 0.0001
+    chamber:
+      feed: expander
+      pressure: 4200000.0
+      mixture_ratio: 5.5
+      thrust_coefficient: 1.9
+      throat_diameter: 0.132
+      exit_diameter: 1.21
+      expansion_ratio: 84
+      chamber_diameter: 0.26
+      chamber_length: 0.35
+      nozzle_length: 1.61
+      cooling: regenerative
+      wall: material.stainless-steel-304
+      construction: tubes
+      tubes: 180
+      tubes_lower: 360
+      splice_expansion: 20
+      tube_wall: 0.0003
+      coolant_passes: 2
+      coolant_pressure: 7000000.0
+      hot_wall_temperature: 830
+      coolant_in: 25
+      coolant_out: 200
+      exit_manifold: 0.05
+      vacuum_only: true
+  needs: {}
+  basis:
+  - of:
+    - function.exhaust
+    - function.thrust
+    - physical.mass
+    - function.throttle
+    - function.gimbal
+    tier: sourced
+    review: true
+    source: standards/sources/research_ship_equipment.json
+    note: 'the RL10: about 110 kN, 300 kg, hydrogen and oxygen; its extendable nozzle is carbon-carbon'
+  - of:
+    - function.efficiency
+    tier: derived
+    review: true
+    note: 'Derived as function.exhaust squared / (2 x material.hydrolox.fuel.energy): 4400^2 / (2 x 13000000) =
+      0.7446153846153846. Keep full precision; rounding the efficiency to two significant figures understates the
+      jet energy. Fuel energy remains the registry''s provisional value; review.'
+  - of:
+    - function.heat_to_hull
+    tier: invented
+    review: true
+    note: A chemical engine's heat is its own, carried off by its propellant; a ten-thousandth of the jet soaks
+      back into the mount. Chosen.
+  - of:
+    - built_of
+    - making
+    rule: rule.first-design-parts
+  - of:
+    - life
+    rule: rule.life-ship-system
+  - of:
+    - function.chamber
+    tier: derived
+    review: true
+    note: 'An RL10A-4-class expander engine, from memory of its published figures: about 42 bar, mixture 5.5, expansion
+      84, a nozzle of brazed stainless tubes cooled by the hydrogen on its way to the turbine. Derived for this
+      record''s 110 kN at 4.4 km/s (25 kg/s): a throat of 0.0138 m2 (110 kN / (1.9 x 4.2 MPa)), 0.132 m across;
+      an exit 84 times that, 1.21 m; an 80% bell 1.61 m from throat to exit; a chamber of 4 times the throat''s
+      area, 0.35 m long. The wall: tubes of 0.3 mm (the tube is the wall: a solid shell of plate would be four times
+      too heavy and could not be cooled), 830 K on the gas side, hydrogen in at 25 K at the exit manifold and out
+      at about 200 K to the turbine. Tube count, wall and temperatures from memory; review.'
+  - of:
+    - function.chamber.tubes_lower
+    - function.chamber.splice_expansion
+    - function.chamber.coolant_pressure
+    - function.chamber.coolant_passes
+    tier: derived
+    review: true
+    note: 'The coolant at 7 MPa (invented: 1.7 times the chamber, for the turbine''s and injector''s drops) loads
+      each tube''s wall with pressure times half its width over 0.3 mm. At the throat 180 tubes are 2.3 mm wide:
+      27 MPa. At the exit they would be 21 mm: 246 MPa, over 304''s 207 MPa yield. Branched in two at an area ratio
+      of 20 (10.3 mm, 120 MPa), 360 reach the exit 10.6 mm wide: 123 MPa, a margin of 1.7 on room-temperature yield.
+      Two passes keep every line at the chamber end (the owner''s rule: vulnerable pipes behind the hull''s closure).'
+  - of:
+    - function.chamber.vacuum_only
+    tier: derived
+    review: true
+    note: 'Expansion 84 at 4.2 MPa (gas ratio 1.2) leaves about 3.4 kPa at the exit. Sea-level air on the 1.15 m2
+      exit pushes back 117 kN, more than the 110 kN thrust, and the flow would separate in the bell: it fires in
+      vacuum or air thinner than about 3 kPa (a Mars-like world''s 0.6 kPa is fine). A lander for worlds with thick
+      air needs a shorter bell.'
+  - of:
+    - built_of.list
+    tier: derived
+    review: true
+    note: 'CHE2-01''s box: 0.35 + 1.61 m long; the rim 1.21 + 2 x 0.05 m across. The engine''s 2.3 m: 0.34 m of
+      turbopump, valves and injector ahead of the injector face. At 0.07 rad of gimbal the rim swings 0.14 m to
+      each side: the hull leaves room for it.'
+- key: equipment.engine.cg.s1
+  source: standards/SFO/metadata/equipment/engine-cg-s1.yaml
+  source_sha256: 36106cff07e69fe4eaabc9df5caca639c47db84d701c803509819ae06942063b
+  status: catalogue candidate only; not selected, placed or installed
+  slot_kind: engine
+  size_class: 1
+  fits: mount.engine-s1
+  physical:
+    mass: 15
+    volume: 0.064
+    length: 0.4
+    width: 0.4
+    height: 0.4
+  function:
+    kind: engine
+    cycle: cold_gas
+    thrust: 500
+    exhaust: 700
+    efficiency: 1
+    burns: material.nitrogen
+    throttle: 0
+    gimbal: 0
+    isotropic_loss: 0
+    shield_pass: 1
+    reaction_offset: 0
+    heat_to_hull: 0
+  needs:
+    power: 50
+  basis:
+  - of:
+    - function
+    - physical
+    tier: invented
+    review: true
+    note: 'A cold gas thruster block as flown on spacecraft: nitrogen at about 0.7 km/s, pulsed; 15 kg for half
+      a kilonewton of nozzles and valves. From memory; review.'
+  - of:
+    - built_of
+    - making
+    rule: rule.first-design-parts
+  - of:
+    - life
+    rule: rule.life-ship-system
+- key: equipment.power.battery-vtol.s1
+  source: standards/SFO/metadata/equipment/power-battery-vtol-s1.yaml
+  source_sha256: 2c7e6832daa0231f254f1148cfa90707a3aa2fa28bd76d964d1227a64ea75e37
+  status: catalogue candidate only; not selected, placed or installed
+  slot_kind: power
+  size_class: 1
+  fits: mount.power-s1
+  physical:
+    mass: 500
+    volume: 0.315
+    length: 0.9
+    width: 0.7
+    height: 0.5
+    specific_heat: 1000
+    operating_max_temperature: 333
+  function:
+    kind: battery
+    stores: 250000000.0
+    rate: 2000000.0
+    efficiency: 0.94
+    cycles: 1500
+  needs: {}
+  basis:
+  - of:
+    - function
+    - physical
+    tier: invented
+    review: true
+    note: '4 kW/kg and 0.5 MJ/kg (140 Wh/kg) at the pack, with cooling plates: the high-rate lithium packs of electric
+      VTOL craft of the 2020s, from memory; 1,500 cycles to 80%. Review.'
+  - of:
+    - built_of
+    - making
+    rule: rule.first-design-parts
+  - of:
+    - life
+    rule: rule.life-ship-system
+  - of:
+    - function.efficiency
+    tier: invented
+    review: true
+    note: 'Discharge efficiency 0.94: at its 8C rate a high-rate pack loses about 6% as heat (lithium cells'' internal
+      resistance, from memory). Review.'
+  - of:
+    - physical.specific_heat
+    - physical.operating_max_temperature
+    tier: invented
+    review: true
+    note: 'About 1 kJ/(kg K) for a lithium pack with its housing and plates, and 333 K (60 C) the hottest its cells
+      may be discharged at: from 293 K at the dock it may warm 40 K on its own losses before it must stop. From
+      memory of cell data sheets; review.'
+- key: equipment.power.battery.s1
+  source: standards/SFO/metadata/equipment/power-battery-s1.yaml
+  source_sha256: 89ba87dd368c2848321cd543a14c3c7d7cab18266a1a89989708a51084fa4c13
+  status: catalogue candidate only; not selected, placed or installed
+  slot_kind: power
+  size_class: 1
+  fits: mount.power-s1
+  physical:
+    mass: 1900
+    volume: 2.4
+    length: 2.0
+    width: 1.0
+    height: 1.2
+    specific_heat: 1000
+    operating_max_temperature: 333
+  function:
+    kind: battery
+    stores: 1000000000.0
+    rate: 1000000.0
+    efficiency: 0.97
+  needs: {}
+  basis:
+  - of:
+    - physical
+    - function
+    - size_class
+    tier: invented
+    review: true
+    note: 1 GJ (278 kWh) at 150 Wh/kg, the usual for lithium packs with their housing; 1 MW in or out. From memory.
+      Not sourced.
+  - of:
+    - built_of
+    - making
+    rule: rule.first-design-parts
+  - of:
+    - life
+    rule: rule.life-ship-system
+  - of:
+    - function.efficiency
+    tier: invented
+    review: true
+    note: 'Discharge efficiency 0.97: a low-rate pack warms little (lithium cells'' internal resistance, from memory).
+      Review.'
+  - of:
+    - physical.specific_heat
+    - physical.operating_max_temperature
+    tier: invented
+    review: true
+    note: 'About 1 kJ/(kg K) for a lithium pack with its housing and plates, and 333 K (60 C) the hottest its cells
+      may be discharged at: from 293 K at the dock it may warm 40 K on its own losses before it must stop. From
+      memory of cell data sheets; review.'
+- key: equipment.tank.hydrolox.1t
+  source: standards/SFO/metadata/equipment/tank-hydrolox-1t.yaml
+  source_sha256: e64d53ae64228debe513f7c7744628841fe84da6aa8480ed916727cbb7e412d0
+  status: catalogue candidate only; not selected, placed or installed
+  slot_kind: tank
+  size_class: 1
+  fits: mount.tank-s1
+  physical:
+    mass: 174.5
+    volume: 9.49
+    length: 2.191
+    width: 2.042
+    height: 2.122
+  function:
+    kind: tank
+    capacity: 1000
+    holds: material.hydrolox
+  needs: {}
+  basis:
+  - of:
+    - built_of.list
+    - physical
+    tier: derived
+    review: true
+    note: 'Sized as the 0.5 t (2026-10-13, from the modeller''s blockout v01): 1,000 kg at O/F 5.5 is 846 kg of
+      oxygen and 154 kg of hydrogen, each with 3% ullage, with the 100 mm common bulkhead inside a 0.919 m inner
+      radius. Wall: 0.35 MPa times 1.5 against 165 MPa welded wants 1.46 mm, so the 2 mm sheet: 57 kg bare plus
+      20% for lands and bosses. Insulation 100 mm at 3.3 kg/m2, bulkhead 33.5 kg, saddles 12 kg, fittings 25 kg
+      for two circuits (10 drawn). Total 174.5 kg, 17% of what it holds (the old 140 kg was an assumed 14%). Box:
+      2.191 x 2.042 x 2.122 m with saddles and opposed service bosses. Chosen; review.'
+  - of:
+    - built_of
+    - making
+    rule: rule.first-design-parts
+  - of:
+    - life
+    rule: rule.life-ship-system
+- key: equipment.tank.nitrogen.50kg
+  source: standards/SFO/metadata/equipment/tank-nitrogen-50kg.yaml
+  source_sha256: 17f2d54602dcf9de6619b61b072f29d1e3c9799f2cb076cd9349534fa2df46eb
+  status: catalogue candidate only; not selected, placed or installed
+  slot_kind: tank
+  size_class: 1
+  fits: mount.tank-s1
+  physical:
+    mass: 59
+    volume: 0.378
+    length: 1.0
+    width: 0.6
+    height: 0.63
+  function:
+    kind: tank
+    capacity: 50.0
+    holds: material.nitrogen
+  needs: {}
+  basis:
+  - of:
+    - physical
+    - function
+    tier: derived
+    review: true
+    note: 'Nitrogen at 300 bar and 293 K is about 310 kg/m3 (compressibility about 1.1; ideal gas would give 345),
+      so 50 kg needs 0.161 m3 inside. A cylinder with hemispherical ends, 0.6 m across over a 25 mm wall, is 0.91
+      m long, and a valve and regulator take 0.1 m more; saddles hold it 30 mm off the floor (0.63 m high). The
+      25 mm is a space allowance: the laminate itself averages about 19 mm (hoop 30 MPa x 0.28 m / about 800 MPa
+      is 10 mm, helical layers and liner the rest), which is what the vessel''s mass below implies; a uniform 25
+      mm shell of CFC at 1,580 kg/m3 would be 63 kg. A type IV composite vessel stores about 100 kJ of pressure-volume
+      per kilogram (from memory of commercial 300 to 700 bar bottles): 30 MPa x 0.161 m3 is 4.8 MJ, so 48 kg of
+      vessel, plus the valve and 5 kg of saddles and bands (the 50 kg bottle''s drawn at 4.9 kg in Blender). Recomputed
+      2026-10-11 from 0.6 kg a kilogram of gas, which did not fit its box.'
+  - of:
+    - built_of
+    - making
+    rule: rule.first-design-parts
+  - of:
+    - life
+    rule: rule.life-ship-system
+- key: equipment.life-support.s0
+  source: standards/SFO/metadata/equipment/life-support-s0.yaml
+  source_sha256: c986c01be11745a7069af5d90c1f5bb280b1287005f675990824f34eef2c7f68
+  status: catalogue candidate only; not selected, placed or installed
+  slot_kind: life_support
+  size_class: 1
+  fits: mount.life-support-s1
+  physical:
+    mass: 150
+    volume: 0.29
+    length: 0.8
+    width: 0.6
+    height: 0.6
+  function:
+    kind: life_support
+    water_recovery: 0.0
+    air_recovery: 0.0
+    persons: 2
+    cooling: 400
+    air_store: 2.2
+    water_store: 5
+  needs:
+    power: 2000
+  basis:
+  - of:
+    - physical
+    - needs
+    - function
+    - size_class
+    tier: invented
+    review: true
+    note: Two people breathe 1.8 kg of oxygen a day (need.air) and give off 2.2 kg of carbon dioxide, which 2.5
+      kg of lithium hydroxide takes up; the bottle, canisters, fans and a 400 W cooler (two people's 137 W each
+      and their displays) come to 150 kg. A capsule's open-loop pack, from memory of Apollo's and the station's
+      figures. Chosen; review.
+  - of:
+    - built_of
+    - making
+    rule: rule.first-design-parts
+  - of:
+    - needs.power
+    tier: derived
+    review: true
+    note: 'Flag: 2 kW looks high. A heat pump lifting 400 W at a COP of 2 to 3 takes 130 to 200 W, the fans about
+      100 W and the controller about 20 W: about 300 to 400 W. All input ends as heat, so the coolant loop takes
+      the input plus the 400 W lifted (2.4 kW as recorded, about 0.8 kW if lowered). Not changed.'
+  - of:
+    - built_of.list
+    tier: derived
+    review: true
+    note: 'Flag: 2.2 kg of oxygen at 300 bar is about 6 L of gas; a composite bottle of that size with its regulator
+      weighs about 5 to 8 kg, not 45 (from memory). The spare mass would cover the case, plumbing and more lithium
+      hydroxide (2.5 kg is near the bare 2.4 kg that 2.2 kg of carbon dioxide needs; packed canisters run about
+      half as much again). Not changed.'
+  - of:
+    - life
+    rule: rule.life-ship-system
+- key: equipment.command.s1
+  source: standards/SFO/metadata/equipment/command-s1.yaml
+  source_sha256: eb1ba55796f43bfe1ace1eaebee259d564af883a1fc7f5e72229d17fee467f14
+  status: catalogue candidate only; not selected, placed or installed
+  slot_kind: command
+  size_class: 1
+  fits: mount.command-s1
+  physical:
+    mass: 180
+    volume: 1.8
+    length: 1.2
+    width: 1
+    height: 1.5
+  function:
+    kind: command_station
+    persons: 1
+    g_rating: 88.3
+    facing: thrust
+  needs:
+    power: 1500
+  basis:
+  - of:
+    - physical
+    - needs
+    - function
+    - size_class
+    tier: invented
+    review: true
+    note: 'One pilot: a seat rated to 9 g eyeballs-in (a fighter''s seat and harness, 40 kg), a console of controls
+      (60 kg) and its displays, computers and frame (80 kg); 1.5 kW of displays and computers. An airliner''s flight
+      deck seat is about 35 kg. From memory; chosen.'
+  - of:
+    - fits
+    tier: derived
+    review: true
+    note: 'At its 88.3 m/s2 (9 g) rating the station and its pilot of 100 kg, 280 kg, pull 24.7 kN on its mount:
+      about 6.2 kN on each of 4 points, against the 1.65 kN they take. Mounts were set at 3 g (rule.mounts-margin);
+      seats need the g they are rated to. As the two-seat station; left for review.'
+  - of:
+    - needs.power
+    tier: derived
+    review: true
+    note: 'Its 1.5 kW all ends as heat. The life support''s cabin cooler is sized for 500 W a head, a person''s
+      137 W and the rest for displays, lights and fans (the open-loop pack''s cooler takes 400 W for two), so the
+      computers cannot dump it all into the cabin air: they sit on cold plates on a capped coolant pair at the rear,
+      to the ship''s coolant loop, and only about a fifth (the screens'' faces and the fans), 300 W, about 300 W
+      a seat, reaches the cabin air. It takes power, data and coolant.'
+  - of:
+    - physical.mass
+    tier: invented
+    review: true
+    note: 'Modelled (candidate-v02: 3 mm aluminium shells as stand-ins, solid fittings, foam and webbing, a cold
+      plate and the rear coolant pair; not engineered) the seat, console and frame are about 141 kg. With the listed
+      displays and computers (63 kg) and wiring (18 kg), that is about 222 kg against 180, just inside the mount''s
+      225 kg; with its pilot, 28.4 kN on the mount at 9 g (7.1 kN a point). Uncertain; left for review.'
+  - of:
+    - built_of
+    - making
+    rule: rule.first-design-parts
+  - of:
+    - life
+    rule: rule.life-ship-system
+- key: equipment.gear.strut.s0
+  source: standards/SFO/metadata/equipment/gear-strut-s0.yaml
+  source_sha256: 30183adf75cba61ec21be99e2162c8f3c84e1b55701b13acb4f3a8c808df0fc1
+  status: catalogue candidate only; not selected, placed or installed
+  slot_kind: gear
+  size_class: 1
+  fits: mount.gear-s1
+  physical:
+    mass: 60
+    volume: 0.11
+    length: 0.3
+    width: 0.3
+    height: 1.2
+  function:
+    kind: landing_gear
+    holds: 60000
+    stroke: 0.3
+    efficiency: 0.8
+    sink_rate: 3.0
+    extended: 1.2
+    spring: 200000.0
+    damper: 14000.0
+  needs:
+    power: 500
+  basis:
+  - of:
+    - physical
+    - needs
+    - function
+    - size_class
+    tier: invented
+    review: true
+    note: At 1.2 kg a kilonewton (an A320's gear, as the S1 was sized) a 60 kN leg is about 70 kg; 60 kg with titanium.
+      Chosen.
+  - of:
+    - identity.description
+    tier: derived
+    note: "Recomputed (Blender, 2026-10-11): a leg must take (m/n)(g + v\xB2/2s)/eta, gravity included: 13 t on\
+      \ four at 3 m/s on 0.3 m at 0.8 needs 100.8 kN a leg. 60 kN holds 7.74 t on four, 11.6 t on six. The old note\
+      \ left out gravity and efficiency. The leg is unchanged; the craft it suits is smaller."
+  - of:
+    - built_of
+    - making
+    rule: rule.first-design-parts
+  - of:
+    - life
+    rule: rule.life-ship-system
+  - of:
+    - function.spring
+    - function.damper
+    tier: derived
+    review: true
+    note: 'A linear spring and damper standing for the oleo strut: the spring takes holds at the end of the stroke
+      (6e+04 N / 0.3 m); the damper is 0.7 x holds at the design sink rate (3.0 m/s). 0.7 is chosen (invented):
+      dropped at 3.0 m/s with the mass whose touchdown fills the stroke at efficiency 0.8 (2 holds stroke eff /
+      v^2), it peaks at 1.03 x holds and uses 0.87 of the stroke; at rest under holds/3 (an aircraft-like limit
+      load factor of 3, from memory) it settles with a damping ratio about 0.48. A real oleo is nonlinear (gas spring,
+      orifice damping).'
+- key: equipment.gear.strut.180kn
+  source: standards/SFO/metadata/equipment/gear-strut-180kn.yaml
+  source_sha256: 2bb2e0ed886ac89ebc127dc35cb945024c746410159d7a2caf7653016597c099
+  status: catalogue candidate only; not selected, placed or installed
+  slot_kind: gear
+  size_class: 1
+  fits: mount.gear-s1
+  physical:
+    mass: 190
+    volume: 0.256
+    length: 0.4
+    width: 0.4
+    height: 1.6
+  function:
+    kind: landing_gear
+    holds: 180000.0
+    stroke: 0.4
+    efficiency: 0.8
+    sink_rate: 3.0
+    extended: 1.6
+    spring: 450000.0
+    damper: 42000.0
+  needs:
+    power: 800
+  basis:
+  - of:
+    - physical
+    - function
+    - needs
+    tier: invented
+    review: true
+    note: At about 1 kg a kilonewton with titanium (the A320's 1.2 kg/kN, as the S1), 190 kg. Four hold a 24 t craft
+      at 3 m/s on a 0.4 m stroke (1.1 g). Chosen; review.
+  - of:
+    - physical
+    - function.extended
+    tier: derived
+    note: The record's size is the leg down (function.extended = height, mount to sole), as the S1; the model is
+      exported gear down. The folded stowage is the hull bay's size.
+  - of:
+    - built_of
+    - making
+    rule: rule.first-design-parts
+  - of:
+    - life
+    rule: rule.life-ship-system
+  - of:
+    - function.spring
+    - function.damper
+    tier: derived
+    review: true
+    note: 'A linear spring and damper standing for the oleo strut: the spring takes holds at the end of the stroke
+      (1.8e+05 N / 0.4 m); the damper is 0.7 x holds at the design sink rate (3.0 m/s). 0.7 is chosen (invented):
+      dropped at 3.0 m/s with the mass whose touchdown fills the stroke at efficiency 0.8 (2 holds stroke eff /
+      v^2), it peaks at 1.03 x holds and uses 0.87 of the stroke; at rest under holds/3 (an aircraft-like limit
+      load factor of 3, from memory) it settles with a damping ratio about 0.48. A real oleo is nonlinear (gas spring,
+      orifice damping).'
+part_inputs: docs/ships/explorer-part-record-inputs.yaml
+remaining_consumer_inputs:
+- 'Camera/altimeter native sensor support: existing native sensor is100kW radar. Do not pretend10W camera is radar.'
+- Battery native capacity/rate/depletion consumer or selected adequate generator.
+- Thermal fit retained with mass; no heat simulation qualification.
+- Inline mechanism/exits schema and posed walking/contact consumer agreed with Engine before formal node binding.
