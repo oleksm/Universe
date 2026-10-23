@@ -513,6 +513,8 @@ def check_all():
             found.append((full, f"{at}: {key} is not {' or '.join(('an ' if k[0] in 'aeiou' else 'a ') + k for k in kinds)}"))
     found += workflow_dependencies(SEEN)
     found += hull_fit_poses(SEEN)
+    from hull_mechanisms import check_records as hull_mechanism_checks
+    found += hull_mechanism_checks(SEEN)
     # (A record the tracker holds as complete may not have changed: standards/changes.yaml.)
     import tracker
     found += list(tracker.check(SEEN))

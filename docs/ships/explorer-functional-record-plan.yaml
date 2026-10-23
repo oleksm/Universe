@@ -104,8 +104,8 @@ current_release:
     fit: Exact recorded fit, including explicitly empty; no cheapest-fit fallback for registered hull.
     stage: 'Uncommissioned if required fit/power/drive missing: shown/walked, not flown; whole mass remains mandatory.'
     evidence: /home/alexm/git/universe/changelog/2026-10-23-registered-stage.md
-    remaining_guard: Ships found hull_from_gltf still rejects a model with no main nozzle before stage assembly.
-      Engine fix and exact current-GLB regression pending; no fake nozzle allowed.
+    remaining_guard: 'Closed by Engine41b9956c4: actual registered no-nozzle GLB stage regression; unregistered
+      refusal retained. Whole current mass and truthful exact-path record still required.'
 catalogue_candidates:
 - key: equipment.engine.ch.s1
   source: standards/SFO/metadata/equipment/engine-ch-s1.yaml
@@ -802,7 +802,7 @@ remaining_consumer_inputs:
 - Inline mechanism/exits schema and posed walking/contact consumer agreed with Engine before formal node binding.
 conditional_ships_allocation:
   source: /home/alexm/.agents/reviews/ships/explorer-functional-20261023/proposal.yaml
-  source_sha256: 1ba669e124e3114a4ed89ef72ca0fe7fa7a4afce8819977a157b799f54e61a25
+  source_sha256: c31e7a18e2f86dc6783896eee27a99b820af255a1979763daa76c5755b584ae8
   status: Conditional proposal, not selected/installed fit or a registry hull/equipment record. Preserve current
     owner-authored geometry and deferred command. Counts and values are traceable catalogue screens; no old craft
     mass/QC transfer.

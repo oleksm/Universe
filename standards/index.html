@@ -1097,6 +1097,11 @@ function detail(k) {
       const from = { said: e.identity.status === "draft" ? "its own record: a draft figure, to be balanced" : "its own record", parts: "its parts, each as many times as it has them", share: `an estimate: its surface, at ${+(est.per_m2 || 0).toPrecision(3)} kg for each m² (the hull's frame mass in the game, shared over all its parts' surface)` }[e.mass_from];
       if (e.mass !== undefined) h = h.replace(`<h3>Made of</h3>`, `<h3>Mass</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr><tr><td>mass of one</td><td>${kg(e.mass)}</td><td>${esc(from)}</td></tr>${n > 1 ? `<tr><td>mass of all ${n}</td><td>${kg(e.mass * n)}</td><td>${n} of it</td></tr>` : ""}</table><h3>Made of</h3>`);
     }
+    if (kind === "hull" && ((e.mechanisms || []).length || (e.exits || []).length)) {
+      h += `<h3>Mechanisms and exits</h3><p class="meta">Discrete authored poses; no motion sweep, load or route qualification is implied. Bound to model SHA256 ${esc(e.model_sha256 || "missing")}.</p>`;
+      if ((e.mechanisms || []).length) h += `<table><tr><th>Mechanism</th><th>Nodes</th><th>States</th><th>Default / deployment</th><th>Ground contact</th></tr>` + e.mechanisms.map(m => `<tr><td>${esc(m.key)} · ${esc(m.kind)}</td><td>${m.nodes.map(esc).join("<br>")}</td><td>${m.states.map(s => `${esc(s.key)}: ${s.poses.map(p => p.kind === "rest" ? `${esc(p.node)} → exported rest` : `${esc(p.node)} → local m ${esc(JSON.stringify(p.translation_m))}, quaternion ${esc(JSON.stringify(p.rotation_xyzw))}`).join("; ")}`).join("<br>")}</td><td>${esc(m.default)} / ${esc(m.deploys_when)}</td><td>${m.contact ? esc(m.contact.node) + " · ground required" : "–"}</td></tr>`).join("") + `</table>`;
+      if ((e.exits || []).length) h += `<table><tr><th>Exit</th><th>Required states, in order</th><th>Entry / foot markers</th></tr>` + e.exits.map(x => `<tr><td>${esc(x.key)} · ${esc(x.kind)}</td><td>${x.requires.map(r => `${esc(r.mechanism)} = ${esc(r.state)}`).join(" → ")}</td><td>${esc(x.top)}${x.foot ? " / " + esc(x.foot) : ""}</td></tr>`).join("") + `</table>`;
+    }
     if (kind === "hull" && e.worked && e.worked.ship) {
       const wk = e.worked, ld = wk.landing || {};
       h += `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr>`
