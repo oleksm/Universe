@@ -1128,6 +1128,11 @@ impl Ground {
     }
 
     /// Finest available ground, before exaggeration, used only for peak clearance and the HUD.
+    /// How much steeper than they stand its normals are lit (land, sea: the package's light exaggeration; 1 and 1).
+    pub fn light_exaggeration(&self) -> (f64, f64) {
+        self.bd.light.map_or((1.0, 1.0), |(_, land, sea)| (land, sea))
+    }
+
     pub fn ground_at(&self, u: DVec3) -> Option<f64> {
         if let Some(p) = &self.pyramid {
             if let Some(h) = p.lock().unwrap().ground_at(u) { return Some(h); }

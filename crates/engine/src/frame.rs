@@ -312,7 +312,17 @@ pub struct ViewShade {
     /// The world's centre (world) and its sea level's radius (m): below it is sea floor.
     pub centre: DVec3,
     pub radius: f64,
+    /// How much steeper than they stand the normals given were made (land, sea: the package's light exaggeration;
+    /// 1 and 1: as they stand). The shade takes them back down as a pixel's ground grows smaller: all of it at a
+    /// pixel of `TAPER_FAR` m or more, none at `TAPER_NEAR` or less, log-linear between.
+    pub land_light: f32,
+    pub sea_light: f32,
 }
+
+/// A view-shade pixel's ground (m) at and over which a normal's exaggeration is kept whole, and at and under which
+/// it is taken back to 1 (the planet lab's: x13 is right for its 19.5 km pixels, over-darkens a 4 km range at 60 km).
+pub const TAPER_FAR: f32 = 19_500.0;
+pub const TAPER_NEAR: f32 = 100.0;
 
 /// A sphere reflecting the light: a planet or moon. What it gives a point
 /// near it is the light falling on the ground beneath (by the sun's height

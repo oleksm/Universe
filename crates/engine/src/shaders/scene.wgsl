@@ -37,6 +37,8 @@ struct Globals {
     // from the eye and its sea level (m).
     view_shade: vec4<f32>,
     view_world: vec4<f32>,
+    // The normals' exaggeration given (land, sea) and its taper by a pixel's ground (far, near: m).
+    view_light: vec4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> g: Globals;
@@ -753,6 +755,20 @@ fn shade(in: MeshOut, tile: TileSample) -> vec4<f32> {
         } else if (in.data.w > 0.0 && dot(in.data.xyz, in.data.xyz) > 0.25) {
             let span = in.data.w / max(0.5 * (length(px) + length(py)), 1e-6);
             nv = normalize(mix(normalize(in.data.xyz), n, smoothstep(2.0, 6.0, span)));
+        }
+        // (The exaggeration baked into the normals (land over the sea level, sea under) taken back toward 1 as a pixel's
+        // ground shrinks from view_light.z to .w (log-linear): its slope part over its up part is the ground's gradient
+        // times what was given, scaled to what's wanted here.)
+        let up_here = normalize(in.at - g.view_world.xyz);
+        let below = length(in.at - g.view_world.xyz) < g.view_world.w;
+        let given = select(g.view_light.x, g.view_light.y, below);
+        if (given > 1.0) {
+            let ground = max(0.5 * (length(px) + length(py)), 1e-3);
+            let t = clamp(log(ground / g.view_light.w) / log(g.view_light.z / g.view_light.w), 0.0, 1.0);
+            let wanted = pow(given, t);
+            let rise = max(dot(nv, up_here), 0.05);
+            let slope = (nv - up_here * dot(nv, up_here)) / rise;
+            nv = normalize(up_here + slope * (wanted / given));
         }
         var shade = g.view_shade.y + g.view_shade.z * max(dot(nv, in.sun_dir), 0.0);
         // (Sea floor by its depth under the sea level: the base's. A pyramid tile is ground (its mask keeps no sea),

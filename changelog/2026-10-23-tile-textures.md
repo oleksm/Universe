@@ -55,3 +55,15 @@ sea level's radius) caught low coastal plains near or under 0 m in patches of th
 their shade toward 1. A pyramid tile is ground (its mask keeps no sea): the rule now only for the base. Found by
 splitting colour from shade (colour clean, the dots all in the shade). Left: much fainter, lighter hexagonal
 specks in the sunlit land.
+
+## The light exaggeration tapered by a pixel's ground
+
+Planets `20261023T151411-planets-fb4a`: ×13 is right for the far view's ~19.5 km pixels but blackens slopes close in (a
+4 km range at 60 km). The exaggeration is baked into the normals (tile textures, the cube, the vertices), so the view
+shade takes it back: a normal's slope part over its up part is the ground's gradient times what was given (land over
+the sea level, sea under: `ViewShade::land_light`, `sea_light`, the package's), scaled to what's wanted at the pixel's
+ground: the whole of it at `TAPER_FAR` (19.5 km) and over, ×1 at `TAPER_NEAR` (100 m) and under, log-linear between.
+`Ground::light_exaggeration` gives the app the package's.
+
+forge_e124s43-mesh: their 60 km oblique view's near-black pixels 1.7 % → 0 (`obl_cmp.png`); from 10,000 km (~9 km
+pixels here, under 19.5 km) the far detail 6.35 → 4.9.
