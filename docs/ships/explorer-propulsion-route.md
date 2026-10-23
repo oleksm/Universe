@@ -22,7 +22,8 @@ the engine's to edit (ships: diagnostics only, as now).
 Steps 1-6 are in (see `changelog/2026-10-22-engines-as-products.md`), for chemical engines. Every CH record is held
 out of the catalogue for now: their jets carry more energy than their fuel gives at their efficiency (S1, S2:
 4,400 m/s needs efficiency 0.745 or exhaust 4,386 m/s at hydrolox's 13 MJ/kg; S3, S4: 3,290 m/s needs 0.542 or
-3,286 m/s at methalox's 10 MJ/kg). The cold-gas RCS beside hydrolox is next (registry 6ce7).
+3,286 m/s at methalox's 10 MJ/kg). The cold-gas RCS beside another fuel is in too (`changelog/2026-10-22-cold-gas-rcs.md`):
+its own nitrogen pool, shares summing to 1 a block, the device path drawing it.
 
 ## The route (one engine commit, the world crate)
 

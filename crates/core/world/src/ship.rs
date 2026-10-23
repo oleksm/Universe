@@ -107,6 +107,9 @@ pub struct ClassSpec {
     /// What its modules are rated for that the game doesn't simulate (an engine's throttle floor, its gimbal, its
     /// starts): stated, so an acceptance can hold on them; none for a ship of the old drives.
     pub limits: Vec<String>,
+    /// Propellants of its own, apart from its fuel (cold nitrogen beside hydrolox): a ship of this class draws
+    /// them through its device state (`Ship::own_propellants`).
+    pub propellants: Vec<crate::ship_devices::Propellant>,
     /// Collision radius (m).
     pub radius: f64,
     /// Drag coefficient × frontal area (m²).
@@ -571,9 +574,11 @@ impl ClassSpec {
             fitted.push((slot, m));
         }
         // (An engine stands for the drive: whether it drives forward is its nozzles', checked with the thrusters.)
-        let engines = fitted.iter().any(|(_, m)| matches!(m.does, Does::Engine { .. }));
+        let engines = fitted.iter().any(|(_, m)| matches!(m.does, Does::Engine { pressure_fed: false, .. }));
+        // (Cold gas stands for the attitude thrusters, an engine of its own wherever it points.)
+        let cold = fitted.iter().any(|(_, m)| matches!(m.does, Does::Engine { pressure_fed: true, .. }));
         for base in BASE_BLOCKS.into_iter().filter(|_| validate_install) {
-            if base == SlotKind::Drive && engines {
+            if (base == SlotKind::Drive && engines) || (base == SlotKind::Thrusters && cold) {
                 continue;
             }
             if !fitted.iter().any(|(s, m)| s.kind == base && !matches!(m.does, Does::Inert { .. })) {
@@ -581,11 +586,34 @@ impl ClassSpec {
             }
         }
         let modules = || fitted.iter().map(|(_, m)| *m);
-        let dry_mass = frame.frame_mass + modules().map(|m| m.mass).sum::<f64>();
-        let fuel_capacity: f64 = modules().filter_map(|m| if let Does::Tank { capacity, .. } = m.does { Some(capacity) } else { None }).sum();
+        // Propellants of their own: a gas only cold-gas engines push with, when the ship has another fuel (cold
+        // nitrogen beside hydrolox). Their tanks are theirs (weighed full in the dry mass), their thrusters draw
+        // on them alone (`ship_devices::Propellant`); the one-fuel rule is for the rest.
+        let fuelled: Vec<&str> = modules()
+            .filter_map(|m| match &m.does {
+                Does::PowerPlant { burns, .. } => Some(burns.as_str()),
+                Does::Engine { pressure_fed: true, .. } => None,
+                d => d.engine().map(|e| e.3),
+            })
+            .collect();
+        let mut own: Vec<String> = modules()
+            .filter_map(|m| if let Does::Engine { pressure_fed: true, burns, .. } = &m.does { Some(burns.clone()) } else { None })
+            .filter(|b| !fuelled.is_empty() && !fuelled.contains(&b.as_str()))
+            .collect();
+        own.sort();
+        own.dedup();
+        let own_capacity = |material: &str| modules().filter_map(|m| if let Does::Tank { capacity, holds } = &m.does { (holds == material).then_some(*capacity) } else { None }).sum::<f64>();
+        for material in &own {
+            if own_capacity(material) <= 0.0 {
+                return Err(format!("its cold-gas thrusters push with {material}, and no tank holds it"));
+            }
+        }
+        let is_own = |k: &str| own.iter().any(|o| o == k);
+        let dry_mass = frame.frame_mass + modules().map(|m| m.mass).sum::<f64>() + own.iter().map(|o| own_capacity(o)).sum::<f64>();
+        let fuel_capacity: f64 = modules().filter_map(|m| if let Does::Tank { capacity, holds } = &m.does { (!is_own(holds)).then_some(*capacity) } else { None }).sum();
         // One fuel aboard: what the tanks hold, and what the plants burn.
-        let held: Vec<&String> = modules().filter_map(|m| if let Does::Tank { holds, .. } = &m.does { Some(holds) } else { None }).collect();
-        let burnt: Vec<&str> = modules().filter_map(|m| if let Does::PowerPlant { burns, .. } = &m.does { Some(burns.as_str()) } else { m.does.engine().map(|e| e.3) }).collect();
+        let held: Vec<&String> = modules().filter_map(|m| if let Does::Tank { holds, .. } = &m.does { (!is_own(holds)).then_some(holds) } else { None }).collect();
+        let burnt: Vec<&str> = modules().filter_map(|m| if let Does::PowerPlant { burns, .. } = &m.does { Some(burns.as_str()) } else { m.does.engine().map(|e| e.3) }).filter(|b| !is_own(b)).collect();
         let fuel = held.first().map(|s| s.to_string()).or(burnt.first().map(|s| s.to_string())).unwrap_or_default();
         if let Some(other) = held.iter().map(|s| s.as_str()).chain(burnt.iter().copied()).find(|k| *k != fuel) {
             return Err(format!("its tanks and plants must hold and burn one fuel ({fuel} and {other})"));
@@ -624,6 +652,7 @@ impl ClassSpec {
                 (SlotKind::Lift, Does::Lift { .. }) => ThrusterRole::Lift,
                 // (An engine drives as it points: along the nose (our −Z) a main drive, upward (+Y) a lift; an
                 // engine is no attitude thruster.)
+                (SlotKind::Engine, Does::Engine { pressure_fed: true, .. }) => ThrusterRole::Rcs,
                 (SlotKind::Engine, Does::Engine { .. }) => match n.push {
                     p if p.dot(DVec3::NEG_Z) >= ENGINE_AXIS => ThrusterRole::Main,
                     p if p.dot(DVec3::Y) >= ENGINE_AXIS => ThrusterRole::Lift,
@@ -634,10 +663,28 @@ impl ClassSpec {
             let (rating, exhaust, efficiency, _) = m.does.engine().expect("an engine");
             thrusters.push(Thruster { nozzle: n.nozzle.clone(), role, at: n.at, push: n.push, thrust: rating * n.share, exhaust, efficiency });
         }
+        // (Each propellant of its own and the thrusters that draw on it, by their places in the list.)
+        let propellants: Vec<crate::ship_devices::Propellant> = own
+            .iter()
+            .map(|material| crate::ship_devices::Propellant {
+                material: material.clone(),
+                capacity: own_capacity(material),
+                thrusters: thrusters
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, t)| {
+                        frame.nozzles.iter().filter(|n| n.nozzle == t.nozzle).any(|n| {
+                            fitted.iter().any(|(s, m)| s.name == n.slot && matches!(&m.does, Does::Engine { pressure_fed: true, burns, .. } if burns == material))
+                        })
+                    })
+                    .map(|(i, _)| i)
+                    .collect(),
+            })
+            .collect();
         if validate_install && engines && !thrusters.iter().any(|t| t.role == ThrusterRole::Main) {
             return Err("no main drive: no engine pushes along the nose".into());
         }
-        if engines {
+        if engines || cold {
             for (slot, _) in fitted.iter().filter(|(s, _)| s.kind == SlotKind::Engine) {
                 if !thrusters.iter().any(|t| frame.nozzles.iter().any(|n| n.nozzle == t.nozzle && n.slot == slot.name)) {
                     return Err(format!("engine slot '{}' drives no nozzle", slot.name));
@@ -646,8 +693,15 @@ impl ClassSpec {
         }
         let mut limits = Vec::new();
         for (slot, m) in &fitted {
-            if let Does::Engine { throttle, gimbal, .. } = m.does {
+            if let Does::Engine { thrust, exhaust, throttle, gimbal, pressure_fed, heat_to_hull, .. } = m.does {
                 let at = format!("{} ({})", slot.name, m.key);
+                if pressure_fed {
+                    limits.push(format!("{at}: cold gas at its rated exhaust, not from its tank's pressure and temperature"));
+                }
+                let heat = heat_to_hull * 0.5 * thrust * exhaust;
+                if heat > 0.0 {
+                    limits.push(format!("{at}: {:.1} kW of its jet's heat aboard at full not simulated", heat / 1e3));
+                }
                 if throttle > 0.0 {
                     limits.push(format!("{at}: throttle floor {throttle} of full not enforced (thrust runs 0 to full)"));
                 } else {
@@ -743,6 +797,7 @@ impl ClassSpec {
             placed,
             crowded,
             limits,
+            propellants,
             radius: frame.radius,
             drag_area: frame.drag_area,
             hull_strength: frame.hull_strength,
@@ -1134,7 +1189,21 @@ impl Ship {
         ship.energy = spec.capacitor_capacity;
         ship.ammo = spec.gun.as_ref().map_or(0, |g| g.magazine);
         ship.transient = Some(spec);
+        ship.own_propellants();
         ship
+    }
+
+    /// A class with propellants of its own (`ClassSpec::propellants`) draws them through device state: given one,
+    /// full, if it has none (a ship already configured keeps its own).
+    pub fn own_propellants(&mut self) {
+        let propellants = self.spec().propellants.clone();
+        if self.devices.is_some() || propellants.is_empty() {
+            return;
+        }
+        let fit = crate::ship_devices::Fit { propellants, ..Default::default() };
+        if let Err(e) = self.configure_devices(fit, 1.0, crate::heat::AMBIENT) {
+            log::warn!("{}: its own propellants: {e}", self.spec().key);
+        }
     }
 
     /// What's seen of it from another system: where it is, how it moves,
@@ -1180,12 +1249,14 @@ impl Ship {
         self.spec_ref = None;
         self.fuel = self.spec().fuel_capacity;
         self.cargo = self.cargo.min(self.spec().hold_capacity);
+        self.own_propellants();
     }
 
     /// Its numbers to hand again (after loading).
     pub fn refresh(&mut self) {
         if self.transient.is_some() { return; }
         self.spec_ref = self.fit.as_ref().and_then(|f| fitted(self.class, f).ok());
+        self.own_propellants();
     }
 
     /// Fit it anew: refused if the fit won't do (see `ClassSpec::assemble`)
@@ -1221,6 +1292,7 @@ impl Ship {
         }
         self.jets.clear();
         self.devices = None;
+        self.own_propellants();
         Ok(())
     }
 

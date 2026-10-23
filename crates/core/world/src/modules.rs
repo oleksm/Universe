@@ -26,8 +26,9 @@ pub enum Does {
     /// An engine as a product (SFO 22), one instance in its own slot: the thrust of a full-share nozzle (N),
     /// pushing as its nozzles point (a main drive along the nose, a lift upward: `ship`). `throttle`: the least
     /// steady thrust (a share of full; 0: on or off only), `gimbal` (rad): both kept, not simulated (the ship's
-    /// `limits` says so).
-    Engine { thrust: f64, exhaust: f64, efficiency: f64, burns: String, throttle: f64, gimbal: f64 },
+    /// `limits` says so). `pressure_fed`: cold gas, pushed by its tank's pressure, not by burning what it `burns`
+    /// (an attitude thruster wherever it points). `heat_to_hull`: the share of its jet's power that comes aboard.
+    Engine { thrust: f64, exhaust: f64, efficiency: f64, burns: String, throttle: f64, gimbal: f64, pressure_fed: bool, heat_to_hull: f64 },
     /// Holds fuel (kg): the material it `holds`.
     Tank { capacity: f64, holds: String },
     /// A capacitor bank: stores energy (J), taken in or given out at up to `rate` (W).
@@ -438,13 +439,15 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
     fn life_support(&mut self, _: &r::EquipmentFunctionLifeSupport) -> Self::Out {
         Some(Does::LifeSupport)
     }
-    /// A chemical engine: its jet driven by the energy of what it burns. The other cycles take their energy
-    /// elsewhere (a reactor, a tank's pressure, a fan's power) and aren't made here yet: none of them pretends.
+    /// A chemical engine (its jet driven by the energy of what it burns) or cold gas (by its tank's pressure). The
+    /// other cycles take their energy elsewhere (a reactor, a fan's power) and aren't made here yet: none pretends.
     fn engine(&mut self, it: &r::EquipmentFunctionEngine) -> Self::Out {
-        if it.cycle != r::EngineCycle::Chemical {
-            return None;
-        }
-        Some(Does::Engine { thrust: it.thrust, exhaust: it.exhaust, efficiency: it.efficiency, burns: it.burns.clone()?, throttle: it.throttle, gimbal: it.gimbal })
+        let pressure_fed = match it.cycle {
+            r::EngineCycle::Chemical => false,
+            r::EngineCycle::ColdGas => true,
+            _ => return None,
+        };
+        Some(Does::Engine { thrust: it.thrust, exhaust: it.exhaust, efficiency: it.efficiency, burns: it.burns.clone()?, throttle: it.throttle, gimbal: it.gimbal, pressure_fed, heat_to_hull: it.heat_to_hull })
     }
     fn gun(&mut self, it: &r::EquipmentFunctionGun) -> Self::Out {
         let f = |v: Option<f64>| v.unwrap_or(0.0);

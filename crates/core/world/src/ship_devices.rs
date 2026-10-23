@@ -40,7 +40,7 @@ pub struct LandingLeg {
 /// thrusters beside hydrolox for the lifts): its tanks, and the thrusters that
 /// burn it. Its contents are weighed full in the dry mass, where its tanks
 /// are; what's burned comes off the ship's mass (`State::burned`).
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Propellant {
     /// What it is (a material's key).
     pub material: String,

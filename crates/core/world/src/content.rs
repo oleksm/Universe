@@ -342,6 +342,8 @@ impl Content {
                         let whole = m.mass > 0.0 && m.volume > 0.0;
                         if !whole { log::warn!("{}: carried, but no mass or volume; not in the catalogue", e.identity.key); }
                         let physical = match &m.does {
+                            // (Cold gas: its jet is its tank's pressure, not its gas's energy: not checked so.)
+                            crate::modules::Does::Engine { pressure_fed: true, .. } => true,
                             crate::modules::Does::Engine { exhaust, efficiency, burns, .. } => resolve(&materials, &aliases, burns).map(|h| materials.get(h)).is_some_and(|mat| {
                                 let ok = 0.5 * exhaust * exhaust <= efficiency * mat.energy * 1.001;
                                 if !ok { log::warn!("{}: an exhaust of {exhaust:.0} m/s carries {:.2e} J/kg, {} at {:.0}% gives {:.2e}; not in the catalogue", e.identity.key, 0.5 * exhaust * exhaust, mat.name, efficiency * 100.0, efficiency * mat.energy); }
@@ -399,6 +401,7 @@ impl Content {
                     }
                 }
                 // An engine's jet can't carry more energy per kg than its fuel gives at its efficiency.
+                crate::modules::Does::Engine { pressure_fed: true, .. } => {}
                 d => {
                     if let Some((_, exhaust, efficiency, burns)) = d.engine() {
                         let mat = of(burns)?;

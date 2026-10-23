@@ -151,7 +151,7 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
 
 /// The nozzles a hull's record binds to its engine slots (`thrusters`: nozzle, slot, share), checked strictly: each
 /// to an engine slot it has, a nozzle the model has, once, at a share over 0 and up to 1, an engine's shares
-/// summing to no more than 1; each engine slot driving at least one. Bindings to other slots are left to the
+/// summing to 1; each engine slot driving at least one. Bindings to other slots are left to the
 /// name rule (as the MC-07's are).
 fn bind_engines(record: &[(String, String, f64)], slots: &[(String, crate::modules::SlotKind, u8)], nozzles: &[&str]) -> Result<Vec<(String, String, f64)>, String> {
     use crate::modules::SlotKind;
@@ -177,8 +177,9 @@ fn bind_engines(record: &[(String, String, f64)], slots: &[(String, crate::modul
         if total == 0.0 {
             return Err(format!("engine slot '{name}': its record binds it no nozzle"));
         }
-        if total > 1.0 + 1e-9 {
-            return Err(format!("engine slot '{name}': its nozzles' shares sum to {total}, over 1"));
+        // (An engine's thrust is its nozzles' together: a four-nozzle 0.5 kN block is 0.5 kN, shared, never 4 × 0.5.)
+        if (total - 1.0).abs() > 1e-9 {
+            return Err(format!("engine slot '{name}': its nozzles' shares sum to {total}, not 1"));
         }
     }
     Ok(bound)
@@ -358,6 +359,7 @@ mod tests {
         refused(vec![t("nozzle_engine_aft", "engine_aft", 0.0), t("nozzle_engine_down", "engine_down", 1.0)], "share 0");
         refused(vec![t("nozzle_engine_aft", "engine_aft", 1.5), t("nozzle_engine_down", "engine_down", 1.0)], "share 1.5");
         refused(vec![t("nozzle_engine_aft", "engine_aft", 0.7), t("nozzle_engine_down", "engine_aft", 0.7)], "sum to 1.4");
+        refused(vec![t("nozzle_engine_aft", "engine_aft", 0.5), t("nozzle_engine_down", "engine_down", 1.0)], "sum to 0.5, not 1");
         refused(vec![t("nozzle_engine_aft", "engine_aft", 1.0)], "engine slot 'engine_down': its record binds it no nozzle");
     }
 
@@ -391,5 +393,45 @@ mod tests {
         assert_eq!(spec.limits.iter().any(|l| l.contains("gimbal")), gimbal > 0.0);
         let sideways = build([DVec3::NEG_Z, DVec3::NEG_Z, DVec3::Y, DVec3::X]).unwrap_err();
         assert!(sideways.contains("pushes neither along the nose nor up"), "{sideways}");
+    }
+
+    /// Cold nitrogen beside another fuel: a four-nozzle block's thrust shared (not multiplied), its nozzles attitude
+    /// thrusters wherever they point, drawing on its own tanks (weighed full) apart from the ship's fuel; a ship of
+    /// that class carries the pool in its device state; with no tank of it, refused.
+    #[test]
+    fn import_cold_gas_rcs_draws_its_own_propellant() {
+        use crate::modules::SlotKind;
+        use crate::ship::{ClassSpec, HullFrame, NozzleLink, Slot, ThrusterRole};
+        let h = |k: &str| content().handle::<Module>(k).unwrap_or_else(|| panic!("{k} is carried"));
+        let (main, block, fuel_tank, gas_tank) = (h("equipment.engine.ca.s1"), h("equipment.engine.cg.s1"), h("equipment.tank.methalox.s1"), h("equipment.tank.nitrogen.s1"));
+        let slot = |name: &str, kind| Slot { name: name.into(), kind, size: 2, mount: None };
+        let link = |n: &str, s: &str, share: f64, push: DVec3| NozzleLink { nozzle: n.into(), slot: s.into(), share, at: DVec3::new(0.0, 0.0, 4.0), push };
+        let build = |with_gas_tank: bool| {
+            let mut slots = vec![slot("engine_aft_p", SlotKind::Engine), slot("engine_aft_s", SlotKind::Engine), slot("rcs_fwd", SlotKind::Engine), slot("tank", SlotKind::Tank)];
+            let mut fit = vec![("engine_aft_p".to_string(), main), ("engine_aft_s".to_string(), main), ("rcs_fwd".to_string(), block), ("tank".to_string(), fuel_tank)];
+            if with_gas_tank {
+                slots.push(slot("gas", SlotKind::Tank));
+                fit.push(("gas".to_string(), gas_tank));
+            }
+            let mut nozzles = vec![link("nozzle_aft_p", "engine_aft_p", 1.0, DVec3::NEG_Z), link("nozzle_aft_s", "engine_aft_s", 1.0, DVec3::NEG_Z)];
+            nozzles.extend([DVec3::X, DVec3::NEG_X, DVec3::Y, DVec3::NEG_Y].iter().enumerate().map(|(i, p)| link(&format!("nozzle_rcs_{i}"), "rcs_fwd", 0.25, *p)));
+            let frame = HullFrame { frame_mass: 8000.0, price: 1.0, slots, nozzles, radius: 10.0, drag_area: 10.0, hull_strength: 1e6, bay: (0.0, 0.0) };
+            let shape = std::sync::Arc::new(crate::shape::ShapeDef::made("shape.test-cold".into(), (0..8).map(|i| DVec3::new(if i & 1 == 0 { -2.0 } else { 2.0 }, if i & 2 == 0 { -2.0 } else { 2.0 }, if i & 4 == 0 { -6.0 } else { 6.0 })).collect(), vec![], vec![], vec![]).build().unwrap());
+            ClassSpec::assemble_uncommissioned_owned("hull.test-cold".into(), "TEST".into(), shape, frame, fit)
+        };
+        let spec = build(true).unwrap();
+        let rcs: Vec<usize> = (2..6).collect();
+        assert!(rcs.iter().all(|&i| spec.thrusters[i].role == ThrusterRole::Rcs && spec.thrusters[i].thrust == 125.0), "0.5 kN shared by four");
+        let gas = content().get(gas_tank).does.clone();
+        let crate::modules::Does::Tank { capacity: gas_full, .. } = gas else { unreachable!() };
+        assert_eq!(spec.propellants, vec![crate::ship_devices::Propellant { material: "material.nitrogen".into(), capacity: gas_full, thrusters: rcs }]);
+        assert_eq!(spec.fuel, "material.methalox");
+        let crate::modules::Does::Tank { capacity: fuel_full, .. } = content().get(fuel_tank).does.clone() else { unreachable!() };
+        assert_eq!(spec.fuel_capacity, fuel_full, "the gas is no fuel");
+        let parts: f64 = [main, main, block, fuel_tank, gas_tank].iter().map(|m| content().get(*m).mass).sum();
+        assert!((spec.dry_mass - 8000.0 - parts - gas_full).abs() < 1e-6, "its gas weighed full");
+        let ship = crate::ship::Ship::with_spec(std::sync::Arc::new(spec), DVec3::ZERO, DVec3::ZERO, glam::DQuat::IDENTITY);
+        assert!(ship.devices.as_ref().is_some_and(|d| d.burned() == 0.0), "the pool aboard, full");
+        assert!(build(false).unwrap_err().contains("no tank holds it"));
     }
 }
