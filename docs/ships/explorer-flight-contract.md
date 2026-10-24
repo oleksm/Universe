@@ -96,3 +96,26 @@ Rime F (4.06 m/s², airless, Port Trethi) is the nearest airless world above tha
 Runtime limits asked: no life-support depletion (air, water, CO2) is simulated. A fuel cell's part-load is
 constant efficiency with no heat simulated (fuel burned = energy taken / (fuel energy × efficiency)); its heat isn't
 tracked anywhere.
+
+## Power duty, as the device model runs it (registry `20261024T115712-registry-eec1`; main c3f37ab49)
+
+A ship carrying a battery runs its power through `ship_devices` (the device state; `Ship::own_propellants` fits the
+battery there).
+
+- **Fuel cell part-load:** the plant gives only what's drawn. Each step it supplies the steady draw (the fitted
+  modules' summed `needs.power`: FBW, LS, camera, altimeter, ...) up to its output, plus capacitor charge and battery
+  recharge, and burns fuel for exactly that energy: kg = energy / (fuel energy × efficiency). Not a constant 50 kW.
+  It burns the ship's one fuel (the tank's), and gives nothing when that's empty.
+- **Disabling it:** no separate plant switch. The ship's power switch (`powered`) turns everything off. A fuel cell
+  with no fuel is in effect off.
+- **Battery alone:** yes. With no plant, or no fuel, the packs carry the steady draw. Each step each pack gives at most
+  its rate, its energy × efficiency, and what its thermal margin allows. 4.23 kW from a 100 MJ pack is about
+  100 MJ × efficiency / 4.23 kW (≈ 6.2 h at 0.95). A 120 s test uses ≈ 0.53 MJ.
+- **Recharge:** the plant's spare (output beyond the draw) recharges the packs at up to their rate, its fuel burned.
+- **Dark:** when plant plus packs can't carry the steady draw, the ship is unpowered that step (no thrust, no flight
+  computer), whatever the switch says.
+- **Heat:** only a pack's own losses heat it: (1 − efficiency) × energy / (mass × specific heat), from 293 K. It is
+  never cooled, and cuts off at its record's operating limit. Over 120 s at 4.23 kW the rise is negligible. The fuel
+  cell's heat isn't simulated.
+- **Commissioning:** the steady draw must be within plant output plus battery rate. A plant or a battery fills the
+  power base block.
