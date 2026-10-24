@@ -40,6 +40,8 @@ bindings:
     sha256: 2a343299bf117d4a843c059e5467defb5f5b6f486e7f2236b44fdf2e83a60cca
   /home/alexm/.agents/reviews/ships/explorer-functional-20261023/roof-primary-frame-v3.json:
     sha256: 846208715356a2de248404153eef935c1389ff6a3c557f49d3d29803c939d37b
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/roof-frame-v3-screen.json:
+    sha256: 51ae87ebb7d330ec6d710cbf21b98f075bc36bbaa727f071f0b18e8d0fbfd928
 frames:
   package: glTF +Y up. Primary mount identity at base centre; metre, unit scale. Saddle datums independently read
     from actual GLB.
@@ -1120,7 +1122,7 @@ assignments:
   ships_frame_design: '20261023 roof-frame-design task: choose draft frame sections, load assumptions, mass, joint/thermal
     strategy and endpoint requirements for reversible Blender study.'
 primary_frame_study:
-  status: Separate reversible draft study, no current hull edit or installed frame
+  status: FAILED current geometry screen; redesign required, not eligible for installation
   proposal: /home/alexm/.agents/reviews/ships/explorer-functional-20261023/roof-primary-frame-v3.json
   members: 23
   stock_sources: 5
@@ -1141,3 +1143,33 @@ primary_frame_study:
   - Thermal guide mapping must name actual saddle coordinates; ordinal third/fourth roles can constrain the wrong
     axis. Ships task20261023T202551-registry-33aa.
   audit: /home/alexm/.agents/reviews/registry/20261023-roof-frame-stock-check.json
+  screen:
+    source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/roof-frame-v3-screen.json
+    source_sha256: 8fc3a7e3ab384395592c35dde78b59a440830bbdae1f4a7ed59e55c07af8927e
+    input_sha256: 846208715356a2de248404153eef935c1389ff6a3c557f49d3d29803c939d37b
+    members_screened: 23
+    seat_blanks_screened: 4
+    omitted: 16gussets and8spliceplates have no placement; not geometrically screened
+    surface_collision_pairs: 57
+    headroom:
+      upper_tube_bottom_z_m: 3.525
+      existing_cabin_floor_z_m: 1.85
+      vertical_gap_m: 1.6749999999999998
+      game_walker_height_m: 1.8
+      scope: geometric central-crossbar screen; existing consumer height, not suit/human qualification
+      verdict: fails standing route if route crosses portal centre; no actor shrink
+    gear_interface_scope: Three nearest-surface probes at40.5mm from query centre do not establish physical attachment
+      or load path.
+    release: NOT accepted; full joint contacts,pressure sleeves,crew and gear load path unresolved
+    historical_binding: Screen binds original846208 frame proposal. Ships later corrected thermal map in mutable
+      proposal; all23member centreline lengths/midpoints/stocks still match screen within1um. This does not transfer
+      a fit pass.
+  redesign_task: '20261023T202658-registry-6003: Ships revise frame topology/sections around unchanged crew/skin/gear
+    envelopes; compare exterior or side/roof integrated routes. No actor shrinking or blanket collision waiver.'
+thermal_guide_map_review:
+  path: /home/alexm/.agents/reviews/ships/explorer-functional-20261023/roof-thermal-guide-map-v1.json
+  sha256: e6e68c80344de6b0ea525abd6b8c218d347f4f616d691dcdb1c406b5f41f267b
+  mapping: saddle1(+,+)fixedXY;2(-,+)freeX;4(+,-)freeY;3(-,-)freeXY. Retained shoes move both tank bolts together;
+    no fixed-plate direct clamp.
+  limits: Uniform planar growth/contraction map only, not general thermal warping or joint/strength qualification.
+    Geometry framev3 still failed.
