@@ -69,3 +69,6 @@ An explicitly registered empty slot/fit allocation is valid for an uncommissione
 ground stage. The report records `empty_recorded_slots` and `empty_recorded_fit`;
 added native slots or equipment still fail the exact comparisons. A clear comparison
 does not mean the stage is flight commissioned.
+
+The effective result also states `flight_commissioned` and `native_limits`, so
+a ground stage can compare cleanly while remaining explicitly uncommissioned.
