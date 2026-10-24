@@ -20,6 +20,21 @@ insert:
   spacing: 11.3 mm centre to centre, 6.3 mm insulation between pins - ample at 600 V
   earth_first: Contact C pin stands 1.0 mm proud of A, B and D (first to make, last to break)
   socket_half: Female insert mirrors the positions; socket bore 5.0 mm with spring contact
+shell_revision:
+  source_task: 20261024T140321-blender-4464
+  finding: The family's scaled shell 25 barrel is OD 32 / ID 24 mm (coupling ring 40). A 30 mm insert leaves 1 mm wall
+    (0.5 mm at the groove) and the old key at R12.2 cuts the insert.
+  choice:
+    insert_diameter_m: 0.026        # replaces face_diameter 0.030 above
+    barrel_bore_m: 0.026            # bored from 24; wall 3.0 mm, 2.5 mm at the coupling groove
+    pins: Unchanged - 5 mm on the 16 mm circle at 45/135/225/315 deg; outer pin edge at R10.5, 2.5 mm insert margin
+    master_key: Integral rib on the barrel bore at 0 deg, 3 mm wide, R12.0 to R13.0; matching keyway in the insert.
+      Key tip to the nearest pin centre (A, D) is 8.5 mm.
+    contact_retention: Rear-release stainless retention clips in the insert, a rigid rear insert plate held by a
+      circlip in the barrel; internal 6 mm2 wires crimped to the contacts behind it. No harness gland on the product
+      side.
+    outer_envelope: Unchanged (40 coupling, 75 mated length)
+  confidence: invented/review; the boring is a change to the family template's shell 25 only
 keying:
   master_key: One 4 mm wide key at 0 deg on the receptacle shell wall, keyway in the plug
   bayonet: The family's three bayonet pins, as the shell 17 template, scaled
