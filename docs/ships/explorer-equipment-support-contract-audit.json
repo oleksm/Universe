@@ -1,0 +1,5277 @@
+{
+  "status": "read-only maintained contract and explicit-gap audit; no product edits, mount selection, adapter rating or installation acceptance",
+  "request": "20261023T233423-ships-7294",
+  "bindings": {
+    "/home/alexm/.agents/reviews/ships/explorer-functional-20261023/roof-single-allocation-v2.json": "dfdc20e0af11f54d4db73b5dc4f0f64b2a16ed30c757363dbf6568f2177a23b1",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/engine-ch-s1.yaml": "e444108a156f73da59f38598a30355016577193008b2bfeb4337bf05d0f3158a",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/engine-s1.yaml": "e0d8c69a62206b038b8dc578a8d7aba4d38a86ad96b4acd15a7ad1c6588b88e7",
+    "/home/alexm/git/freefall-assets/models/engine-ch-s1/v1/model.glb": "e71bcd3c5a107ddd6b62749e6c69d7fefe410d5a11efee71ecf96d66829a2a98",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/engine-cg-s1.yaml": "36106cff07e69fe4eaabc9df5caca639c47db84d701c803509819ae06942063b",
+    "/home/alexm/git/freefall-assets/models/engine-cg-s1/v1/model.glb": "ff42c3554a9dbebb7e68b905855a48c67ba6185f9ba94a86351fe095e0347ca9",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/tank-hydrolox-0p5t.yaml": "3c75097f645dfe4fb9bc5014b6ca8aa1f5b13ae5115ec0fe7e0eda3e45abc64d",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/tank-s1.yaml": "b648bb633aa0b3258d5033131714479e975a237b15e635c0acc7f33a14316883",
+    "/home/alexm/git/freefall-assets/models/tank-hydrolox-0p5t/v1/model.glb": "52fd4af3e84b13c03bd77ef7694cf694b02aa6a168a4891015c391f3ea431cf3",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/tank-nitrogen-100kg.yaml": "bd5d2f46da8f512f453002b348bf4281c3dea28ee3536aed83b5bbd848244996",
+    "/home/alexm/git/freefall-assets/models/tank-nitrogen-100kg/v1/model.glb": "896184095f22626e3963e49377d3902f8f4021fd5b6e6338fc0e87935554d4b2",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/power-fuelcell-s1.yaml": "c39882adcf51421ce921dc55f2abc9fb75b544de31f67bb4dbef634d72f3da9c",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/power-s1.yaml": "9853f3d5f7b43153ff3f78d8382da56deabfb92328c535485e09baf9db803ea1",
+    "/home/alexm/git/freefall-assets/models/power-fuelcell-s1/v1/model.glb": "7555b5653a545f3c95b773c96c77e228dd3f552d5a1ed555df45df6acbc6f7e6",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/power-battery-s0.yaml": "8d0e6cd77e6d61e25a5ba596071c36b09e060018edc4e4f1619ba0b1a55bc338",
+    "/home/alexm/git/freefall-assets/models/power-battery-s0/v1/model.glb": "a9afbcc69dfe4773779fab6a733f8e1ffd2e198e1b4def12ff57b9c084d6249f",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/computer-fbw-s1.yaml": "85cb89f14ed058c0082c08ca4883e7b97953e507c22d9fce03829f614a76f880",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/computer-s1.yaml": "c144ffd254f9ef7f43138bb42b9e57bbc4cdf2eba33cca29788577a97d5e5ec9",
+    "/home/alexm/git/freefall-assets/models/computer-fbw-s1/v2/model.glb": "c31ed9faeec95563b9688a0b11bdd637d0a27d3daa37aedcb954522591508edc",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/avionics-nav-basic-s1.yaml": "8902a5dc41e54fe2d28bc2f9a4975ccf9ed4b3238e1fadcfd1800d4f9d28d359",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/avionics-s1.yaml": "1cb2825012f763a9c19212bd5457e816a65a71fb33a0dc3e5b9e9368237f64e7",
+    "/home/alexm/git/freefall-assets/models/avionics-nav-basic-s1/v1/model.glb": "5a410f145db366293dbde3952adf3ebc936787466a44c645311b53beb08854a4",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/transponder-s1.yaml": "6aa7dbd37f9e8e2f253f0054d83c888f765b56813a744a430f162daa2e5269ee",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/transponder-s1.yaml": "493e6a7c1c1c1431840301611953532a4209311508394337dfc246fca7b5a997",
+    "/home/alexm/git/freefall-assets/models/transponder-s1/v2/model.glb": "6df1f628f83e059919d43478bf0696860ee3bf1195e59740bb9fcdc5fb72af16",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/comm-basic-s1.yaml": "327d2380fd9b5879505a27762584596a76ccf3316ffa90dc883a53a07889ebf7",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/comm-s1.yaml": "46270dac55a36c5996c46365588223652875a8e337a2ee5b780a721d951cc9d8",
+    "/home/alexm/git/freefall-assets/models/comm-basic-s1/v2/model.glb": "c87a22f1cf3867cb6520b88a55c37e950e8a3d705dd33e28a2495fff95aa726c",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/life-support-s0.yaml": "c986c01be11745a7069af5d90c1f5bb280b1287005f675990824f34eef2c7f68",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/life-support-s1.yaml": "1ff60db62719c47390d6788b93f2443616bf3c16df1caa03057bcfbf247cba2d",
+    "/home/alexm/git/freefall-assets/models/life-support-s0/v1/model.glb": "e1a3ee9aaddfadfb14e91419544b3081253936696d5cbb05389e7bade5f77006",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/sensors-camera-s1.yaml": "e2cd57fac18a3917420ee472af692b234f710cc80657fcfb887dd5a386fad947",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/sensors-s1.yaml": "863719c3287d25eb4770be377eb8ec3be32d3758252ea857963b5d79b9edcae1",
+    "/home/alexm/git/freefall-assets/models/sensors-camera-s1/v1/model.glb": "d65c81286d2379e0f26e1604b50c3521aa25f53de52544c67f1f2dc7bf0d1c86",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/sensors-altimeter-s1.yaml": "d49068310bb0121cab6c63b9bdfa5be2f141fb6c11456bc15ca775dc22e4ec3c",
+    "/home/alexm/git/freefall-assets/models/sensors-altimeter-s1/v1/model.glb": "100d699142a104abf54b9fae37c79fa81e1ee872fec7a5578a7749afda3cb920",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/thermal-air-cooler-s0.yaml": "a1262322f88cd2a204f83decf914a8f1539707096712674568c27692c444b56f",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/thermal-s1.yaml": "6c564b5975268d7b4b71425e9ea45188894b1e9fd511f310b2072f5d215134b5",
+    "/home/alexm/git/freefall-assets/models/thermal-air-cooler-s0/v1/model.glb": "b49353309dfd93c0f1b5909b249e6ef4bccad42da22a631506e17611427ef9aa",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/thermal-coolant-loop-s0.yaml": "40a5fd314c8f6b3aa9e7bd8db4f099c9ae3cd53325799a62c845c4e5bde11c09",
+    "/home/alexm/git/freefall-assets/models/thermal-coolant-loop-s0/v1/model.glb": "d7131ee49c864efe2ae0e43424ff483ad1c16a588f008fb1cd4f67047176f3ac",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/thermal-radiator-s0.yaml": "06cd678332f7a5ce4b0298938a0f49ea5f09742d4f2574e17928033c16f3c1dc",
+    "/home/alexm/git/freefall-assets/models/thermal-radiator-s0/v1/model.glb": "d3b037ef7541ec7e91be7413c5193903ce288d1000328e7c25c0748e7e13b127",
+    "/home/alexm/git/universe-fso/tools/standards/equipment_ports.py": "069c1655670f5f4730ad4d2181d2983849fb10f7bd5acf93e5328002f53e8776",
+    "/home/alexm/git/universe-fso/tools/standards/mounting.py": "e0de2e1b58a77a5bd24f1e622ee563fecd51e65674ed6a8c5bfbd4253ebe97d8",
+    "/home/alexm/git/universe-fso/docs/proposals/physical-mounts.md": "ab82e95113cf5f755f713844db3d7d4919314e81bb84846b86dc0a0084da4e38",
+    "/home/alexm/git/universe-fso/docs/ships/explorer-roof-cradle-contract.yaml": "463a5c5f297c1eb6b317959f0750ab1730df006bc9ae2400b1ebb778da8c8213"
+  },
+  "instances": 31,
+  "unique_products": 16,
+  "contracts": [
+    {
+      "item": "equipment.engine.ch.s1",
+      "count": 4,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/engine-ch-s1.yaml",
+      "fits_record": "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/engine-s1.yaml",
+      "model": "/home/alexm/git/freefall-assets/models/engine-ch-s1/v1/model.glb",
+      "model_hash_matches_allocation": true,
+      "nominal_record_dimensions_m": [
+        1.29,
+        0.63,
+        0.63
+      ],
+      "load_ports_as_currently_generated": [
+        {
+          "id": "foot-1",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m30",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.0,
+          "force": 3125.0,
+          "at": [
+            1.485,
+            0.0,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.engine-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-2",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m30",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.0,
+          "force": 3125.0,
+          "at": [
+            1.0501,
+            1.0501,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.engine-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-3",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m30",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.0,
+          "force": 3125.0,
+          "at": [
+            0.0,
+            1.485,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.engine-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-4",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m30",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.0,
+          "force": 3125.0,
+          "at": [
+            -1.0501,
+            1.0501,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.engine-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-5",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m30",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.0,
+          "force": 3125.0,
+          "at": [
+            -1.485,
+            0.0,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.engine-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-6",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m30",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.0,
+          "force": 3125.0,
+          "at": [
+            -1.0501,
+            -1.0501,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.engine-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-7",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m30",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.0,
+          "force": 3125.0,
+          "at": [
+            0.0,
+            -1.485,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.engine-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-8",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m30",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.0,
+          "force": 3125.0,
+          "at": [
+            1.0501,
+            -1.0501,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.engine-s1's socket of the same id, bolted through"
+        }
+      ],
+      "service_ports_as_currently_recorded": [],
+      "actual_authored_markers": [
+        {
+          "name": "mount_CHS1",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        }
+      ],
+      "gaps": [
+        "Generated record feet exceed nominal centred product length/width for foot-1,foot-2,foot-3,foot-4,foot-5,foot-6,foot-7,foot-8. This is a dimensional mismatch screen, not model-frame qualification.",
+        "Both products inherit generic mount.engine-s1 eight-point1.485m radius/M30 feet despite different actual small models. Do not build to these coordinates without explicit product-interface reconciliation."
+      ]
+    },
+    {
+      "item": "equipment.engine.cg.s1",
+      "count": 4,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/engine-cg-s1.yaml",
+      "fits_record": "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/engine-s1.yaml",
+      "model": "/home/alexm/git/freefall-assets/models/engine-cg-s1/v1/model.glb",
+      "model_hash_matches_allocation": true,
+      "nominal_record_dimensions_m": [
+        0.4,
+        0.4,
+        0.4
+      ],
+      "load_ports_as_currently_generated": [
+        {
+          "id": "foot-1",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m30",
+          "half": "male",
+          "make": "bolted",
+          "mass": 1.88,
+          "force": 62.0,
+          "at": [
+            1.485,
+            0.0,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.engine-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-2",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m30",
+          "half": "male",
+          "make": "bolted",
+          "mass": 1.88,
+          "force": 62.0,
+          "at": [
+            1.0501,
+            1.0501,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.engine-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-3",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m30",
+          "half": "male",
+          "make": "bolted",
+          "mass": 1.88,
+          "force": 62.0,
+          "at": [
+            0.0,
+            1.485,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.engine-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-4",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m30",
+          "half": "male",
+          "make": "bolted",
+          "mass": 1.88,
+          "force": 62.0,
+          "at": [
+            -1.0501,
+            1.0501,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.engine-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-5",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m30",
+          "half": "male",
+          "make": "bolted",
+          "mass": 1.88,
+          "force": 62.0,
+          "at": [
+            -1.485,
+            0.0,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.engine-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-6",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m30",
+          "half": "male",
+          "make": "bolted",
+          "mass": 1.88,
+          "force": 62.0,
+          "at": [
+            -1.0501,
+            -1.0501,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.engine-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-7",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m30",
+          "half": "male",
+          "make": "bolted",
+          "mass": 1.88,
+          "force": 62.0,
+          "at": [
+            0.0,
+            -1.485,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.engine-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-8",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m30",
+          "half": "male",
+          "make": "bolted",
+          "mass": 1.88,
+          "force": 62.0,
+          "at": [
+            1.0501,
+            -1.0501,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.engine-s1's socket of the same id, bolted through"
+        }
+      ],
+      "service_ports_as_currently_recorded": [
+        {
+          "id": "dc-in",
+          "flow": "in",
+          "medium": "power",
+          "interface": "interface.circular-shell-17",
+          "half": "male",
+          "make": "manual",
+          "connector": "connector.circular-shell-17",
+          "voltage": 28.0,
+          "current": 1.79,
+          "power": 50.0,
+          "channel": "dc-28v",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "plus"
+            },
+            {
+              "contact": "2",
+              "role": "minus"
+            },
+            {
+              "contact": "3",
+              "role": "earth"
+            },
+            {
+              "contact": "4",
+              "role": "spare"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.2,
+            0.037,
+            0.12
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        },
+        {
+          "id": "data-1",
+          "flow": "both",
+          "medium": "signal",
+          "interface": "interface.circular-shell-11",
+          "half": "female",
+          "make": "manual",
+          "connector": "connector.circular-shell-11",
+          "channel": "can-a",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "signal-high"
+            },
+            {
+              "contact": "2",
+              "role": "signal-low"
+            },
+            {
+              "contact": "3",
+              "role": "return"
+            },
+            {
+              "contact": "4",
+              "role": "screen"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.2,
+            -0.004,
+            0.12
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        },
+        {
+          "id": "data-2",
+          "flow": "both",
+          "medium": "signal",
+          "interface": "interface.circular-shell-11",
+          "half": "female",
+          "make": "manual",
+          "connector": "connector.circular-shell-11",
+          "channel": "can-a",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "signal-high"
+            },
+            {
+              "contact": "2",
+              "role": "signal-low"
+            },
+            {
+              "contact": "3",
+              "role": "return"
+            },
+            {
+              "contact": "4",
+              "role": "screen"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.2,
+            -0.041,
+            0.12
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        }
+      ],
+      "actual_authored_markers": [
+        {
+          "name": "mount",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        }
+      ],
+      "gaps": [
+        "Generated record feet exceed nominal centred product length/width for foot-1,foot-2,foot-3,foot-4,foot-5,foot-6,foot-7,foot-8. This is a dimensional mismatch screen, not model-frame qualification.",
+        "Both products inherit generic mount.engine-s1 eight-point1.485m radius/M30 feet despite different actual small models. Do not build to these coordinates without explicit product-interface reconciliation."
+      ]
+    },
+    {
+      "item": "equipment.tank.hydrolox.0p5t",
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/tank-hydrolox-0p5t.yaml",
+      "fits_record": "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/tank-s1.yaml",
+      "model": "/home/alexm/git/freefall-assets/models/tank-hydrolox-0p5t/v1/model.glb",
+      "model_hash_matches_allocation": true,
+      "nominal_record_dimensions_m": [
+        1.795,
+        1.673,
+        1.739
+      ],
+      "load_ports_as_currently_generated": [
+        {
+          "id": "foot-1",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m42",
+          "half": "male",
+          "make": "bolted",
+          "mass": 28.75,
+          "at": [
+            -2.646,
+            -2.646,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.tank-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-2",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m42",
+          "half": "male",
+          "make": "bolted",
+          "mass": 28.75,
+          "at": [
+            2.646,
+            -2.646,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.tank-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-3",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m42",
+          "half": "male",
+          "make": "bolted",
+          "mass": 28.75,
+          "at": [
+            2.646,
+            2.646,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.tank-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-4",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m42",
+          "half": "male",
+          "make": "bolted",
+          "mass": 28.75,
+          "at": [
+            -2.646,
+            2.646,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.tank-s1's socket of the same id, bolted through"
+        }
+      ],
+      "service_ports_as_currently_recorded": [],
+      "actual_authored_markers": [
+        {
+          "name": "mount",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_saddle_1",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.27890855073928833
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.27890855073928833
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_saddle_2",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.27890855073928833
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.27890855073928833
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_saddle_3",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.27890855073928833
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              0.27890855073928833
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_saddle_4",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.27890855073928833
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              0.27890855073928833
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "port_H2_filldrain",
+          "world_matrix_gltf": [
+            [
+              -1.0,
+              0.0,
+              -1.5099580252808664e-07,
+              0.05080203711986542
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.8717032074928284
+            ],
+            [
+              1.5099580252808664e-07,
+              0.0,
+              -1.0,
+              0.8886172771453857
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "port_H2_gauge",
+          "world_matrix_gltf": [
+            [
+              -1.0,
+              0.0,
+              -1.5099580252808664e-07,
+              0.04781368002295494
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.8328545689582825
+            ],
+            [
+              1.5099580252808664e-07,
+              0.0,
+              -1.0,
+              0.8886172771453857
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "port_H2_outlet",
+          "world_matrix_gltf": [
+            [
+              -1.0,
+              0.0,
+              -1.5099580252808664e-07,
+              -0.03884861618280411
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.8836566209793091
+            ],
+            [
+              1.5099580252808664e-07,
+              0.0,
+              -1.0,
+              0.8886172771453857
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "port_H2_pressurant",
+          "world_matrix_gltf": [
+            [
+              -1.0,
+              0.0,
+              -1.5099580252808664e-07,
+              0.041836973279714584
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.9374470114707947
+            ],
+            [
+              1.5099580252808664e-07,
+              0.0,
+              -1.0,
+              0.8886172771453857
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "port_H2_relief",
+          "world_matrix_gltf": [
+            [
+              -1.0,
+              0.0,
+              -1.5099580252808664e-07,
+              -0.05976710468530655
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.9553771615028381
+            ],
+            [
+              1.5099580252808664e-07,
+              0.0,
+              -1.0,
+              0.8886172771453857
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "port_H2_vent",
+          "world_matrix_gltf": [
+            [
+              -1.0,
+              0.0,
+              -1.5099580252808664e-07,
+              -0.011953420005738735
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.9673305749893188
+            ],
+            [
+              1.5099580252808664e-07,
+              0.0,
+              -1.0,
+              0.8886172771453857
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "port_O2_filldrain",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.05080203711986542
+            ],
+            [
+              0,
+              1,
+              0,
+              0.8717032074928284
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.8886172771453857
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "port_O2_gauge",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.04781368002295494
+            ],
+            [
+              0,
+              1,
+              0,
+              0.8328545689582825
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.8886172771453857
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "port_O2_outlet",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.03884861618280411
+            ],
+            [
+              0,
+              1,
+              0,
+              0.8836566209793091
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.8886172771453857
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "port_O2_pressurant",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.041836973279714584
+            ],
+            [
+              0,
+              1,
+              0,
+              0.9374470114707947
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.8886172771453857
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "port_O2_relief",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.05976710468530655
+            ],
+            [
+              0,
+              1,
+              0,
+              0.9553771615028381
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.8886172771453857
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "port_O2_vent",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.011953420005738735
+            ],
+            [
+              0,
+              1,
+              0,
+              0.9673305749893188
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.8886172771453857
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        }
+      ],
+      "gaps": [
+        "Generated record feet exceed nominal centred product length/width for foot-1,foot-2,foot-3,foot-4. This is a dimensional mismatch screen, not model-frame qualification."
+      ]
+    },
+    {
+      "item": "equipment.tank.nitrogen.100kg",
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/tank-nitrogen-100kg.yaml",
+      "fits_record": "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/tank-s1.yaml",
+      "model": "/home/alexm/git/freefall-assets/models/tank-nitrogen-100kg/v1/model.glb",
+      "model_hash_matches_allocation": true,
+      "nominal_record_dimensions_m": [
+        1.15,
+        0.8,
+        0.83
+      ],
+      "load_ports_as_currently_generated": [
+        {
+          "id": "foot-1",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m42",
+          "half": "male",
+          "make": "bolted",
+          "mass": 29.25,
+          "at": [
+            -2.646,
+            -2.646,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.tank-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-2",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m42",
+          "half": "male",
+          "make": "bolted",
+          "mass": 29.25,
+          "at": [
+            2.646,
+            -2.646,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.tank-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-3",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m42",
+          "half": "male",
+          "make": "bolted",
+          "mass": 29.25,
+          "at": [
+            2.646,
+            2.646,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.tank-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-4",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m42",
+          "half": "male",
+          "make": "bolted",
+          "mass": 29.25,
+          "at": [
+            -2.646,
+            2.646,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.tank-s1's socket of the same id, bolted through"
+        }
+      ],
+      "service_ports_as_currently_recorded": [],
+      "actual_authored_markers": [
+        {
+          "name": "mount",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_saddle_1",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.3700000047683716
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              0.36500000953674316
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_saddle_2",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.3700000047683716
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.36500000953674316
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_saddle_3",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.27000001072883606
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              0.36500000953674316
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_saddle_4",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.27000001072883606
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.36500000953674316
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        }
+      ],
+      "gaps": [
+        "Generated record feet exceed nominal centred product length/width for foot-1,foot-2,foot-3,foot-4. This is a dimensional mismatch screen, not model-frame qualification.",
+        "Actual saddle empties differ from tank-s1 generic5.292m square/M42 feet; use measured saddle/bore study, not hydrolox cradle by identity transfer."
+      ]
+    },
+    {
+      "item": "equipment.power.fuelcell.s1",
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/power-fuelcell-s1.yaml",
+      "fits_record": "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/power-s1.yaml",
+      "model": "/home/alexm/git/freefall-assets/models/power-fuelcell-s1/v1/model.glb",
+      "model_hash_matches_allocation": true,
+      "nominal_record_dimensions_m": [
+        0.8,
+        0.5,
+        0.5
+      ],
+      "load_ports_as_currently_generated": [
+        {
+          "id": "foot-1",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.97,
+          "at": [
+            -6.21,
+            -3.2265,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.power-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-2",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.97,
+          "at": [
+            6.21,
+            -3.2265,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.power-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-3",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.97,
+          "at": [
+            6.21,
+            3.2265,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.power-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-4",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.97,
+          "at": [
+            -6.21,
+            3.2265,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.power-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-5",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.97,
+          "at": [
+            0.0,
+            -3.2265,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.power-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-6",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.97,
+          "at": [
+            6.21,
+            0.0,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.power-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-7",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.97,
+          "at": [
+            0.0,
+            3.2265,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.power-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-8",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.97,
+          "at": [
+            -6.21,
+            0.0,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.power-s1's socket of the same id, bolted through"
+        }
+      ],
+      "service_ports_as_currently_recorded": [],
+      "actual_authored_markers": [
+        {
+          "name": "mount",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_foot_1",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.3869999945163727
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              0.2329999953508377
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_foot_2",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.3869999945163727
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.2329999953508377
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_foot_3",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.3869999945163727
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              0.2329999953508377
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_foot_4",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.3869999945163727
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.2329999953508377
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        }
+      ],
+      "gaps": [
+        "Generated record feet exceed nominal centred product length/width for foot-1,foot-2,foot-3,foot-4,foot-5,foot-6,foot-7,foot-8. This is a dimensional mismatch screen, not model-frame qualification."
+      ]
+    },
+    {
+      "item": "equipment.power.battery.s0",
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/power-battery-s0.yaml",
+      "fits_record": "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/power-s1.yaml",
+      "model": "/home/alexm/git/freefall-assets/models/power-battery-s0/v1/model.glb",
+      "model_hash_matches_allocation": true,
+      "nominal_record_dimensions_m": [
+        0.8,
+        0.5,
+        0.5
+      ],
+      "load_ports_as_currently_generated": [
+        {
+          "id": "foot-1",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 25.0,
+          "at": [
+            -6.21,
+            -3.2265,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.power-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-2",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 25.0,
+          "at": [
+            6.21,
+            -3.2265,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.power-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-3",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 25.0,
+          "at": [
+            6.21,
+            3.2265,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.power-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-4",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 25.0,
+          "at": [
+            -6.21,
+            3.2265,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.power-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-5",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 25.0,
+          "at": [
+            0.0,
+            -3.2265,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.power-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-6",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 25.0,
+          "at": [
+            6.21,
+            0.0,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.power-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-7",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 25.0,
+          "at": [
+            0.0,
+            3.2265,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.power-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-8",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 25.0,
+          "at": [
+            -6.21,
+            0.0,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.power-s1's socket of the same id, bolted through"
+        }
+      ],
+      "service_ports_as_currently_recorded": [],
+      "actual_authored_markers": [
+        {
+          "name": "mount",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_foot_1",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.3869999945163727
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              0.2329999953508377
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_foot_2",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.3869999945163727
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.2329999953508377
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_foot_3",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.3869999945163727
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              0.2329999953508377
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_foot_4",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.3869999945163727
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.2329999953508377
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        }
+      ],
+      "gaps": [
+        "Generated record feet exceed nominal centred product length/width for foot-1,foot-2,foot-3,foot-4,foot-5,foot-6,foot-7,foot-8. This is a dimensional mismatch screen, not model-frame qualification."
+      ]
+    },
+    {
+      "item": "equipment.computer.fbw.s1",
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/computer-fbw-s1.yaml",
+      "fits_record": "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/computer-s1.yaml",
+      "model": "/home/alexm/git/freefall-assets/models/computer-fbw-s1/v2/model.glb",
+      "model_hash_matches_allocation": true,
+      "nominal_record_dimensions_m": [
+        0.5,
+        0.4,
+        0.25
+      ],
+      "load_ports_as_currently_generated": [
+        {
+          "id": "foot-1",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.deck-track",
+          "half": "male",
+          "make": "manual",
+          "mass": 7.5,
+          "at": [
+            -0.2032,
+            -0.125,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "a stud into the deck track under it"
+        },
+        {
+          "id": "foot-2",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.deck-track",
+          "half": "male",
+          "make": "manual",
+          "mass": 7.5,
+          "at": [
+            0.2032,
+            -0.125,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "a stud into the deck track under it"
+        },
+        {
+          "id": "foot-3",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.deck-track",
+          "half": "male",
+          "make": "manual",
+          "mass": 7.5,
+          "at": [
+            -0.2032,
+            0.125,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "a stud into the deck track under it"
+        },
+        {
+          "id": "foot-4",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.deck-track",
+          "half": "male",
+          "make": "manual",
+          "mass": 7.5,
+          "at": [
+            0.2032,
+            0.125,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "a stud into the deck track under it"
+        }
+      ],
+      "service_ports_as_currently_recorded": [],
+      "actual_authored_markers": [
+        {
+          "name": "mount",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "item": "equipment.avionics.nav-basic.s1",
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/avionics-nav-basic-s1.yaml",
+      "fits_record": "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/avionics-s1.yaml",
+      "model": "/home/alexm/git/freefall-assets/models/avionics-nav-basic-s1/v1/model.glb",
+      "model_hash_matches_allocation": true,
+      "nominal_record_dimensions_m": [
+        0.4,
+        0.3,
+        0.25
+      ],
+      "load_ports_as_currently_generated": [
+        {
+          "id": "foot-1",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.deck-track",
+          "half": "male",
+          "make": "manual",
+          "mass": 3.75,
+          "at": [
+            -0.1778,
+            -0.125,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "a stud into the deck track under it"
+        },
+        {
+          "id": "foot-2",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.deck-track",
+          "half": "male",
+          "make": "manual",
+          "mass": 3.75,
+          "at": [
+            0.1778,
+            -0.125,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "a stud into the deck track under it"
+        },
+        {
+          "id": "foot-3",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.deck-track",
+          "half": "male",
+          "make": "manual",
+          "mass": 3.75,
+          "at": [
+            -0.1778,
+            0.125,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "a stud into the deck track under it"
+        },
+        {
+          "id": "foot-4",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.deck-track",
+          "half": "male",
+          "make": "manual",
+          "mass": 3.75,
+          "at": [
+            0.1778,
+            0.125,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "a stud into the deck track under it"
+        }
+      ],
+      "service_ports_as_currently_recorded": [
+        {
+          "id": "dc-in",
+          "flow": "in",
+          "medium": "power",
+          "interface": "interface.circular-shell-17",
+          "half": "male",
+          "make": "manual",
+          "connector": "connector.circular-shell-17",
+          "voltage": 28.0,
+          "current": 3.57,
+          "power": 100.0,
+          "channel": "dc-28v",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "plus"
+            },
+            {
+              "contact": "2",
+              "role": "minus"
+            },
+            {
+              "contact": "3",
+              "role": "earth"
+            },
+            {
+              "contact": "4",
+              "role": "spare"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.2,
+            0.037,
+            0.075
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        },
+        {
+          "id": "data-1",
+          "flow": "both",
+          "medium": "signal",
+          "interface": "interface.circular-shell-11",
+          "half": "female",
+          "make": "manual",
+          "connector": "connector.circular-shell-11",
+          "channel": "can-a",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "signal-high"
+            },
+            {
+              "contact": "2",
+              "role": "signal-low"
+            },
+            {
+              "contact": "3",
+              "role": "return"
+            },
+            {
+              "contact": "4",
+              "role": "screen"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.2,
+            -0.004,
+            0.075
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        },
+        {
+          "id": "data-2",
+          "flow": "both",
+          "medium": "signal",
+          "interface": "interface.circular-shell-11",
+          "half": "female",
+          "make": "manual",
+          "connector": "connector.circular-shell-11",
+          "channel": "can-a",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "signal-high"
+            },
+            {
+              "contact": "2",
+              "role": "signal-low"
+            },
+            {
+              "contact": "3",
+              "role": "return"
+            },
+            {
+              "contact": "4",
+              "role": "screen"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.2,
+            -0.041,
+            0.075
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        }
+      ],
+      "actual_authored_markers": [
+        {
+          "name": "mount",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "item": "equipment.transponder.s1",
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/transponder-s1.yaml",
+      "fits_record": "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/transponder-s1.yaml",
+      "model": "/home/alexm/git/freefall-assets/models/transponder-s1/v2/model.glb",
+      "model_hash_matches_allocation": true,
+      "nominal_record_dimensions_m": [
+        0.2,
+        0.15,
+        0.17
+      ],
+      "load_ports_as_currently_generated": [
+        {
+          "id": "foot-1",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.deck-track",
+          "half": "male",
+          "make": "manual",
+          "mass": 1.5,
+          "at": [
+            -0.0762,
+            0.0,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "a stud into the deck track under it"
+        },
+        {
+          "id": "foot-2",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.deck-track",
+          "half": "male",
+          "make": "manual",
+          "mass": 1.5,
+          "at": [
+            0.0762,
+            0.0,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "a stud into the deck track under it"
+        }
+      ],
+      "service_ports_as_currently_recorded": [
+        {
+          "id": "dc-in",
+          "flow": "in",
+          "medium": "power",
+          "interface": "interface.circular-shell-17",
+          "half": "male",
+          "make": "manual",
+          "connector": "connector.circular-shell-17",
+          "voltage": 28.0,
+          "current": 0.71,
+          "power": 20.0,
+          "channel": "dc-28v",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "plus"
+            },
+            {
+              "contact": "2",
+              "role": "minus"
+            },
+            {
+              "contact": "3",
+              "role": "earth"
+            },
+            {
+              "contact": "4",
+              "role": "spare"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.1,
+            0.037,
+            0.06
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        },
+        {
+          "id": "data-1",
+          "flow": "both",
+          "medium": "signal",
+          "interface": "interface.circular-shell-11",
+          "half": "female",
+          "make": "manual",
+          "connector": "connector.circular-shell-11",
+          "channel": "can-a",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "signal-high"
+            },
+            {
+              "contact": "2",
+              "role": "signal-low"
+            },
+            {
+              "contact": "3",
+              "role": "return"
+            },
+            {
+              "contact": "4",
+              "role": "screen"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.1,
+            -0.004,
+            0.06
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        },
+        {
+          "id": "data-2",
+          "flow": "both",
+          "medium": "signal",
+          "interface": "interface.circular-shell-11",
+          "half": "female",
+          "make": "manual",
+          "connector": "connector.circular-shell-11",
+          "channel": "can-a",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "signal-high"
+            },
+            {
+              "contact": "2",
+              "role": "signal-low"
+            },
+            {
+              "contact": "3",
+              "role": "return"
+            },
+            {
+              "contact": "4",
+              "role": "screen"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.1,
+            -0.041,
+            0.06
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        }
+      ],
+      "actual_authored_markers": [
+        {
+          "name": "mount",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "item": "equipment.comm.basic.s1",
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/comm-basic-s1.yaml",
+      "fits_record": "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/comm-s1.yaml",
+      "model": "/home/alexm/git/freefall-assets/models/comm-basic-s1/v2/model.glb",
+      "model_hash_matches_allocation": true,
+      "nominal_record_dimensions_m": [
+        3.0,
+        3.0,
+        1.5
+      ],
+      "load_ports_as_currently_generated": [
+        {
+          "id": "foot-1",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 22.5,
+          "at": [
+            -1.485,
+            -1.485,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.comm-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-2",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 22.5,
+          "at": [
+            1.485,
+            -1.485,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.comm-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-3",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 22.5,
+          "at": [
+            1.485,
+            1.485,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.comm-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-4",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 22.5,
+          "at": [
+            -1.485,
+            1.485,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.comm-s1's socket of the same id, bolted through"
+        }
+      ],
+      "service_ports_as_currently_recorded": [],
+      "actual_authored_markers": [
+        {
+          "name": "mount",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        }
+      ],
+      "gaps": [
+        "Dish/pedestal mount and swept/visibility envelope require actual mesh/root measurement; generic comm-s1 foot square alone is not physical footing proof."
+      ]
+    },
+    {
+      "item": "equipment.life-support.s0",
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/life-support-s0.yaml",
+      "fits_record": "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/life-support-s1.yaml",
+      "model": "/home/alexm/git/freefall-assets/models/life-support-s0/v1/model.glb",
+      "model_hash_matches_allocation": true,
+      "nominal_record_dimensions_m": [
+        0.8,
+        0.6,
+        0.6
+      ],
+      "load_ports_as_currently_generated": [
+        {
+          "id": "foot-1",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 37.5,
+          "at": [
+            -1.0395,
+            -0.99,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.life-support-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-2",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 37.5,
+          "at": [
+            1.0395,
+            -0.99,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.life-support-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-3",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 37.5,
+          "at": [
+            1.0395,
+            0.99,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.life-support-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-4",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 37.5,
+          "at": [
+            -1.0395,
+            0.99,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.life-support-s1's socket of the same id, bolted through"
+        }
+      ],
+      "service_ports_as_currently_recorded": [
+        {
+          "id": "dc-in",
+          "flow": "in",
+          "medium": "power",
+          "interface": "interface.circular-shell-17",
+          "half": "male",
+          "make": "manual",
+          "connector": "connector.circular-shell-17",
+          "voltage": 270.0,
+          "current": 7.41,
+          "power": 2000.0,
+          "channel": "dc-270v",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "plus"
+            },
+            {
+              "contact": "2",
+              "role": "minus"
+            },
+            {
+              "contact": "3",
+              "role": "earth"
+            },
+            {
+              "contact": "4",
+              "role": "spare"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.4,
+            0.037,
+            0.18
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        },
+        {
+          "id": "data-1",
+          "flow": "both",
+          "medium": "signal",
+          "interface": "interface.circular-shell-11",
+          "half": "female",
+          "make": "manual",
+          "connector": "connector.circular-shell-11",
+          "channel": "can-a",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "signal-high"
+            },
+            {
+              "contact": "2",
+              "role": "signal-low"
+            },
+            {
+              "contact": "3",
+              "role": "return"
+            },
+            {
+              "contact": "4",
+              "role": "screen"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.4,
+            -0.004,
+            0.18
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        },
+        {
+          "id": "data-2",
+          "flow": "both",
+          "medium": "signal",
+          "interface": "interface.circular-shell-11",
+          "half": "female",
+          "make": "manual",
+          "connector": "connector.circular-shell-11",
+          "channel": "can-a",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "signal-high"
+            },
+            {
+              "contact": "2",
+              "role": "signal-low"
+            },
+            {
+              "contact": "3",
+              "role": "return"
+            },
+            {
+              "contact": "4",
+              "role": "screen"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.4,
+            -0.041,
+            0.18
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        }
+      ],
+      "actual_authored_markers": [
+        {
+          "name": "mount",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_foot_1",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.3799999952316284
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              0.2800000011920929
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_foot_2",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.3799999952316284
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.2800000011920929
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_foot_3",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.3799999952316284
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              0.2800000011920929
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_foot_4",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.3799999952316284
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.2800000011920929
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        }
+      ],
+      "gaps": [
+        "Generated record feet exceed nominal centred product length/width for foot-1,foot-2,foot-3,foot-4. This is a dimensional mismatch screen, not model-frame qualification."
+      ]
+    },
+    {
+      "item": "equipment.sensors.camera.s1",
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/sensors-camera-s1.yaml",
+      "fits_record": "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/sensors-s1.yaml",
+      "model": "/home/alexm/git/freefall-assets/models/sensors-camera-s1/v1/model.glb",
+      "model_hash_matches_allocation": true,
+      "nominal_record_dimensions_m": [
+        0.1,
+        0.1,
+        0.15
+      ],
+      "load_ports_as_currently_generated": [
+        {
+          "id": "foot-1",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 0.5,
+          "at": [
+            -1.98,
+            -0.99,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.sensors-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-2",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 0.5,
+          "at": [
+            1.98,
+            -0.99,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.sensors-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-3",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 0.5,
+          "at": [
+            1.98,
+            0.99,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.sensors-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-4",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 0.5,
+          "at": [
+            -1.98,
+            0.99,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.sensors-s1's socket of the same id, bolted through"
+        }
+      ],
+      "service_ports_as_currently_recorded": [
+        {
+          "id": "dc-in",
+          "flow": "in",
+          "medium": "power",
+          "interface": "interface.circular-shell-17",
+          "half": "male",
+          "make": "manual",
+          "connector": "connector.circular-shell-17",
+          "voltage": 28.0,
+          "current": 0.36,
+          "power": 10.0,
+          "channel": "dc-28v",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "plus"
+            },
+            {
+              "contact": "2",
+              "role": "minus"
+            },
+            {
+              "contact": "3",
+              "role": "earth"
+            },
+            {
+              "contact": "4",
+              "role": "spare"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.037,
+            0.05,
+            0.025
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "place from the model's empty power_data"
+        },
+        {
+          "id": "data-1",
+          "flow": "both",
+          "medium": "signal",
+          "interface": "interface.circular-shell-11",
+          "half": "female",
+          "make": "manual",
+          "connector": "connector.circular-shell-11",
+          "channel": "can-a",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "signal-high"
+            },
+            {
+              "contact": "2",
+              "role": "signal-low"
+            },
+            {
+              "contact": "3",
+              "role": "return"
+            },
+            {
+              "contact": "4",
+              "role": "screen"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            0.004,
+            0.05,
+            0.025
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "place from the model's empty power_data"
+        },
+        {
+          "id": "data-2",
+          "flow": "both",
+          "medium": "signal",
+          "interface": "interface.circular-shell-11",
+          "half": "female",
+          "make": "manual",
+          "connector": "connector.circular-shell-11",
+          "channel": "can-a",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "signal-high"
+            },
+            {
+              "contact": "2",
+              "role": "signal-low"
+            },
+            {
+              "contact": "3",
+              "role": "return"
+            },
+            {
+              "contact": "4",
+              "role": "screen"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            0.041,
+            0.05,
+            0.025
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "place from the model's empty power_data"
+        }
+      ],
+      "actual_authored_markers": [
+        {
+          "name": "mount",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_corner_1",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.04600000008940697
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              0.04600000008940697
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_corner_2",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.04600000008940697
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.04600000008940697
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_corner_3",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.04600000008940697
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              0.04600000008940697
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_corner_4",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.04600000008940697
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.04600000008940697
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        }
+      ],
+      "gaps": [
+        "Generated record feet exceed nominal centred product length/width for foot-1,foot-2,foot-3,foot-4. This is a dimensional mismatch screen, not model-frame qualification."
+      ]
+    },
+    {
+      "item": "equipment.sensors.altimeter.s1",
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/sensors-altimeter-s1.yaml",
+      "fits_record": "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/sensors-s1.yaml",
+      "model": "/home/alexm/git/freefall-assets/models/sensors-altimeter-s1/v1/model.glb",
+      "model_hash_matches_allocation": true,
+      "nominal_record_dimensions_m": [
+        0.3,
+        0.2,
+        0.15
+      ],
+      "load_ports_as_currently_generated": [
+        {
+          "id": "foot-1",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 2.0,
+          "at": [
+            -1.98,
+            -0.99,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.sensors-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-2",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 2.0,
+          "at": [
+            1.98,
+            -0.99,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.sensors-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-3",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 2.0,
+          "at": [
+            1.98,
+            0.99,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.sensors-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-4",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 2.0,
+          "at": [
+            -1.98,
+            0.99,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.sensors-s1's socket of the same id, bolted through"
+        }
+      ],
+      "service_ports_as_currently_recorded": [
+        {
+          "id": "dc-in",
+          "flow": "in",
+          "medium": "power",
+          "interface": "interface.circular-shell-17",
+          "half": "male",
+          "make": "manual",
+          "connector": "connector.circular-shell-17",
+          "voltage": 28.0,
+          "current": 1.43,
+          "power": 40.0,
+          "channel": "dc-28v",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "plus"
+            },
+            {
+              "contact": "2",
+              "role": "minus"
+            },
+            {
+              "contact": "3",
+              "role": "earth"
+            },
+            {
+              "contact": "4",
+              "role": "spare"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.15,
+            0.037,
+            0.06
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        },
+        {
+          "id": "data-1",
+          "flow": "both",
+          "medium": "signal",
+          "interface": "interface.circular-shell-11",
+          "half": "female",
+          "make": "manual",
+          "connector": "connector.circular-shell-11",
+          "channel": "can-a",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "signal-high"
+            },
+            {
+              "contact": "2",
+              "role": "signal-low"
+            },
+            {
+              "contact": "3",
+              "role": "return"
+            },
+            {
+              "contact": "4",
+              "role": "screen"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.15,
+            -0.004,
+            0.06
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        },
+        {
+          "id": "data-2",
+          "flow": "both",
+          "medium": "signal",
+          "interface": "interface.circular-shell-11",
+          "half": "female",
+          "make": "manual",
+          "connector": "connector.circular-shell-11",
+          "channel": "can-a",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "signal-high"
+            },
+            {
+              "contact": "2",
+              "role": "signal-low"
+            },
+            {
+              "contact": "3",
+              "role": "return"
+            },
+            {
+              "contact": "4",
+              "role": "screen"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.15,
+            -0.041,
+            0.06
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        }
+      ],
+      "actual_authored_markers": [
+        {
+          "name": "mount",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        }
+      ],
+      "gaps": [
+        "Generated record feet exceed nominal centred product length/width for foot-1,foot-2,foot-3,foot-4. This is a dimensional mismatch screen, not model-frame qualification."
+      ]
+    },
+    {
+      "item": "equipment.thermal.air-cooler.s0",
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/thermal-air-cooler-s0.yaml",
+      "fits_record": "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/thermal-s1.yaml",
+      "model": "/home/alexm/git/freefall-assets/models/thermal-air-cooler-s0/v1/model.glb",
+      "model_hash_matches_allocation": true,
+      "nominal_record_dimensions_m": [
+        0.5,
+        0.4,
+        0.3
+      ],
+      "load_ports_as_currently_generated": [
+        {
+          "id": "foot-1",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 3.75,
+          "at": [
+            -3.1005,
+            -1.548,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.thermal-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-2",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 3.75,
+          "at": [
+            3.1005,
+            -1.548,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.thermal-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-3",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 3.75,
+          "at": [
+            3.1005,
+            1.548,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.thermal-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-4",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 3.75,
+          "at": [
+            -3.1005,
+            1.548,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.thermal-s1's socket of the same id, bolted through"
+        }
+      ],
+      "service_ports_as_currently_recorded": [
+        {
+          "id": "dc-in",
+          "flow": "in",
+          "medium": "power",
+          "interface": "interface.circular-shell-17",
+          "half": "male",
+          "make": "manual",
+          "connector": "connector.circular-shell-17",
+          "voltage": 28.0,
+          "current": 14.29,
+          "power": 400.0,
+          "channel": "dc-28v",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "plus"
+            },
+            {
+              "contact": "2",
+              "role": "minus"
+            },
+            {
+              "contact": "3",
+              "role": "earth"
+            },
+            {
+              "contact": "4",
+              "role": "spare"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.25,
+            0.037,
+            0.09
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        },
+        {
+          "id": "data-1",
+          "flow": "both",
+          "medium": "signal",
+          "interface": "interface.circular-shell-11",
+          "half": "female",
+          "make": "manual",
+          "connector": "connector.circular-shell-11",
+          "channel": "can-a",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "signal-high"
+            },
+            {
+              "contact": "2",
+              "role": "signal-low"
+            },
+            {
+              "contact": "3",
+              "role": "return"
+            },
+            {
+              "contact": "4",
+              "role": "screen"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.25,
+            -0.004,
+            0.09
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        },
+        {
+          "id": "data-2",
+          "flow": "both",
+          "medium": "signal",
+          "interface": "interface.circular-shell-11",
+          "half": "female",
+          "make": "manual",
+          "connector": "connector.circular-shell-11",
+          "channel": "can-a",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "signal-high"
+            },
+            {
+              "contact": "2",
+              "role": "signal-low"
+            },
+            {
+              "contact": "3",
+              "role": "return"
+            },
+            {
+              "contact": "4",
+              "role": "screen"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.25,
+            -0.041,
+            0.09
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        }
+      ],
+      "actual_authored_markers": [
+        {
+          "name": "mount",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_corner_1",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.23000000417232513
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              0.18000000715255737
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_corner_2",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.23000000417232513
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.18000000715255737
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_corner_3",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.23000000417232513
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              0.18000000715255737
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_corner_4",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.23000000417232513
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.18000000715255737
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        }
+      ],
+      "gaps": [
+        "Generated record feet exceed nominal centred product length/width for foot-1,foot-2,foot-3,foot-4. This is a dimensional mismatch screen, not model-frame qualification."
+      ]
+    },
+    {
+      "item": "equipment.thermal.coolant-loop.s0",
+      "count": 3,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/thermal-coolant-loop-s0.yaml",
+      "fits_record": "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/thermal-s1.yaml",
+      "model": "/home/alexm/git/freefall-assets/models/thermal-coolant-loop-s0/v1/model.glb",
+      "model_hash_matches_allocation": true,
+      "nominal_record_dimensions_m": [
+        0.5,
+        0.4,
+        0.3
+      ],
+      "load_ports_as_currently_generated": [
+        {
+          "id": "foot-1",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 7.5,
+          "at": [
+            -3.1005,
+            -1.548,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.thermal-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-2",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 7.5,
+          "at": [
+            3.1005,
+            -1.548,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.thermal-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-3",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 7.5,
+          "at": [
+            3.1005,
+            1.548,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.thermal-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-4",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 7.5,
+          "at": [
+            -3.1005,
+            1.548,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.thermal-s1's socket of the same id, bolted through"
+        }
+      ],
+      "service_ports_as_currently_recorded": [
+        {
+          "id": "dc-in",
+          "flow": "in",
+          "medium": "power",
+          "interface": "interface.circular-shell-17",
+          "half": "male",
+          "make": "manual",
+          "connector": "connector.circular-shell-17",
+          "voltage": 28.0,
+          "current": 10.71,
+          "power": 300.0,
+          "channel": "dc-28v",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "plus"
+            },
+            {
+              "contact": "2",
+              "role": "minus"
+            },
+            {
+              "contact": "3",
+              "role": "earth"
+            },
+            {
+              "contact": "4",
+              "role": "spare"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.25,
+            0.037,
+            0.09
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        },
+        {
+          "id": "data-1",
+          "flow": "both",
+          "medium": "signal",
+          "interface": "interface.circular-shell-11",
+          "half": "female",
+          "make": "manual",
+          "connector": "connector.circular-shell-11",
+          "channel": "can-a",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "signal-high"
+            },
+            {
+              "contact": "2",
+              "role": "signal-low"
+            },
+            {
+              "contact": "3",
+              "role": "return"
+            },
+            {
+              "contact": "4",
+              "role": "screen"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.25,
+            -0.004,
+            0.09
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        },
+        {
+          "id": "data-2",
+          "flow": "both",
+          "medium": "signal",
+          "interface": "interface.circular-shell-11",
+          "half": "female",
+          "make": "manual",
+          "connector": "connector.circular-shell-11",
+          "channel": "can-a",
+          "pins": [
+            {
+              "contact": "1",
+              "role": "signal-high"
+            },
+            {
+              "contact": "2",
+              "role": "signal-low"
+            },
+            {
+              "contact": "3",
+              "role": "return"
+            },
+            {
+              "contact": "4",
+              "role": "screen"
+            },
+            {
+              "contact": "5",
+              "role": "spare"
+            },
+            {
+              "contact": "6",
+              "role": "spare"
+            },
+            {
+              "contact": "7",
+              "role": "spare"
+            }
+          ],
+          "at": [
+            -0.25,
+            -0.041,
+            0.09
+          ],
+          "facing": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "note": "place invented (the model has no empty for it): on its -x end face, for review"
+        }
+      ],
+      "actual_authored_markers": [
+        {
+          "name": "mount",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_corner_1",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.22499999403953552
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              0.17499999701976776
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_corner_2",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.22499999403953552
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.17499999701976776
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_corner_3",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.22499999403953552
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              0.17499999701976776
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_corner_4",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.22499999403953552
+            ],
+            [
+              0,
+              1,
+              0,
+              0.0
+            ],
+            [
+              0,
+              0,
+              1,
+              -0.17499999701976776
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "port_inlet",
+          "world_matrix_gltf": [
+            [
+              -1.3435885648505064e-07,
+              0.0,
+              -0.9999999657714511,
+              0.25
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.1899999976158142
+            ],
+            [
+              0.9999999657714511,
+              0.0,
+              -1.3435885648505064e-07,
+              -0.054999999701976776
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "port_outlet",
+          "world_matrix_gltf": [
+            [
+              -1.3435885648505064e-07,
+              0.0,
+              -0.9999999657714511,
+              0.25
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.22499999403953552
+            ],
+            [
+              0.9999999657714511,
+              0.0,
+              -1.3435885648505064e-07,
+              0.06499999761581421
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        }
+      ],
+      "gaps": [
+        "Generated record feet exceed nominal centred product length/width for foot-1,foot-2,foot-3,foot-4. This is a dimensional mismatch screen, not model-frame qualification."
+      ]
+    },
+    {
+      "item": "equipment.thermal.radiator.s0",
+      "count": 8,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/thermal-radiator-s0.yaml",
+      "fits_record": "/home/alexm/git/universe-fso/standards/SFO/metadata/mounts/thermal-s1.yaml",
+      "model": "/home/alexm/git/freefall-assets/models/thermal-radiator-s0/v1/model.glb",
+      "model_hash_matches_allocation": true,
+      "nominal_record_dimensions_m": [
+        2,
+        1,
+        0.05
+      ],
+      "load_ports_as_currently_generated": [
+        {
+          "id": "foot-1",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.0,
+          "at": [
+            -3.1005,
+            -1.548,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.thermal-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-2",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.0,
+          "at": [
+            3.1005,
+            -1.548,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.thermal-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-3",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.0,
+          "at": [
+            3.1005,
+            1.548,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.thermal-s1's socket of the same id, bolted through"
+        },
+        {
+          "id": "foot-4",
+          "flow": "out",
+          "medium": "load",
+          "interface": "interface.insert-m10",
+          "half": "male",
+          "make": "bolted",
+          "mass": 10.0,
+          "at": [
+            -3.1005,
+            1.548,
+            0.0
+          ],
+          "facing": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "note": "on mount.thermal-s1's socket of the same id, bolted through"
+        }
+      ],
+      "service_ports_as_currently_recorded": [],
+      "actual_authored_markers": [
+        {
+          "name": "mount",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_root_1",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.9850000143051147
+            ],
+            [
+              0,
+              1,
+              0,
+              -0.013000000268220901
+            ],
+            [
+              0,
+              0,
+              1,
+              0.0
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_root_2",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              -0.9850000143051147
+            ],
+            [
+              0,
+              1,
+              0,
+              0.013000000268220901
+            ],
+            [
+              0,
+              0,
+              1,
+              0.0
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_root_3",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.9850000143051147
+            ],
+            [
+              0,
+              1,
+              0,
+              -0.013000000268220901
+            ],
+            [
+              0,
+              0,
+              1,
+              0.0
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "mount_root_4",
+          "world_matrix_gltf": [
+            [
+              1,
+              0,
+              0,
+              0.9850000143051147
+            ],
+            [
+              0,
+              1,
+              0,
+              0.013000000268220901
+            ],
+            [
+              0,
+              0,
+              1,
+              0.0
+            ],
+            [
+              0,
+              0,
+              0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "port_inlet",
+          "world_matrix_gltf": [
+            [
+              -1.3435885648505064e-07,
+              0.0,
+              0.9999999657714511,
+              -0.9769999980926514
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              -0.010999999940395355
+            ],
+            [
+              -0.9999999657714511,
+              0.0,
+              -1.3435885648505064e-07,
+              -0.05999999865889549
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        },
+        {
+          "name": "port_outlet",
+          "world_matrix_gltf": [
+            [
+              -1.3435885648505064e-07,
+              0.0,
+              -0.9999999657714511,
+              0.9769999980926514
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.010999999940395355
+            ],
+            [
+              0.9999999657714511,
+              0.0,
+              -1.3435885648505064e-07,
+              -0.05999999865889549
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "scope": "Authored datum only; hole/contact/fastener/rating not inferred from empty alone."
+        }
+      ],
+      "gaps": [
+        "Generated record feet exceed nominal centred product length/width for foot-1,foot-2,foot-3,foot-4. This is a dimensional mismatch screen, not model-frame qualification.",
+        "Four actual root markers and inlet/outlet markers exist; thermal-s1 generic feet are not those model root attachments. Preserve two-face space exposure and real coolant/thermal isolation envelope."
+      ]
+    }
+  ],
+  "maintained_sources": {
+    "equipment_ports": "tools/standards/equipment_ports.py feet() derives every equipment foot from fits mount sockets; with_feet() overwrites foot-* on regeneration. A hand-edited foot coordinate is not stable.",
+    "mounts": "tools/standards/mounting.py owns generic cradle/deck/socket geometry, stock wrappers and load-port contracts. Existing interface dimensions apply to the named interface, not arbitrary product bores.",
+    "physical_mounts": "docs/proposals/physical-mounts.md is the maintained design rationale; current equipment/mount/connector/interface records are exact formal references.",
+    "roof_tank": "docs/ships/explorer-roof-cradle-contract.yaml already rejects generic tank-s1/M42 as unchanged500kg tank saddle match."
+  },
+  "ships_handoff": [
+    "Design hull-owned supports only from actual measured product fixed contact surfaces, bores and proper local frame; root empties position the package but do not certify the fastener pattern. Preserve package hashes and do not silently cut caps or rewrite product feet.",
+    "Separate generic formal fits/ports from model physical interfaces in the support ledger. Record both and mark each mismatch. Hull support naming does not resolve the existing product metadata inconsistency.",
+    "For each observed service bore, preserve its source position/axis/diameter but leave connector standard/half/seal/T/P/flow/current duty unresolved unless the named current interface/connector record actually supplies it. Generated invented service positions do not locate physical bores by themselves.",
+    "A future corrected product physical mount contract needs an explicit compatible identity/frame, measured bore and contact pattern, keeper/tool/service envelopes and duty/load assumptions, plus a generator change; no product edits in this audit.",
+    "Real compact adapters may be drawn as new hull-owned parts with stock, positive geometry and actual fasteners. No claim to generic mount rating, unchanged catalogue load qualification or installed fit before combined current hull/service/crew/plume check."
+  ],
+  "scope": "GLB node world transforms composed from actual hierarchy/TRS in glTF coordinates. No axis-facing inference, mesh-hole/contact measurement, service-rating verification, support sizing or whole-craft design performed."
+}
