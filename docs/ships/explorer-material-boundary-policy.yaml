@@ -242,3 +242,36 @@ protected_core_study_review:
   next: Identify each protected-core component, actual end contacts and every retained/discarded island. Split seal
     carriers need deliberate joins; report pane before/after hashes. No silent component removal or fusion. Dorsal
     pressure skin untouched and conflict remains.
+connected_solid_followup:
+  path: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/glazing-core-connectivity.json
+  sha256: 894472a86254e2c19b0887f0d215c9a9a33be5dc04996122e69325adc936f17d
+  derived_meshes_sha256: d27d91346d38991a4674fd95c87ecfd0e75e25df7138fe4c29acb29a918d09bc
+  objects: 48
+  oriented_components_reported: 175
+  negative_signed_components: 42
+  smallest_signed_component_volume_m3: -8.691570880911563e-07
+  pane_hash_pairs_equal: 13
+  split_seal_join_rows: 21
+  cores:
+  - object: Cockpit supported sill -1
+    components: 11
+    protected_core_components: 1
+  - object: Canopy aft frame -1
+    components: 22
+    protected_core_components: 2
+  - object: Cockpit supported sill 1
+    components: 30
+    protected_core_components: 1
+  - object: Canopy aft frame 1
+    components: 26
+    protected_core_components: 2
+  count_scope: Manifold decomposition and raw indexed-edge counts are oriented boundary connectivity screens. Negative
+    signed components may be cavity/void shells or orientation errors, not detached positive matter. Need nesting/winding/material-region
+    classification before an island-removal decision. No absolute-volume summation or void filling.
+  chosen_next_construction: Prototype connected6061backbone plus removable retainingbead per frame/sill, explicit
+    end tabs/retainer supports and finite joined silicone perimeter. Use viable spanning material regions only after
+    boundary classification. Retire genuine unwanted positive fragments only through explicit edit-map/volume; never
+    discard cavity shells as debris. Preserve13 panes/exterior intent, count new parts/stock/mass. No pressure or
+    strength claim.
+  status: Pane hash equivalence verified;175oriented boundary components are not175accepted solid parts. Attachments,
+    region topology and seal joins unresolved.
