@@ -1176,7 +1176,7 @@ thermal_guide_map_review:
 primary_frame_v4_study:
   proposal: /home/alexm/.agents/reviews/ships/explorer-functional-20261023/roof-primary-frame-v4.json
   sha256: 9333505ade79170dc91da67831a70326b282aa18e24b59c18df815e856a24ebb
-  status: Uninstalled redesign seed; actual geometry screen pending
+  status: Joint development study only;8remaining roof crossings, crew/gear interfaces unresolved
   members: 23
   cut_stock_subtotal_kg: 314.62188611283295
   complete_frame_mass_kg: null
@@ -1202,3 +1202,27 @@ primary_frame_v4_study:
     thermal: Preserve exact saddle1fixedXY,2freeX,4freeY,3freeXY capturedshoes; revised standoffnames unchanged.
       No ordinalmapping or eight directboltsclampingfixedplate.
   separate_study_only: true
+  screen:
+    path: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/roof-frame-v4-screen.json
+    sha256: e6c85e895c18a856a83db693fa0d680ede083c72e3f0ebc0722f34556e18d8ac
+    source_sha256: 8fc3a7e3ab384395592c35dde78b59a440830bbdae1f4a7ed59e55c07af8927e
+    input_sha256: 9333505ade79170dc91da67831a70326b282aa18e24b59c18df815e856a24ebb
+    members: 23
+    seat_blanks: 4
+    sampled_poses: 17
+    surface_pairs: 8
+    roof_penetration_standoffs: 4
+    headroom:
+      upper_tube_bottom_z_m: 3.75
+      existing_cabin_floor_z_m: 1.85
+      vertical_gap_m: 1.9
+      game_walker_height_m: 1.8
+      scope: nominal centreline height only; actor/turns/sidecompartment/suit unknown
+    unplaced: 16gussets+8spliceplates not placed:coordinates/orientations unspecified; exclude from geometric clearance
+      claim
+    limits: NOT accepted; full joint contacts,pressure sleeves,crew and gear load path unresolved
+    gear_probe_scope: Inherited supplied gear-region centre queries identify actual nearest gear surface; these
+      are not v4rail endpoint contacts.
+    next_joint_task: '20261023T203127-registry-0037: Ships choose explicit sealed bosses, retained sliding shoes,
+      portal nodes, gusset/splice and stationary gear adapter geometry/stock/mass for separate study. No blanket
+      waiver or installation.'
