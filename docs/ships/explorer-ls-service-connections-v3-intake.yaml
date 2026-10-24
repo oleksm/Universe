@@ -1,0 +1,42 @@
+status: independent packet integrity and arithmetic review; not product acceptance
+packet: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-fit-current-study/life-service-connections-v3-study/handoff.json
+packet_sha256: 37357ae7d9950c02383701931171c770af9fb673274b4215b9bfabc7ca958cbd
+blender_note: 20261024T123807-blender-7d5c
+choices_input: docs/ships/explorer-service-cable-fluid-prototype-choices.yaml (f59f50bb0, sha256 8e187864..., copied verbatim as choices-frozen.yaml)
+checks:
+  hashed_files: 20
+  hash_mismatches: 0
+  hashed_inputs: 9
+  input_mismatches: 0
+  bend_centreline_radius_m:
+    dc-in: 0.059      # (outer 0.0627 + inner 0.0553)/2 = registry elbow radius of run.cable-dc-600v-3x2p5mm2
+    data-1: 0.035     # = chosen CAN R35
+    data-2: 0.035
+  grip_contact_area_2_pi_r_L_matches: true   # 12 mm grip on 7.4 / 4.4 mm OD
+  liner_section_area_conserved: true         # free 7.6/10.6 -> closed 7.4/10.458 mm, same annulus
+  cable_mass_per_m_matches_registry: true    # 0.1092 and 0.0355 kg/m x route length; elbow fitting mass not added (formed bends)
+  cables_kg: 0.028710055446359482
+  net_harness_delta_kg: 0.07451014291203227
+  local_static_pairs: 0
+  local_tool_and_removal_contacts: 0
+  packing_states: 979
+  packing_hits: 0
+  nonmanifold_product_primitives_reported: 91
+visual_review:
+  views: [cables-rear.png, grip-interior.png]
+  finding: Three split saddles with liners grip the cables behind the shell 17 and shell 11
+    terminals; dc bend visibly larger than the two CAN bends; tails end free at study ends.
+remaining:
+- Remote cable routes, 60 mm free-tail termination and supports (not drawn)
+- Grip force and pullout; liner closure is imposed geometry, not simulated deformation
+- Insert breakout, crimps, EMC and current qualification
+- Connector unlock/remate replay with the bent harness attached
+- Installed crew hand/tool approach and plume clearance
+- Fastener thread engagement and strength
+- Fluid V2 pressure, pullout and assembly qualification
+- Combined coverage with the other 30 products, engine gimbal and supports
+scope:
+  active_record_created: false
+  installed_ground_changed: false
+  product_originals_changed: false
+  whole_product_or_flight_mass_rebound: false
