@@ -1,0 +1,94 @@
+status: chosen prototype pressure ownership for separate reversible study; no cabin pressure closure/rating accepted
+request: 20261023T204052-ships-749d
+source_sha256: 8fc3a7e3ab384395592c35dde78b59a440830bbdae1f4a7ed59e55c07af8927e
+authority: Owner authorizes collaborative functional record/design completion. Registry chooses explicit draft physical
+  boundary; no invented existing pressure surface or engineering rating.
+bindings:
+  /home/alexm/.agents/reviews/ships/explorer-functional-20261023/roof-joints-v5.json: 07e6284e8d2c375d39d5395da4dccd1b49bd5c1bddd47d42056421d123423e93
+  standards/SFO/metadata/mill-stock/AL6061-PL-8.yaml: e7722e242daf737580d93c733c9e2598b4aaf90b23ae532000e79d3e30d7337d
+  standards/SFO/metadata/mill-stock/AL6061-SH-3.yaml: dea65ce3b7eaac01ac3d1bb517593684b52a5224aefc4f72947b5ce625f07011
+decision:
+  topology: Each gear well is exterior-vented and excluded from pressurized cabin. A NEW fixed pressure pan (lid
+    plus surrounding sidewalls and sealed structural-riser penetration) separates cabin from well. Gear travel does
+    not require a sliding pressure seal on the moving leg.
+  ownership:
+    cabin_boundary: New hull-owned static pan, identified collar/cap, sidewall seams to actual named pressure-skin
+      faces.
+    outside_boundary: Moving leg, fixed gear assembly/25mm top plate, tool/nut region and cosmetic compact gear
+      cover. None is pressure boundary merely by name.
+    walking_floor: Existing walkfloor is access/walk geometry. Replace a local patch in the derived study with a
+      NEW pressure-owned lid at unchanged top elevation; do not relabel the old floor as qualified pressure structure.
+    gear_cover: Retain removable cosmetic/access cover as nonpressure component; vents/drains to exterior deliberately
+      designed, no claim from currently open geometry.
+  materials:
+    lid:
+      material: material.aluminium-alloy-6061
+      stock: stock.al6061-pl-8
+      density_kg_m3: 2700
+      thickness_m: 0.008
+      basis: New prototype geometry/mass choice, invented/review true. No unsupported plate-span/pressure allowable.
+    sidewalls:
+      material: material.aluminium-alloy-6061
+      stock: stock.al6061-sh-3
+      density_kg_m3: 2700
+      thickness_m: 0.003
+      basis: New prototype geometry/mass choice, invented/review true. Actual formed shape, seam support, stiffeners
+        and pressure duty remain design work.
+    collar: 'Static6061formed collar/closed riser base: choose actual shape from measured lid/riser/skin contacts;
+      retain mass explicitly, no decorative/sealing proxy.'
+lid_study_seed:
+  walk_surface_z_m: 1.85
+  lid_thickness_m: 0.008
+  nominal_lid_underside_z_m: 1.842
+  v5_bolt_head_top_z_m: 1.837
+  nominal_vertical_head_gap_m: 0.005
+  interpretation: Scalar geometric seed only, not tolerance/tool/installation proof. Lid extent comes from actual
+    gear sweep, head/tool/removal geometry and seal flange, not a forced420mm square. If current geometry cannot
+    fit, report exact contradiction; do not lower floor or shrink gear/crew.
+  replacement: Explicit local old-floor patch retirement and new lid object with edge/join. No overlapping double
+    material or unreported floor hole. Preserve route surface continuity and hatch/ladder/ramp function.
+riser_pressure_path:
+  mechanical: Gear fixed face -> proposed adapter plate/riser -> actual new primary-frame member. Pan is not credited
+    as primary tank/gear support.
+  static_boundary: Continuous pan-lid-to-collar and collar-to-riser closures. Pressure-exposed hollow riser must
+    terminate at a genuinely closed, nonpierced base/contact cap; audit connected tube bores, weld seams and every
+    fastener hole.
+  bolts: V5gear bolt holes/tool access outside sealed riser core are not automatically cabin leaks if wholly in
+    exterior well; prove their volumes remain outside boundary. If a bolt crosses the pressure surface, design a
+    sealed boss/joint explicitly.
+  relative_motion: Gear retraction stays exterior. Lid/riser/frame remain static in nominal state; thermal/structural
+    deflection and seam strain still need analysis. No dynamic sealing or pressure/landing load transfer inferred.
+sidewall_and_hull_seams:
+  must_measure:
+  - Full swept gear/cover/head/adapter/tool envelopes in all relevant poses
+  - Closed lid perimeter and accessible retaining/join faces
+  - Each sidewall bottom/edge landing on actual identified hull pressure skin, including surface normals/area and
+    corner transitions
+  - Every opening to exterior/cabin, neighboring gearwell/compartment/hatch interface and intended vent/drain
+  - Disassembly/bolt insertion and lid removal sequence without trapped hardware
+  prohibited:
+  - Using nearest walkingfloor or cosmetic cover as pressure skin
+  - Blindly extending walls into belly geometry and declaring weld contact
+  - Blanket waiver of all skin/gear intersections
+  - Silently moving gear, changing floor height or filling access route to close pan
+  if_no_skin_seam: Keep boundary OPEN; design a new connected belly/keel pressure patch or revise well/adapter topology
+    in separate study, with exact additional parts/stock/mass. Do not declare whole cabin sealed.
+joint_and_mass_scope:
+  v5_joint_proposal: /home/alexm/.agents/reviews/ships/explorer-functional-20261023/roof-joints-v5.json
+  v5_uncoped_parts_and_hardware_proxy_kg: 365.3329802393918
+  v5_complete_added_mass_kg: null
+  new_pans_excluded_from_v5: true
+  rollup: New pressure pan/lid/sides/collars/retainers/stiffeners/seals/welds are additional physical parts after
+    existing replaced patches are explicitly retired. Count true material volumes and actual stock; no equal perwell
+    allowance or blank volume promoted to measured mass. Tank115kg and existing owned gear remain separately counted
+    once.
+  pressure_qualification: Operating/differential pressure, proof/leak conditions, weld allowables and stiffener
+    design are not established here. Study can establish geometry ownership/closure and draft mass without claiming
+    qualification or commissioning.
+deliverables:
+  blender: 'Task20261023T204212-registry-1c25: separate current-source study, exact named skin seams, swept envelope,
+    contacts/cut map, actual part volumes/material/stock and all unclosed interfaces. No live edits.'
+  ships: Use this ownership for v5 joint study; mechanical path separate from pressure pan. Resolve actual joints,
+    sealing and load/support design; no change to gear rating/mount inference.
+  registry: Track design choices and exact evidence; create parts/hull values only when physical quantities and
+    full bare assembly accounting support them.

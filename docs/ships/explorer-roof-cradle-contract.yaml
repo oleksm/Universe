@@ -1226,3 +1226,12 @@ primary_frame_v4_study:
     next_joint_task: '20261023T203127-registry-0037: Ships choose explicit sealed bosses, retained sliding shoes,
       portal nodes, gusset/splice and stationary gear adapter geometry/stock/mass for separate study. No blanket
       waiver or installation.'
+v5_joint_study:
+  path: /home/alexm/.agents/reviews/ships/explorer-functional-20261023/roof-joints-v5.json
+  sha256: 07e6284e8d2c375d39d5395da4dccd1b49bd5c1bddd47d42056421d123423e93
+  status: Proposed explicit geometry only; actual contact/closure/tool screen pending
+  proxy_mass_kg: 365.3329802393918
+  complete_added_mass_kg: null
+  gear_boundary_decision: docs/ships/explorer-gearwell-pressure-boundary.yaml
+  scope: V5replaces V4seat/gusset/splice blanks; do not add twice. New gearwell pressure pans not included in365.333kg
+    proxy.
