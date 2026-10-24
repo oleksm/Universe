@@ -1,0 +1,34 @@
+request: 20261024T102332-blender-5e0f
+status: Selected ground-stage hull volume domain; measured current V3 value, refresh after final edits
+domain: Gross closed/rest convex clearance-envelope volume of every installed bare hull vertex, including static
+  edited gear and appendages in the exact exported rest pose. A deliberately conservative stowage approximation,
+  not actual exterior displacement.
+why: The physical field describes how much room the product takes, separately from its material constituents. A
+  measured 3Dconvex envelope is usable for this uncommissioned ground stage without claiming enclosed cabin/pressure
+  topology; it avoids equating a hollow vehicle to a few cubic metres of metal or blindly multiplying its box dimensions.
+measurement: Transform every mesh primitive POSITION vertex through the exact closed scene hierarchy; compute the3Dconvex
+  hull in metres and its positive volume. Preserve the source geometry; this envelope is measurement-only and never
+  replaces the collision/render mesh. Record source/model/algorithm/input count and pose, compare a centred tetrahedral
+  sum, and retain AABB only as an upper bound.
+current_result:
+  input_raw_vertices: 459381
+  convex_extreme_vertices: 340
+  triangular_facets: 676
+  volume_m3: 164.6872837098238
+  separate_centered_tetrahedral_volume_m3: 164.68728370982342
+  bbox_m3: 285.45597299199153
+  scope: Independent convex-envelope computation with centred tetrahedral arithmetic cross-check; selected approximation
+    only, no source remesh or material/pressure calculation.
+bound_closed_model_sha256: b341441762e2eb95c9bbff3f0a7152078b600362c9fb22943ada5b70d7a2605e
+basis: derived,review:true with explicit convex-envelope approximation in hull basis.note. This is a scope choice
+  for Explorer ground-stage, not an undocumented reinterpretation of all existing hull records.
+separate_domains:
+- 'Material volume: per-material same-material Boolean union, reconciled mixed interfaces; only this domain times
+  density sets geometry mass.'
+- 'Surviving hidden actuator/electronics reserve: separate explicit mass, not a fictitious volume or bounding-boxCOM.'
+- 'Enclosed external displacement, pressure/cabin volume and usable capacity: not measured or asserted by convex
+  envelope.'
+- 'Open/deployed dimensions and swept clearance: distinct pose/path evidence; not physical.volume here.'
+handoff: After final local/header edits, Blender recomputes the exact same domain on final closed bytes. Registry
+  verifies and binds it once with final dimensions, wholemass and mechanism states. Do not defer registration solely
+  to pressure-volume qualification, and do not claim convex-envelope value as a pressure proof.
