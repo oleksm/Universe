@@ -1,0 +1,1239 @@
+{
+  "status": "Registry record verification for selected mission; candidate allocation not installed and numerical sortie limit not derived",
+  "mission": "docs/ships/explorer-initial-mission.yaml (owner1person/0cargo/short airless-moon trips)",
+  "bindings": {
+    "/home/alexm/.agents/reviews/ships/explorer-functional-20261023/roof-single-allocation-v2.json": "dfdc20e0af11f54d4db73b5dc4f0f64b2a16ed30c757363dbf6568f2177a23b1",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/engine-ch-s1.yaml": "e444108a156f73da59f38598a30355016577193008b2bfeb4337bf05d0f3158a",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/engine-cg-s1.yaml": "36106cff07e69fe4eaabc9df5caca639c47db84d701c803509819ae06942063b",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/tank-hydrolox-0p5t.yaml": "3c75097f645dfe4fb9bc5014b6ca8aa1f5b13ae5115ec0fe7e0eda3e45abc64d",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/tank-nitrogen-100kg.yaml": "bd5d2f46da8f512f453002b348bf4281c3dea28ee3536aed83b5bbd848244996",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/power-fuelcell-s1.yaml": "c39882adcf51421ce921dc55f2abc9fb75b544de31f67bb4dbef634d72f3da9c",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/power-battery-s0.yaml": "8d0e6cd77e6d61e25a5ba596071c36b09e060018edc4e4f1619ba0b1a55bc338",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/computer-fbw-s1.yaml": "85cb89f14ed058c0082c08ca4883e7b97953e507c22d9fce03829f614a76f880",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/avionics-nav-basic-s1.yaml": "8902a5dc41e54fe2d28bc2f9a4975ccf9ed4b3238e1fadcfd1800d4f9d28d359",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/transponder-s1.yaml": "6aa7dbd37f9e8e2f253f0054d83c888f765b56813a744a430f162daa2e5269ee",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/comm-basic-s1.yaml": "327d2380fd9b5879505a27762584596a76ccf3316ffa90dc883a53a07889ebf7",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/life-support-s0.yaml": "c986c01be11745a7069af5d90c1f5bb280b1287005f675990824f34eef2c7f68",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/sensors-camera-s1.yaml": "e2cd57fac18a3917420ee472af692b234f710cc80657fcfb887dd5a386fad947",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/sensors-altimeter-s1.yaml": "d49068310bb0121cab6c63b9bdfa5be2f141fb6c11456bc15ca775dc22e4ec3c",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/thermal-air-cooler-s0.yaml": "a1262322f88cd2a204f83decf914a8f1539707096712674568c27692c444b56f",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/thermal-coolant-loop-s0.yaml": "40a5fd314c8f6b3aa9e7bd8db4f099c9ae3cd53325799a62c845c4e5bde11c09",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/thermal-radiator-s0.yaml": "06cd678332f7a5ce4b0298938a0f49ea5f09742d4f2574e17928033c16f3c1dc",
+    "/home/alexm/git/universe-fso/standards/People/metadata/needs/air.yaml": "9702da822b638b100a1b7efe81bc4120d7aa4735ba61ffac21ebb6e59af70fe6",
+    "/home/alexm/git/universe-fso/standards/People/metadata/needs/water.yaml": "8a4b43776dcac335b1c68925522b66f89e4b31f3f9ddc953823de1303917bd63",
+    "/home/alexm/git/universe-fso/standards/People/metadata/needs/washing.yaml": "6dc034a57ae002eca6ff0dbfd82fbd84c944350ba190611e174a4168894a45a3",
+    "/home/alexm/git/universe-fso/standards/People/metadata/needs/food.yaml": "206f64f326438dad9f74af266a90191eb48cca013a0f82683cc77a5f15f5f5bc",
+    "/home/alexm/git/universe-fso/standards/SFO/metadata/materials/hydrolox.yaml": "f127863648f4b0cbca9522288160cbf0bb86aa02dc6d553bc95346408d7889ab",
+    "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-b-i.yaml": "9cbec78a7bdb5783f5b50f4d0024d2e6050a47618d9e42af007190cbd894de43",
+    "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-c-i.yaml": "0eaffd000e8204b5e2c2e6681e2f64c045f0251c9c64540da7e1ecadf498d9fb",
+    "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-d-i.yaml": "ec03710d2e3a78ae40192836e321d71986f8c5549fb9d4650561ce557a5f91da",
+    "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-g-i.yaml": "afe538e160eeb704340f2a67a6fc4a6a46cbd4831eec30bf1e42610fde2003b3",
+    "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-g-ii.yaml": "670355b4ca37f8da7b696d5a95a3334e415681f7033c3afcbd129ca56e146520",
+    "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-g-iii.yaml": "7dcdf8e33a31b419cef09fb556e9aa2460f8b472729812349b9d216bde84bcd4",
+    "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-h-i.yaml": "c22b17f1e965071390bafedd7dfe6bdf32bd5d018e216983bda7a48229cb0fe3",
+    "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-h-ii.yaml": "074ea206114c92c21519225576b0d0084c5e002b89308be7b5798a5f7a1928ac",
+    "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-i-i.yaml": "99135d22f69676c75ccc5e50c08535453d753efe5f2f23eea0fc4c3b8ef66137",
+    "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-i-ii.yaml": "f4a50d76bc02a78f608de79ca7f51e6f157f57aa3cdfdbed7a0d1f24577b9ac7",
+    "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-i-iii.yaml": "7ebc212008f30502ceb9be78fdbdae18c7d19429e94d143f5a47bf8516395b41",
+    "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-j-i.yaml": "e0657634180364a46b590c6f49444bc67c1f857b8ebcd6d1e0668d553b613b11",
+    "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-j-ii.yaml": "cd787c22004376809f619d1756ae4f624864cc91f83b7b059b7a116f26f5b7ed",
+    "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-j-iii.yaml": "a17fec19c9dccc3344988440650ab526ba3b20ca9ba325c9be4e7f5a17ce9b56",
+    "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-j-iv.yaml": "4fe80bca8c7c9128574ffa2c572fa98ea99e69b6e948396032d5e6d5d6ab3c6b"
+  },
+  "records": {
+    "equipment.engine.ch.s1": {
+      "count": 4,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/engine-ch-s1.yaml",
+      "physical": {
+        "mass": 80,
+        "volume": 0.513,
+        "length": 1.29,
+        "width": 0.63,
+        "height": 0.63
+      },
+      "function": {
+        "kind": "engine",
+        "cycle": "chemical",
+        "thrust": 25000,
+        "exhaust": 4400,
+        "efficiency": 0.7446153846153846,
+        "burns": "material.hydrolox",
+        "throttle": 0.2,
+        "gimbal": 0.07,
+        "isotropic_loss": 0,
+        "shield_pass": 1,
+        "reaction_offset": 0.6,
+        "heat_to_hull": 0.0001,
+        "chamber": {
+          "feed": "expander",
+          "pressure": 4200000.0,
+          "mixture_ratio": 5.5,
+          "thrust_coefficient": 1.9,
+          "throat_diameter": 0.063,
+          "exit_diameter": 0.579,
+          "expansion_ratio": 84,
+          "chamber_diameter": 0.126,
+          "chamber_length": 0.367,
+          "nozzle_length": 0.77,
+          "cooling": "regenerative",
+          "wall": "material.stainless-steel-304",
+          "construction": "tubes",
+          "tubes": 90,
+          "tubes_lower": 180,
+          "splice_expansion": 20,
+          "tube_wall": 0.0003,
+          "coolant_passes": 2,
+          "coolant_pressure": 7000000.0,
+          "hot_wall_temperature": 830,
+          "coolant_in": 25,
+          "coolant_out": 200,
+          "exit_manifold": 0.024,
+          "vacuum_only": true
+        }
+      },
+      "needs": {},
+      "basis": [
+        {
+          "of": [
+            "function.exhaust",
+            "function.thrust",
+            "physical.mass",
+            "function.throttle",
+            "function.gimbal"
+          ],
+          "tier": "invented",
+          "review": true,
+          "note": "scaled from the RL10 by thrust; review"
+        },
+        {
+          "of": [
+            "function.efficiency"
+          ],
+          "tier": "derived",
+          "review": true,
+          "note": "Derived as function.exhaust squared / (2 x material.hydrolox.fuel.energy): 4400^2 / (2 x 13000000) = 0.7446153846153846. Keep full precision; rounding the efficiency to two significant figures understates the jet energy. Fuel energy remains the registry's provisional value; review."
+        },
+        {
+          "of": [
+            "function.heat_to_hull"
+          ],
+          "tier": "invented",
+          "review": true,
+          "note": "A chemical engine's heat is its own, carried off by its propellant; a ten-thousandth of the jet soaks back into the mount. Chosen."
+        },
+        {
+          "of": [
+            "function.chamber",
+            "physical.length",
+            "physical.width",
+            "physical.height",
+            "physical.volume",
+            "built_of.list"
+          ],
+          "tier": "derived",
+          "review": true,
+          "note": "The S2 engine's chamber (an RL10-class expander at 42 bar, mixture 5.5, expansion 84) for this record's 25 kN at 4.4 km/s (5.7 kg/s): a throat of 0.00313 m2 (25 kN / (1.9 x 4.2 MPa)), 63 mm across; an exit 84 times that, 0.579 m; an 80% bell 0.77 m long. The chamber keeps S2's 4 to 1 contraction and its 1.35 m characteristic length (the gas needs the same time to burn), so 0.126 m across: a 0.297 m cylinder and a 0.07 m cone to the throat hold 0.0042 m3 (the modeller measured a straight 0.34 m with S2's taper at only 1.0 m and lengthened it). It does not shrink with the throat. 1.14 m with the bell, about 0.156 m of pump, valves and injector ahead: 1.29 m. The rim, 0.58 m plus the torus, 0.63 m across: wider than the first box's 0.6. At 0.07 rad of gimbal the rim swings about 0.08 m to each side."
+        },
+        {
+          "of": [
+            "function.chamber.tubes",
+            "function.chamber.tubes_lower",
+            "function.chamber.vacuum_only"
+          ],
+          "tier": "derived",
+          "review": true,
+          "note": "Half S2's tubes keep its tube sizes: 90 at the throat are 2.2 mm wide; 9.9 mm at the splice (area ratio 20), 180 at the exit 10.1 mm: at 7 MPa over a 0.3 mm wall, 118 MPa at worst, a margin of 1.75 on 304's yield. Expansion 84 leaves about 3.4 kPa at the exit; sea-level air on its 0.263 m2 pushes back 27 kN, more than its 25 kN: vacuum or air thinner than about 3 kPa only, like S2. Feeds (invented speed 5 m/s in the pump inlets): hydrogen 0.87 kg/s, 12.3 L/s, a 56 mm bore; oxygen 4.8 kg/s, 4.2 L/s, a 33 mm bore."
+        },
+        {
+          "of": [
+            "built_of",
+            "making"
+          ],
+          "rule": "rule.first-design-parts"
+        },
+        {
+          "of": [
+            "life"
+          ],
+          "rule": "rule.life-ship-system"
+        }
+      ]
+    },
+    "equipment.engine.cg.s1": {
+      "count": 4,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/engine-cg-s1.yaml",
+      "physical": {
+        "mass": 15,
+        "volume": 0.064,
+        "length": 0.4,
+        "width": 0.4,
+        "height": 0.4
+      },
+      "function": {
+        "kind": "engine",
+        "cycle": "cold_gas",
+        "thrust": 500,
+        "exhaust": 700,
+        "efficiency": 1,
+        "burns": "material.nitrogen",
+        "throttle": 0,
+        "gimbal": 0,
+        "isotropic_loss": 0,
+        "shield_pass": 1,
+        "reaction_offset": 0,
+        "heat_to_hull": 0
+      },
+      "needs": {
+        "power": 50
+      },
+      "basis": [
+        {
+          "of": [
+            "function",
+            "physical"
+          ],
+          "tier": "invented",
+          "review": true,
+          "note": "A cold gas thruster block as flown on spacecraft: nitrogen at about 0.7 km/s, pulsed; 15 kg for half a kilonewton of nozzles and valves. From memory; review."
+        },
+        {
+          "of": [
+            "built_of",
+            "making"
+          ],
+          "rule": "rule.first-design-parts"
+        },
+        {
+          "of": [
+            "life"
+          ],
+          "rule": "rule.life-ship-system"
+        }
+      ]
+    },
+    "equipment.tank.hydrolox.0p5t": {
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/tank-hydrolox-0p5t.yaml",
+      "physical": {
+        "mass": 115,
+        "volume": 5.22,
+        "length": 1.795,
+        "width": 1.673,
+        "height": 1.739
+      },
+      "function": {
+        "kind": "tank",
+        "capacity": 500,
+        "holds": "material.hydrolox"
+      },
+      "needs": {},
+      "basis": [
+        {
+          "of": [
+            "built_of.list",
+            "physical"
+          ],
+          "tier": "derived",
+          "review": true,
+          "note": "Sized as the hydrolox S1 (2026-10-13, from the modeller's blockout v01): 500 kg at O/F 5.5 is 423 kg of oxygen (0.371 m3) and 77 kg of hydrogen (1.086 m3), each with 3% ullage, with the 100 mm common bulkhead inside a 0.735 m inner radius. Wall: 0.35 MPa times 1.5 against 165 MPa welded wants 1.2 mm, so the 2 mm sheet, not the big tanks' 5 mm plate: 37 kg bare plus 20% for lands and bosses (the modeller's 5 mm made it 111). Insulation 100 mm at 3.3 kg/m2, bulkhead 21.5 kg, saddles 7 kg, fittings 20 kg for two circuits (6 drawn). Total 115 kg, 23% of what it holds: a small tank's insulation and bulkhead do not shrink with it (the old 70 kg was an assumed 14%). Box: 1.795 x 1.673 x 1.739 m with saddles and opposed service bosses. Chosen; review."
+        },
+        {
+          "of": [
+            "built_of",
+            "making"
+          ],
+          "rule": "rule.first-design-parts"
+        },
+        {
+          "of": [
+            "life"
+          ],
+          "rule": "rule.life-ship-system"
+        }
+      ]
+    },
+    "equipment.tank.nitrogen.100kg": {
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/tank-nitrogen-100kg.yaml",
+      "physical": {
+        "mass": 117,
+        "volume": 0.764,
+        "length": 1.15,
+        "width": 0.8,
+        "height": 0.83
+      },
+      "function": {
+        "kind": "tank",
+        "capacity": 100.0,
+        "holds": "material.nitrogen"
+      },
+      "needs": {},
+      "basis": [
+        {
+          "of": [
+            "physical",
+            "function"
+          ],
+          "tier": "derived",
+          "review": true,
+          "note": "Nitrogen at 300 bar and 293 K is about 310 kg/m3 (compressibility about 1.1; ideal gas would give 345), so 100 kg needs 0.323 m3 inside. A cylinder with hemispherical ends, 0.8 m across over a 25 mm wall, is 1.05 m long, and a valve and regulator take 0.1 m more. A type IV composite vessel stores about 100 kJ of pressure-volume per kilogram (from memory of commercial 300 to 700 bar bottles): 30 MPa x 0.323 m3 is 9.7 MJ, so 97 kg of vessel, plus the valve and 8 kg of saddles and bands (the 50 kg bottle's drawn at 4.9 kg in Blender). Recomputed 2026-10-11 from 0.6 kg a kilogram of gas, which did not fit its box."
+        },
+        {
+          "of": [
+            "built_of.list",
+            "physical"
+          ],
+          "tier": "derived",
+          "review": true,
+          "note": "Wall check (2026-10-13, for the modeller's blockout v01): hoop fibre at 1,500 MPa in the laminate (from memory) times a burst factor of 2.25 wants 17 mm at 30 MPa over 0.375 m; the helical layers about half again: 25 mm, as drawn. 25 mm at 1,580 kg/m3 over the vessel is 98.6 kg against the 97 kg from stored energy: the two agree. Height 0.83 m with the saddles' 30 mm under the bottle."
+        },
+        {
+          "of": [
+            "built_of",
+            "making"
+          ],
+          "rule": "rule.first-design-parts"
+        },
+        {
+          "of": [
+            "life"
+          ],
+          "rule": "rule.life-ship-system"
+        }
+      ]
+    },
+    "equipment.power.fuelcell.s1": {
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/power-fuelcell-s1.yaml",
+      "physical": {
+        "mass": 87.8,
+        "volume": 0.2,
+        "length": 0.8,
+        "width": 0.5,
+        "height": 0.5
+      },
+      "function": {
+        "kind": "power_plant",
+        "output": 50000,
+        "efficiency": 0.55,
+        "burns": "material.hydrolox"
+      },
+      "needs": {},
+      "basis": [
+        {
+          "of": [
+            "function",
+            "physical"
+          ],
+          "tier": "invented",
+          "review": true,
+          "note": "An Apollo-type cell scaled to 50 kW: about 1.8 kg a kilowatt (the shuttle's three cells gave 21 kW for 118 kg each, from memory); 55% of the hydrolox's 13 MJ/kg to power, the rest heat and warm water. Review."
+        },
+        {
+          "of": [
+            "built_of",
+            "physical.mass"
+          ],
+          "tier": "derived",
+          "review": true,
+          "note": "The case from the modeller's layout (blockout-v01): 2 mm 6061 walls and lids, 1.7 m2, 9.2 kg plus fasteners; 5 mm base 0.4 m2, 5.4 kg, and four 8 mm corner feet, 6.3 kg. No radiator on the case: 50 kW at 55% leaves 40.9 kW of heat at stack temperature (about 350 K), which needs about 53 m2 of radiating face in vacuum (emissivity 0.9) against the case's 2.1 m2, so a rear coolant pair hands it to the ship's loop (thermal-coolant-loop) and the hull's radiators. The stack-to-loop heat exchanger is in FCL1-02. H2 and O2 come in as separate gases; the hull's tanks own storage and boil-off. Product water leaves by its own outlet."
+        },
+        {
+          "of": [
+            "making"
+          ],
+          "rule": "rule.first-design-parts"
+        },
+        {
+          "of": [
+            "life"
+          ],
+          "rule": "rule.life-ship-system"
+        }
+      ]
+    },
+    "equipment.power.battery.s0": {
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/power-battery-s0.yaml",
+      "physical": {
+        "mass": 200,
+        "volume": 0.2,
+        "length": 0.8,
+        "width": 0.5,
+        "height": 0.5,
+        "specific_heat": 1000,
+        "operating_max_temperature": 333
+      },
+      "function": {
+        "kind": "battery",
+        "stores": 100000000.0,
+        "rate": 300000.0,
+        "efficiency": 0.97
+      },
+      "needs": {},
+      "basis": [
+        {
+          "of": [
+            "function",
+            "physical"
+          ],
+          "tier": "invented",
+          "review": true,
+          "note": "150 Wh/kg with its housing, as the S1; 300 kW in or out. From memory; review."
+        },
+        {
+          "of": [
+            "built_of",
+            "making"
+          ],
+          "rule": "rule.first-design-parts"
+        },
+        {
+          "of": [
+            "life"
+          ],
+          "rule": "rule.life-ship-system"
+        },
+        {
+          "of": [
+            "function.efficiency"
+          ],
+          "tier": "invented",
+          "review": true,
+          "note": "Discharge efficiency 0.97: a low-rate pack warms little (lithium cells' internal resistance, from memory). Review."
+        },
+        {
+          "of": [
+            "physical.specific_heat",
+            "physical.operating_max_temperature"
+          ],
+          "tier": "invented",
+          "review": true,
+          "note": "About 1 kJ/(kg K) for a lithium pack with its housing and plates, and 333 K (60 C) the hottest its cells may be discharged at: from 293 K at the dock it may warm 40 K on its own losses before it must stop. From memory of cell data sheets; review."
+        }
+      ]
+    },
+    "equipment.computer.fbw.s1": {
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/computer-fbw-s1.yaml",
+      "physical": {
+        "mass": 30.0,
+        "volume": 0.05,
+        "length": 0.5,
+        "width": 0.4,
+        "height": 0.25
+      },
+      "function": {
+        "kind": "flight_computer",
+        "turn_rate": 1,
+        "roll_rate": 1.8
+      },
+      "needs": {
+        "power": 200.0
+      },
+      "basis": [
+        {
+          "of": [
+            "physical",
+            "needs",
+            "function",
+            "size_class"
+          ],
+          "rule": "rule.early-list"
+        },
+        {
+          "of": [
+            "built_of",
+            "making"
+          ],
+          "tier": "invented",
+          "review": true,
+          "note": "A first design: three computers that check each other, the instruments that tell them how the ship is turning, and the drivers that pass their word to the thrusters."
+        },
+        {
+          "of": [
+            "physical.length",
+            "physical.width",
+            "physical.height"
+          ],
+          "tier": "sourced",
+          "review": true,
+          "source": "docs/ships/mc-07-equipment-dimensions.md",
+          "note": "Three flight computers, three inertial units and three star trackers: a spacecraft's computer draws 10 W, a star tracker weighs 3 kg, an inertial unit 4 kg. Half a cubic metre of rack. Real figures: docs/ships/mc-07-equipment-dimensions.md."
+        },
+        {
+          "of": [
+            "physical.mass",
+            "physical.volume",
+            "needs.power"
+          ],
+          "tier": "sourced",
+          "review": true,
+          "source": "standards/sources/research_ship_equipment.json",
+          "note": "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list."
+        },
+        {
+          "of": [
+            "built_of.list",
+            "identity.description"
+          ],
+          "tier": "derived",
+          "review": true,
+          "note": "For the modeller (2026-10-10): packed into the record's 0.5 x 0.4 x 0.25 m. Three inertial units in 4.5 kg are small fibre-optic or MEMS units (1.5 kg each, invented); the three 3 kg star trackers the dimensions note counts are heads that must see the sky: separate sensor equipment, not made yet (flagged). Ship wiring belongs to the hull."
+        },
+        {
+          "of": [
+            "life"
+          ],
+          "rule": "rule.life-ship-system"
+        }
+      ]
+    },
+    "equipment.avionics.nav-basic.s1": {
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/avionics-nav-basic-s1.yaml",
+      "physical": {
+        "mass": 15.0,
+        "volume": 0.03,
+        "length": 0.4,
+        "width": 0.3,
+        "height": 0.25
+      },
+      "function": {
+        "kind": "nav_computer",
+        "features": [
+          "docking",
+          "landing"
+        ],
+        "interlock": 1000,
+        "governor": 2
+      },
+      "needs": {
+        "power": 100.0
+      },
+      "basis": [
+        {
+          "of": [
+            "physical",
+            "needs",
+            "function",
+            "size_class"
+          ],
+          "rule": "rule.early-list"
+        },
+        {
+          "of": [
+            "built_of",
+            "making"
+          ],
+          "tier": "invented",
+          "review": true,
+          "note": "A first design: a computer, its sensors and a case."
+        },
+        {
+          "of": [
+            "physical.length",
+            "physical.width",
+            "physical.height"
+          ],
+          "tier": "sourced",
+          "review": true,
+          "source": "docs/ships/mc-07-equipment-dimensions.md",
+          "note": "One computer and its approach sensors. Real figures: docs/ships/mc-07-equipment-dimensions.md."
+        },
+        {
+          "of": [
+            "physical.mass",
+            "physical.volume",
+            "needs.power"
+          ],
+          "tier": "sourced",
+          "review": true,
+          "source": "standards/sources/research_ship_equipment.json",
+          "note": "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list."
+        },
+        {
+          "of": [
+            "life"
+          ],
+          "rule": "rule.life-ship-system"
+        }
+      ]
+    },
+    "equipment.transponder.s1": {
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/transponder-s1.yaml",
+      "physical": {
+        "mass": 3.0,
+        "volume": 0.005,
+        "length": 0.2,
+        "width": 0.15,
+        "height": 0.17
+      },
+      "function": {
+        "kind": "transponder"
+      },
+      "needs": {
+        "power": 20.0
+      },
+      "basis": [
+        {
+          "of": [
+            "physical",
+            "needs",
+            "function",
+            "size_class"
+          ],
+          "rule": "rule.early-list"
+        },
+        {
+          "of": [
+            "built_of",
+            "making"
+          ],
+          "tier": "invented",
+          "review": true,
+          "note": "A first design: a radio in a box with its aerial."
+        },
+        {
+          "of": [
+            "physical.length",
+            "physical.width",
+            "physical.height"
+          ],
+          "tier": "sourced",
+          "review": true,
+          "source": "docs/ships/mc-07-equipment-dimensions.md",
+          "note": "A deep-space transponder: 3 kg, 16 W. Real figures: docs/ships/mc-07-equipment-dimensions.md."
+        },
+        {
+          "of": [
+            "physical.mass",
+            "physical.volume",
+            "needs.power"
+          ],
+          "tier": "sourced",
+          "review": true,
+          "source": "standards/sources/research_ship_equipment.json",
+          "note": "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list."
+        },
+        {
+          "of": [
+            "life"
+          ],
+          "rule": "rule.life-ship-system"
+        }
+      ]
+    },
+    "equipment.comm.basic.s1": {
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/comm-basic-s1.yaml",
+      "physical": {
+        "mass": 90.0,
+        "volume": 13.5,
+        "length": 3.0,
+        "width": 3.0,
+        "height": 1.5
+      },
+      "function": {
+        "kind": "comm",
+        "capture": 50000000,
+        "link": 7500000000,
+        "lag": 0.05,
+        "capacity": 0.166666666667
+      },
+      "needs": {
+        "power": 360.0
+      },
+      "basis": [
+        {
+          "of": [
+            "physical",
+            "needs",
+            "function",
+            "size_class"
+          ],
+          "rule": "rule.early-list"
+        },
+        {
+          "of": [
+            "physical.height",
+            "built_of.list"
+          ],
+          "tier": "invented",
+          "review": true,
+          "note": "Geometry for the modeller (2026-10-10): the architecture is the Mars Reconnaissance Orbiter's (JPL DESCANSO article on MRO telecommunications, section 2.1.1, found by blender: a 3 m offset paraboloid, a 0.45 m ellipsoidal subreflector near the focus, a two-axis gimbal). Blender's offset blockout (comm-basic-s1 blockout-v01/design.yaml): parent paraboloid f 0.625 m cut 1.5 m off axis, a 3 m circular aperture, sag up to 0.703 m, the 0.45 m ellipsoidal subreflector (semi-major 0.30 m) intercepting every rim ray within 0.204 m, its top at 1.42 m, the beam's boresight 50.2 degrees from the mount normal at rest; vertex and pivot 0.30 m above the base: 1.5 m overall (was 1.3, too tight for the subreflector). The pointing cone (elevation 77 to 90 degrees, inside the probe's clear range; a mast would widen it, not made) is chosen, not sourced (the old 0.6 m was the dish alone, with no room for a feed)."
+        },
+        {
+          "of": [
+            "built_of",
+            "making"
+          ],
+          "tier": "invented",
+          "review": true,
+          "note": "A first design, in the shares of the Mars Reconnaissance Orbiter's radio: a dish on a gimbal, amplifiers, a transponder, waveguide."
+        },
+        {
+          "of": [
+            "physical.length",
+            "physical.width",
+            "physical.height"
+          ],
+          "tier": "sourced",
+          "review": true,
+          "source": "docs/ships/mc-07-equipment-dimensions.md",
+          "note": "The Mars Reconnaissance Orbiter's radio: a 3 m dish on its gimbal and the boxes behind it, 94 kg, 360 W. Its size is the dish's, stowed. Real figures: docs/ships/mc-07-equipment-dimensions.md."
+        },
+        {
+          "of": [
+            "physical.mass",
+            "physical.volume",
+            "needs.power"
+          ],
+          "tier": "sourced",
+          "review": true,
+          "source": "standards/sources/research_ship_equipment.json",
+          "note": "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list."
+        },
+        {
+          "of": [
+            "life"
+          ],
+          "rule": "rule.life-ship-system"
+        }
+      ]
+    },
+    "equipment.life-support.s0": {
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/life-support-s0.yaml",
+      "physical": {
+        "mass": 150,
+        "volume": 0.29,
+        "length": 0.8,
+        "width": 0.6,
+        "height": 0.6
+      },
+      "function": {
+        "kind": "life_support",
+        "water_recovery": 0.0,
+        "air_recovery": 0.0,
+        "persons": 2,
+        "cooling": 400,
+        "air_store": 2.2,
+        "water_store": 5
+      },
+      "needs": {
+        "power": 2000
+      },
+      "basis": [
+        {
+          "of": [
+            "physical",
+            "needs",
+            "function",
+            "size_class"
+          ],
+          "tier": "invented",
+          "review": true,
+          "note": "Two people breathe 1.8 kg of oxygen a day (need.air) and give off 2.2 kg of carbon dioxide, which 2.5 kg of lithium hydroxide takes up; the bottle, canisters, fans and a 400 W cooler (two people's 137 W each and their displays) come to 150 kg. A capsule's open-loop pack, from memory of Apollo's and the station's figures. Chosen; review."
+        },
+        {
+          "of": [
+            "built_of",
+            "making"
+          ],
+          "rule": "rule.first-design-parts"
+        },
+        {
+          "of": [
+            "needs.power"
+          ],
+          "tier": "derived",
+          "review": true,
+          "note": "Flag: 2 kW looks high. A heat pump lifting 400 W at a COP of 2 to 3 takes 130 to 200 W, the fans about 100 W and the controller about 20 W: about 300 to 400 W. All input ends as heat, so the coolant loop takes the input plus the 400 W lifted (2.4 kW as recorded, about 0.8 kW if lowered). Not changed."
+        },
+        {
+          "of": [
+            "built_of.list"
+          ],
+          "tier": "derived",
+          "review": true,
+          "note": "Flag: 2.2 kg of oxygen at 300 bar is about 6 L of gas; a composite bottle of that size with its regulator weighs about 5 to 8 kg, not 45 (from memory). The spare mass would cover the case, plumbing and more lithium hydroxide (2.5 kg is near the bare 2.4 kg that 2.2 kg of carbon dioxide needs; packed canisters run about half as much again). Not changed."
+        },
+        {
+          "of": [
+            "life"
+          ],
+          "rule": "rule.life-ship-system"
+        }
+      ]
+    },
+    "equipment.sensors.camera.s1": {
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/sensors-camera-s1.yaml",
+      "physical": {
+        "mass": 2,
+        "volume": 0.0015,
+        "length": 0.1,
+        "width": 0.1,
+        "height": 0.15
+      },
+      "function": {
+        "kind": "camera",
+        "field_of_view": 1.571
+      },
+      "needs": {
+        "power": 10
+      },
+      "basis": [
+        {
+          "of": [
+            "physical",
+            "needs",
+            "function",
+            "size_class"
+          ],
+          "tier": "invented",
+          "review": true,
+          "note": "A ruggedised camera head of 2 kg with a heater, 90 degrees across, 10 W. From memory; chosen."
+        },
+        {
+          "of": [
+            "built_of",
+            "making"
+          ],
+          "rule": "rule.first-design-parts"
+        },
+        {
+          "of": [
+            "life"
+          ],
+          "rule": "rule.life-ship-system"
+        }
+      ]
+    },
+    "equipment.sensors.altimeter.s1": {
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/sensors-altimeter-s1.yaml",
+      "physical": {
+        "mass": 8,
+        "volume": 0.009,
+        "length": 0.3,
+        "width": 0.2,
+        "height": 0.15
+      },
+      "function": {
+        "kind": "altimeter",
+        "range": 5000,
+        "accuracy": 0.1
+      },
+      "needs": {
+        "power": 40
+      },
+      "basis": [
+        {
+          "of": [
+            "physical",
+            "needs",
+            "function",
+            "size_class"
+          ],
+          "tier": "invented",
+          "review": true,
+          "note": "A lidar altimeter of a lander's class: 5 km range, 0.1 m accuracy, 8 kg, 40 W (from memory of planetary landers' lidars; a radar altimeter reads to about 0.5 m). Chosen."
+        },
+        {
+          "of": [
+            "built_of",
+            "making"
+          ],
+          "rule": "rule.first-design-parts"
+        },
+        {
+          "of": [
+            "life"
+          ],
+          "rule": "rule.life-ship-system"
+        }
+      ]
+    },
+    "equipment.thermal.air-cooler.s0": {
+      "count": 1,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/thermal-air-cooler-s0.yaml",
+      "physical": {
+        "mass": 15,
+        "volume": 0.06,
+        "length": 0.5,
+        "width": 0.4,
+        "height": 0.3
+      },
+      "function": {
+        "kind": "heat_exchanger",
+        "transfers": 20000.0
+      },
+      "needs": {
+        "power": 400
+      },
+      "basis": [
+        {
+          "of": [
+            "function",
+            "physical",
+            "needs"
+          ],
+          "tier": "invented",
+          "review": true,
+          "note": "A car's radiator and fan: about 20 kW at a 30 K difference from 15 kg of finned aluminium, 400 W of fan. From memory; review."
+        },
+        {
+          "of": [
+            "needs.power",
+            "function.transfers"
+          ],
+          "tier": "derived",
+          "review": true,
+          "note": "Flag: 20 kW at a 30 K air rise (an upper bound; air leaving at coolant temperature) needs 0.67 kg/s of air: 0.55 m3/s in sea-level air (1.2 kg/m3), 2.2 m3/s at the 0.3 kg/m3 floor. Core pressure drop goes as 1/density at the same mass flow, so fan power goes as 1/density squared: about 400 W at 1.2 kg/m3 becomes about 6 kW at 0.3, and a 0.21 m fan would need about 64 m/s through its disc. The 400 W holds near sea-level air only; in thin air either the rating falls (about 20 kW x density/1.2 at the same fan) or the fan and power grow. Not changed."
+        },
+        {
+          "of": [
+            "built_of",
+            "making"
+          ],
+          "rule": "rule.first-design-parts"
+        },
+        {
+          "of": [
+            "life"
+          ],
+          "rule": "rule.life-ship-system"
+        }
+      ]
+    },
+    "equipment.thermal.coolant-loop.s0": {
+      "count": 3,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/thermal-coolant-loop-s0.yaml",
+      "physical": {
+        "mass": 30,
+        "volume": 0.06,
+        "length": 0.5,
+        "width": 0.4,
+        "height": 0.3
+      },
+      "function": {
+        "kind": "coolant_loop",
+        "carries": 20000.0,
+        "flow": 0.53
+      },
+      "needs": {
+        "power": 300
+      },
+      "basis": [
+        {
+          "of": [
+            "function",
+            "physical",
+            "needs"
+          ],
+          "tier": "derived",
+          "review": true,
+          "note": "20 kW at a 10 K rise in water-glycol (3.8 kJ/kg K) is 0.53 kg/s (1.6 m/s in a 20 mm bore); a 300 W pump; 30 kg of pump, lines and plates, the lines and plates (CLP0-02) a loose kit fitted along the ship, not inside the skid box. Chosen; review."
+        },
+        {
+          "of": [
+            "built_of",
+            "making"
+          ],
+          "rule": "rule.first-design-parts"
+        },
+        {
+          "of": [
+            "life"
+          ],
+          "rule": "rule.life-ship-system"
+        }
+      ]
+    },
+    "equipment.thermal.radiator.s0": {
+      "count": 8,
+      "record": "/home/alexm/git/universe-fso/standards/SFO/metadata/equipment/thermal-radiator-s0.yaml",
+      "physical": {
+        "mass": 40,
+        "volume": 0.1,
+        "length": 2,
+        "width": 1,
+        "height": 0.05
+      },
+      "function": {
+        "kind": "radiator",
+        "rejects": 2400.0,
+        "temperature": 330,
+        "area": 2.0
+      },
+      "needs": {},
+      "basis": [
+        {
+          "of": [
+            "function",
+            "physical"
+          ],
+          "tier": "derived",
+          "review": true,
+          "note": "Two faces of 2 m2 at 330 K and emissivity 0.9 radiate 2 x 2 x 0.9 x 5.67e-8 x 330^4 = 2.4 kW to empty space; rated at that (Blender, 2026-10-11: the old 10 kW counted convection in air, which a space radiator cannot claim). 20 kg/m2 is heavy for it; review."
+        },
+        {
+          "of": [
+            "built_of",
+            "making"
+          ],
+          "rule": "rule.first-design-parts"
+        },
+        {
+          "of": [
+            "life"
+          ],
+          "rule": "rule.life-ship-system"
+        }
+      ]
+    }
+  },
+  "totals": {
+    "instances": 31,
+    "catalogue_empty_equipment_kg": 1622.8,
+    "plus_candidate500kgHLOX100kgN2_kg": 2222.8,
+    "known_record_electrical_draw_W": 4230.0,
+    "scope": "No bare hull/frame/cradle/service hardware/crew or added supplies included; load duty and unknown auxiliary loads remain."
+  },
+  "propulsion_screen": {
+    "CHS1_count": 4,
+    "lift_pair_count": 2,
+    "lift_pair_max_N": 50000,
+    "lift_pair_min_continuous_N": 10000.0,
+    "pair_full_fuel_kg_s": 11.363636363636363,
+    "CGS1_count": 4,
+    "CGS1_total_N_per_block": 500,
+    "CGS1_block_full_flow_kg_s": 0.7142857142857143,
+    "scope": "No gimbal/throttle-floor/startup or pressure enforcement inferred from catalogue; shares must apportion block thrust, not multiply it by nozzle count. Ideal gravity screen excludes tilt/control/ascent margins and gear rating."
+  },
+  "power_heat_screen": {
+    "fuelcell_max_electric_W": 50000,
+    "fuelcell_efficiency": 0.55,
+    "hydrolox_energy_J_kg": 13000000,
+    "at4230W_fuel_kg_s": 0.0005916083916083915,
+    "at4230W_stack_loss_W": 3460.9090909090905,
+    "conservative_known_load_plus_stack_plus400W_cabin_cooling_W": 8090.90909090909,
+    "lift_pair_full_heat_to_hull_W": 11000.0,
+    "lift_pair20pct_heat_to_hull_W": 2200.0,
+    "gross_radiator_nameplate_W": 19200.0,
+    "radiator_temperature_K": 330,
+    "limits": "Part-load values assume constant recorded55% efficiency; no efficiency curve/minimum stable load given. Full50kW cell alone rejects40909W and exceeds19200W gross radiator nameplate. Nameplate assumes both faces see empty space; routing, view factors, moon/solar heat, battery loss, tools, actuator duty and thermal buffer are not closed."
+  },
+  "one_person_supplies_screen": {
+    "persons_rating": 2,
+    "air_store_record_kg": 2.2,
+    "water_store_record_kg": 5,
+    "O2_kg_s": 1.036e-05,
+    "CO2_kg_s": 1.256e-05,
+    "drinking_water_kg_s": 2.894e-05,
+    "washing_water_kg_s": 0.0005498,
+    "metabolic_heat_W": 137,
+    "oxygen_only_no_leak_or_cabin_fill_hours": 58.98755898755899,
+    "water_drinking_only_hours": 47.99201412884896,
+    "water_drink_plus_washing_hours": 2.399849481440524,
+    "limits": [
+      "These quotients are not sortie endurance. Explicit initial filled quantities, gross versus consumable mass accounting, cabin fill/vent/leak, reserves and usable CO2 canister capacity are unresolved.",
+      "Life-support basis names2.5kgLiOH for2people/day but no function field gives usable CO2 capacity. Do not convert that narrative into an installed canister certificate.",
+      "Need.washing is the household design rate, not an owner-approved short-flight duty. Show both water cases; do not silently delete washing or claim the shorter quotient is a physical cutoff.",
+      "Fuel-cell product water is not potable inventory without real capture/storage/quality route. No food/suit/escape-oxygen capacity is established by this allocation.",
+      "Command deferred: current Studio seat-derived crew count can be zero despite the selected one-person mission. Audit must use mission1person; no zero-crew consumable pass."
+    ]
+  },
+  "treistun_registry_moons": [
+    {
+      "key": "body.treistun.treistun-b-i",
+      "record": "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-b-i.yaml",
+      "name": "Cinder B I",
+      "record_surface_gravity_m_s2": 1.415,
+      "mean_temperature_K": 566.9,
+      "airless_evidence": "identity.about says no air; no atmosphere group",
+      "ideal_pair_hover_mass_interval_kg": [
+        7067.137809187279,
+        35335.68904593639
+      ]
+    },
+    {
+      "key": "body.treistun.treistun-c-i",
+      "record": "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-c-i.yaml",
+      "name": "Anvil C I",
+      "record_surface_gravity_m_s2": 1.113,
+      "mean_temperature_K": 424.9,
+      "airless_evidence": "identity.about says no air; no atmosphere group",
+      "ideal_pair_hover_mass_interval_kg": [
+        8984.72596585804,
+        44923.62982929021
+      ]
+    },
+    {
+      "key": "body.treistun.treistun-d-i",
+      "record": "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-d-i.yaml",
+      "name": "Heath D I",
+      "record_surface_gravity_m_s2": 1.281,
+      "mean_temperature_K": 306.0,
+      "airless_evidence": "identity.about says no air; no atmosphere group",
+      "ideal_pair_hover_mass_interval_kg": [
+        7806.4012490242,
+        39032.006245121
+      ]
+    },
+    {
+      "key": "body.treistun.treistun-g-i",
+      "record": "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-g-i.yaml",
+      "name": "Drum G I",
+      "record_surface_gravity_m_s2": 1.872,
+      "mean_temperature_K": 150.7,
+      "airless_evidence": "identity.about says no air; no atmosphere group",
+      "ideal_pair_hover_mass_interval_kg": [
+        5341.880341880342,
+        26709.401709401707
+      ]
+    },
+    {
+      "key": "body.treistun.treistun-g-ii",
+      "record": "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-g-ii.yaml",
+      "name": "Drum G II",
+      "record_surface_gravity_m_s2": 1.006,
+      "mean_temperature_K": 149.6,
+      "airless_evidence": "identity.about says no air; no atmosphere group",
+      "ideal_pair_hover_mass_interval_kg": [
+        9940.357852882704,
+        49701.78926441352
+      ]
+    },
+    {
+      "key": "body.treistun.treistun-g-iii",
+      "record": "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-g-iii.yaml",
+      "name": "Drum G III",
+      "record_surface_gravity_m_s2": 0.701,
+      "mean_temperature_K": 149.7,
+      "airless_evidence": "identity.about says no air; no atmosphere group",
+      "ideal_pair_hover_mass_interval_kg": [
+        14265.335235378032,
+        71326.67617689016
+      ]
+    },
+    {
+      "key": "body.treistun.treistun-h-i",
+      "record": "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-h-i.yaml",
+      "name": "Pale H I",
+      "record_surface_gravity_m_s2": 0.702,
+      "mean_temperature_K": 112.8,
+      "airless_evidence": "identity.about says no air; no atmosphere group",
+      "ideal_pair_hover_mass_interval_kg": [
+        14245.014245014247,
+        71225.07122507122
+      ]
+    },
+    {
+      "key": "body.treistun.treistun-h-ii",
+      "record": "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-h-ii.yaml",
+      "name": "Pale H II",
+      "record_surface_gravity_m_s2": 2.178,
+      "mean_temperature_K": 111.5,
+      "airless_evidence": "identity.about says no air; no atmosphere group",
+      "ideal_pair_hover_mass_interval_kg": [
+        4591.368227731864,
+        22956.84113865932
+      ]
+    },
+    {
+      "key": "body.treistun.treistun-i-i",
+      "record": "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-i-i.yaml",
+      "name": "Hush I I",
+      "record_surface_gravity_m_s2": 0.971,
+      "mean_temperature_K": 93.5,
+      "airless_evidence": "identity.about says no air; no atmosphere group",
+      "ideal_pair_hover_mass_interval_kg": [
+        10298.661174047375,
+        51493.30587023687
+      ]
+    },
+    {
+      "key": "body.treistun.treistun-i-ii",
+      "record": "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-i-ii.yaml",
+      "name": "Hush I II",
+      "record_surface_gravity_m_s2": 1.096,
+      "mean_temperature_K": 93.5,
+      "airless_evidence": "identity.about says no air; no atmosphere group",
+      "ideal_pair_hover_mass_interval_kg": [
+        9124.087591240876,
+        45620.437956204376
+      ]
+    },
+    {
+      "key": "body.treistun.treistun-i-iii",
+      "record": "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-i-iii.yaml",
+      "name": "Hush I III",
+      "record_surface_gravity_m_s2": 0.471,
+      "mean_temperature_K": 80.1,
+      "airless_evidence": "identity.about says no air; no atmosphere group",
+      "ideal_pair_hover_mass_interval_kg": [
+        21231.422505307855,
+        106157.11252653929
+      ]
+    },
+    {
+      "key": "body.treistun.treistun-j-i",
+      "record": "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-j-i.yaml",
+      "name": "Verge J I",
+      "record_surface_gravity_m_s2": 1.254,
+      "mean_temperature_K": 83.5,
+      "airless_evidence": "identity.about says no air; no atmosphere group",
+      "ideal_pair_hover_mass_interval_kg": [
+        7974.481658692185,
+        39872.408293460925
+      ]
+    },
+    {
+      "key": "body.treistun.treistun-j-ii",
+      "record": "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-j-ii.yaml",
+      "name": "Verge J II",
+      "record_surface_gravity_m_s2": 0.604,
+      "mean_temperature_K": 83.5,
+      "airless_evidence": "identity.about says no air; no atmosphere group",
+      "ideal_pair_hover_mass_interval_kg": [
+        16556.29139072848,
+        82781.45695364238
+      ]
+    },
+    {
+      "key": "body.treistun.treistun-j-iii",
+      "record": "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-j-iii.yaml",
+      "name": "Verge J III",
+      "record_surface_gravity_m_s2": 0.47,
+      "mean_temperature_K": 60.7,
+      "airless_evidence": "identity.about says no air; no atmosphere group",
+      "ideal_pair_hover_mass_interval_kg": [
+        21276.595744680853,
+        106382.97872340426
+      ]
+    },
+    {
+      "key": "body.treistun.treistun-j-iv",
+      "record": "/home/alexm/git/universe-fso/standards/Celestial/metadata/systems/treistun/bodies/treistun-j-iv.yaml",
+      "name": "Verge J IV",
+      "record_surface_gravity_m_s2": 0.63,
+      "mean_temperature_K": 60.5,
+      "airless_evidence": "identity.about says no air; no atmosphere group",
+      "ideal_pair_hover_mass_interval_kg": [
+        15873.015873015873,
+        79365.07936507936
+      ]
+    }
+  ],
+  "runtime_request": "20261023T231721-registry-78d0 asks Engine actual selectable/spawnable moons and runtime gravity/consumables/part-load support; registry numeric gravity is not yet runtime validation.",
+  "release_gates": [
+    "Bound whole current wet mass and COM/fill cases after actual material/parts retirement and newframe/pans/equipment.",
+    "Actual fit, supports/services/plumes/thermal exposure and real exported nozzle bindings; command/person controls and pressure/egress plan.",
+    "Derive a sortie with outbound/return/abort propellant and finite power/cooling/air/CO2/water reserves; select actual body and gravity only after runtime check.",
+    "Separate software proof from physical capability; require current exact record/export/import diagnostic and flight evidence."
+  ]
+}
