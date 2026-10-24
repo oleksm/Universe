@@ -50,8 +50,9 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     hull_from_record(bytes, visual, crate::registry::registry().hulls.iter().find(|h| h.model.as_deref() == Some(visual)))
 }
 
-/// `hull_from_gltf`, with the hull record that describes it given (None: an unregistered model).
-pub(crate) fn hull_from_record(bytes: &[u8], visual: &str, record: Option<&crate::registry::Hull>) -> Result<ClassSpec, String> {
+/// `hull_from_gltf`, with the hull record that describes it given (None: an unregistered model). Public for check
+/// tools that try a candidate record before the registry has one.
+pub fn hull_from_record(bytes: &[u8], visual: &str, record: Option<&crate::registry::Hull>) -> Result<ClassSpec, String> {
     // (Its record's mechanism nodes, by exact name: their meshes move with them, and the legacy `*Ramp*` reading is
     // off: an authored mechanism is never replaced by a guessed one.)
     let owned: Vec<String> = record.map_or_else(Vec::new, |h| h.mechanisms.iter().flat_map(|m| m.nodes.iter().cloned()).collect());
@@ -416,6 +417,12 @@ mod tests {
         let over = hull_from_record(&bytes, "assets/models/mc07.glb", Some(&h)).unwrap();
         assert!(!over.commissioned && over.limits[0].contains("batteries give 1000.0 kW at most"), "{}", over.limits[0]);
         h.fit.retain(|f| f.slot != "hyperdrive" && f.slot != "lift");
+        // (A stage can't be flown: no thrust, whatever it carries.)
+        let mut stage = crate::Ship::with_spec(std::sync::Arc::new(over), DVec3::ZERO, DVec3::ZERO, glam::DQuat::IDENTITY);
+        stage.powered = true;
+        stage.throttle = 1.0;
+        stage.drive(None, 1.0, true);
+        assert!(stage.jets.iter().all(|&j| j == 0.0) && stage.applied.0 == DVec3::ZERO, "a stage doesn't fly");
         let spec = hull_from_record(&bytes, "assets/models/mc07.glb", Some(&h)).unwrap();
         assert!(spec.commissioned, "{:?}", spec.limits);
         assert!(spec.limits.iter().any(|l| l.starts_with("on its batteries")) && spec.batteries.len() == 1);

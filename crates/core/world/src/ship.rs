@@ -1412,6 +1412,13 @@ impl Ship {
     /// sets the drive's speed, or on the ground, where the landing gear's
     /// rules decide lift-off.)
     pub fn drive(&mut self, turn: Option<&Controls>, dt: f64, push: bool) {
+        // (A stage before it can fly (`ClassSpec::commissioned` false: its reason first in `limits`): no thrust, whatever
+        // it carries.)
+        if !self.spec().commissioned {
+            self.jets.fill(0.0);
+            self.applied = (DVec3::ZERO, DVec3::ZERO);
+            return;
+        }
         if self.devices.is_some() { return self.drive_devices(turn, dt, push); }
         if self.manual && push {
             return self.drive_manual(dt);
