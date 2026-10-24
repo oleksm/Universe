@@ -24,59 +24,52 @@ basis:
   - unit
   - reading
   tier: derived
-  source: planet-forge 89d78fc docs/field-inventory-2026-10-24.md; current registry field definitions
-  note: Literal producer/registry audit; unavailable means no valid current binding. This does not source a scientific
-    causal law, calibrate retained ramps, or prove a proxy.
+  source: planet-forge d9e9475 docs/m4-cover-setting-fields-2026-10-24.md
+  note: Bound to the producer's saved class field (M4 C3). This does not source a scientific causal law or calibrate
+    retained ramps.
 - of:
   - class_map
   tier: derived
-  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
-  note: Scientific class intent named, but no saved classification field provides these values. Empty possible-code
-    lists remain unknown everywhere; no fabricated category driver.
+  source: planet-forge d9e9475 docs/m4-cover-setting-fields-2026-10-24.md
+  note: Codes from the planets spec, first match wins in the producer. hotspot is active-now only. back-arc and intermontane-basin are never assigned yet and stay unresolved (unknown everywhere).
 status: draft
 kind: categorical
+unit: '1'
+reads:
+  fields:
+  - planet-field.tect-setting
+signal:
+  field: planet-field.tect-setting
 reading:
-  status: unavailable
-  source: planet-forge 89d78fc docs/field-inventory-2026-10-24.md; current registry field definitions
-  note: crust-kind distinguishes only ocean/continent; it cannot identify craton/passive margin/orogen/rift/hotspot.
-    Event lines are separate evidence, not a comparable numeric category.
+  status: verified
+  source: planet-forge d9e9475 docs/m4-cover-setting-fields-2026-10-24.md
+  note: Raw planet-field.tect-setting codes (0 unclassified, never a class). Checkpoints saved before M4 C3 lack the field; reads there stay unknown.
 class_map:
 - key: oceanic
-  codes: []
-  unresolved: true
+  codes: [1]
 - key: craton-shield
-  codes: []
-  unresolved: true
+  codes: [2]
 - key: platform
-  codes: []
-  unresolved: true
+  codes: [3]
 - key: magmatic-arc
-  codes: []
-  unresolved: true
+  codes: [8]
 - key: passive-margin
-  codes: []
-  unresolved: true
+  codes: [5]
 - key: hotspot
-  codes: []
-  unresolved: true
+  codes: [11]
 - key: active-orogen
-  codes: []
-  unresolved: true
+  codes: [7]
 - key: old-orogen
-  codes: []
-  unresolved: true
+  codes: [6]
 - key: rift-extensional
-  codes: []
-  unresolved: true
+  codes: [9]
 - key: intermontane-basin
   codes: []
   unresolved: true
 - key: foreland-basin
-  codes: []
-  unresolved: true
+  codes: [10]
 - key: back-arc
   codes: []
   unresolved: true
 - key: transform
-  codes: []
-  unresolved: true
+  codes: [12]

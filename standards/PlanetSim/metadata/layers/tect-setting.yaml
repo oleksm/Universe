@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/planet-layer.schema.yaml
+identity:
+  key: planet-layer.tect-setting
+  name: Tectonic setting
+  about: The classes of planet-field.tect-setting.
+version: 1
+classes:
+- {id: 1, name: oceanic, source: '1'}
+- {id: 2, name: craton-shield, source: '2'}
+- {id: 3, name: platform, source: '3'}
+- {id: 5, name: passive-margin, source: '5'}
+- {id: 6, name: old-orogen, source: '6'}
+- {id: 7, name: active-orogen, source: '7'}
+- {id: 8, name: magmatic-arc, source: '8'}
+- {id: 9, name: rift-extensional, source: '9'}
+- {id: 10, name: foreland-basin, source: '10'}
+- {id: 11, name: hotspot, source: '11'}
+- {id: 12, name: transform, source: '12'}
+- {id: 13, name: back-arc}
+- {id: 14, name: intermontane-basin}
+levels:
+- planet-level.10000-km
+- planet-level.1000-km
+basis:
+- of:
+  - identity
+  - classes
+  tier: derived
+  source: planet-forge d9e9475 docs/m4-cover-setting-fields-2026-10-24.md
+  note: The producer's codes, 0 unclassified, 4 unused; registry ids equal the codes. back-arc and intermontane-basin
+    are reserved ids with no producer word yet (unresolved).
+status: draft

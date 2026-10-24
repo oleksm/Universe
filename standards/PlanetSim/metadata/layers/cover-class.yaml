@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/planet-layer.schema.yaml
+identity:
+  key: planet-layer.cover-class
+  name: Land cover class
+  about: The relief-landscape pass's land-cover key (fn covers); the classes of planet-field.cover.
+version: 1
+classes:
+- {id: 1, name: perennial snow and ice, source: '1'}
+- {id: 2, name: bare rock, source: '2'}
+- {id: 3, name: alpine zone, source: '3'}
+- {id: 4, name: tundra, source: '4'}
+- {id: 5, name: cold desert, source: '5'}
+- {id: 6, name: hot desert, source: '6'}
+- {id: 7, name: boreal forest (taiga), source: '7'}
+- {id: 8, name: savanna, source: '8'}
+- {id: 9, name: steppe grassland, source: '9'}
+- {id: 10, name: Mediterranean shrubland, source: '10'}
+- {id: 11, name: tropical rainforest, source: '11'}
+- {id: 12, name: tropical seasonal forest, source: '12'}
+- {id: 13, name: temperate rainforest, source: '13'}
+- {id: 14, name: temperate broadleaf forest, source: '14'}
+levels:
+- planet-level.10000-km
+- planet-level.1000-km
+basis:
+- of:
+  - identity
+  - classes
+  tier: derived
+  source: planet-forge d9e9475 docs/m4-cover-setting-fields-2026-10-24.md
+  note: The producer's codes, 0 sea or none; registry ids equal the codes.
+status: draft

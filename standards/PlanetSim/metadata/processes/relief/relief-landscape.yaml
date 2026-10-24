@@ -77,6 +77,10 @@ reads:
   field: planet-field.temperature-warm-month
 - name: temperature-cold-month
   field: planet-field.temperature-cold-month
+- name: arc-last-active
+  field: planet-field.arc-last-active
+- name: hotspot-last-active
+  field: planet-field.hotspot-last-active
 - name: rain-season
   field: planet-field.rain-season
 - name: latitude
@@ -102,6 +106,10 @@ writes:
     shield-craton, shore-platform, snow-line, spit, star-dunes, structural-basin, structural-dome, submarine-canyon,
     submarine-fan, syncline-axis, terminal-moraine, tidal-flat, till-plain, tombolo, transform-valley, transverse-dunes,
     tree-line, tributary-network, v-valley, valley-glacier, wadi, waterfall, wetland, wind-gap, yardangs
+- name: cover
+  field: planet-field.cover
+- name: tect-setting
+  field: planet-field.tect-setting
 params:
 - name: obliquity
   meaning: Provisional axial tilt of the seasonal screening model; not a measured per-body obliquity.
@@ -670,6 +678,13 @@ implementations:
   state: current
 status: draft
 basis:
+- of:
+  - writes
+  - reads
+  tier: derived
+  source: planet-forge d9e9475 docs/m4-cover-setting-fields-2026-10-24.md
+  note: 'M4 C3: writes planet-field.cover and planet-field.tect-setting, and reads arc-last-active and hotspot-last-active
+    for the magmatic-arc and hotspot settings.'
 - of:
   - params
   - clock

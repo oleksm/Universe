@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.cover
+  name: Land cover
+  about: The Whittaker-style land-cover class the relief-landscape pass gives each land sample (fn covers).
+unit: '1'
+per: sample
+producer:
+  where: planet-forge crates/forge-core/src/models/tectonic/landscape.rs fn covers (planet-process.relief-landscape)
+  file: checkpoint fields/*.npy
+  key: planet-field.cover
+class_of: planet-layer.cover-class
+missing: '0: sea or none'
+cautions:
+- f64 codes 1..14 in fn covers' own order; not the older planet-layer.cover (planet-trees, 12 classes).
+- A cover class alone is not a vegetation process or a biome proof.
+levels:
+- planet-level.10000-km
+- planet-level.1000-km
+basis:
+- of:
+  - identity
+  - producer
+  - class_of
+  - missing
+  tier: derived
+  source: planet-forge d9e9475 docs/m4-cover-setting-fields-2026-10-24.md
+  note: The producer's own key, saved from the relief-landscape pass that computed and discarded it before.
+status: draft
