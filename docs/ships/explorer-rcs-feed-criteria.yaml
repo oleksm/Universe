@@ -1,0 +1,46 @@
+status: Feed, pressure, valve and regulator criteria for the outboard RCS (equipment.engine.cg.outboard-s1, draft) from
+  its drawn nozzles; first-order sizing, invented/review where marked, no qualification
+source_task: 20261024T163814-ships-8b15 (registry lane of the full-auto refresh)
+nozzle:
+  from: /home/alexm/git/blender/engine-cg-outboard-s1/proposal-v01/original-nozzles.json (drawn contour, kept rigid)
+  throat_diameter_m: 0.010
+  exit_diameter_m: 0.028
+  area_ratio: 7.84
+  thrust_coefficient_vacuum: 1.628   # ideal, nitrogen gamma 1.4, exit Mach 3.66
+  note: Drawn visual contour taken as the gas path; an internal contour may differ - review
+performance_per_jet:              # at the 125 N comparison target
+  chamber_pressure_Pa: 978000
+  stagnation_temperature_K: [250, 293]   # regulator expansion cools the gas; 250 K design, invented/review
+  exhaust_velocity_m_s: [648, 701]
+  mass_flow_kg_s: [0.178, 0.193]
+  check: Agrees with the cold gas family's 700 m/s (engine.cg.s1 record)
+supply:
+  tank: equipment.tank.nitrogen.100kg, 30 MPa full, 0.323 m3
+  minimum_usable_tank_pressure_Pa: 3000000
+  usable_N2_kg: 87                # 13 kg left at 3 MPa, 250 K
+  usable_total_impulse_N_s: 56000 # 87 x 648
+architecture:
+  regulation: At each pod - the pod's hidden 2 kg regulator/filter/isolation allowance becomes a real pod regulator to
+    1.27 MPa (chamber pressure plus 30% for valve and passage loss), a 25 um filter and a latching isolation valve
+  tank_side: The tank's own valve becomes high-pressure isolation; its regulator is not used for the RCS
+  jet_valves: One normally-closed fast solenoid valve per jet, pulse at least 10 ms; invented/review
+  pod_manifold_ID_m: 0.016        # 4 jets at once Mach 0.70 over at most 0.3 m: about 0.24 MPa, inside the 0.3 MPa allowance
+  pod_inlet: The drawn 8 mm ID stub is too small - one jet already runs Mach 0.7 at 1.27 MPa and two choke it. Upstream
+    of the regulator, at tank pressure, it must be 16 mm ID too (below)
+  branch_lines:
+    from: Tank manifold, one branch per pod, about 6 m each
+    ID_m: 0.016
+    stock: 304 tube 22 x 3 mm (16 mm ID); burst 4 x 33 MPa needs 2.05 mm - 3 mm chosen
+    mass_kg_per_m: 1.43
+    estimate_kg: 34               # four branches of about 6 m; inside the ledger's harness and plumbing allowance
+    check: At the 3 MPa floor and four jets firing in a pod, 95 m/s and about 1.0 MPa drop over 6 m - regulator inlet
+      about 2.0 MPa, above 1.27 MPa plus dropout
+control_limit: None needed for flow above 3 MPa; below it the pod regulators drop out first
+thermal: Joule-Thomson cooling across the pod regulator from high tank pressure can reach tens of K; keep the 250 K
+  design, add a pod heater only if the thermal model asks
+next:
+- Blender - pod inlet 16 mm and the pod regulator, filter and latching valve drawn in the 2 kg allowance's place
+- Ships - control allocation with up to 4 jets per pod; usable 56 kN s against the hop's attitude budget
+- Engine - read-only check of jet share and duty against these flows
+scope:
+  active_record_created: false

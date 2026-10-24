@@ -22,10 +22,15 @@ thermal_reaction:
   dead_load_N: 282                # parked at 1.281 m/s2: two rows from the 12.8 N m dead moment plus the dead shear
   friction_N: 42                  # 0.15 x 282
   verdict: Pass, under the 500 N limit; a landing may stick the guide, which need not slide then
+feet:
+  material: 304 stainless - the feet are part RAD0-03 Fittings (stock.st304-pl-3) in build_radiator_s0.py
+  washer_bearing_on_304: 188 MPa at the yield case against about 205 MPa annealed 304 yield - margin 1.09, too thin
+  choice: Hardened steel washer 12 mm OD / 6.4 mm ID under each M5 head on the foot face - 84.8 mm2, about 113 MPa at
+    the yield case (margin 1.8); check it seats on the drawn foot land
 replication: Released for the study to copy to the other seven radiators once the pad mass is recounted; each copy
   re-screens its own placement (505 states, 16 cones, tools)
 still_open:
-- Product feet material and strength (product author)
+- Foot strength beyond washer bearing (product author)
 - Welds and receiver to the G frame; frame-to-gear path
 - Panel thermal distortion beyond local guide travel; creep under thermal cycling
 scope:
