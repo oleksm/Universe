@@ -173,7 +173,7 @@
 - { record: body.treistun.treistun-c-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "0eaffd000e8204b5" }
 - { record: body.treistun.treistun-d, at: "2026-10-06T19:47:40Z", status: "", summary: "changed: bake, surface", sha: "4001049a009dd488" }
 - { record: body.treistun.treistun-d-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "ec03710d2e3a78ae" }
-- { record: body.treistun.treistun-e, at: "2026-10-21T22:26:57Z", status: "", summary: "changed: ground", sha: "484031f618d59e4e" }
+- { record: body.treistun.treistun-e, at: "2026-10-24T23:37:09Z", status: "", summary: "changed", sha: "6444bb83466b8742" }
 - { record: body.treistun.treistun-f, at: "2026-10-06T20:01:57Z", status: "", summary: "changed: provenance, survey, bake, surface", sha: "00883e89e8764acc" }
 - { record: body.treistun.treistun-g, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "447e29d178391820" }
 - { record: body.treistun.treistun-g-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "afe538e160eeb704" }
@@ -3214,7 +3214,7 @@
 - { record: rule.life-hull, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "c7ee9eaf08afffd3" }
 - { record: rule.life-plant, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "fbda7bc757c6f115" }
 - { record: rule.life-ship-system, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "dfb76750c01c37b7" }
-- { record: rule.mounts-margin, at: "2026-10-13T05:32:00Z", status: review, summary: "changed: statement", sha: "88491f348e30a319" }
+- { record: rule.mounts-margin, at: "2026-10-24T23:37:09Z", status: review, summary: "changed", sha: "ec3a53275744a306" }
 - { record: rule.packing-stock, at: "2026-10-21T02:16:03Z", status: review, summary: "changed: statement", sha: "ab2daed972d26559" }
 - { record: rule.plant-weights-from-memory, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "d4bff33987b75c18" }
 - { record: rule.run-support, at: "2026-10-18T20:37:52Z", status: review, summary: "first tracked", sha: "2d38160a4d228cbc" }
@@ -3371,7 +3371,7 @@
 - { record: settlement.treistun.port-eikir, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "193712523481731f" }
 - { record: settlement.treistun.port-fabindum, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "eba00c6e85659bc3" }
 - { record: settlement.treistun.port-lisaur, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "3123ac04c9f89b1f" }
-- { record: settlement.treistun.port-nacaubun, at: "2026-10-21T23:17:33Z", status: "", summary: "changed: position, about, story", sha: "33e17bfb5b1ee7cb" }
+- { record: settlement.treistun.port-nacaubun, at: "2026-10-24T23:37:09Z", status: "", summary: "changed: position, about", sha: "18a1b0afe2b8d830" }
 - { record: settlement.treistun.port-seiwiti, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "f7070cb182461a08" }
 - { record: settlement.treistun.port-sirnendis, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "946ab4bf47dc9967" }
 - { record: settlement.treistun.port-trethi, at: "2026-10-07T01:54:51Z", status: "", summary: "changed", sha: "815867bc1c10980a" }

@@ -7,7 +7,7 @@ at: body.treistun.treistun-e
 # Owner-requested move to the installed Shasta plain, 2026-10-21; measured against
 # forge_e104-land-c4-600-shasta-4ad675930cb1. Site evidence:
 # docs/diagnostics/hoar-port-shasta-20261021.yaml (port relief 2.26 m at source vertices).
-position: { latitude: -37.22982227888752, longitude: 100.66788693903489 }
+position: { latitude: -13.3355066, longitude: 0.9432780 }
 structure: structure.spaceport
 population: 60000
 # Supplied from Port Eikir: 98.5 t a day of what its people take; 8.2 days each way at a torchship's cruise (1 m/s2) over the two orbits' typical separation; 13 hauler(s) on the run, so a delivery every 1.4 days (tools/standards/census.py).
@@ -75,7 +75,7 @@ independents:
   - { hull: hull.sprint, count: 54 }
   - { hull: hull.prospector, count: 36 }
   - { hull: hull.hauler, count: 19 }
-about: "The port on Hoar, the first world settled, on a plain southeast of Shasta. Gravity 0.98 g; air nobody can breathe; at 57 below."
+about: "The port on Hoar, the first world settled, on the floor of a valley running north. Gravity 0.98 g; air nobody can breathe; at 57 below."
 story:
   - "The first port in the system, now on the Shasta plain. The station overhead took most of its trade; Nacaubun keeps the ground traffic."
   - "It is a sealed city of sixty thousand, at 57 below on an average day, breathing from its plants: Hoar's air is nitrogen and carbon dioxide, with no oxygen in it, since nothing ever lived here. Nothing grows outside; its halls raise salad under lamps and the rest of what it eats comes up from Heath, the home world now."
