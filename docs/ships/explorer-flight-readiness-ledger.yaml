@@ -30,9 +30,9 @@ propellant_and_range:          # 500 kg hydrolox at the CHS1 target ve 4400 m/s 
   hover_thrust_kN: [12.4, 13.2] # two mains at 25 kN target each: T/W about 3.8 local
   hop: 20% reserve and 20 s for touchdown kept; the rest split between launch and landing burns
   hop_range_km: [4.4, 5.1]     # one-way ballistic, flat ground, impulsive; a sortie out and back needs two tanks or a refill
-  sortie_defined: One hop of up to 4 km from a pad to a site with a pad or prepared ground, refuelled before the return,
-    is the first flight envelope. Anything longer waits for a bigger tank. invented/review choice for the owner's
-    "short trips"
+  conditional_envelope: PROPOSED by the registry, not accepted by the owner - one hop of up to 4 km from a pad to a site
+    with a pad or prepared ground, refuelled before the return. Kept as a conditional envelope for the owner to accept
+    or change; the owner's mission stays "short trips".
 
 heat_at_the_site:
   load_W: 7690           # known aux 4230 W plus fuel-cell heat at that output (40.909/50 of electrical)
@@ -53,7 +53,9 @@ open_to_ready:                 # owner of each in brackets
 - Altimeter, camera, coolant, air cooler, LS service panels built to the choices; harness routes [blender]
 - Whole wet COM against the hover band from drawn parts (V10 known COMx 1.148..1.719 vs band ~1.643..1.757) [ships]
 - RCS feed pressure, valves, regulator; main engine and RCS performance beyond targets [registry + ships]
-- Pilot station and suit stowage drawn (tightens crew COM) [blender]
+- Crew reservation kept for a future module. The owner deferred the command seat and dashboard - no custom
+  substitute and no inclusion authorised. Crew COM stays the floor-region bound; the control requirement for that
+  future module is kept separate [owner]
 - Thermal model and daytime cooling umbilical [registry]
 - Installed fit record, wet mass record, commissioning (thrust on) [registry, engine]
 scope:
