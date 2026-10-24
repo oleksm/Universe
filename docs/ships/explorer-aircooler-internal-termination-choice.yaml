@@ -1,0 +1,46 @@
+status: Chosen prototype internal termination for the air cooler S0 service study, plus the conductive gasket density
+  for the coolant controller lid; not product release or rating
+source_task: 20261024T135520-blender-8bb5
+rule: Harness jackets stay on the plug side (docs/ships/explorer-camera-power-termination-choice.yaml); inside, the
+  receptacle contacts take hook-up wire sized for this unit's own draw. External side unchanged (shell 25,
+  run.cable-dc-600v-3x6mm2, OD 9.9 mm, R79; docs/ships/explorer-service-cable-fluid-prototype-choices.yaml).
+choice:
+  internal_power:
+    item: run.wire-6mm2
+    count: 3            # plus, minus, earth on three of shell 25's four contacts; the fourth unwired
+    OD_m: 0.0043
+    bend_radius_m: 0.043
+    draw_A: 14.286      # 400 W at 28 V
+    single_wire_vacuum_A: 28
+    check: At the registry's 0.8 factor for three conductors together (run.cable-dc-600v-3x6mm2 basis) the wires carry
+      22.4 A; 14.286 A is 64% of that. 2.5 mm2 (12 A) would be over its rating and is not used. Over a 0.15 m tail, both
+      ways, drop is 12 mV and each wire warms about 0.09 W.
+  contacts: Full-size shell 25 crimp contacts for 6 mm2 (the insert takes up to 16 mm2). invented/review.
+  internal_CAN:
+    item: run.wire-0p5mm2
+    per_port: 4
+    pairing: H/L twisted; shell 11 ports joined as a pass-through with one stub to the board, as the other units
+  straight_tail_m: 0.01
+  wire_end_reserved_m: 0.06   # 10 mm tail plus R43 bends and clips at the connector end
+  board_allocation:
+    what: Fan drive, input filter and CAN interface on one board in the cooler's controller
+    box_m: [0.10, 0.08, 0.03]
+    heat: About 20 W of drive loss at 400 W (95%, invented/review), conducted to a case wall that is not a lid
+    place: In the drawn controller beyond the wire end; the author measures. If it does not fit, report the free
+      volume - registry revises the board, never the wire or bend.
+    mass: Inside the unit's existing nominal until drawn
+    confidence: invented/review; no circuit, EMC or thermal design
+  wire_support: One lacing/clip point per bundle to the case
+conductive_gasket:
+  for: docs/ships/explorer-coolant-controller-case-construction.yaml lid gasket (and any later conductive lid gasket)
+  material: Nickel-graphite filled silicone, counted on material.silicone-rubber's base
+  density_kg_m3: 2000
+  basis: invented/review - filled conductive silicones are of the order of 1,900 to 2,100 kg/m3 against plain
+    silicone's 1,075 (registry); from memory of makers' sheets, to be sourced. Count mass as drawn volume x 2000.
+remaining:
+- Drawn controller survey, board, routing and clips with clearance
+- Crimp, EMC, thermal and vibration qualification
+- Airless use: the cooler rejects no heat in vacuum; whether it stays in the fit is still open
+scope:
+  active_record_created: false
+  product_original_changed: false
