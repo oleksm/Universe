@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.boundary-type-sample
+  name: Boundary type at a sample
+  about: 'The plate boundary type at a sample: 0 none, 1 convergent, 2 divergent, 3 transform.'
+unit: '1'
+per: sample
+producer:
+  where: planet-forge crates/forge-core/src/models/tectonic/landscape.rs (planet-process.relief-landscape)
+  file: checkpoint fields/*.npy
+  key: planet-field.boundary-type-sample
+cautions:
+- 'Per sample, not the per-segment planet-field.boundary-kind (whose codes differ: 0 ridge, 1 trench, 2 collision,
+  3 transform).'
+levels:
+- planet-level.10000-km
+- planet-level.1000-km
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  source: planet-forge 6988989 crates/forge-core/src/models/tectonic/landscape.rs (Ground docs, save list ~l.567)
+  note: Describe-only save of what the pass computed (M4 C2); ranges checked on e126s43 ck_001124.
+status: draft

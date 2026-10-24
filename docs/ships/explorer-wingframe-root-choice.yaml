@@ -1,0 +1,38 @@
+status: Chosen root path for the Explorer common radiator/RCS wingframe study (alternative F); a study direction,
+  not a strength, pressure or fit acceptance
+source_task: 20261024T134223-ships-a4b2
+packet: /home/alexm/.agents/reviews/ships/explorer-final-ground-20261024/wingframe-F-root-interface-intake.json
+packet_sha256: cc087e4c7f54f68e29b664508d08a2c55f47e4329a8461cd352b8af480f0fc80
+survey: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-fit-current-study/wing-root-signed-survey/signed-root-survey.json
+choice: Tie F into the central/gear foundation (designed combined structure). Not a skin- or deck-spread root.
+why:
+- Load must end at the landing gear. The foundation rails (160x5, Y+-1.30, Z1.72, X-2.1..2.2) sit over the gear
+  legs (Y+-1.35); F's four root stations are only 0.3-0.6 m outboard at the same height (Z1.75).
+- The pressure skin and deck are thin shell; spreading about 19 kN of inertial load and its moments into them at four
+  pads would make the cabin boundary the frame. Rejected.
+- One combined structure is counted once (mass, load, screen) instead of two partial ones.
+load_basis:
+  same_as: docs/ships/explorer-radiator-root-disposition.yaml (limit 20 m/s2 any direction; 1.25 yield, 2.0 ultimate)
+  carried_mass_kg: ~959   # F 535.66 coarse + 8 radiators x 40 + 4 RCS x 25.78; refine from drawn parts
+  limit_inertial_N: ~19200
+  RCS_thrust: 125 N per jet, small beside it; include as its own case for fatigue later
+construction:
+  stubs: Each 160x5 cross-stub continues inboard through the skin to a welded or bolted node on the foundation rail.
+  skin_crossing: A sealed sleeve that carries no frame load - skin doubler with a welded collar and a flexible
+    pressure boot (or bellows) to the stub, so the stub can move against the skin. The hollow stub is capped by a
+    welded bulkhead inside the boot so no tube joins outside to cabin.
+  deck: Deck seats stop being attachments; at most locating guides with clearance.
+  aft_station: X2.7 is beyond the rail end X2.2. First try moving the aft root station to X2.2 (span 3.2 m, was 3.7)
+    and re-run the 16 cones and 505 states. Only if that breaks the cones, study a measured rail extension to X2.7
+    against the aft gear envelope - never by assumption.
+  ownership: The combined foundation-plus-wingframe is hull-owned structure; radiators and RCS are its payloads.
+next_inputs:
+- Rail section and its gear-leg attachment as drawn (is the rail itself tied to the gear frame, and where)
+- Node geometry at each root, the sleeve/boot outline on the signed skin sections, the stub bulkhead
+- Combined mass/COM and the re-screen
+open:
+- The foundation's own path into the gear is not yet proven; this choice leans on it, so it must be shown
+- Pressure boot material and travel; thermal growth of a 3.2 m frame against the rail (radiator X+ compliance stays)
+scope:
+  active_record_created: false
+  installed_ground_changed: false
