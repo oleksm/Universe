@@ -27,6 +27,18 @@ lid:
   construction: As docs/ships/explorer-coolant-controller-case-construction.yaml - 2 mm 6061 lid on a 1.5 mm backing
     flange, 1 mm conductive silicone (2000 kg/m3), captive M3 at no more than 60 mm along the gasket centreline,
     compression stops
+heat_path_revision:
+  source_task: 20261024T140321-blender-0dff
+  finding: The first trial case sits 103.5 mm from the header front (Y -0.0825); the header front face is only 18 mm
+    wide (X) x 279 mm (Z), its side face 70 mm (Y) x 279 mm (Z). No 100x80 wall touches it.
+  choice: Reseat the case so its heat wall lies flat on the header SIDE face, board 100 mm along Z, the 80 mm board
+    width along Y with at most 10 mm overhang past the 70 mm face. Contact at least 70x100 mm through the 0.5 mm gap pad,
+    about 0.024 K/W, 0.5 K at 20 W. Bolts and inserts as above, in the header side face.
+  rejected: A bridging bracket over the 103.5 mm gap - 6061 at 80x10 mm section is about 0.82 K/W (16 K at 20 W), at
+    40x5 mm about 3.1 K/W (62 K); too hot against a 363 K loop.
+  connector_panel: The case end face grows to carry the whole connector panel; the panel is not trimmed.
+  if_no_room: Report the free space on and around the side face; registry then revises the board shape (e.g. two
+    boards stacked), never a floating or strap-only thermal attachment.
 remaining:
 - Measured packing of board, wire zone and enclosure against the motor case, fan, exchanger and shroud
 - Header pad and insert placement on the drawn exchanger
