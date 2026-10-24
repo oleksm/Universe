@@ -239,3 +239,30 @@ chosen_service_topology_v6:
   - Returnexactnewroster/stock/meshvolume/COMandretiredoldpatchvolumes,allunbuiltjointpartsandfailedcontacts. Noqualifiedpressureseal/operationalacceptancefromzerotrianglehits.
   remaining: Pressure/loadallowables,weld/HAZdesign,fastenergrade/threadengagement/preload,tolerancesandsealmaterial/pressuretestcriteriaremainopen.
     Nominalgapsareasgeometryseeds. Maintainsunknownmission/commanddeferral.
+planar_floor_reconstruction_review:
+  path: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/floor-solid-reconstruction.json
+  sha256: 3d3fa25b9123cf47eadae3599baecfb62ae71fab01662c74ea90a0cd36ce1490
+  source_object: Crew access floor | round opening
+  status: Valid planar candidate reported; whole floor/intent and3Dreturns pending
+  material: material.aluminium-alloy-6061
+  density_kg_m3: 2700
+  vertical_thickness_m: 0.012
+  top_z_m: 1.85
+  baseline_area_m2: 23.6086822458385
+  after_three_patches_area_m2: 21.9434662458385
+  baseline_planar_kg: 764.9213054944292
+  after_three_patches_planar_kg: 710.9683072210408
+  nonmanifold_edges_reported:
+  - 0
+  - 0
+  loop_area_and_mass_independently_checked: true
+  snap_grid_m: 1.0e-06
+  crack_join_tolerance_m: 2.0e-06
+  raw_to_snapped_area_difference_m2: 1.924150383010288e-05
+  remaining:
+  - Circular hatch hole loop contains micron-wide fan slits to outer edges; distinguish source triangulation cracks
+    from intended physical slots before promotion.
+  - Rear sloped transition/returns remain excluded and source-owned; preserve actual top/bottom/rampentry sections.
+  - V6new panel/rim extent differs from earlier three cutpatches; final net floor retirement must use actual chosen
+    joint geometry.
+  - No whole floor mass or source replacement accepted.
