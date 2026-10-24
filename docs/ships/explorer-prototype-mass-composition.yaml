@@ -1,0 +1,30 @@
+status: Countable prototype quantities bound for the Explorer game prototype's whole mass (engine prototype gates);
+  measured drawn material and named allowances only, no physical qualification
+rule: Blender's root recomputes the whole same-material union of the final hull export; that figure is the record's
+  mass. These rows are the bindings it must reproduce, each counted once. Equipment stays external (fit).
+bound:
+- row: base + 92 foundation parts + 8 ground patches
+  kg: 6857.622533287
+  com_m: [1.10081490, -0.00136831, 2.52215364]
+  source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-prototype-composition/foundation-base-spatial.json
+  note: blender 20261024T170714-blender-6d73; patches applied once, no foundation double count
+- row: hidden dry reserves
+  kg: 91.6
+  source: docs/ships/explorer-explicit-hardware-reserve-map.yaml (boxed in docs/ships/explorer-com-allocation-bounds.yaml)
+  tier: invented/review
+- row: interior prototype supports (11 holders)
+  kg: 94.63488343846481        # 395 closed parts 94.6924 plus two floor replacements -0.0575
+  source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-fit-current-study/interior-prototype-supports/handoff.json
+  sha256: 8b54373adf6915393f2866c3a013d0447df9a4258bf4c6c92c8e8d465c544622
+  checks: 23 file hashes match; 0 static and 0 motion hit rows; walker gap 139 mm
+  rule: If the first five holders (220 parts) are already inside the base row, add only the 175 later parts (79.39302 kg)
+    with the two floor replacements - never both
+  task: 20261024T172758-blender-b260
+external:
+- row: 31 equipment (V11 marker-fit payload, fit not hull mass)
+  kg: 1665.9293551044705
+  source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-fit-current-study/native-export-payload-v11/marker-fit-payload.json
+pending:
+- K wing frame and radiator retention (Ships counts base + K at 7340.527 - reconcile against the rows above in the root union)
+- Roof tank cradle at X1.35, comm relocation to X3.9, pipes and harness (RCS branches about 34 kg)
+limits: Pressure, structural, thread and fabrication qualification are limits, not gates
