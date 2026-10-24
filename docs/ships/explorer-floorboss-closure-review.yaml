@@ -61,3 +61,29 @@ composition: Retire exact current service-floor parent once. Add9part evidence o
   adoption.
 limitations: Raw indexed-edge incidence and signed-volume arithmetic independently checked; Boolean cuts/intersections,
   assembly fit, service routes and pressure/load capability not independently replayed.
+v2_outer_attachment:
+  status: Accept four added finite outer fillets as scoped geometry/quantity, completing the previously missing
+    modelled ring/floor attachment; integrated closure not accepted
+  bindings:
+    ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/equipment-v4-floor-boss-closure-v2.json
+    : 043c4001982a4675a99021f7e2983892ab79fb585e39dcb9d944c2a4cbb47a77
+    ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/equipment-v4-floor-boss-closure-v2-meshes.json
+    : cc5b461cca2c6b1bf69837f5d272555524819eae9fc6f533fdd270e14b541e06
+  checks: All5 input hashes and mesh hash pass; original9 objects exact-equal; all13 raw signed volumes positive
+    and match reported values within1e-10m3, indexed edges each incident twice, density2700 arithmetic within1e-6kg.
+    Reported local adjacency/void/contact rows inspected; no independent Boolean or weld-access replay.
+  new_outer_welds_kg: 0.012296165430825297
+  all12_added_parts_gross_kg: 0.589642976674876
+  updated_object_sum_delta_kg: -0.4685962157716602
+  contact_domain: Blender1um translation probes estimate positive ring/floor adjacent face areas; this is finite
+    geometric attachment evidence, not weld strength or original-source global clearance. Current pinned local support/service
+    roster reports no new contacts.
+  remaining: Compose cassette/floorbridge/latest receiver edits into one exact candidate and retire old floor once;
+    current full source/gear/service/crew replay, welding tool/assembly sequence, net material union and wholemass
+    remain pending.
+replay_handoff:
+  ships_file: /home/alexm/.agents/reviews/ships/explorer-functional-20261023/local-interface-replay-gates-20261024.json
+  status: Agreed exact integrated skins/supports/collars/rings, retirement map, exit discs and pivot poses needed;
+    no historicalV4 pass transfer. V2floor subset now available, not the missing whole candidate.
+  drive_dependency: c81cd2739 architecture remains selected; exact stock/fit/synchronization/recovery is Ships task20261024T082054-registry-d2f2.
+    No dimensions or drive acceptance inferred from queued status.
