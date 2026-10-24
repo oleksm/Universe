@@ -1,7 +1,6 @@
 status: Prepared exact ground-stage fields; NOT installed/registered; physical mass still pending
 supersedes: Old formal-stage073396fa/bc1dfc02, firstgroundecfa/e241, correctedground0d96526d/820d0387 are historical.
-  This intake binds V3 lights only. V2 003ed6fd/8572ec5d/67e543ee is now a historical checked parent of V3 lights,
-  not the current candidate.
+  This intake binds V3 lights only. V2 003ed6fd/8572ec5d/67e543ee is a historical checked parent of V3 lights.
 bindings:
   ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v3-lights/mechanism-record-inputs.yaml
   : 7e8fb54744100d188e5e34b638aeaa7b5eb76b8d8a78a52ea27313489e30fa8b
@@ -12,6 +11,7 @@ bindings:
   : b341441762e2eb95c9bbff3f0a7152078b600362c9fb22943ada5b70d7a2605e
   ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v3-lights/export/explorer-hull-open.glb
   : 6eb3dc1f7e868c8bea6b07036bd0c51695e1b94705826d5553703a628df4b063
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v3-lights/export-envelope.json: be3700c0d9970d86d6b3b767f0169755ba768e61a413c48855e03a24e8ff0925
 hull_record_fields:
   model: assets/models/explorer-study.glb
   model_sha256: b341441762e2eb95c9bbff3f0a7152078b600362c9fb22943ada5b70d7a2605e
@@ -169,8 +169,31 @@ hull_record_fields:
   - Authored edited gear is hull-owned; no inherited catalogue landing rating or dynamic contact qualification.
   - Exit marker/state replay is not boarding acceptance; continuous route, terrain contact and actor transfer need
     exact runtime checks.
-physical_pending: No provisional6739.970483+91.6kg promoted. Final material-interface repairs and exact union ledger
-  must supply mass and physicalvolume/dimensions; do not put null or guessed placeholders in an active hull record.
+  physical:
+    length: 11.031919964872138
+    width: 6.534206536726907
+    height: 3.9599998965859413
+    volume: 164.6872837098238
+  basis:
+  - of:
+    - physical.length
+    - physical.width
+    - physical.height
+    tier: derived
+    source: Exact closed export b341441762e2eb95c9bbff3f0a7152078b600362c9fb22943ada5b70d7a2605e; transformed raw
+      POSITION vertices
+    note: Closed/rest axis-aligned dimensions include authored hull-owned gear. Refresh after geometry/export changes.
+  - of:
+    - physical.volume
+    tier: derived
+    review: true
+    source: Same exact closed/rest transformed vertices;3Dconvex clearance envelope
+    note: 'Chosen ground-stage stowage-envelope approximation: convex hull includes concavities and gaps between
+      extremities. Not occupied material volume, cabin/hold capacity, watertight pressure displacement, usable room,
+      swept volume or a collision mesh. No convex remesh replaces any source geometry.'
+physical_pending: Mass remains pending six PTFE/EPDM interface repairs and final reconciled material ledger. Current
+  exact closed dimensions and chosen convex clearance-envelope volume are prepared; all must refresh after final
+  geometry. Provisional6739.970483+91.6kg is not inserted.
 scope: Bare hull ground stage, edited hull-owned gear included. No trial tank/engine/support/roof frames or selected
   equipment. Empty slots/fit/thrusters are intentional. Mechanisms preserve actual V3 lights geometry, including
   original15/10mm hatch motion; separate new10/8mm cassette study is not installed here.
@@ -185,6 +208,31 @@ verification:
   worst_node: Extension compact underside seat -1
   limit: Independent TRS world-matrix replay of two exact exported poses, not mesh/continuous motion, contact, fit,
     pressure or boarding acceptance.
+  closed_envelope:
+    raw_position_vertices: 459381
+    min_gltf:
+    - -3.267108739654822
+    - 0.2200000286102295
+    - -5.111918737324293
+    max_gltf:
+    - 3.2670977970720845
+    - 4.179999925196171
+    - 5.920001227547845
+    source_xyz_extent:
+    - 11.031919964872138
+    - 6.534206536726907
+    - 3.9599998965859413
+    scope: Independent transformed raw POSITION accessor vertices, no accessor min/max shortcut. Closed gear included.
+      Not interior capacity, material union, pressure volume or swept clearance.
+  clearance_envelope:
+    input_raw_vertices: 459381
+    convex_extreme_vertices: 340
+    triangular_facets: 676
+    volume_m3: 164.6872837098238
+    separate_centered_tetrahedral_volume_m3: 164.68728370982342
+    bbox_m3: 285.45597299199153
+    scope: Independent convex-envelope computation with centred tetrahedral arithmetic cross-check; selected approximation
+      only, no source remesh or material/pressure calculation.
 release_sequence:
 - Freeze current pending local PTFE/EPDM/lamp repairs and any boarding geometry changes before final export.
 - Bind complete material assignment, reconciled same-material union and all cross-material resolutions plus separate
