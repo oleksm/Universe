@@ -7,7 +7,7 @@ identity:
   slot: power
   description: "50 kW from hydrogen and oxygen at 55%, its water drinkable: a commuter's power with no reactor aboard. It burns the same hydrolox as the engines, 7 g/s at full, as gas from the hull's tanks; its 41 kW of heat goes to the ship's coolant loop."
 size_class: 1
-fits: mount.power-s1
+fits: mount.power-s1c
 physical:
   mass: 87.8
   volume: 0.2
@@ -42,11 +42,7 @@ basis:
   - { of: [life], rule: rule.life-ship-system }
 # ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
-- {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.97, at: [-6.21, -3.2265, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.power-s1''s socket of the same id, bolted through'}
-- {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.97, at: [6.21, -3.2265, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.power-s1''s socket of the same id, bolted through'}
-- {id: foot-3, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.97, at: [6.21, 3.2265, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.power-s1''s socket of the same id, bolted through'}
-- {id: foot-4, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.97, at: [-6.21, 3.2265, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.power-s1''s socket of the same id, bolted through'}
-- {id: foot-5, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.97, at: [0.0, -3.2265, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.power-s1''s socket of the same id, bolted through'}
-- {id: foot-6, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.97, at: [6.21, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.power-s1''s socket of the same id, bolted through'}
-- {id: foot-7, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.97, at: [0.0, 3.2265, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.power-s1''s socket of the same id, bolted through'}
-- {id: foot-8, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.97, at: [-6.21, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.power-s1''s socket of the same id, bolted through'}
+- {id: foot-1, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 21.95, at: [-0.3556, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
+- {id: foot-2, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 21.95, at: [0.3556, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
+- {id: foot-3, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 21.95, at: [-0.3556, 0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
+- {id: foot-4, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 21.95, at: [0.3556, 0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}

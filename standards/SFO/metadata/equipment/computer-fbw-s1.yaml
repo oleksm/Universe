@@ -7,7 +7,7 @@ identity:
   slot: computer
   description: "Flies the ship by wire: turns the pilot's hand into thruster firings. One sealed 500 x 400 x 250 mm cabinet: three voting computer modules above, the thruster drivers and inertial units below, a conductive base carrying its 200 W into the mount, power and harness connectors at the rear."
 size_class: 1
-fits: mount.computer-s1
+fits: mount.computer-s1c
 physical:
   mass: 30.0
   volume: 0.05

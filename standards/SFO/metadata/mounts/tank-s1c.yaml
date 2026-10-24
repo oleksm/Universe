@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=../../schema/mount.schema.yaml
+# SFO 19. Set round the compact class 1 equipment of this slot (at most 2 m a side, 250 kg) on the list today, with a quarter to spare.
+identity:
+  key: mount.tank-s1c
+  name: "Tank mount, class 1 compact"
+  slot: tank
+  size_class: 1
+  description: "What a compact class 1 tank slot offers (pieces at most 2 m a side and 250 kg), and what fits it."
+envelope:
+  length: 2.13
+  width: 1.99
+  height: 2.07
+bears:
+  mass: 2700.0
+attachment:
+  points: 4
+  pattern: saddles
+  each:
+    tension: 19800.0
+    compression: 19800.0
+    shear: 9920.0
+# (holder and sockets: written by tools/standards/mounting.py)
+holder: adapter
+sockets:
+- id: s1
+  at: [-0.9585, -0.8955, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m10
+  connector: stock.st4340-bolt-m10
+- id: s2
+  at: [0.9585, -0.8955, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m10
+  connector: stock.st4340-bolt-m10
+- id: s3
+  at: [0.9585, 0.8955, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m10
+  connector: stock.st4340-bolt-m10
+- id: s4
+  at: [-0.9585, 0.8955, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m10
+  connector: stock.st4340-bolt-m10
+# (end of mounting.py)
+basis:
+  - { of: [envelope, bears, attachment], rule: rule.mounts-margin }

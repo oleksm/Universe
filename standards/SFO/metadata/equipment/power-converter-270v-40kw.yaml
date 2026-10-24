@@ -10,7 +10,7 @@ identity:
     two connector.hvdc-pole-400a receptacles) and data (connector.circular-shell-11) at its +x end, the coolant pair under it (connector.flat-face-dn13). The connectors'' mass is the routed harness''s (connector.schema physical), not
     the box''s. 97% efficient: at full load it draws 41.24 kW and gives 1.24 kW to the coolant loop.'
 size_class: 1
-fits: mount.utility-s1
+fits: mount.utility-s1c
 physical:
   mass: 20.0
   volume: 0.02

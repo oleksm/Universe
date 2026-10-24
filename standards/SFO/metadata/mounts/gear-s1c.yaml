@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../schema/mount.schema.yaml
+# SFO 19. Set round the compact class 1 equipment of this slot (at most 2 m a side, 250 kg) on the list today, with a quarter to spare.
+identity:
+  key: mount.gear-s1c
+  name: "Landing gear mount, class 1 compact"
+  slot: gear
+  size_class: 1
+  description: "What a compact class 1 landing gear slot offers (pieces at most 2 m a side and 250 kg), and what fits it."
+envelope:
+  length: 0.44
+  width: 0.44
+  height: 1.76
+bears:
+  mass: 238.0
+  landing: 225000.0
+attachment:
+  points: 3
+  pattern: trunnion
+  each:
+    tension: 77300.0
+    compression: 77300.0
+    shear: 38700.0
+# (holder and sockets: written by tools/standards/mounting.py)
+holder: adapter
+sockets:
+- id: s1
+  at: [0.099, -0.198, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m16
+  connector: stock.st4340-bolt-m16
+- id: s2
+  at: [0.099, 0.198, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m16
+  connector: stock.st4340-bolt-m16
+- id: s3
+  at: [-0.198, 0.0, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.insert-m16
+  connector: stock.st4340-bolt-m16
+# (end of mounting.py)
+feeds:
+  power: 1000.0
+basis:
+  - { of: [envelope, bears, attachment, feeds], rule: rule.mounts-margin }

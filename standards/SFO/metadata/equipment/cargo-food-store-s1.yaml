@@ -7,7 +7,7 @@ identity:
   slot: cargo
   description: "A larder: racks and sealed bins holding a tonne of food of any kind sold as food (market.food), part of it chilled. 1,000 kg is 667 person-days at need.food's 1.5 kg a day. A rack of two columns of four sealed bins, one of the eight chilled; eight corner mount pads, four at the base and four at the top."
 size_class: 1
-fits: mount.cargo-s1
+fits: mount.cargo-s1c
 physical:
   mass: 150
   volume: 3.6
@@ -42,14 +42,10 @@ basis:
   - { of: [life], rule: rule.life-ship-system }
 # ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
-- {id: foot-1, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 18.75, at: [-1.5705, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
-- {id: foot-2, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 18.75, at: [1.5705, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
-- {id: foot-3, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 18.75, at: [1.5705, 0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
-- {id: foot-4, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 18.75, at: [-1.5705, 0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
-- {id: foot-5, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 18.75, at: [0.0, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
-- {id: foot-6, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 18.75, at: [1.5705, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
-- {id: foot-7, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 18.75, at: [0.0, 0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
-- {id: foot-8, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 18.75, at: [-1.5705, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 37.5, at: [-0.7425, -0.594, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1c''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 37.5, at: [0.7425, -0.594, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1c''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 37.5, at: [0.7425, 0.594, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1c''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 37.5, at: [-0.7425, 0.594, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1c''s socket of the same id, bolted through'}
 - {id: dc-in, flow: in, medium: power, interface: interface.circular-shell-17, half: male, make: manual, connector: connector.circular-shell-17, voltage: 28.0, current: 7.14, power: 200.0, channel: dc-28v, pins: [{contact: '1', role: plus}, {contact: '2', role: minus}, {contact: '3', role: earth}, {contact: '4', role: spare}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.75, 0.037, 0.6], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}
 - {id: data-1, flow: both, medium: signal, interface: interface.circular-shell-11, half: female, make: manual, connector: connector.circular-shell-11, channel: can-a, pins: [{contact: '1', role: signal-high}, {contact: '2', role: signal-low}, {contact: '3', role: return}, {contact: '4', role: screen}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.75, -0.004, 0.6], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}
 - {id: data-2, flow: both, medium: signal, interface: interface.circular-shell-11, half: female, make: manual, connector: connector.circular-shell-11, channel: can-a, pins: [{contact: '1', role: signal-high}, {contact: '2', role: signal-low}, {contact: '3', role: return}, {contact: '4', role: screen}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.75, -0.041, 0.6], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}

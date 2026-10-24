@@ -7,7 +7,7 @@ identity:
   slot: sensors
   description: "A laser rangefinder looking down: the ground's distance from 5 km to touchdown, to a tenth of a metre. What the pilot lands by in the last hundred metres; the radar's 500 km is not for that."
 size_class: 1
-fits: mount.sensors-s1
+fits: mount.sensors-s1c
 physical:
   mass: 8
   volume: 0.009
@@ -43,10 +43,8 @@ basis:
   - { of: [life], rule: rule.life-ship-system }
 # ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
-- {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 2.0, at: [-1.98, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.sensors-s1''s socket of the same id, bolted through'}
-- {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 2.0, at: [1.98, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.sensors-s1''s socket of the same id, bolted through'}
-- {id: foot-3, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 2.0, at: [1.98, 0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.sensors-s1''s socket of the same id, bolted through'}
-- {id: foot-4, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 2.0, at: [-1.98, 0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.sensors-s1''s socket of the same id, bolted through'}
+- {id: foot-1, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 4.0, at: [-0.127, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
+- {id: foot-2, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 4.0, at: [0.127, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
 - {id: dc-in, flow: in, medium: power, interface: interface.circular-shell-17, half: male, make: manual, connector: connector.circular-shell-17, voltage: 28.0, current: 1.43, power: 40.0, channel: dc-28v, pins: [{contact: '1', role: plus}, {contact: '2', role: minus}, {contact: '3', role: earth}, {contact: '4', role: spare}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.15, 0.037, 0.06], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}
 - {id: data-1, flow: both, medium: signal, interface: interface.circular-shell-11, half: female, make: manual, connector: connector.circular-shell-11, channel: can-a, pins: [{contact: '1', role: signal-high}, {contact: '2', role: signal-low}, {contact: '3', role: return}, {contact: '4', role: screen}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.15, -0.004, 0.06], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}
 - {id: data-2, flow: both, medium: signal, interface: interface.circular-shell-11, half: female, make: manual, connector: connector.circular-shell-11, channel: can-a, pins: [{contact: '1', role: signal-high}, {contact: '2', role: signal-low}, {contact: '3', role: return}, {contact: '4', role: screen}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.15, -0.041, 0.06], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}

@@ -7,7 +7,7 @@ identity:
   slot: life_support
   description: "A lithium hydroxide cartridge with a fan: takes up two people's carbon dioxide for twelve hours, then the cartridge is pulled from the front and swapped. No oxygen of its own: fit a bottle (tank.oxygen) for the air they breathe."
 size_class: 1
-fits: mount.life-support-s1
+fits: mount.life-support-s1c
 physical:
   mass: 8.7
   volume: 0.036
@@ -46,7 +46,7 @@ basis:
   - { of: [life], rule: rule.life-ship-system }
 # ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
-- {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 2.17, at: [-1.0395, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.life-support-s1''s socket of the same id, bolted through'}
-- {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 2.17, at: [1.0395, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.life-support-s1''s socket of the same id, bolted through'}
-- {id: foot-3, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 2.17, at: [1.0395, 0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.life-support-s1''s socket of the same id, bolted through'}
-- {id: foot-4, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 2.17, at: [-1.0395, 0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.life-support-s1''s socket of the same id, bolted through'}
+- {id: foot-1, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 2.17, at: [-0.1778, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
+- {id: foot-2, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 2.17, at: [0.1778, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
+- {id: foot-3, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 2.17, at: [-0.1778, 0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
+- {id: foot-4, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 2.17, at: [0.1778, 0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}

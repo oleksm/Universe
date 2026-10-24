@@ -13,28 +13,28 @@ basis:
   tier: invented
   review: true
 sockets:                        # name, kind, size, mount, count; zone is a requirement on Blender's receiver placement
-- {names: [main_port, main_starboard], kind: engine, size: 1, mount: mount.engine-s1,
+- {names: [main_port, main_starboard], kind: engine, size: 1, mount: mount.engine-s1c,
    zone: 'Aft, thrust axis along the nose (the source frame''s nose is -X, so the push is toward -X), symmetric about the centreline'}
-- {names: [lift_port, lift_starboard], kind: engine, size: 1, mount: mount.engine-s1,
+- {names: [lift_port, lift_starboard], kind: engine, size: 1, mount: mount.engine-s1c,
    zone: 'Belly, thrust up, symmetric about the centreline, authored at X 1.12 from the bare hull COM 1.118 (Ships
      socket-authoring-station-guidance.json). A loaded COM band cannot be promised before a player fits it; hover trim
      with a given loadout is the shipyard''s check, not a socket claim'}
-- {names: [rcs_fore_port, rcs_fore_starboard, rcs_aft_port, rcs_aft_starboard], kind: engine, size: 1, mount: mount.engine-s1,
+- {names: [rcs_fore_port, rcs_fore_starboard, rcs_aft_port, rcs_aft_starboard], kind: engine, size: 1, mount: mount.engine-s1c,
    zone: 'Four hull extremities, fore and aft on each side, as far from the COM as the hull allows; exterior, plumes clear of
      the skin and gear for a block up to 0.4 m'}
-- {names: [tank_1, tank_2], kind: tank, size: 1, mount: mount.tank-s1,
+- {names: [tank_1, tank_2], kind: tank, size: 1, mount: mount.tank-s1c,
    zone: 'Near the bare COM (X 1.12) so a propellant burn shifts it least (the burn-shift finding of c5207d9b8)'}
-- {names: [power_1, power_2], kind: power, size: 1, mount: mount.power-s1, zone: Interior, serviceable}
-- {names: [computer], kind: computer, size: 1, mount: mount.computer-s1, zone: Interior}
-- {names: [avionics], kind: avionics, size: 1, mount: mount.avionics-s1, zone: Interior}
-- {names: [transponder], kind: transponder, size: 1, mount: mount.transponder-s1, zone: Interior or exterior, antenna clear}
+- {names: [power_1, power_2], kind: power, size: 1, mount: mount.power-s1c, zone: Interior, serviceable}
+- {names: [computer], kind: computer, size: 1, mount: mount.computer-s1c, zone: Interior}
+- {names: [avionics], kind: avionics, size: 1, mount: mount.avionics-s1c, zone: Interior}
+- {names: [transponder], kind: transponder, size: 1, mount: mount.transponder-s1c, zone: Interior or exterior, antenna clear}
 - {names: [comm], kind: comm, size: 1, mount: mount.comm-s1, zone: Exterior or roof, clear sky view}
-- {names: [sensor_belly_1, sensor_belly_2], kind: sensors, size: 1, mount: mount.sensors-s1,
+- {names: [sensor_belly_1, sensor_belly_2], kind: sensors, size: 1, mount: mount.sensors-s1c,
    zone: 'Belly, looking down past the gear (camera and altimeter class)'}
-- {names: [life_support], kind: life_support, size: 1, mount: mount.life-support-s1, zone: Inside the pressure hull}
-- {names: [thermal_ext_1, thermal_ext_2, thermal_ext_3, thermal_ext_4], kind: thermal, size: 1, mount: mount.thermal-s1,
+- {names: [life_support], kind: life_support, size: 1, mount: mount.life-support-s1c, zone: Inside the pressure hull}
+- {names: [thermal_ext_1, thermal_ext_2, thermal_ext_3, thermal_ext_4], kind: thermal, size: 1, mount: mount.thermal-s1c,
    zone: 'Exterior, both faces to sky where possible: four radiators of 2.37 kW at night cover the about 7.7 kW load'}
-- {names: [thermal_int_1, thermal_int_2], kind: thermal, size: 1, mount: mount.thermal-s1, zone: Interior (coolant loop, air cooler)}
+- {names: [thermal_int_1, thermal_int_2], kind: thermal, size: 1, mount: mount.thermal-s1c, zone: Interior (coolant loop, air cooler)}
 total: 25
 not_offered:
 - command - the owner deferred the command seat and dashboard; no socket, no datum (future reservation only)
@@ -43,5 +43,8 @@ not_offered:
 per_socket_evidence: As the contract - stable id, hull-owned receiver geometry with measured bearing lands (rule.joint-bearing-evidence),
   exact mount_<name> rigid frame in the accepted hull frame, structural path and clearances, bare mass delta and new GLB sha.
   Receiver strength stays 'unknown' until qualified; no product foot rating reused.
-gap: equipment.engine.cg.outboard-s1 fits no mount, so no socket takes it; a player's attitude block is the engine.cg.s1
-  class on mount.engine-s1. Whether the outboard pod gets mount.engine-s1 is a separate product question.
+compact_mounts: 'Re-based 2026-10-24 on the compact class 1 mounts (mount.<kind>-s1c, rule.mounts-margin): the size-1 mounts were
+  sized by the class''s largest piece and did not fit the hull (ship-check.socket-qualification S3/S4). Comm stays on
+  mount.comm-s1 (its products are 3 m dishes). Checked with tools/standards/ship_qualify.py: S3/S4 pass; a trial fit of
+  CHS1, cold gas, outboard RCS, 0.5 t hydrolox, 100 kg N2, fuel cell, battery, FBW, nav, transponder, comm, camera,
+  altimeter, LS s0, radiators, coolant loop and air cooler passes F3/F4; only S5 (mount_ markers) waits on Blender.'

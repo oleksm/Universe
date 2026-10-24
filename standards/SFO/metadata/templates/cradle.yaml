@@ -9,7 +9,7 @@ draws: model
 scales_by:
 - physical
 reference: adapter.access-s1
-members: 56
+members: 62
 model_requests:
 - work: rig
   because: 'Hold v1: exported port-node local +Y does not match registry facing. Correct all 14 frames and verify positions and +Y directions directly from raw GLB world matrices; source/reimport checks alone missed the export-axis

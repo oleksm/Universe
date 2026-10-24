@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../schema/mount.schema.yaml
+# SFO 19. Set round the compact class 1 equipment of this slot (at most 2 m a side, 250 kg) on the list today, with a quarter to spare.
+identity:
+  key: mount.life-support-s1c
+  name: "Life support mount, class 1 compact"
+  slot: life_support
+  size_class: 1
+  description: "What a compact class 1 life support slot offers (pieces at most 2 m a side and 250 kg), and what fits it."
+envelope:
+  length: 0.88
+  width: 0.66
+  height: 0.66
+bears:
+  mass: 188.0
+attachment:
+  points: 4
+  pattern: corners
+  each:
+    tension: 1380.0
+    compression: 1380.0
+    shear: 690.0
+# (holder and sockets: written by tools/standards/mounting.py)
+holder: deck
+sockets:
+- id: s1
+  at: [-0.381, -0.125, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.deck-track
+- id: s2
+  at: [0.381, -0.125, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.deck-track
+- id: s3
+  at: [-0.381, 0.125, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.deck-track
+- id: s4
+  at: [0.381, 0.125, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.deck-track
+# (end of mounting.py)
+feeds:
+  power: 2500.0
+basis:
+  - { of: [envelope, bears, attachment, feeds], rule: rule.mounts-margin }

@@ -116,6 +116,20 @@ recipes:
     quantity: 0.0003
   rate: 0.5
   power: 1500000.0
+- makes: stock.kit-adapter-cargo-s1c
+  does: Tube and plate are cut, jigged and welded; inserts are set and lugs bored; each cradle is proof loaded.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.0228
+  - item: stock.st4340-bar-120
+    quantity: 0.0072
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0298
+  - item: stock.st4340-scrap
+    quantity: 0.0002
+  rate: 0.5
+  power: 1500000.0
 - makes: stock.kit-adapter-cargo-s2
   does: Tube and plate are cut, jigged and welded; inserts are set and lugs bored; each cradle is proof loaded.
   inputs:
@@ -173,6 +187,20 @@ recipes:
   rate: 0.5
   power: 1500000.0
 - makes: stock.kit-adapter-command-s1
+  does: Tube and plate are cut, jigged and welded; inserts are set and lugs bored; each cradle is proof loaded.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.0094
+  - item: stock.st4340-bar-120
+    quantity: 0.0206
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0294
+  - item: stock.st4340-scrap
+    quantity: 0.0006
+  rate: 0.5
+  power: 1500000.0
+- makes: stock.kit-adapter-command-s1c
   does: Tube and plate are cut, jigged and welded; inserts are set and lugs bored; each cradle is proof loaded.
   inputs:
   - item: stock.al6061-pl-5
@@ -270,6 +298,20 @@ recipes:
     quantity: 0.0045
   rate: 0.5
   power: 1500000.0
+- makes: stock.kit-adapter-engine-s1c
+  does: Tube and plate are cut, jigged and welded; inserts are set and lugs bored; each cradle is proof loaded.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.017
+  - item: stock.st4340-bar-120
+    quantity: 0.013
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0296
+  - item: stock.st4340-scrap
+    quantity: 0.0004
+  rate: 0.5
+  power: 1500000.0
 - makes: stock.kit-adapter-engine-s2
   does: Tube and plate are cut, jigged and welded; inserts are set and lugs bored; each cradle is proof loaded.
   inputs:
@@ -348,6 +390,20 @@ recipes:
     quantity: 0.0291
   - item: stock.st4340-scrap
     quantity: 0.0009
+  rate: 0.5
+  power: 1500000.0
+- makes: stock.kit-adapter-gear-s1c
+  does: Tube and plate are cut, jigged and welded; inserts are set and lugs bored; each cradle is proof loaded.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.021
+  - item: stock.st4340-bar-120
+    quantity: 0.009
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0297
+  - item: stock.st4340-scrap
+    quantity: 0.0003
   rate: 0.5
   power: 1500000.0
 - makes: stock.kit-adapter-gear-s2
@@ -652,6 +708,20 @@ recipes:
     quantity: 0.0002
   rate: 0.5
   power: 1500000.0
+- makes: stock.kit-adapter-tank-s1c
+  does: Tube and plate are cut, jigged and welded; inserts are set and lugs bored; each cradle is proof loaded.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.02
+  - item: stock.st4340-bar-120
+    quantity: 0.01
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0297
+  - item: stock.st4340-scrap
+    quantity: 0.0003
+  rate: 0.5
+  power: 1500000.0
 - makes: stock.kit-adapter-tank-s2
   does: Tube and plate are cut, jigged and welded; inserts are set and lugs bored; each cradle is proof loaded.
   inputs:
@@ -706,6 +776,20 @@ recipes:
     quantity: 0.0299
   - item: stock.st4340-scrap
     quantity: 0.0001
+  rate: 0.5
+  power: 1500000.0
+- makes: stock.kit-adapter-thermal-s1c
+  does: Tube and plate are cut, jigged and welded; inserts are set and lugs bored; each cradle is proof loaded.
+  inputs:
+  - item: stock.al6061-pl-5
+    quantity: 1.0044
+  - item: stock.st4340-bar-120
+    quantity: 0.0256
+  outputs:
+  - item: stock.al6061-scrap
+    quantity: 0.0293
+  - item: stock.st4340-scrap
+    quantity: 0.0007
   rate: 0.5
   power: 1500000.0
 - makes: stock.kit-adapter-thermal-s2

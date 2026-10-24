@@ -7,7 +7,7 @@ identity:
   slot: avionics
   description: "Navigation aids for docking and landing in one sealed case: the computer and a receiver board, power, data and sensor ports at the rear, a conductive base that carries its 100 W into the mount. It has no heads of its own: it reads the ship's sensors (altimeter, camera, radar), which are their own equipment, as the full nav computer does."
 size_class: 1
-fits: mount.avionics-s1
+fits: mount.avionics-s1c
 physical:
   mass: 15.0
   volume: 0.03

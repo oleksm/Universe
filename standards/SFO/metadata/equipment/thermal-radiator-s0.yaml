@@ -7,7 +7,7 @@ identity:
   slot: thermal
   description: "A 2 m2 panel at 330 K: 2.4 kW to space from both faces. A fixed fin, no hinge: it stands out from the hull on its root edge, where its two headers, feet and capped coolant inlet and outlet are, so both dark faces see space. In air it also convects, a little more; heat to the air is the air cooler's job. For a cabin's and a pack's heat."
 size_class: 1
-fits: mount.thermal-s1
+fits: mount.thermal-s1c
 physical:
   mass: 40
   volume: 0.1
@@ -40,7 +40,7 @@ basis:
   - { of: [life], rule: rule.life-ship-system }
 # ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
-- {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.0, at: [-3.1005, -1.548, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1''s socket of the same id, bolted through'}
-- {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.0, at: [3.1005, -1.548, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1''s socket of the same id, bolted through'}
-- {id: foot-3, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.0, at: [3.1005, 1.548, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1''s socket of the same id, bolted through'}
-- {id: foot-4, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.0, at: [-3.1005, 1.548, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1''s socket of the same id, bolted through'}
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.0, at: [-0.99, -0.495, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1c''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.0, at: [0.99, -0.495, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1c''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.0, at: [0.99, 0.495, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1c''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.0, at: [-0.99, 0.495, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1c''s socket of the same id, bolted through'}

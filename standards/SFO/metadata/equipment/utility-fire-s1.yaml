@@ -7,7 +7,7 @@ identity:
   slot: utility
   description: "One closed cabinet on the wall of a pressurised room: a smoke-sampling grille and heat pickup in front, two outlet nozzles, and inside a bottle of clean agent and its controller. It floods the room when it senses a fire. One in each pressurised room."
 size_class: 1
-fits: mount.utility-s1
+fits: mount.utility-s1c
 physical:
   mass: 25
   volume: 0.045

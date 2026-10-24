@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: stock.kit-adapter-engine-s1c
+  code: KIT-ADAPTER-ENGINE-S1C
+  name: Engine cradle, class 1 compact
+  traded_as: market.machinery
+  form: piece
+package: package.crate-steel
+made_from:
+- item: material.aluminium-alloy-6061
+- item: material.high-strength-steel-4340
+size:
+  length: 2.1
+  width: 2.08
+  height: 0.18
+supplies:
+  item: adapter.engine-s1c
+physical:
+  mass: 30.9
+basis:
+- of:
+  - size
+  - physical.mass
+  tier: derived
+  note: One adapter.engine-s1c, as made.

@@ -7,7 +7,7 @@ identity:
   slot: transponder
   description: "Says who the ship is: one sealed unit on the hull skin, a 200 x 150 x 130 mm case with a 40 mm radome over its patch aerial on the outer face, four base lugs, power and data at the rear."
 size_class: 1
-fits: mount.transponder-s1
+fits: mount.transponder-s1c
 physical:
   mass: 3.0
   volume: 0.005

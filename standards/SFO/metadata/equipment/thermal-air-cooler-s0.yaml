@@ -7,7 +7,7 @@ identity:
   slot: thermal
   description: "A finned core with a fan: 20 kW from the coolant loop to the air, where there is air (of 0.3 kg/m3 or more); nothing in vacuum. A commuter on a world with air cools this way and carries a small radiator for the dock. A box housing with the finned core across its front face and one guarded fan at the rear drawing air through it; four bolted feet, two capped coolant ports and a power port at the rear."
 size_class: 1
-fits: mount.thermal-s1
+fits: mount.thermal-s1c
 physical:
   mass: 15
   volume: 0.06
@@ -41,10 +41,10 @@ basis:
   - { of: [life], rule: rule.life-ship-system }
 # ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
-- {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 3.75, at: [-3.1005, -1.548, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1''s socket of the same id, bolted through'}
-- {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 3.75, at: [3.1005, -1.548, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1''s socket of the same id, bolted through'}
-- {id: foot-3, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 3.75, at: [3.1005, 1.548, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1''s socket of the same id, bolted through'}
-- {id: foot-4, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 3.75, at: [-3.1005, 1.548, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1''s socket of the same id, bolted through'}
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 3.75, at: [-0.99, -0.495, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1c''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 3.75, at: [0.99, -0.495, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1c''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 3.75, at: [0.99, 0.495, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1c''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 3.75, at: [-0.99, 0.495, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1c''s socket of the same id, bolted through'}
 - {id: dc-in, flow: in, medium: power, interface: interface.circular-shell-17, half: male, make: manual, connector: connector.circular-shell-17, voltage: 28.0, current: 14.29, power: 400.0, channel: dc-28v, pins: [{contact: '1', role: plus}, {contact: '2', role: minus}, {contact: '3', role: earth}, {contact: '4', role: spare}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.25, 0.037, 0.09], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}
 - {id: data-1, flow: both, medium: signal, interface: interface.circular-shell-11, half: female, make: manual, connector: connector.circular-shell-11, channel: can-a, pins: [{contact: '1', role: signal-high}, {contact: '2', role: signal-low}, {contact: '3', role: return}, {contact: '4', role: screen}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.25, -0.004, 0.09], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}
 - {id: data-2, flow: both, medium: signal, interface: interface.circular-shell-11, half: female, make: manual, connector: connector.circular-shell-11, channel: can-a, pins: [{contact: '1', role: signal-high}, {contact: '2', role: signal-low}, {contact: '3', role: return}, {contact: '4', role: screen}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.25, -0.041, 0.09], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}

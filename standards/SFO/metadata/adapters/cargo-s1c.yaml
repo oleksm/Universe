@@ -1,0 +1,180 @@
+# yaml-language-server: $schema=../../schema/adapter.schema.yaml
+# Written by tools/standards/mounting.py: change it there.
+identity:
+  key: adapter.cargo-s1c
+  name: Cargo cradle, class 1 compact
+  description: 'Holds what fits mount.cargo-s1c on a ship''s frame: 2 6061 tube 100 x 2 mm beams over the frame''s struts, 1 m or more apart, clamped at the middle of every 1 m, 4 cross tubes, the mount''s 4 sockets on top.'
+offers: mount.cargo-s1c
+rating:
+  tension: 42400.0
+  compression: 42400.0
+  shear: 21160.0
+physical:
+  length: 2.1
+  width: 2.1
+  height: 0.2
+  mass: 28.54
+built_of:
+- what: Beams
+  item: material.aluminium-alloy-6061
+  mass: 6.65
+  note: 2 of 6061 tube 100 x 2 mm, 2.0 m each
+- what: Cross tubes
+  item: material.aluminium-alloy-6061
+  mass: 19.75
+  note: 4 of 6061 tube 100 x 3 mm, 2.0 m each at x [-1.0, -0.743, 0.743, 1.0]; untrimmed stock mass, fishmouth deductions pending
+- what: Socket pads and inserts
+  item: material.high-strength-steel-4340
+  mass: 0.2
+  note: 4 4340 pads, each an M10 insert; pad thickness 0.01 m, crosses lowered by that thickness with fishmouth seats to retain socket face z 0.2; joints unqualified
+- what: Fixing lugs
+  item: material.aluminium-alloy-6061
+  mass: 1.94
+  note: 4 6061 lugs, a strut clamp bolted to each
+ports:
+- id: s1
+  flow: in
+  medium: load
+  interface: interface.insert-m10
+  half: female
+  make: bolted
+  at:
+  - -0.7425
+  - -0.594
+  - 0.2
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: the mount's socket, an M10 insert (bolt stock.st4340-bolt-m10); spare when no foot is on it
+- id: s2
+  flow: in
+  medium: load
+  interface: interface.insert-m10
+  half: female
+  make: bolted
+  at:
+  - 0.7425
+  - -0.594
+  - 0.2
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: the mount's socket, an M10 insert (bolt stock.st4340-bolt-m10); spare when no foot is on it
+- id: s3
+  flow: in
+  medium: load
+  interface: interface.insert-m10
+  half: female
+  make: bolted
+  at:
+  - 0.7425
+  - 0.594
+  - 0.2
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: the mount's socket, an M10 insert (bolt stock.st4340-bolt-m10); spare when no foot is on it
+- id: s4
+  flow: in
+  medium: load
+  interface: interface.insert-m10
+  half: female
+  make: bolted
+  at:
+  - -0.7425
+  - 0.594
+  - 0.2
+  facing:
+  - 0.0
+  - 0.0
+  - 1.0
+  optional: true
+  note: the mount's socket, an M10 insert (bolt stock.st4340-bolt-m10); spare when no foot is on it
+- id: fix-1
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 367.1
+  force: 10600.0
+  at:
+  - -0.5
+  - -1.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-2
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 367.1
+  force: 10600.0
+  at:
+  - 0.5
+  - -1.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-3
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 367.1
+  force: 10600.0
+  at:
+  - -0.5
+  - 1.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+- id: fix-4
+  flow: out
+  medium: load
+  interface: interface.kit-clamp
+  half: male
+  make: bolted
+  mass: 367.1
+  force: 10600.0
+  at:
+  - 0.5
+  - 1.0
+  - 0.0
+  facing:
+  - 0.0
+  - 0.0
+  - -1.0
+  note: clamped onto the strut under it at the middle of a 1 m segment
+template: template.cradle
+basis:
+- of:
+  - built_of
+  - physical
+  - ports
+  tier: derived
+  review: true
+  note: 'By the cradle rule in tools/standards/mounting.py: tubes chosen for the mount''s points times 1.5 in bending (cross tubes 5.1 kN m, beams 4.0 kN m); fixings'' duty the mount''s mass and points shared evenly, a placeholder:
+    a design''s duty comes from the stiffness model. Review-pending (docs/proposals/physical-mounts.md): chosen, not approved.'
+- of:
+  - rating
+  tier: derived
+  note: The mount's 4 points (mount.cargo-s1c).

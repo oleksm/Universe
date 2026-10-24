@@ -7,7 +7,7 @@ identity:
   slot: utility
   description: "Two centrifugal pumps side by side on one skid, piped in parallel: together 20 kg/s of water or coolant against 1 MPa, 10 kg/s each; if one fails the other carries half. Each has its own motor and guarded coupling; one sealed control box serves both. Inlets and outlets 80 mm, capped until the hull connects them; power at the rear; four feet. For liquids near room temperature: water, coolant, storable fuels; not for cryogens."
 size_class: 1
-fits: mount.utility-s1
+fits: mount.utility-s1c
 physical:
   mass: 250
   volume: 0.36

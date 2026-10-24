@@ -9,7 +9,7 @@ identity:
     a trunnion at the mount, a 0.4 m square pad on a ball joint, and an enclosed geared retraction drive beside the trunnion that swings the leg up and locks it. Folded, it lies in the hull''s gear bay; the bay is the hull''s, not the
     leg''s.'
 size_class: 1
-fits: mount.gear-s1
+fits: mount.gear-s1c
 physical:
   mass: 190
   volume: 0.256
@@ -99,9 +99,9 @@ basis:
     it settles with a damping ratio about 0.48. A real oleo is nonlinear (gas spring, orifice damping).'
 # ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
-- {id: foot-1, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 63.33, at: [0.2178, -0.4356, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gear-s1''s socket of the same id, bolted through'}
-- {id: foot-2, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 63.33, at: [0.2178, 0.4356, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gear-s1''s socket of the same id, bolted through'}
-- {id: foot-3, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 63.33, at: [-0.4356, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gear-s1''s socket of the same id, bolted through'}
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 63.33, at: [0.099, -0.198, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gear-s1c''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 63.33, at: [0.099, 0.198, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gear-s1c''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 63.33, at: [-0.198, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gear-s1c''s socket of the same id, bolted through'}
 - {id: dc-in, flow: in, medium: power, interface: interface.circular-shell-25, half: male, make: manual, connector: connector.circular-shell-25, voltage: 28.0, current: 28.57, power: 800.0, channel: dc-28v, pins: [{contact: A, role: plus}, {contact: B, role: minus}, {contact: C, role: earth}, {contact: D, role: spare}], at: [-0.2, 0.037, 0.48], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}
 - {id: data-1, flow: both, medium: signal, interface: interface.circular-shell-11, half: female, make: manual, connector: connector.circular-shell-11, channel: can-a, pins: [{contact: '1', role: signal-high}, {contact: '2', role: signal-low}, {contact: '3', role: return}, {contact: '4', role: screen}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.2, -0.009, 0.48], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}
 - {id: data-2, flow: both, medium: signal, interface: interface.circular-shell-11, half: female, make: manual, connector: connector.circular-shell-11, channel: can-a, pins: [{contact: '1', role: signal-high}, {contact: '2', role: signal-low}, {contact: '3', role: return}, {contact: '4', role: screen}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.2, -0.046, 0.48], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}

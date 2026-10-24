@@ -9,7 +9,7 @@ identity:
   description: 'Where a ship''s 270 V DC bus branches: fed from its converter by a pole pair or a circular shell 33 or 25 (whichever the converter has, all three on one bus bar), 8 ways of shell 25 (55 A), 2 ways of shell 33 (120 A)
     out, each through its own solid-state breaker, and the control bus through. Up to 108 kW on its bus bar. The connectors'' mass is the routed harness''s, not the board''s.'
 size_class: 1
-fits: mount.utility-s1
+fits: mount.utility-s1c
 physical:
   mass: 11.0
   volume: 0.0262

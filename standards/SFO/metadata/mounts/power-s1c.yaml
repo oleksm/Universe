@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schema/mount.schema.yaml
+# SFO 19. Set round the compact class 1 equipment of this slot (at most 2 m a side, 250 kg) on the list today, with a quarter to spare.
+identity:
+  key: mount.power-s1c
+  name: "Power plant mount, class 1 compact"
+  slot: power
+  size_class: 1
+  description: "What a compact class 1 power plant slot offers (pieces at most 2 m a side and 250 kg), and what fits it."
+envelope:
+  length: 0.88
+  width: 0.55
+  height: 0.55
+bears:
+  mass: 250.0
+attachment:
+  points: 4
+  pattern: corners
+  each:
+    tension: 1840.0
+    compression: 1840.0
+    shear: 919.0
+# (holder and sockets: written by tools/standards/mounting.py)
+holder: deck
+sockets:
+- id: s1
+  at: [-0.381, -0.125, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.deck-track
+- id: s2
+  at: [0.381, -0.125, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.deck-track
+- id: s3
+  at: [-0.381, 0.125, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.deck-track
+- id: s4
+  at: [0.381, 0.125, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.deck-track
+# (end of mounting.py)
+feeds:
+  cooling: 51100.0
+  fuel: 3.29e-10
+basis:
+  - { of: [envelope, bears, attachment, feeds], rule: rule.mounts-margin }

@@ -7,7 +7,7 @@ identity:
   slot: access
   description: "A hatch that holds a cabin's pressure across it, either way, with a window: a hole vents one compartment, not the ship. The studio's doors between compartments are these. A frame 1.0 m wide, 1.9 m tall and 0.1 m deep around an 0.8 by 1.7 m clear opening; a hollow aluminium leaf (two skins on ribs) swings on three hinges and seats on a seal in the frame; six dogs round its edge drive out into the frame, so pressure on either face is held (from one side by the seat, from the other by the dogs). A small window, retained in the leaf. To open: retract the dogs, then swing. Rest pose: closed and dogged."
 size_class: 1
-fits: mount.access-s1
+fits: mount.access-s1c
 physical:
   mass: 90
   volume: 0.19
@@ -39,11 +39,5 @@ basis:
   - { of: [life], rule: rule.life-ship-system }
 # ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
-- {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 11.25, at: [1.485, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s1''s socket of the same id, bolted through'}
-- {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 11.25, at: [1.0501, 1.0501, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s1''s socket of the same id, bolted through'}
-- {id: foot-3, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 11.25, at: [0.0, 1.485, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s1''s socket of the same id, bolted through'}
-- {id: foot-4, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 11.25, at: [-1.0501, 1.0501, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s1''s socket of the same id, bolted through'}
-- {id: foot-5, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 11.25, at: [-1.485, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s1''s socket of the same id, bolted through'}
-- {id: foot-6, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 11.25, at: [-1.0501, -1.0501, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s1''s socket of the same id, bolted through'}
-- {id: foot-7, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 11.25, at: [0.0, -1.485, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s1''s socket of the same id, bolted through'}
-- {id: foot-8, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 11.25, at: [1.0501, -1.0501, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s1''s socket of the same id, bolted through'}
+- {id: foot-1, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 45.0, at: [-0.4318, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
+- {id: foot-2, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 45.0, at: [0.4318, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}

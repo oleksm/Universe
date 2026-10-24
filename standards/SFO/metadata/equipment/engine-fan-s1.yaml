@@ -7,7 +7,7 @@ identity:
   slot: engine
   description: "An electric fan in a 1 m duct: 10 kN in air of 1.2 kg/m3 for 0.97 MW, nothing burnt. Its thrust falls with the cube root of the air's density at the same power; below 0.3 kg/m3 it is not rated."
 size_class: 1
-fits: mount.engine-s1
+fits: mount.engine-s1c
 physical:
   mass: 73.8
   volume: 1.15
@@ -54,11 +54,11 @@ basis:
   - { of: [function.heat_to_hull], tier: derived, review: true, note: "The motor and inverter lose about 8% of the electrical power as heat in the hull (0.92 efficient); electrical power is jet power / 0.75, so that is 0.107 of the jet power, the share lib.jet_heat counts. The duct's own losses go to the air it moves, not the hull." }
 # ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
-- {id: foot-1, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 9.22, force: 1250.0, at: [1.485, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1''s socket of the same id, bolted through'}
-- {id: foot-2, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 9.22, force: 1250.0, at: [1.0501, 1.0501, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1''s socket of the same id, bolted through'}
-- {id: foot-3, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 9.22, force: 1250.0, at: [0.0, 1.485, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1''s socket of the same id, bolted through'}
-- {id: foot-4, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 9.22, force: 1250.0, at: [-1.0501, 1.0501, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1''s socket of the same id, bolted through'}
-- {id: foot-5, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 9.22, force: 1250.0, at: [-1.485, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1''s socket of the same id, bolted through'}
-- {id: foot-6, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 9.22, force: 1250.0, at: [-1.0501, -1.0501, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1''s socket of the same id, bolted through'}
-- {id: foot-7, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 9.22, force: 1250.0, at: [0.0, -1.485, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1''s socket of the same id, bolted through'}
-- {id: foot-8, flow: out, medium: load, interface: interface.insert-m30, half: male, make: bolted, mass: 9.22, force: 1250.0, at: [1.0501, -1.0501, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1''s socket of the same id, bolted through'}
+- {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 9.22, force: 1250.0, at: [0.594, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1c''s socket of the same id, bolted through'}
+- {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 9.22, force: 1250.0, at: [0.42, 0.42, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1c''s socket of the same id, bolted through'}
+- {id: foot-3, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 9.22, force: 1250.0, at: [0.0, 0.594, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1c''s socket of the same id, bolted through'}
+- {id: foot-4, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 9.22, force: 1250.0, at: [-0.42, 0.42, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1c''s socket of the same id, bolted through'}
+- {id: foot-5, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 9.22, force: 1250.0, at: [-0.594, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1c''s socket of the same id, bolted through'}
+- {id: foot-6, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 9.22, force: 1250.0, at: [-0.42, -0.42, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1c''s socket of the same id, bolted through'}
+- {id: foot-7, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 9.22, force: 1250.0, at: [0.0, -0.594, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1c''s socket of the same id, bolted through'}
+- {id: foot-8, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 9.22, force: 1250.0, at: [0.42, -0.42, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1c''s socket of the same id, bolted through'}

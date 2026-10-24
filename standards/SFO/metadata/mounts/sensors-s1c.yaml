@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../schema/mount.schema.yaml
+# SFO 19. Set round the compact class 1 equipment of this slot (at most 2 m a side, 250 kg) on the list today, with a quarter to spare.
+identity:
+  key: mount.sensors-s1c
+  name: "Sensor mount, class 1 compact"
+  slot: sensors
+  size_class: 1
+  description: "What a compact class 1 sensor slot offers (pieces at most 2 m a side and 250 kg), and what fits it."
+envelope:
+  length: 0.33
+  width: 0.22
+  height: 0.165
+bears:
+  mass: 10.0
+attachment:
+  points: 4
+  pattern: corners
+  each:
+    tension: 73.5
+    compression: 73.5
+    shear: 36.8
+# (holder and sockets: written by tools/standards/mounting.py)
+holder: deck
+sockets:
+- id: s1
+  at: [-0.127, -0.125, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.deck-track
+- id: s2
+  at: [0.127, -0.125, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.deck-track
+- id: s3
+  at: [-0.127, 0.125, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.deck-track
+- id: s4
+  at: [0.127, 0.125, 0.0]
+  facing: [0.0, 0.0, 1.0]
+  interface: interface.deck-track
+# (end of mounting.py)
+feeds:
+  power: 50.0
+basis:
+  - { of: [envelope, bears, attachment, feeds], rule: rule.mounts-margin }

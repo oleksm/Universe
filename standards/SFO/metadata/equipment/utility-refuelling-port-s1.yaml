@@ -7,7 +7,7 @@ identity:
   slot: utility
   description: "A connection through the hull for taking one liquid aboard or giving it out: water, liquid oxygen or liquid methane, set when it is fitted. Not hydrogen, not gas. A 125 mm vacuum-jacketed dry-break coupling behind a hinged door."
 size_class: 1
-fits: mount.utility-s1
+fits: mount.utility-s1c
 physical:
   mass: 82
   volume: 0.144

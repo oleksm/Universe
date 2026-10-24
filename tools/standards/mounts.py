@@ -23,7 +23,9 @@ NAMES = {"power": "power plant", "drive": "main drive", "thrusters": "thruster",
          "avionics": "avionics", "gear": "landing gear", "access": "access", "handling": "handling", "thermal": "thermal", "command": "command station", "engine": "engine"}
 PATTERN = {"drive": ("ring", 8), "thrusters": ("ring", 4), "lift": ("ring", 6), "tank": ("saddles", 4), "gear": ("trunnion", 3), "hardpoint": ("ring", 4), "access": ("ring", 8), "thermal": ("corners", 4), "engine": ("ring", 8)}
 M, DESIGN_G = 1.25, 3 * 9.80665
-CARRIES = ("tank", "rack", "ore_bay", "store")   # kinds whose capacity is kg they hold: the mount bears the thing full
+CARRIES = ("tank", "rack", "ore_bay", "store")
+COMPACT_SIDE, COMPACT_MASS = 2.0, 250.0   # a class-1 piece at most 2 m a side and 250 kg dry gets a compact mount (rule.mounts-margin)
+compact = lambda d: d.get("size_class") == 1 and max(d["physical"].get(k) or 0 for k in ("length", "width", "height")) <= COMPACT_SIDE and d["physical"]["mass"] <= COMPACT_MASS   # kinds whose capacity is kg they hold: the mount bears the thing full
 
 
 def main():
@@ -33,6 +35,8 @@ def main():
         d = yaml.safe_load(open(f)); i = d["identity"]
         if i.get("slot") and d.get("size_class"):
             eq.setdefault((i["slot"], d["size_class"]), []).append(d)
+            if compact(d):
+                eq.setdefault((i["slot"], "1c"), []).append(d)
     slots = set()
     for f in glob.glob(S + "metadata/hulls/*.yaml"):
         for sl in yaml.safe_load(open(f)).get("slots") or []:
@@ -40,7 +44,10 @@ def main():
 
     def figures(kind, cls):
         here = eq.get((kind, cls))
-        near = next(((c, eq[(kind, c)]) for c in sorted(range(1, 5), key=lambda c: abs(c - cls)) if (kind, c) in eq), None)
+        if cls == "1c":
+            near = None
+        else:
+            near = next(((c, eq[(kind, c)]) for c in sorted(range(1, 5), key=lambda c: abs(c - cls)) if (kind, c) in eq), None)
         base, k = (here, 1.0) if here else (near[1], 2.0 ** (cls - near[0])) if near else ([], 1.0)
         if not base:
             return None, 1.0, None
@@ -57,14 +64,14 @@ def main():
                 "moment": g(lambda d: fnk(d).get("moment", 0)) * k}, k, here is not None
 
     n = 0
-    for kind, cls in sorted(set(eq) | slots):
+    for kind, cls in sorted(set(eq) | slots, key=lambda kc: (kc[0], str(kc[1]))):
         fig, k, exact = figures(kind, cls)
         if fig is None:
             continue
         slug = f"{kind.replace('_', '-')}-s{cls}"; key = f"mount.{slug}"
-        name = f"{NAMES.get(kind, kind).capitalize()} mount, class {cls}"
-        s = (f"# yaml-language-server: $schema=../../schema/mount.schema.yaml\n# SFO 19. {'Set round the equipment of this slot and class on the list today, with a quarter to spare.' if exact else 'No equipment of this class is on the list: scaled from the nearest class, twice the volume a class.'}\n"
-             f"identity:\n  key: {key}\n  name: {q(name)}\n  slot: {kind}\n  size_class: {cls}\n  description: {q('What a class ' + str(cls) + ' ' + NAMES.get(kind, kind) + ' slot offers, and what fits it.')}\n")
+        name = f"{NAMES.get(kind, kind).capitalize()} mount, class {cls}" if cls != "1c" else f"{NAMES.get(kind, kind).capitalize()} mount, class 1 compact"
+        s = (f"# yaml-language-server: $schema=../../schema/mount.schema.yaml\n# SFO 19. {('Set round the compact class 1 equipment of this slot (at most 2 m a side, 250 kg) on the list today, with a quarter to spare.' if cls == '1c' else 'Set round the equipment of this slot and class on the list today, with a quarter to spare.') if exact else 'No equipment of this class is on the list: scaled from the nearest class, twice the volume a class.'}\n"
+             f"identity:\n  key: {key}\n  name: {q(name)}\n  slot: {kind}\n  size_class: {1 if cls == '1c' else cls}\n  description: {q(('What a compact class 1 ' + NAMES.get(kind, kind) + ' slot offers (pieces at most 2 m a side and 250 kg), and what fits it.') if cls == '1c' else ('What a class ' + str(cls) + ' ' + NAMES.get(kind, kind) + ' slot offers, and what fits it.'))}\n")
         s += f"envelope:\n  length: {r(fig['L'] * 1.1)!r}\n  width: {r(fig['W'] * 1.1)!r}\n  height: {r(fig['H'] * 1.1)!r}\nbears:\n  mass: {r(fig['mass'] * M)!r}\n"
         if fig["thrust"]: s += f"  thrust: {r(fig['thrust'] * M)!r}\n"
         if fig["recoil"]: s += f"  recoil: {r(fig['recoil'] * M)!r}\n"
@@ -87,9 +94,15 @@ def main():
     # equipment fits a mount; a hull's slots offer one
     for f in sorted(glob.glob(E + "*.yaml")):
         s = open(f).read(); d = yaml.safe_load(s); i = d["identity"]
-        if not i.get("slot") or not d.get("size_class") or "\nfits:" in s:
+        if not i.get("slot") or not d.get("size_class"):
             continue
-        key = f"mount.{i['slot'].replace('_', '-')}-s{d['size_class']}"
+        base = f"mount.{i['slot'].replace('_', '-')}-s{d['size_class']}"
+        key = base + "c" if compact(d) else base
+        if "\nfits:" in s:
+            if d.get("fits") in (base, base + "c") and d["fits"] != key:   # only the generator's own choice moves
+                s = re.sub(r"^fits: .*$", f"fits: {key}", s, count=1, flags=re.M)
+                yaml.safe_load(s); open(f, "w").write(s)
+            continue
         s, k = re.subn(r"^size_class: (\d)\n", lambda m: m.group(0) + f"fits: {key}\n", s, count=1, flags=re.M)
         yaml.safe_load(s); open(f, "w").write(s)
     for f in glob.glob(S + "metadata/hulls/*.yaml"):

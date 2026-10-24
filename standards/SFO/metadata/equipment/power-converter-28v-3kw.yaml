@@ -10,7 +10,7 @@ identity:
     connector.circular-shell-33 receptacles) and data (connector.circular-shell-11) at its +x end, the coolant pair under it (connector.flat-face-dn6). The connectors'' mass is the routed harness''s (connector.schema physical), not
     the box''s. 93% efficient: at full load it draws 3.23 kW and gives 0.23 kW to the coolant loop.'
 size_class: 1
-fits: mount.utility-s1
+fits: mount.utility-s1c
 physical:
   mass: 5.0
   volume: 0.006

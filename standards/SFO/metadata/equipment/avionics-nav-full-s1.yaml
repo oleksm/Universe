@@ -7,7 +7,7 @@ identity:
   slot: avionics
   description: "Navigation aids in one sealed case: two stacked trays, the navigation computer above and the inertial unit and receivers below, power and data at the rear, a conductive base that carries its 140 W into the mount. It has no heads of its own: it reads the ship's sensors (altimeter, camera, radar), which are their own equipment."
 size_class: 1
-fits: mount.avionics-s1
+fits: mount.avionics-s1c
 physical:
   mass: 20.0
   volume: 0.04
