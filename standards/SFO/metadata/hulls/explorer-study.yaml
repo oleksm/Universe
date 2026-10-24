@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/hull.schema.yaml
 model: assets/models/explorer-study.glb
-model_sha256: 5ba56b39d25098985064ff5839f5fe37cfd8c7178b4fcff68453cb6fb9184d24
+model_sha256: 4daa9ff55e273cd33140f625ba167c6f8b21686d30d51d28b1e209636ea3a6f4
 mechanisms:
 - key: rear_ramp
   kind: ramp
@@ -145,7 +145,32 @@ identity:
   class: Uncommissioned ground stage
   description: Bare Explorer ground stage with hull-owned edited landing gear and authored rear ramp, belly hatch
     and folding ladder. No command station, propulsion or fitted equipment; flight is not commissioned.
-slots: []
+slots:
+- {name: power_1, kind: power, size: 1, mount: mount.power-s1c}
+- {name: power_2, kind: power, size: 1, mount: mount.power-s1c}
+- {name: life_support, kind: life_support, size: 1, mount: mount.life-support-s1c}
+- {name: computer, kind: computer, size: 1, mount: mount.computer-s1c}
+- {name: avionics, kind: avionics, size: 1, mount: mount.avionics-s1c}
+- {name: transponder, kind: transponder, size: 1, mount: mount.transponder-s1c}
+- {name: thermal_int_1, kind: thermal, size: 1, mount: mount.thermal-s1c}
+- {name: thermal_int_2, kind: thermal, size: 1, mount: mount.thermal-s1c}
+- {name: main_port, kind: engine, size: 1, mount: mount.engine-s1c}
+- {name: lift_port, kind: engine, size: 1, mount: mount.engine-s1c}
+- {name: rcs_fore_port, kind: engine, size: 1, mount: mount.engine-s1c}
+- {name: rcs_aft_port, kind: engine, size: 1, mount: mount.engine-s1c}
+- {name: main_starboard, kind: engine, size: 1, mount: mount.engine-s1c}
+- {name: lift_starboard, kind: engine, size: 1, mount: mount.engine-s1c}
+- {name: rcs_fore_starboard, kind: engine, size: 1, mount: mount.engine-s1c}
+- {name: rcs_aft_starboard, kind: engine, size: 1, mount: mount.engine-s1c}
+- {name: sensor_belly_1, kind: sensors, size: 1, mount: mount.sensors-s1c}
+- {name: sensor_belly_2, kind: sensors, size: 1, mount: mount.sensors-s1c}
+- {name: thermal_ext_1, kind: thermal, size: 1, mount: mount.thermal-s1c}
+- {name: thermal_ext_2, kind: thermal, size: 1, mount: mount.thermal-s1c}
+- {name: thermal_ext_3, kind: thermal, size: 1, mount: mount.thermal-s1c}
+- {name: thermal_ext_4, kind: thermal, size: 1, mount: mount.thermal-s1c}
+- {name: comm, kind: comm, size: 1, mount: mount.comm-s1}
+- {name: tank_1, kind: tank, size: 1, mount: mount.tank-s1c}
+- {name: tank_2, kind: tank, size: 1, mount: mount.tank-s1c}
 fit: []
 thrusters: []
 flight:
@@ -197,7 +222,7 @@ basis:
   tier: derived
   source: 5ba56b39d25098985064ff5839f5fe37cfd8c7178b4fcff68453cb6fb9184d24
   note: Exact closed/rest GLB transformed raw POSITION vertices, including static hull-owned gear. Refresh after
-    export changes.
+    export changes. Unchanged in 4daa9ff5 (socket markers added only; binary geometry identical).
 - of:
   - physical.volume
   tier: derived
@@ -215,6 +240,8 @@ basis:
   source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/mechanism-record-inputs.yaml
   note: Exact5ba56b39closed/2e55f0caopen bytes;6parent-local root targets replay1076world node matrices within5.916e-7.
     Declared terrain/exit states need exact runtime acceptance.
+    Socket-only export 2026-10-24 - closed 4daa9ff5 / open c64b3594 (blender socket-only-v1 manifest) - the same 1076
+    nodes and binary geometry plus 25 mount_<slot> nodes; mechanism bindings carry over unchanged.
 - of:
   - identity.class
   - slots
@@ -223,5 +250,8 @@ basis:
   - flight.frame_material
   tier: invented
   review: true
-  note: Owner-authorized bare ground-stage scope. Empty slots,fit,thrusters deliberate;6061material assignment from
-    prototype stock schedule. No propulsion/equipment/strength/mission ratings invented.
+  note: Owner-authorized hull-and-sockets scope (ship-rule.scope 1.1.1). 25 logical shipyard sockets on compact
+    class 1 mounts (docs/ships/explorer-socket-inventory.yaml), each an exact mount_<slot> node on existing structure, 0 mm
+    holder offset; fit and thrusters empty - players fit modules in the shipyard. tools/standards/ship.py validate passes
+    on the export. 6061 material assignment from prototype stock schedule. No propulsion/equipment/strength/mission
+    ratings invented.
