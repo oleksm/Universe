@@ -116,6 +116,9 @@ pub struct ClassSpec {
     /// Propellants of its own, apart from its fuel (cold nitrogen beside hydrolox): a ship of this class draws
     /// them through its device state (`Ship::own_propellants`).
     pub propellants: Vec<crate::ship_devices::Propellant>,
+    /// Its batteries: drawn down where its plant can't carry its draw, recharged from its spare, through its device
+    /// state (`Ship::own_propellants`).
+    pub batteries: Vec<crate::ship_devices::Battery>,
     /// The fitted motion packages drawn at rest, held still, as (slot, item) (`pose: rest` on its record's fit:
     /// that item in that slot only; nothing moves them, nothing physical is claimed). Any other is refused.
     pub rest: Vec<(String, String)>,
@@ -674,8 +677,16 @@ impl ClassSpec {
         let hyper_top = modules().filter_map(|m| if let Does::Hyperdrive { top_speed, .. } = m.does { Some(top_speed) } else { None }).fold(0.0, f64::max);
         let plant_efficiency = modules().filter_map(|m| if let Does::PowerPlant { output, efficiency, .. } = m.does { Some(output * efficiency) } else { None }).sum::<f64>() / power_output.max(1e-9);
         let power_draw: f64 = modules().map(|m| m.power).sum();
-        if validate_install && power_draw > power_output {
-            return Err(format!("its modules draw {:.1} MW, its plant makes {:.1} MW", power_draw / 1e6, power_output / 1e6));
+        let batteries: Vec<crate::ship_devices::Battery> = modules()
+            .filter_map(|m| match m.does {
+                Does::Battery { stores, rate, efficiency, heat_capacity, max_temperature } => Some(crate::ship_devices::Battery { capacity: stores, rate, efficiency, heat_capacity, max_temperature }),
+                _ => None,
+            })
+            .collect();
+        // (What its batteries can give the bus at once: their rate, less what heats them.)
+        let battery_rate: f64 = batteries.iter().map(|b| b.rate).sum();
+        if validate_install && power_draw > power_output + battery_rate {
+            return Err(format!("its modules draw {:.1} kW, its plant makes {:.1} kW and its batteries give {:.1} kW at most", power_draw / 1e3, power_output / 1e3, battery_rate / 1e3));
         }
         let comm = modules().find_map(|m| m.does.comm()).unwrap_or(crate::modules::Comm { capture: 0.0, link: 0.0, lag: 0.0, capacity: 0.0 });
         let (turn_rate, roll_rate) = modules()
@@ -738,6 +749,24 @@ impl ClassSpec {
             }
         }
         let mut limits = Vec::new();
+        if power_draw > power_output {
+            let stored: f64 = batteries.iter().map(|b| b.capacity * b.efficiency).sum();
+            limits.push(format!(
+                "on its batteries: its modules draw {:.2} kW over its plant's {:.2} kW; {:.0} min on a full charge, then no power",
+                power_draw / 1e3,
+                power_output / 1e3,
+                stored / (power_draw - power_output) / 60.0
+            ));
+        }
+        for (slot, m) in &fitted {
+            match m.does {
+                Does::Radiator { rejects, .. } => limits.push(format!("{} ({}): carried; {:.1} kW of heat rejection not simulated (the ship's heat isn't)", slot.name, m.key, rejects / 1e3)),
+                Does::Inert { slot: SlotKind::Thermal } => limits.push(format!("{} ({}): carried, not simulated", slot.name, m.key)),
+                Does::Camera { .. } => limits.push(format!("{} ({}): a camera; nothing shows its picture yet", slot.name, m.key)),
+                Does::Altimeter { .. } => limits.push(format!("{} ({}): an altimeter; nothing reads it yet", slot.name, m.key)),
+                _ => {}
+            }
+        }
         for (slot, m) in &fitted {
             if let Does::Engine { thrust, exhaust, throttle, gimbal, pressure_fed, heat_to_hull, .. } = m.does {
                 let at = format!("{} ({})", slot.name, m.key);
@@ -846,6 +875,7 @@ impl ClassSpec {
             commissioned: validate_install,
             mechanisms: None,
             propellants,
+            batteries,
             rest: Vec::new(),
             radius: frame.radius,
             drag_area: frame.drag_area,
@@ -1250,11 +1280,11 @@ impl Ship {
     /// A class with propellants of its own (`ClassSpec::propellants`) draws them through device state: given one,
     /// full, if it has none (a ship already configured keeps its own).
     pub fn own_propellants(&mut self) {
-        let propellants = self.spec().propellants.clone();
-        if self.devices.is_some() || propellants.is_empty() {
+        let (propellants, batteries) = (self.spec().propellants.clone(), self.spec().batteries.clone());
+        if self.devices.is_some() || (propellants.is_empty() && batteries.is_empty()) {
             return;
         }
-        let fit = crate::ship_devices::Fit { propellants, ..Default::default() };
+        let fit = crate::ship_devices::Fit { propellants, batteries, ..Default::default() };
         if let Err(e) = self.configure_devices(fit, 1.0, crate::heat::AMBIENT) {
             log::warn!("{}: its own propellants: {e}", self.spec().key);
         }

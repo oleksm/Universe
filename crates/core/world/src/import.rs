@@ -397,6 +397,43 @@ mod tests {
         assert_eq!(crate::ship::rest_slots(&h), vec![("gear_0".to_string(), h.fit[at].item.clone())]);
     }
 
+    /// The MC-07 refitted on its record: a battery its only power, a camera its sensor. Drawing past the pack's rate:
+    /// refused; within it: commissioned on the battery (its endurance stated), its radiators carried; running drains
+    /// the pack, and a flat one leaves it dark however it's switched.
+    #[test]
+    fn import_battery_powers_by_its_charge_then_goes_dark() {
+        let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../../assets/models/mc07.glb");
+        let Ok(bytes) = std::fs::read(path) else { return };
+        let mut h = crate::registry::registry().hull("hull.mc-07").unwrap().clone();
+        for f in &mut h.fit {
+            match f.slot.as_str() {
+                "power" => f.item = "equipment.power.battery.s1".into(),
+                "sensors" => f.item = "equipment.sensors.camera.s1".into(),
+                _ => {}
+            }
+        }
+        // (Its torch, hyperdrive and lift together draw past the pack's rate: refused, a stage.)
+        let over = hull_from_record(&bytes, "assets/models/mc07.glb", Some(&h)).unwrap();
+        assert!(!over.commissioned && over.limits[0].contains("batteries give 1000.0 kW at most"), "{}", over.limits[0]);
+        h.fit.retain(|f| f.slot != "hyperdrive" && f.slot != "lift");
+        let spec = hull_from_record(&bytes, "assets/models/mc07.glb", Some(&h)).unwrap();
+        assert!(spec.commissioned, "{:?}", spec.limits);
+        assert!(spec.limits.iter().any(|l| l.starts_with("on its batteries")) && spec.batteries.len() == 1);
+        assert!(spec.fit.iter().any(|(_, m)| matches!(content().get(*m).does, crate::modules::Does::Radiator { .. })), "radiators carried");
+        let draw = spec.power_draw;
+        let mut ship = crate::Ship::with_spec(std::sync::Arc::new(spec), DVec3::ZERO, DVec3::ZERO, glam::DQuat::IDENTITY);
+        ship.powered = true;
+        ship.throttle = 1.0;
+        let pack = |s: &crate::Ship| s.devices.as_ref().unwrap().packs[0].energy;
+        let full = pack(&ship);
+        ship.drive(None, 1.0, true);
+        ship.burn(1.0);
+        assert!(full - pack(&ship) >= draw * 0.99 && ship.jets.iter().any(|&j| j > 0.0), "drained by its draw, and flying");
+        ship.devices.as_mut().unwrap().packs[0].energy = 0.0;
+        ship.drive(None, 1.0, true);
+        assert!(ship.jets.iter().all(|&j| j == 0.0), "flat: dark");
+    }
+
     /// A model with no nozzle at all: refused unregistered; registered (its record names it), a stage built
     /// uncommissioned (through the real importer), no nozzle made up.
     #[test]

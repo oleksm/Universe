@@ -12,7 +12,7 @@ pub struct Fan {
     pub min_density: f64,
     pub reference_density: f64,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Battery {
     pub capacity: f64,
     pub rate: f64,
@@ -265,6 +265,13 @@ impl State {
             .zip(&mut self.packs)
             .zip(&self.pack_w)
         {
+            if *w < 0. {
+                // (Taken in: what reaches its cells, the rest heat.)
+                let taken = -w * dt;
+                p.energy = (p.energy + taken * b.efficiency).min(b.capacity);
+                p.temperature += taken * (1. - b.efficiency) / b.heat_capacity;
+                continue;
+            }
             let used = (w * dt / b.efficiency).min(p.energy).max(0.);
             p.energy -= used;
             p.temperature += used * (1. - b.efficiency) / b.heat_capacity;
@@ -402,6 +409,20 @@ impl State {
                 }
             })
             .collect();
+        // (Nothing drawn from them: the plant's spare recharges them, each at up to its rate and what it has room
+        // for (negative: taken in), its fuel burned for it.)
+        if from_pack <= 0. {
+            let mut spare = (plant - from_plant - self.capacitor_w).max(0.);
+            for ((b, p), w) in self.fit.batteries.iter().zip(&self.packs).zip(self.pack_w.iter_mut()) {
+                let room = ((b.capacity - p.energy).max(0.) / dt).min(b.rate).min(spare);
+                *w = -room;
+                spare -= room;
+            }
+            let charging: f64 = -self.pack_w.iter().filter(|w| **w < 0.).sum::<f64>();
+            if per_kg > 0. {
+                self.plant_fuel_rate += charging / per_kg;
+            }
+        }
     }
 }
 
@@ -462,14 +483,18 @@ impl Ship {
         let mut ts = crate::trim::thrusters(spec, &self.trim).into_owned();
         let per_kg =
             crate::materials::material(&spec.fuel).map_or(0., |m| m.energy) * spec.plant_efficiency;
-        let fan_share = if self.powered {
+        // (Powered as switched, and only while its plant and batteries can carry its modules' draw: a flat pack and
+        // no plant leaves it dark, whatever the switch says.)
+        let carried = (if per_kg > 0. { spec.power_output.min(self.fuel / dt * per_kg) } else { 0. }) + state.available(dt).iter().sum::<f64>();
+        let powered = self.powered && carried + 1e-9 >= spec.power_draw;
+        let fan_share = if powered {
             let plant = if per_kg > 0. { spec.power_output.min(self.fuel / dt * per_kg) } else { 0. };
             state.fan_share(plant + state.available(dt).iter().sum::<f64>(), spec.power_draw)
         } else {
             1.
         };
-        state.effective(&mut ts, self.fuel, self.powered, fan_share);
-        let cap_w = if self.powered && !self.hyperdrive {
+        state.effective(&mut ts, self.fuel, powered, fan_share);
+        let cap_w = if powered && !self.hyperdrive {
             ((spec.capacitor_capacity - self.energy).max(0.) / dt).min(spec.capacitor_rate)
         } else {
             0.
@@ -494,11 +519,11 @@ impl Ship {
         });
         self.jets.resize(ts.len(), 0.);
         if self.manual && push {
-            crate::flight_control::manual(&ts, body, self.held, self.powered, dt, &mut self.jets);
+            crate::flight_control::manual(&ts, body, self.held, powered, dt, &mut self.jets);
         } else {
             // No translational request needs no envelope. Angular control still
             // uses the live allocator below. Never solve disabled hardware.
-            let a = if self.powered && push && (self.throttle > 0. || self.rcs != DVec3::ZERO) {
+            let a = if powered && push && (self.throttle > 0. || self.rcs != DVec3::ZERO) {
                 state.authority(&ts, body)
             } else {
                 Authority { main: 0., lift: 0., side: 0. }
@@ -517,7 +542,7 @@ impl Ship {
                     force,
                     want_rates: want,
                     drive: Some(level),
-                    enabled: self.powered,
+                    enabled: powered,
                 },
                 dt,
                 &mut self.jets,
@@ -529,9 +554,9 @@ impl Ship {
             &mut self.jets,
             dt,
             self.fuel,
-            if self.powered { output } else { 0. },
+            if powered { output } else { 0. },
             per_kg,
-            if self.powered { draw } else { 0. },
+            if powered { draw } else { 0. },
             cap_w,
             fan_share,
         );

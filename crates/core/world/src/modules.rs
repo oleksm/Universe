@@ -47,6 +47,19 @@ pub enum Does {
     /// `resolves`: how far it makes out a rock, for its size (m per m), and
     /// `survey_range` the farthest it looks (m): 0, it doesn't survey.
     Sensors { range: f64, resolves: f64, survey_range: f64 },
+    /// A camera the pilot sees by where there's no window (its picture `field_of_view` rad across). A sensor (it
+    /// fills the base block); nothing shows its picture yet.
+    Camera { field_of_view: f64 },
+    /// A landing sensor: the ground's distance below, out to `range` m, to `accuracy` m. A sensor (it fills the base
+    /// block); nothing reads it yet.
+    Altimeter { range: f64, accuracy: f64 },
+    /// A battery: stores `stores` J, gives or takes at most `rate` W, `efficiency` of what leaves its cells reaching
+    /// the bus (the rest heats it: `heat_capacity` J/K, cut off at `max_temperature` K). Drawn down where the plant
+    /// can't carry the draw, recharged from its spare (`ship_devices`); never more than it holds.
+    Battery { stores: f64, rate: f64, efficiency: f64, heat_capacity: f64, max_temperature: f64 },
+    /// A radiator: throws off `rejects` W at `temperature` K. Carried (its mass counted); the ship's heat isn't
+    /// simulated yet (its `limits` says so).
+    Radiator { rejects: f64, temperature: f64 },
     /// A comm (the hypernet, `docs/hypernet.md`): it hears what happens within
     /// `capture` (m), links to another comm within `link` (m; the shorter of
     /// the two decides), passes a message on after `lag` (s), and handles
@@ -121,6 +134,8 @@ pub enum SlotKind {
     Command,
     /// An engine (SFO 22): one instance a slot, driving the nozzles its hull's record binds to it.
     Engine,
+    /// Heat (SFO 20 fittings): radiators, and the loops and exchangers carried with them.
+    Thermal,
     /// Landing gear (SFO 15): a leg's product. Its fit is carried (mass, model); the legs the ground meets are
     /// the hull's (`ground::struts`), its motion not made.
     Gear,
@@ -133,7 +148,8 @@ impl SlotKind {
         use SlotKind as G;
         match k {
             // (Fittings, SFO 20: ways in and out, bulk handling, heat. No game slot kind for them yet: not made.)
-            R::Access | R::Handling | R::Thermal => None,
+            R::Access | R::Handling => None,
+            R::Thermal => Some(G::Thermal),
             R::Engine => Some(G::Engine),
             R::Gear => Some(G::Gear),
             R::Command => Some(G::Command),
@@ -189,6 +205,15 @@ impl Does {
         }
     }
 
+    /// Carried where a hull's record fits it, priced or not (unpriced: at 0, never sold for that): command stations,
+    /// legs, engines, the avionics and power and heat fittings a lander needs that the shops don't stock.
+    pub fn carried(&self) -> bool {
+        matches!(
+            self,
+            Does::Inert { slot: SlotKind::Command | SlotKind::Gear | SlotKind::Thermal } | Does::Engine { .. } | Does::Camera { .. } | Does::Altimeter { .. } | Does::Battery { .. } | Does::Radiator { .. }
+        )
+    }
+
     /// The kind of slot it goes in.
     pub fn slot(&self) -> SlotKind {
         match self {
@@ -204,7 +229,9 @@ impl Does {
             Does::Hyperdrive { .. } => SlotKind::Hyperdrive,
             Does::FlightComputer { .. } => SlotKind::Computer,
             Does::Transponder => SlotKind::Transponder,
-            Does::Sensors { .. } => SlotKind::Sensors,
+            Does::Sensors { .. } | Does::Camera { .. } | Does::Altimeter { .. } => SlotKind::Sensors,
+            Does::Battery { .. } => SlotKind::Power,
+            Does::Radiator { .. } => SlotKind::Thermal,
             Does::Comm { .. } => SlotKind::Comm,
             Does::GateRelay { .. } | Does::HyperRelay { .. } => SlotKind::Relay,
             Does::LifeSupport => SlotKind::LifeSupport,
@@ -305,7 +332,7 @@ impl Module {
 
     pub(crate) fn check(&self) -> Result<(), String> {
         // (A carried command station or leg, unpriced, is at 0: never sold.)
-        let carried = matches!(self.does, Does::Inert { slot: SlotKind::Command | SlotKind::Gear } | Does::Engine { .. });
+        let carried = self.does.carried();
         for (what, v) in [("mass", self.mass), ("volume", self.volume), ("price", self.price)] {
             if what == "price" && carried && v == 0.0 {
                 continue;
@@ -330,7 +357,13 @@ impl Module {
             Does::Tank { capacity, .. } | Does::Rack { capacity } => positive("capacity", *capacity),
             Does::Cabin { seats } => positive("seats", *seats as f64),
             Does::FlightComputer { turn_rate, roll_rate } => positive("turn_rate", *turn_rate).and(positive("roll_rate", *roll_rate)),
-            Does::Sensors { range, .. } => positive("range", *range),
+            Does::Sensors { range, .. } | Does::Altimeter { range, .. } => positive("range", *range),
+            Does::Camera { field_of_view } => positive("field_of_view", *field_of_view),
+            Does::Battery { stores, rate, efficiency, heat_capacity, max_temperature } => positive("stores", *stores)
+                .and(positive("rate", *rate))
+                .and(positive("heat_capacity", *heat_capacity))
+                .and(positive("max_temperature", *max_temperature))
+                .and(if *efficiency > 0.0 && *efficiency <= 1.0 { Ok(()) } else { Err(format!("efficiency must be in 0..1 ({efficiency})")) }),
             Does::Comm { capture, link, lag, capacity } => positive("capture", *capture).and(positive("link", *link)).and(positive("capacity", *capacity)).and(if lag.is_finite() && *lag >= 0.0 { Ok(()) } else { Err(format!("lag can't be negative ({lag})")) }),
             Does::GateRelay { lag, capacity, .. } | Does::HyperRelay { lag, capacity, .. } => positive("capacity", *capacity).and(if lag.is_finite() && *lag >= 0.0 { Ok(()) } else { Err(format!("lag can't be negative ({lag})")) }),
             Does::Hyperdrive { efficiency, top_speed } => positive("top_speed", *top_speed).and(if *efficiency > 0.0 && *efficiency <= 1.0 { Ok(()) } else { Err(format!("efficiency must be in 0..1 ({efficiency})")) }),
@@ -351,7 +384,18 @@ impl Module {
     /// slots retain their physical fitting but grant no function. None if their
     /// registry slot is absent or not represented by the fitter yet.
     pub fn from_record(e: &crate::registry::Equipment, price: f64) -> Option<Self> {
-        let does = e.function.handle(&mut Kinds).or_else(|| {
+        let does = e.function.handle(&mut Kinds).and_then(|d| match d {
+            // (A battery's heat from its physical record: its mass times its specific heat, and its limit. Without
+            // them it can't be run honestly: carried inert.)
+            Does::Battery { stores, rate, efficiency, .. } => match (e.physical.specific_heat, e.physical.operating_max_temperature, e.physical.mass) {
+                (Some(c), Some(t), Some(m)) => Some(Does::Battery { stores, rate, efficiency, heat_capacity: c * m, max_temperature: t }),
+                _ => {
+                    log::warn!("{}: a battery without its specific heat, operating limit or mass; carried inert", e.identity.key);
+                    None
+                }
+            },
+            d => Some(d),
+        }).or_else(|| {
             Some(Does::Inert { slot: SlotKind::from_record(e.identity.slot?)? })
         })?;
         let inert = matches!(does, Does::Inert { .. });
@@ -419,6 +463,20 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
     }
     fn sensors(&mut self, it: &r::EquipmentFunctionSensors) -> Self::Out {
         Some(Does::Sensors { range: it.range, resolves: it.resolves.unwrap_or(0.0), survey_range: it.survey_range.unwrap_or(0.0) })
+    }
+    fn camera(&mut self, it: &r::EquipmentFunctionCamera) -> Self::Out {
+        Some(Does::Camera { field_of_view: it.field_of_view })
+    }
+    fn altimeter(&mut self, it: &r::EquipmentFunctionAltimeter) -> Self::Out {
+        Some(Does::Altimeter { range: it.range, accuracy: it.accuracy })
+    }
+    /// Its heat capacity and cut-off come from its physical record (`Module::from_record`); without its store, rate
+    /// or efficiency it's no battery the game can run: carried inert.
+    fn battery(&mut self, it: &r::EquipmentFunctionBattery) -> Self::Out {
+        Some(Does::Battery { stores: it.stores?, rate: it.rate?, efficiency: it.efficiency?, heat_capacity: 0.0, max_temperature: 0.0 })
+    }
+    fn radiator(&mut self, it: &r::EquipmentFunctionRadiator) -> Self::Out {
+        Some(Does::Radiator { rejects: it.rejects.unwrap_or(0.0), temperature: it.temperature.unwrap_or(0.0) })
     }
     fn comm(&mut self, it: &r::EquipmentFunctionComm) -> Self::Out {
         Some(Does::Comm { capture: it.capture, link: it.link, lag: it.lag, capacity: it.capacity })

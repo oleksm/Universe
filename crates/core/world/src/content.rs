@@ -322,7 +322,7 @@ impl Content {
         inherit_renamed_prices(&mut prices, &aliases)?;
         let price = |key: &str| prices.get(key).copied().ok_or_else(|| format!("prices.ron: no price for {key}"));
         // (Command stations, legs and engines as products: carried where a record fits them, priced or not.)
-        let carried = |d: &crate::modules::Does| matches!(d, crate::modules::Does::Inert { slot: crate::modules::SlotKind::Command | crate::modules::SlotKind::Gear } | crate::modules::Does::Engine { .. });
+        let carried = |d: &crate::modules::Does| d.carried();
         // Unimplemented equipment enters the playable catalogue only when explicitly
         // priced by game content. Do not invent prices for the registry's prototypes.
         // Modules: the registry's ship equipment, at the game's prices.
