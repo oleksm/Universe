@@ -1,20 +1,24 @@
-status: Prepared exact ground-stage fields; NOT installed/registered; physical mass still pending
+status: Promoted to active draft hull.explorer-study with accepted bare ground quantity; canonical installation/runtime
+  still pending
 supersedes: Old formal-stage073396fa/bc1dfc02, firstgroundecfa/e241, correctedground0d96526d/820d0387 are historical.
-  This intake binds V3 lights only. V2 003ed6fd/8572ec5d/67e543ee is a historical checked parent of V3 lights.
+  This intake binds combined V2 only. V2 003ed6fd/8572ec5d/67e543ee is a historical checked parent of combined V2
+  lights.
 bindings:
-  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v3-lights/mechanism-record-inputs.yaml
-  : 7e8fb54744100d188e5e34b638aeaa7b5eb76b8d8a78a52ea27313489e30fa8b
-  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v3-lights/integration.json: ce648d64ac2f340de7bd9b14d7f67da1e3478e7b3839f31b85ed94f1303c68dc
-  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v3-lights/export/manifest.json: 38abbfde261560782f6c26b45d3181ff66c359948ab33abb4317f9f900395520
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/mechanism-record-inputs.yaml
+  : 7f2b03597de45f06ebc5412045d24473864611081251a7111e3a595c69799a67
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/integration.json: d029a36c228172b48fe539a2f9d9556fd8b67a5e8740a3dd4bf44e565f58c305
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/export/manifest.json
+  : 4f70ee2242c251fb2b55de32cf8d6b8439b86f5060d3f6f7e2516e1fa5f59b13
   /home/alexm/git/universe-fso/standards/SFO/schema/hull.schema.yaml: f409c0e2cd8533931bd320662212b9f649db2e552f162901a9130033437abf96
-  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v3-lights/export/explorer-hull-closed.glb
-  : b341441762e2eb95c9bbff3f0a7152078b600362c9fb22943ada5b70d7a2605e
-  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v3-lights/export/explorer-hull-open.glb
-  : 6eb3dc1f7e868c8bea6b07036bd0c51695e1b94705826d5553703a628df4b063
-  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v3-lights/export-envelope.json: be3700c0d9970d86d6b3b767f0169755ba768e61a413c48855e03a24e8ff0925
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/export/explorer-hull-closed.glb
+  : 5ba56b39d25098985064ff5839f5fe37cfd8c7178b4fcff68453cb6fb9184d24
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/export/explorer-hull-open.glb
+  : 2e55f0ca90a89966b8d57893f52b05e3b5ecbc1b7a4af770bb36ca4a1418b827
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/export-envelope.json
+  : d710d8f2333d0174a829e9e07da1a2fc382c255b458512b31febc1f499fcec16
 hull_record_fields:
   model: assets/models/explorer-study.glb
-  model_sha256: b341441762e2eb95c9bbff3f0a7152078b600362c9fb22943ada5b70d7a2605e
+  model_sha256: 5ba56b39d25098985064ff5839f5fe37cfd8c7178b4fcff68453cb6fb9184d24
   mechanisms:
   - key: rear_ramp
     kind: ramp
@@ -157,59 +161,105 @@ hull_record_fields:
     key: hull.explorer-study
     name: Explorer Study
     class: Uncommissioned ground stage
+    description: Bare Explorer ground stage with hull-owned edited landing gear and authored rear ramp, belly hatch
+      and folding ladder. No command station, propulsion or fitted equipment; flight is not commissioned.
   slots: []
   fit: []
   thrusters: []
   flight:
     frame_material: material.aluminium-alloy-6061
   open_questions:
-  - 'Ground stage only: no selected command station, propulsion, equipment or flight capability.'
-  - Whole physical mass and final physical dimensions/volume must bind the final integrated material ledger before
-    registration.
-  - Authored edited gear is hull-owned; no inherited catalogue landing rating or dynamic contact qualification.
-  - Exit marker/state replay is not boarding acceptance; continuous route, terrain contact and actor transfer need
-    exact runtime checks.
+  - 'Ground stage only: no command station, propulsion, RCS, tank, power or life-support allocation; not commissioned
+    for flight.'
+  - Geometry/load/pressure qualification remains open. Edited gear is hull-owned and has no inherited catalogue
+    landing rating.
+  - Upper seal has an explicit184.285mm2endland deficit; side/lower perimeter pressure closure remains unqualified.
+  - Discrete mechanism states are not continuous-motion or actuator/holding-load certification. Ground contact and
+    boarding must pass exact installed-model runtime checks.
+  - Convex physical.volume is a closed/rest clearance-envelope approximation; it is not material/cabin/hold/pressure
+    volume or a collision mesh.
+  - Exact numerical mating residuals remain named in docs/ships/explorer-ground-stage-registration-audit.yaml; no
+    global collision tolerance.
+  - Whole mass includes91.6kg surviving invented dry actuator/electronics allowances pending explicit matched part
+    replacement; COM and inertia not qualified.
+  - Inherited raw/constructor numeric domains of12smallM4fasteners and one nonstructural return3 edge junction remain
+    explicit in registration audit; raw render geometry is not silently repaired.
   physical:
     length: 11.031919964872138
     width: 6.534206536726907
     height: 3.9599998965859413
-    volume: 164.6872837098238
+    mass: 6829.395259018859
+    volume: 164.79543387159498
+  revision:
+    status: draft
+    owner: registry
+    on_conflict: propose
+    because: Registered bare ground stage from exact measured candidate; no flight/equipment/pressure/load qualification.
+    ask: docs/ships/explorer-ground-stage-registration-audit.yaml
   basis:
+  - of:
+    - physical.mass
+    tier: derived
+    review: true
+    source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/mass-cross-material-audit.json
+    note: Exact1040solid roster on e7077eb0:7per-material same-material unions 6737.795259018859kg + separate91.6kg
+      surviving invented dry allowance from explorer-material-stock-schedule.yaml. Raw source vertices/roles/hash/volume
+      arithmetic audited; Boolean union producer is Blender. Named41mixed mating residuals retained without arbitrary
+      subtraction, conservative combined accounting bound 0.001007442521kg; not a clearance/pressure proof. Twelve
+      inherited M4raw/constructor differences add 0.000776070652kg bounded accounting uncertainty; one nonstructural
+      return3 indexed4incident edge remains explicit. These are not mesh repairs or physical topology acceptance.
   - of:
     - physical.length
     - physical.width
     - physical.height
     tier: derived
-    source: Exact closed export b341441762e2eb95c9bbff3f0a7152078b600362c9fb22943ada5b70d7a2605e; transformed raw
-      POSITION vertices
-    note: Closed/rest axis-aligned dimensions include authored hull-owned gear. Refresh after geometry/export changes.
+    source: 5ba56b39d25098985064ff5839f5fe37cfd8c7178b4fcff68453cb6fb9184d24
+    note: Exact closed/rest GLB transformed raw POSITION vertices, including static hull-owned gear. Refresh after
+      export changes.
   - of:
     - physical.volume
     tier: derived
     review: true
-    source: Same exact closed/rest transformed vertices;3Dconvex clearance envelope
-    note: 'Chosen ground-stage stowage-envelope approximation: convex hull includes concavities and gaps between
-      extremities. Not occupied material volume, cabin/hold capacity, watertight pressure displacement, usable room,
-      swept volume or a collision mesh. No convex remesh replaces any source geometry.'
-physical_pending: Mass remains pending six PTFE/EPDM interface repairs and final reconciled material ledger. Current
-  exact closed dimensions and chosen convex clearance-envelope volume are prepared; all must refresh after final
-  geometry. Provisional6739.970483+91.6kg is not inserted.
+    source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/closed-convex-envelope.json
+    note: Chosen closed/rest3Dconvex clearance-envelope approximation; includes concavities/gaps between extremities.
+      Independent rawGLB convex hull/tetrahedral volume cross-check. Not material/cabin/hold volume, watertight
+      displacement, sweep or render/collision remesh.
+  - of:
+    - mechanisms
+    - exits
+    - model
+    - model_sha256
+    tier: derived
+    source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/mechanism-record-inputs.yaml
+    note: Exact5ba56b39closed/2e55f0caopen bytes;6parent-local root targets replay1076world node matrices within5.916e-7.
+      Declared terrain/exit states need exact runtime acceptance.
+  - of:
+    - identity.class
+    - slots
+    - fit
+    - thrusters
+    - flight.frame_material
+    tier: invented
+    review: true
+    note: Owner-authorized bare ground-stage scope. Empty slots,fit,thrusters deliberate;6061material assignment
+      from prototype stock schedule. No propulsion/equipment/strength/mission ratings invented.
+physical_pending: Resolved for exact e7077eb0 ground-stage record; future geometry changes require refresh.
 scope: Bare hull ground stage, edited hull-owned gear included. No trial tank/engine/support/roof frames or selected
-  equipment. Empty slots/fit/thrusters are intentional. Mechanisms preserve actual V3 lights geometry, including
+  equipment. Empty slots/fit/thrusters are intentional. Mechanisms preserve actual combined V2 geometry, including
   original15/10mm hatch motion; separate new10/8mm cassette study is not installed here.
 verification:
   schema_fields: All prepared fields validate against actual hull schema properties; full required physical record
     is intentionally incomplete.
   mechanism_cross_references: pass
-  unique_scene_nodes: 1042
-  meshes: 1006
-  parent_local_replay_nodes: 1042
+  unique_scene_nodes: 1076
+  meshes: 1040
+  parent_local_replay_nodes: 1076
   world_matrix_max_component_error: 5.915025944602803e-07
   worst_node: Extension compact underside seat -1
   limit: Independent TRS world-matrix replay of two exact exported poses, not mesh/continuous motion, contact, fit,
     pressure or boarding acceptance.
   closed_envelope:
-    raw_position_vertices: 459381
+    raw_position_vertices: 549345
     min_gltf:
     - -3.267108739654822
     - 0.2200000286102295
@@ -224,15 +274,6 @@ verification:
     - 3.9599998965859413
     scope: Independent transformed raw POSITION accessor vertices, no accessor min/max shortcut. Closed gear included.
       Not interior capacity, material union, pressure volume or swept clearance.
-  clearance_envelope:
-    input_raw_vertices: 459381
-    convex_extreme_vertices: 340
-    triangular_facets: 676
-    volume_m3: 164.6872837098238
-    separate_centered_tetrahedral_volume_m3: 164.68728370982342
-    bbox_m3: 285.45597299199153
-    scope: Independent convex-envelope computation with centred tetrahedral arithmetic cross-check; selected approximation
-      only, no source remesh or material/pressure calculation.
 release_sequence:
 - Freeze current pending local PTFE/EPDM/lamp repairs and any boarding geometry changes before final export.
 - Bind complete material assignment, reconciled same-material union and all cross-material resolutions plus separate

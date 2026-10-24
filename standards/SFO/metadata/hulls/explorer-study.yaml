@@ -1,0 +1,227 @@
+# yaml-language-server: $schema=../../schema/hull.schema.yaml
+model: assets/models/explorer-study.glb
+model_sha256: 5ba56b39d25098985064ff5839f5fe37cfd8c7178b4fcff68453cb6fb9184d24
+mechanisms:
+- key: rear_ramp
+  kind: ramp
+  nodes:
+  - RearRamp_Pivot
+  - RearRamp_ExtensionPivot
+  states:
+  - key: closed
+    poses:
+    - node: RearRamp_Pivot
+      kind: rest
+    - node: RearRamp_ExtensionPivot
+      kind: rest
+  - key: deployed
+    poses:
+    - node: RearRamp_Pivot
+      kind: rigid
+      translation_m:
+      - 4.949999809265137
+      - 1.75
+      - 0
+      rotation_xyzw:
+      - 0
+      - 0
+      - -0.8651100993156433
+      - 0.5015820860862732
+    - node: RearRamp_ExtensionPivot
+      kind: rigid
+      translation_m:
+      - -0.10000002384185791
+      - 1.600000262260437
+      - 0
+      rotation_xyzw:
+      - 0.0
+      - 0.0
+      - 0.0
+      - 1.0
+  default: closed
+  deploys_when: landed
+  contact:
+    node: RearRamp_Toe
+    ground: required
+- key: crew_hatch
+  kind: hatch
+  nodes:
+  - CrewHatch_FloorSlide
+  - CrewHatch_BellySlide
+  states:
+  - key: closed
+    poses:
+    - node: CrewHatch_FloorSlide
+      kind: rest
+    - node: CrewHatch_BellySlide
+      kind: rest
+  - key: deployed
+    poses:
+    - node: CrewHatch_FloorSlide
+      kind: rigid
+      translation_m:
+      - 1.399999976158142
+      - -0.014999999664723873
+      - 0
+      rotation_xyzw:
+      - 0.0
+      - 0.0
+      - 0.0
+      - 1.0
+    - node: CrewHatch_BellySlide
+      kind: rigid
+      translation_m:
+      - 1.399999976158142
+      - 0.009999999776482582
+      - 0
+      rotation_xyzw:
+      - 0.0
+      - 0.0
+      - 0.0
+      - 1.0
+  default: closed
+  deploys_when: landed
+- key: crew_ladder
+  kind: ladder
+  nodes:
+  - CrewLadder_UpperPivot
+  - CrewLadder_LowerPivot
+  states:
+  - key: stowed
+    poses:
+    - node: CrewLadder_UpperPivot
+      kind: rest
+    - node: CrewLadder_LowerPivot
+      kind: rest
+  - key: deployed
+    poses:
+    - node: CrewLadder_UpperPivot
+      kind: rigid
+      translation_m:
+      - 0.5000000596046448
+      - 1.684999942779541
+      - 0
+      rotation_xyzw:
+      - 0
+      - 0
+      - -0.2022344321012497
+      - 0.979337215423584
+    - node: CrewLadder_LowerPivot
+      kind: rigid
+      translation_m:
+      - 0.0549999475479126
+      - -0.7999999523162842
+      - 0
+      rotation_xyzw:
+      - 0.0
+      - 0.0
+      - 0.0
+      - 1.0
+  default: stowed
+  deploys_when: landed
+  contact:
+    node: CrewLadder_Foot
+    ground: required
+exits:
+- key: rear
+  kind: walk
+  requires:
+  - mechanism: rear_ramp
+    state: deployed
+  top: RearRamp_Top
+  foot: RearRamp_Toe
+- key: belly
+  kind: climb
+  requires:
+  - mechanism: crew_hatch
+    state: deployed
+  - mechanism: crew_ladder
+    state: deployed
+  top: CrewLadder_Top
+  foot: CrewLadder_Foot
+identity:
+  key: hull.explorer-study
+  name: Explorer Study
+  class: Uncommissioned ground stage
+  description: Bare Explorer ground stage with hull-owned edited landing gear and authored rear ramp, belly hatch
+    and folding ladder. No command station, propulsion or fitted equipment; flight is not commissioned.
+slots: []
+fit: []
+thrusters: []
+flight:
+  frame_material: material.aluminium-alloy-6061
+open_questions:
+- 'Ground stage only: no command station, propulsion, RCS, tank, power or life-support allocation; not commissioned
+  for flight.'
+- Geometry/load/pressure qualification remains open. Edited gear is hull-owned and has no inherited catalogue landing
+  rating.
+- Upper seal has an explicit184.285mm2endland deficit; side/lower perimeter pressure closure remains unqualified.
+- Discrete mechanism states are not continuous-motion or actuator/holding-load certification. Ground contact and
+  boarding must pass exact installed-model runtime checks.
+- Convex physical.volume is a closed/rest clearance-envelope approximation; it is not material/cabin/hold/pressure
+  volume or a collision mesh.
+- Exact numerical mating residuals remain named in docs/ships/explorer-ground-stage-registration-audit.yaml; no
+  global collision tolerance.
+- Whole mass includes91.6kg surviving invented dry actuator/electronics allowances pending explicit matched part
+  replacement; COM and inertia not qualified.
+- Inherited raw/constructor numeric domains of12smallM4fasteners and one nonstructural return3 edge junction remain
+  explicit in registration audit; raw render geometry is not silently repaired.
+physical:
+  length: 11.031919964872138
+  width: 6.534206536726907
+  height: 3.9599998965859413
+  mass: 6829.395259018859
+  volume: 164.79543387159498
+revision:
+  status: draft
+  owner: registry
+  on_conflict: propose
+  because: Registered bare ground stage from exact measured candidate; no flight/equipment/pressure/load qualification.
+  ask: docs/ships/explorer-ground-stage-registration-audit.yaml
+basis:
+- of:
+  - physical.mass
+  tier: derived
+  review: true
+  source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/mass-cross-material-audit.json
+  note: Exact1040solid roster on e7077eb0:7per-material same-material unions 6737.795259018859kg + separate91.6kg
+    surviving invented dry allowance from explorer-material-stock-schedule.yaml. Raw source vertices/roles/hash/volume
+    arithmetic audited; Boolean union producer is Blender. Named41mixed mating residuals retained without arbitrary
+    subtraction, conservative combined accounting bound 0.001007442521kg; not a clearance/pressure proof. Twelve
+    inherited M4raw/constructor differences add 0.000776070652kg bounded accounting uncertainty; one nonstructural
+    return3 indexed4incident edge remains explicit. These are not mesh repairs or physical topology acceptance.
+- of:
+  - physical.length
+  - physical.width
+  - physical.height
+  tier: derived
+  source: 5ba56b39d25098985064ff5839f5fe37cfd8c7178b4fcff68453cb6fb9184d24
+  note: Exact closed/rest GLB transformed raw POSITION vertices, including static hull-owned gear. Refresh after
+    export changes.
+- of:
+  - physical.volume
+  tier: derived
+  review: true
+  source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/closed-convex-envelope.json
+  note: Chosen closed/rest3Dconvex clearance-envelope approximation; includes concavities/gaps between extremities.
+    Independent rawGLB convex hull/tetrahedral volume cross-check. Not material/cabin/hold volume, watertight displacement,
+    sweep or render/collision remesh.
+- of:
+  - mechanisms
+  - exits
+  - model
+  - model_sha256
+  tier: derived
+  source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/mechanism-record-inputs.yaml
+  note: Exact5ba56b39closed/2e55f0caopen bytes;6parent-local root targets replay1076world node matrices within5.916e-7.
+    Declared terrain/exit states need exact runtime acceptance.
+- of:
+  - identity.class
+  - slots
+  - fit
+  - thrusters
+  - flight.frame_material
+  tier: invented
+  review: true
+  note: Owner-authorized bare ground-stage scope. Empty slots,fit,thrusters deliberate;6061material assignment from
+    prototype stock schedule. No propulsion/equipment/strength/mission ratings invented.

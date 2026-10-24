@@ -1036,6 +1036,7 @@
 - { record: ground-vocabulary.pattern, at: "2026-10-17T15:44:28Z", status: "", summary: "changed", sha: "45bab9119969759f" }
 - { record: ground-vocabulary.rock, at: "2026-10-10T22:11:43Z", status: "", summary: "first tracked", sha: "7d3835cbcfa04d13" }
 - { record: hull.drover, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "43e4088fcb8c1351" }
+- { record: hull.explorer-study, at: "2026-10-24T16:00:42Z", status: draft, summary: "first tracked", sha: "c0c816a65ccdaf11" }
 - { record: hull.hauler, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "bb65478e558da977" }
 - { record: hull.interceptor, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "51cc059564d57a1f" }
 - { record: hull.mc-07, at: "2026-10-11T02:11:58Z", status: draft, summary: "changed: revision", sha: "30f561cfaeeb31c5" }
