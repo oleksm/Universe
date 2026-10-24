@@ -12,15 +12,16 @@ decided:                       # registry choices on fso (all merged to main)
   - 3412bc9b2 3d0d77dfa d22f6aeea air cooler; c0fb89fa4 d22f6aeea shell 25 insert
   structure:
   - b541dac69 radiator root loads (20 m/s2 limit, 1.25/2.0); 27d6bc952 one-V2 review (guide fails; V3 wide guide in build)
-  - 659980dff wingframe tied to the central/gear foundation; aft node now X1.950 on the rail (Ships H)
-  rcs: 71fd15e54 outboard RCS V2 intake (draft 25.78 kg each, 8 kg invented reserve)
+  - 659980dff wingframe tied to the central/gear foundation; aft root now X1.200 on the 160x5 rails, fore X-1 (Ships I, coarse)
+  - f22e456ea 4c464545a radiator wide guide V3 passes (bronze-filled PTFE); feet are 304, 12 mm hardened washers
+  rcs: 71fd15e54 outboard RCS V2 intake (draft 25.78 kg each); 4c464545a feed criteria (pod regulators, 16 mm lines)
 
-mass_budget_kg:                # interval; Ships equipped-com-intervals-20261024.json V10 plus what it excludes
+mass_budget_kg:                # interval; Ships equipped-com-intervals-20261024.json roster V10 (V6 superseded) plus what it excludes
   known_V10_with_fills_and_crew: [8635.3, 9335.3]   # tare 8495.3 + HLOX 0..500 + N2 0..100 + crew 140..240
-  wingframe_F_coarse: 535.7
+  wingframe_coarse: 535.7   # F figure; I geometry regenerates it
   radiator_retention_8_x_1.389: 11.1
   undrawn_structure_allowance: [0, 300]   # foundation, nodes, sleeves, joints - invented/review placeholder
-  harness_and_plumbing_allowance: [0, 100] # invented/review placeholder
+  harness_and_plumbing_allowance: [0, 100] # invented/review placeholder; RCS branch lines about 34 kg of it
   full_tank_range: [9682, 10282]         # with 500 kg HLOX and its share of the rest
   rule: Allowances retire as drawn parts replace them; never add twice
 
@@ -48,11 +49,11 @@ heat_at_the_site:
     (a new service interface) as the daytime answer
 
 open_to_ready:                 # owner of each in brackets
-- Wingframe H geometry, coarse gate, foundation-to-gear path shown [ships, blender]
+- Wingframe I (aft X1.2) coarse gates, foundation-to-gear path shown [ships, blender]
 - Radiator wide guide V3 build and replay; product feet material [blender, ships]
 - Altimeter, camera, coolant, air cooler, LS service panels built to the choices; harness routes [blender]
 - Whole wet COM against the hover band from drawn parts (V10 known COMx 1.148..1.719 vs band ~1.643..1.757) [ships]
-- RCS feed pressure, valves, regulator; main engine and RCS performance beyond targets [registry + ships]
+- RCS feed drawn to 4c464545a; main engine performance beyond targets [blender, ships]
 - Crew reservation kept for a future module. The owner deferred the command seat and dashboard - no custom
   substitute and no inclusion authorised. Crew COM stays the floor-region bound; the control requirement for that
   future module is kept separate [owner]
