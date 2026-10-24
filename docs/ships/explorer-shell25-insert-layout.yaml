@@ -50,6 +50,24 @@ mating_key:
     retention: Rear-release stainless clips and a rigid rear insert plate held by a circlip, as the male; the harness
       backshell and cable grip sit behind it on the harness side
   invented/review: true
+wire_entry:
+  source_task: 20261024T164459-blender-594e
+  finding: The inherited female rear gland (ID 10.7 mm, Z -27.5..-37.5) blocks four 6 mm2 wires leaving contacts on the
+    16 mm circle with their 10 mm straight tails.
+  panel_receptacles: Any shell 25 fixed on a product (the box's female motor-out, the box's male ship-in, a load's male)
+    has a full-bore rear - barrel ID 26 mm right through, rear insert plate and circlip, no gland. Internal wires leave
+    straight 10 mm, then bend at R43 or more inside the product.
+  harness_plugs:
+    rule: A cable plug gets its own breakout backshell between the insert and the jacket or sleeve grip; the gland is
+      not used
+    length_m: 0.060               # 10 mm tail + 29.2 mm S-bend (5.1 mm offset at R43) + 12 mm grip + about 5 mm margin
+    bore: 26 mm at the insert end, tapering to the grip
+    grip: 12 mm on the 9.9 mm jacket of run.cable-dc-600v-3x6mm2 (ship harness), or on the sleeve of the box-to-motor
+      lead (4 x run.wire-6mm2)
+    boot: Silicone strain-relief boot over the grip end, dust and abrasion only
+    envelope: The record's 75 mm is the mated pair only; a wired harness plug adds about 60 mm behind it. Report the
+      drawn wired length; no 75 mm wired claim.
+  invented/review: true
 keying:
   master_key: One 4 mm wide key at 0 deg on the receptacle shell wall, keyway in the plug
   bayonet: The family's three bayonet pins, as the shell 17 template, scaled
