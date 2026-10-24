@@ -1,0 +1,153 @@
+status: chosen prototype construction direction; representative study is not complete cluster or installed mass
+request: 20261023T222644-blender-b01c
+source_sha256: 8fc3a7e3ab384395592c35dde78b59a440830bbdae1f4a7ed59e55c07af8927e
+bindings:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/glazing-final-pane-seat.json: 3c37c88a20471311c7c9ce619f4fa1956591ab41d0ea18b8c1b23339e7ede13d
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/cumulative-bare-geometry.json: fdbb55113e220759b3fe2c19ad673f65ba4366782013bf58e622b93d1143dcb1
+  standards/SFO/metadata/mill-stock/AL6061-PL-5.yaml: 6857d1b3b139d2db5cb9e5b5ea3579b0f39048f1ab33462bc967c794451131a7
+  standards/SFO/metadata/mill-stock/AL6061-SH-3.yaml: dea65ce3b7eaac01ac3d1bb517593684b52a5224aefc4f72947b5ce625f07011
+  standards/SFO/metadata/mill-stock/AL6061-PL-8.yaml: e7722e242daf737580d93c733c9e2598b4aaf90b23ae532000e79d3e30d7337d
+  standards/SFO/metadata/mill-stock/AL6061-INGOT.yaml: a4ab7e02f141392975a8cfb5bb61bcc728177baff3e4e54e2f8c7f602ff0feed
+  standards/SFO/metadata/mill-stock/ST4340-FG.yaml: b7c5174f8d6a1e47d7c5d40d77c73eb0488e2da9ad8bbd9a100c54b9df4dfc4e
+  standards/SFO/metadata/stock/CHEM-SILICONE-RUBBER.yaml: c1d32869cfb4deb23fcb7fd260d9b06dadd3d776e9065a13974f1a98efd9c88f
+scope:
+  glass_objects:
+  - Cockpit glazing 01-2 pane 0
+  - Cockpit glazing 01-2 pane 1
+  - Cockpit glazing 01-4 pane 0
+  - Cockpit glazing 01-4 pane 1
+  - Cockpit glazing 02-2 pane 0
+  - Cockpit glazing 02-2 pane 1
+  - Cockpit glazing 02-4 pane 0
+  - Cockpit glazing 02-4 pane 1
+  - Cockpit glazing 03-2 pane 0
+  - Cockpit glazing 03-2 pane 1
+  - Cockpit glazing 03-3 pane 0
+  - Cockpit glazing 03-4 pane 0
+  - Cockpit glazing 03-4 pane 1
+  - Visor | windshield -1
+  - Visor | windshield 1
+  count: 15
+  decision: Treat13cockpit panes AND2visor windshields as one connected interface review scope. Preserve actual
+    pane geometry/placement; no silent windshield omission. Lighting optics remain outside this cluster.
+prototype_review:
+  representative_frame: Cockpit supported sill -1
+  representative_pane: Cockpit glazing 02-4 pane 0
+  parts:
+  - name: Representative continuous sill core + explicit brackets
+    volume_m3: 0.0026458117164013437
+    mass_kg: 7.143691634283628
+    signed_shell_volumes_m3:
+    - 0.0026458117164013437
+    bounds_m:
+    - -4.063121337563966
+    - -1.4530573478514999
+    - 2.775140589544685
+    - -2.8149562927687635
+    - -0.8201083383290904
+    - 3.634859210117072
+  - name: Pane-specific removable retaining bead
+    volume_m3: 5.7051022426516366e-05
+    mass_kg: 0.15403776055159418
+    signed_shell_volumes_m3:
+    - 5.7051022426516366e-05
+    bounds_m:
+    - -3.29092788197685
+    - -1.4447126640013244
+    - 2.977322744945729
+    - -2.8289882638042565
+    - -0.9930292650961127
+    - 3.327185160882213
+  - name: Pane-specific finite joined silicone seal
+    volume_m3: 2.499785173589903e-05
+    mass_kg: 0.026872690616091457
+    signed_shell_volumes_m3:
+    - 2.499785173589903e-05
+    bounds_m:
+    - -3.288261679428033
+    - -1.4425533987742147
+    - 2.983532261881284
+    - -2.837358658884307
+    - -0.9982112738003108
+    - 3.3247084585608255
+  contact_brackets:
+  - start_core_m:
+    - -3.2673056592096974
+    - -1.0116991780357893
+    - 3.319153124018659
+    end_bead_m:
+    - -3.2671499252319336
+    - -1.011487603187561
+    - 3.3190009593963623
+    span_m: 0.000303596871709249
+    raw_pane_overlap_m3: 0.0
+    trimmed_volume_m3: 3.098589747630427e-07
+    core_intersection_m3: 1.658549901699594e-07
+    bead_intersection_before_partition_m3: 8.44642892394119e-08
+  source_neighbor_intersection_count: 31
+  result: Continuous core/carrier plus finite seal and removable bead is the chosen construction family. Current
+    single-corner carrier/core contact is insufficient as an assembly support definition; no whole cluster adoption
+    yet.
+  new_fixed_stock_outside_original_frame_m3: 7.17516410020654e-05
+  new_bead_outside_original_frame_m3: 5.4613722161580996e-05
+  scope_limits: Positive connected prototype solids and negligible pane intersection do not certify support, removable
+    fit or sealing. New stock exceeds old member envelope and needs assembled exterior/neighbor review.
+chosen_construction:
+  fixed_carrier: Continuous6061perimeter ring for each pane, mechanically part of a named fixed backbone/cluster.
+    Keep representative12mmwidth/5mmdepth as a seed (stock.al6061-pl-5 or raw6061customsection), then explicitly
+    report any geometry change required at neighboring visor corners.
+  brackets: Use at least two separated bracket stations from carrier to a genuine spanning backbone material region,
+    not the present one-corner tangency. Representative12x6mm section is a raw6061prototype choice; draw actual
+    contact/union geometry and quantities. Separated stations are a topology choice, not a strength certificate.
+  end_supports: New8mm6061plate end tabs at fore/aft backbone ends land on actual named surrounding frame faces.
+    For the port representative, candidate neighbor identities are Visor|faceted surround-1 and Canopy aft frame-1
+    (mirror starboard), subject to actual face measurement. If a neighbor is itself replaced, name its new counterpart,
+    not a retired ghost. Trim tab contacts around preserved glass/crew envelope; no bbox-centre connection or blanket
+    intersection waiver.
+  bead: Retain removable3mm6061bead from stock.al6061-sh-3. Increase its outer metal carrier-seat overlap from4mm
+    to8mm for the M4geometry seed; widen outward only where actual neighbor/visibility/crew checks permit. Current4mm
+    metal seat cannot contain4.5mm clearance bore. Keep full pane retention outline and report seat gap/stock intrusion.
+  fasteners: Use hull-owned nominalM4through screws and captive nutplates behind carrier as a new4340forging prototype
+    (stock.st4340-fg); no existingM4stock product/interface/grade asserted. Nominal4mmshank/4.5mmclearance bores
+    are geometric choices only. Locate each screw wholly outside glass and continuous seal land, with real washer/head/nut
+    seats, matched stack-dependent length and cabin-side driver path. No drilled pane or hidden trapped nut. Determine
+    actual corner/midspan pattern/count from final geometry, without claiming pressure/load capacity.
+  seal: Keep finite joined silicone perimeter, representative8mmwidth/2mmthickness seed from stock.chem-silicone-rubber.
+    Conform to actual pane facets and carrier land with an explicit assembly gap; planar projection alone cannot
+    establish two-sided contact. Join corners as real positive material; no entire-pane rubber, vanished land or
+    inferred compression/rating.
+  visor_junctions: Resolve each shared frame corner/visor/sill junction in the combined15pane assembly. Identify
+    meeting carrier segments, miter/seat surfaces, retainer access and continuous gasket route. Do not copy a single-pane
+    pattern over existing neighbors and treat31source intersections as accepted.
+  retirement: Classify source intersections into exact replacement targets versus remaining physical neighbors.
+    Retire old seal carriers/frame stock only through full-cluster edit map when new replacements exist. Do not
+    remove cavity shells as debris or double-count old and new frame mass. No global material priority.
+  prototype_scope: This authorizes reversible geometric construction/quantity work, not pressure/load/fatigue or
+    mission acceptance. Do not wait for engineering ratings to count actual prototype parts; do not invent those
+    ratings.
+stock_choices:
+  carrier: stock.al6061-pl-5
+  bead: stock.al6061-sh-3
+  end_tabs: stock.al6061-pl-8
+  custom_brackets: stock.al6061-ingot
+  nominal_fasteners: stock.st4340-fg
+  seal: stock.chem-silicone-rubber
+next_evidence:
+- Final15pane before/after hash PAIRS in one documented coordinate/serialization domain, including both visor windshields.
+  Do not compare unlike representative/family hash domains.
+- Named carrier/backbone/end-tab contacts, actual support stations and newpart drawing/stock/volume/mass.
+- Local bead/core/seal/pane disjoint material partitions plus real mating seats and removable screw/retainer path.
+- Combined cluster neighbor review and matched assembled exterior/crew views, with actual stock extension outside
+  oldmember bounds.
+- Cumulative same-material and cross-material quantities after oldstock retirement; newfasteners/seals remain physical
+  parts, not free hardware.
+cumulative_candidate_review:
+  path: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/cumulative-bare-geometry.json
+  candidate_blend_sha256: 2e928f7c07caec0d49c8e943cd2bfba8a1e4bedbb1e78f584c8c67a40558df60
+  positive_objects_verified: 952
+  replacement_map_rows_verified: 13
+  same_material_candidate_kg: 6913.008512590455
+  hidden_dry_reserve_kg: 96.1
+  material_pair_families_remaining: 7
+  scope: All per-object and material-union density arithmetic checked. Not a physical joint/BOM proof or mixed-material
+    final mass; newglazing/frame/pans/equipment excluded as stated.
