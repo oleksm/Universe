@@ -1,0 +1,72 @@
+status: chosen reversible pane-boundary and joint redesign; not installed or pressure rated
+request: 20261023T223623-blender-ac69
+supersedes: The immutable pane geometry requirement in explorer-glazing-retention-direction.yaml is withdrawn for
+  this explicit glazing redesign only. Preserve historical source and failed prototype.
+evidence:
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/glazing-final-preserved-glass-pairs.json
+  : 1494fb7ce0a1a222d3ac17c2a3a955f353500cbe39459cd70da1239e5a7347de
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/glazing-full-prototype-delivery.json: d7c8d9837a5345213d30f32abaebece9bb3cb2ad212fd4044be4ba8f772dc9bd
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/glazing-cluster-view-witness.json: c59ffa2662153e878f304a69d9de975c7e95af8a22853dea459c2f3f2553ec20
+findings:
+  glass_pair_count_above_1e_9_m3: 21
+  largest_pair:
+    a: Cockpit glazing 03-3 pane 0
+    b: Cockpit glazing 03-4 pane 1
+    overlap_m3: 0.0005242771757415897
+  failed_support_rows: 5
+  missing_fastener_patterns: 10
+  independent_internal_pairs_above_1e_10_m3: 179
+  visual_scope: Registry inspected original port and front assembled views; faceted canopy, paired front windshield,
+    triangular side lights and header are the appearance baseline. These views do not prove every hidden boundary.
+chosen_scope:
+  construction: Rebuild the fifteen-pane glazing family as a non-overlapping set of individually retained faceted
+    panes. Author common junction lines and fixed mullions first; derive neighboring pane edges and their seats
+    from that shared network. Do not keep conflicting solids then subtract them by object iteration order.
+  appearance: Preserve cockpit exterior facet planes, front windshield pair, centre divider, roof/header transition
+    and triangular side-light pattern. Keep current hull/neck/crew reservations. Edge setbacks and local carrier
+    changes are explicit design edits, not an appearance acceptance. No wholesale canopy shrink or changed crown
+    to hide conflicts.
+  front_roof_junction: The two Visor | windshield objects own the paired forward windshield openings below the visible
+    header. Cockpit glazing 03-3 pane 0 must end at the canopy side of that header, rather than continuing into
+    the windshield openings. Rebuild its adjacent 03-2/03-4 edge lines on the actual facet/header junction. If its
+    source solid covers several visible facets, split it into named replacement panes at those facets rather than
+    retaining a thick cross-facet volume.
+  side_junctions: For each remaining pair, use the existing visible mullion/facet junction as the shared edge datum;
+    where no visible mullion exists, author a symmetric local butt-joint datum halfway across the measured overlap
+    strip on the exterior surface. Record the chosen line and both pane owners. Triple corners are one joint design,
+    not successive pairwise cuts.
+  glass: Keep original non-joint exterior facet locations and measured local thickness away from redesigned edges.
+    Rebuild bounded solids from those faces, with explicit edge cuts/chamfers and new edge faces. No density reduction,
+    arbitrary thin shell, global glass union, or hidden retirement of either windshield. Keep fifteen source identities
+    in the edit map even if replacement pane count changes.
+  clearance: Choose 3 mm minimum edge-to-edge assembly clearance at adjacent glass edges as a draft geometric target,
+    not a thermal/pressure qualification. At mullions the actual glass separation may be larger to accommodate the
+    fixed web and both seal seats; do not force a 3 mm gap through required hardware. Measure final local gap and
+    report exceptions.
+  retention: Retain the previous 6061 carrier, removable bead and silicone construction family. Use one shared fixed
+    mullion at a shared seam, with separate pane seats and continuous finite seals on each side. Draw real corner
+    blocks and end supports; keep screws outside glass and seal land. Widen local carrier outward where needed for
+    the 4.5 mm bore plus positive edge ligament, not merely enough for its centre point. Resolve all five support
+    failures and ten absent patterns against the new joint network.
+  work_order: Build the highest-overlap 03-3/03-2/03-4 and front-header junction as a representative complete joint
+    first, including adjoining visor edges, seal, bead and support. Replay overlap/contact checks before propagating
+    to the full family. Then reconstruct all affected edges and re-fit all carriers; do not continue detailing the
+    known failed immutable-pane prototype.
+  ownership: Blender owns exact joint coordinates and reversible geometry, within this scope; report coordinates
+    and before/after witnesses. A lost visible window, changed hull profile or a required crew-envelope intrusion
+    is a design exception to surface explicitly, not an automatic trim.
+next_evidence:
+- Old-to-new fifteen-source pane map; retain originals only as hidden historical references excluded from candidate/render/export
+  and mass. Changed panes have changed hashes, not preservation claims.
+- Before/after exterior facet and window-outline witnesses; per-pane removed/added volume, final positive material
+  volumes and density-based quantities. Do not sum pair overlap volumes as removed mass because triple intersections
+  exist.
+- Full glass/glass replay including containment and coincident duplicate coverage, with actual numerical tolerance
+  stated. Pair volume alone does not certify edge clearance or seal contact.
+- All-material combined joint checks, genuine support contacts, populated screw/seat/driver paths and source-neighbor
+  retirement classification; no blanket waiver of the 179 prototype intersections.
+- Matched assembled front, port, starboard and interior junction views. Recompute material unions and mixed-material
+  partition after actual replacements; current 6913.009 kg candidate is historical input, not accepted mass.
+limits: A prototype construction and quantity decision under owner finish authority. No pressure, optical, structural,
+  thermal-expansion or mission rating is inferred. Engineering ratings are not prerequisites to building and counting
+  these explicit draft parts.
