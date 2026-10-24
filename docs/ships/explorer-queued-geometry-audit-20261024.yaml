@@ -1,0 +1,161 @@
+status: Queued exact geometry audit receipts; distinct ground and propulsion-study scopes
+bindings:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/returns-078-v3-handoff.json: d2a1565cfbd7020c79a77ca6b4c4cb55bdbf6b74d1fe651d54591270f9819800
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/review/aft-wall-closeout-replacement.json: 35dc3f9ed4023e0cfebfaa6c34ad34499f303b22bc70c4b083961b951b503adf
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/integrated-engine-closure-study.json: 89b26cd4b02bd634086bce3fa3925382d8d3eb0dbb37614a65552b51138c7c8c
+returns_078_v3:
+  raw_mesh_checks:
+  - name: Raised floor | perimeter return 0
+    raw_signed_volume_m3: 0.0004334596813686438
+    material: material.aluminium-alloy-6061
+    mass_kg: 1.1703411396953383
+  - name: Raised floor | perimeter return 8
+    raw_signed_volume_m3: 0.00043303718379942197
+    material: material.aluminium-alloy-6061
+    mass_kg: 1.1692003962584394
+  - name: Raised floor | perimeter return 7
+    raw_signed_volume_m3: 0.00046652225009881674
+    material: material.aluminium-alloy-6061
+    mass_kg: 1.2596100752668051
+  - name: Raised floor | return 0 to 9 backing angle
+    raw_signed_volume_m3: 4.801628233590607e-06
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.01296439623069464
+  - name: Raised floor | return 8 to 9 backing angle
+    raw_signed_volume_m3: 4.681808266461876e-06
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.012640882319447065
+  gross_replacement_set_kg: 3.6247568897623292
+  retire_once:
+  - Raised floor | perimeter return 0
+  - Raised floor | perimeter return 7
+  - Raised floor | perimeter return 8
+  checks: 17 handoff hashes,5positive/raw indexed-closed meshes and density arithmetic checked; reported static
+    adjacent hits empty and finite-contact rows reviewed, not independently recomputed Boolean/contact proof.
+  mass_domain: 3.624756889762kg is the five-part replacement-set gross and reported internal same-material union,
+    not a net delta against retired old returns or complete ship. Ground-stage ledger must substitute3 originals
+    once and add2 backing angles.
+  visual: 'Matched return7 views inspected: continuous cabin-side replacement replaces previously occluded fragments.
+    No owner visual approval or whole assembly/motion acceptance inferred.'
+owner_aft_wall_closeouts:
+  rows:
+  - name: Aft roof | sealed shell-to-compartment join -1
+    raw_signed_volume_m3: 0.000604836349283581
+    material: material.aluminium-alloy-6061
+    mass_kg: 1.6330581430656688
+  - name: Aft roof | sealed shell-to-compartment join 1
+    raw_signed_volume_m3: 0.0006048363492834515
+    material: material.aluminium-alloy-6061
+    mass_kg: 1.633058143065319
+  checks: Both positive raw triangulated closed meshes and exact Ymirror checked. This two-part vertical wall continuation
+    replaces the rejected shelves under existing names; no closure deletion.
+  supersedes: Earlier removed panels and horizontal recessed-shelfV2 proposals; historical only.
+  quantity: Count these two measured6061walls within current groundmaterial union, replacing prior named objects
+    once; no old exterior shelf mass transfer.
+engine_closure_study:
+  candidate_sha256: b927bdc594c4c627a08e8e5248593aa68bb4d7e725af039576d16ad7687236d5
+  source_name_mapping: Four __ENGINE_COLLAR_CUT suffixes explicitly map to original named host replacements as the
+    frozen integration script does.
+  rows:
+  - name: Engine pressure welded collar | aft_thrust_diagonal_-1
+    raw_signed_volume_m3: 5.028909293984562e-05
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.13578055093758318
+  - name: Engine pressure welded collar | aft_thrust_diagonal_1
+    raw_signed_volume_m3: 5.3318792041192154e-05
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.14396073851121882
+  - name: Engine pressure welded collar | underwing_crossbeam_-1_1.2
+    raw_signed_volume_m3: 0.0001223882070255462
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.3304481589689747
+  - name: Engine pressure welded collar | underwing_crossbeam_-1_2.2
+    raw_signed_volume_m3: 0.00012061875686997086
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.32567064354892133
+  - name: Engine pressure welded collar | underwing_crossbeam_1_1.2
+    raw_signed_volume_m3: 0.00012350619674901037
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.333466731222328
+  - name: Engine pressure welded collar | underwing_crossbeam_1_2.2
+    raw_signed_volume_m3: 0.00012232243217872923
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.33027056688256895
+  - name: Core pressure skin 06-6__ENGINE_COLLAR_CUT
+    raw_signed_volume_m3: 0.001953508644947971
+    material: material.aluminium-alloy-6061
+    mass_kg: 5.2744733413595215
+  - name: Core pressure skin 05-0__ENGINE_COLLAR_CUT
+    raw_signed_volume_m3: 0.002925956008884682
+    material: material.aluminium-alloy-6061
+    mass_kg: 7.900081223988641
+  - name: Core pressure skin 06-0__ENGINE_COLLAR_CUT
+    raw_signed_volume_m3: 0.00195316387154018
+    material: material.aluminium-alloy-6061
+    mass_kg: 5.273542453158486
+  - name: Core pressure skin 05-6__ENGINE_COLLAR_CUT
+    raw_signed_volume_m3: 0.0029280430757945655
+    material: material.aluminium-alloy-6061
+    mass_kg: 7.905716304645327
+  - name: Crew access floor | service openings
+    raw_signed_volume_m3: 0.28307264880759736
+    material: material.aluminium-alloy-6061
+    mass_kg: 764.2961517805129
+  - name: ENGINE floor boss collar 1.2 -1.3
+    raw_signed_volume_m3: 5.2505043518255114e-05
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.1417636174992888
+  - name: ENGINE floor boss weld 1.2 -1.3
+    raw_signed_volume_m3: 9.529945603641686e-07
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.0025730853129832553
+  - name: ENGINE floor boss collar 1.2 1.3
+    raw_signed_volume_m3: 5.25050435194622e-05
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.14176361750254793
+  - name: ENGINE floor boss weld 1.2 1.3
+    raw_signed_volume_m3: 9.529945603644623e-07
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.002573085312984048
+  - name: ENGINE floor boss collar 2.2 -1.3
+    raw_signed_volume_m3: 5.250504351955414e-05
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.14176361750279617
+  - name: ENGINE floor boss weld 2.2 -1.3
+    raw_signed_volume_m3: 9.529945603601932e-07
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.0025730853129725217
+  - name: ENGINE floor boss collar 2.2 1.3
+    raw_signed_volume_m3: 5.2505043519215e-05
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.1417636175018805
+  - name: ENGINE floor boss weld 2.2 1.3
+    raw_signed_volume_m3: 9.5299456036659e-07
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.002573085312989793
+  - name: ENGINE floor boss outer weld 1.2 -1.3
+    raw_signed_volume_m3: 1.138533836183765e-06
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.0030740413576961652
+  - name: ENGINE floor boss outer weld 1.2 1.3
+    raw_signed_volume_m3: 1.1385338361844877e-06
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.003074041357698117
+  - name: ENGINE floor boss outer weld 2.2 -1.3
+    raw_signed_volume_m3: 1.138533836180133e-06
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.003074041357686359
+  - name: ENGINE floor boss outer weld 2.2 1.3
+    raw_signed_volume_m3: 1.1385338361790125e-06
+    material: material.aluminium-alloy-6061
+    mass_kg: 0.003074041357683334
+  edits: 23
+  replacements: 5
+  additions: 18
+  checks: Exact2input hashes/output hash and raw indexed-closed positive meshes verified. Reported Blender roundtrip
+    is not independently replayed.
+  scope: b927bdc5 separate propulsion/service-floor study. Not adopted into bare ground stage and does not replace
+    its intact floor/skin automatically. Caps/support/cassette composition, whole contacts and material union remain
+    separate.
+limits: No wholemass, flight/pressure/load/continuous-route acceptance. Exact current ground export/state draft
+  has separate binding and must refresh after pending local repairs.

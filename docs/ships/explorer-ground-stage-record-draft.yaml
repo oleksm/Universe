@@ -1,18 +1,20 @@
 status: Prepared exact ground-stage fields; NOT installed/registered; physical mass still pending
 supersedes: Old formal-stage073396fa/bc1dfc02, firstgroundecfa/e241, correctedground0d96526d/820d0387 are historical.
-  This intake binds V2 only.
+  This intake binds V3 lights only. V2 003ed6fd/8572ec5d/67e543ee is now a historical checked parent of V3 lights,
+  not the current candidate.
 bindings:
-  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v2/mechanism-record-inputs.yaml: ed352b1d99974a8615fbbf0d4f083f99fd91c940c9f7a7983b0d0604dbda5318
-  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v2/integration.json: d4034abfeaf62141108b965d052c1d48c9faa2ba3ddcfca29cf4c4d97c8e5103
-  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v2/export/manifest.json: 3cba67557feac19c880e1c62802d909661e79b59ae0e1e54189eb8cc35c4574c
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v3-lights/mechanism-record-inputs.yaml
+  : 7e8fb54744100d188e5e34b638aeaa7b5eb76b8d8a78a52ea27313489e30fa8b
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v3-lights/integration.json: ce648d64ac2f340de7bd9b14d7f67da1e3478e7b3839f31b85ed94f1303c68dc
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v3-lights/export/manifest.json: 38abbfde261560782f6c26b45d3181ff66c359948ab33abb4317f9f900395520
   /home/alexm/git/universe-fso/standards/SFO/schema/hull.schema.yaml: f409c0e2cd8533931bd320662212b9f649db2e552f162901a9130033437abf96
-  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v2/export/explorer-hull-closed.glb
-  : 8572ec5d55f0a610d7fdec2f910a309923b4ce48f5d129113d474ad877239964
-  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v2/export/explorer-hull-open.glb
-  : 67e543eee9c85baf3f9c5dc060f9f5e72d091a31fa61da741d859a4213831bdd
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v3-lights/export/explorer-hull-closed.glb
+  : b341441762e2eb95c9bbff3f0a7152078b600362c9fb22943ada5b70d7a2605e
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-v3-lights/export/explorer-hull-open.glb
+  : 6eb3dc1f7e868c8bea6b07036bd0c51695e1b94705826d5553703a628df4b063
 hull_record_fields:
   model: assets/models/explorer-study.glb
-  model_sha256: 8572ec5d55f0a610d7fdec2f910a309923b4ce48f5d129113d474ad877239964
+  model_sha256: b341441762e2eb95c9bbff3f0a7152078b600362c9fb22943ada5b70d7a2605e
   mechanisms:
   - key: rear_ramp
     kind: ramp
@@ -167,18 +169,18 @@ hull_record_fields:
   - Authored edited gear is hull-owned; no inherited catalogue landing rating or dynamic contact qualification.
   - Exit marker/state replay is not boarding acceptance; continuous route, terrain contact and actor transfer need
     exact runtime checks.
-physical_pending: No provisional6739.788663+91.6kg promoted. Final material-interface repairs and exact union ledger
+physical_pending: No provisional6739.970483+91.6kg promoted. Final material-interface repairs and exact union ledger
   must supply mass and physicalvolume/dimensions; do not put null or guessed placeholders in an active hull record.
 scope: Bare hull ground stage, edited hull-owned gear included. No trial tank/engine/support/roof frames or selected
-  equipment. Empty slots/fit/thrusters are intentional. Mechanisms preserve actual V2 geometry, including original15/10mm
-  hatch motion; separate new10/8mm cassette study is not installed here.
+  equipment. Empty slots/fit/thrusters are intentional. Mechanisms preserve actual V3 lights geometry, including
+  original15/10mm hatch motion; separate new10/8mm cassette study is not installed here.
 verification:
   schema_fields: All prepared fields validate against actual hull schema properties; full required physical record
     is intentionally incomplete.
   mechanism_cross_references: pass
-  unique_scene_nodes: 1034
-  meshes: 998
-  parent_local_replay_nodes: 1034
+  unique_scene_nodes: 1042
+  meshes: 1006
+  parent_local_replay_nodes: 1042
   world_matrix_max_component_error: 5.915025944602803e-07
   worst_node: Extension compact underside seat -1
   limit: Independent TRS world-matrix replay of two exact exported poses, not mesh/continuous motion, contact, fit,
