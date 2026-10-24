@@ -1,0 +1,47 @@
+status: Load and strength review of the one-radiator paired-root prototype V2 against
+  docs/ships/explorer-radiator-root-disposition.yaml; first-order sizing, not a qualification
+source_task: 20261024T135613-ships-b014
+packet: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-fit-current-study/radiator-retention-one-v2/handoff.json
+packet_sha256: 6de647ae3b15e62f7b83755399ca0a0b0e046c5bbdcd280e735c5da50588abd7
+viewed: guide.png (T-shoe head captured in a guide box under the rail saddle)
+basis: Limit 20 m/s2 any direction, 1.25 yield, 2.0 ultimate; per bracket 200 N m out-of-plane root moment and 400 N
+  shear; bolt tension 5263 N at limit; preload 8250 N (M5 10.9)
+results:
+  washer_bearing:
+    supported_area_mm2: 50.76249      # 92.93% of the washer; 5.5 mm washer ID over the 6 mm bore
+    at_preload_MPa: 162.5
+    at_1.25_limit_MPa: 188.4
+    at_2.0_limit_MPa: 207.4           # joint gapped, bolt carries all
+    verdict: Pass against 6061-T6 compressive yield about 276 MPa (margin 1.46 at yield case), on the condition that
+      the product feet are 6061-T6 class aluminium. If the product author's feet are a softer alloy or cast, use a
+      hardened 12 mm OD washer and recheck. The 7% unsupported washer area is acceptable.
+  fixed_end: Pass as disposed, provided the guided end takes its half of the root moment.
+  guided_end:
+    verdict: FAIL as drawn
+    why: The T-head's PTFE pads resist the out-of-plane moment over a couple arm of about 12 mm (retaining pads at the
+      head's edges) or 8 mm (side pads). 200 N m needs 16.7 kN - about 35 MPa on the 80x6 mm retaining pads and 39 MPa
+      on the 80x8 mm side pads at limit. PTFE takes about 7 MPa (filled) before cold flow. If the guide is let go
+      soft, the fixed end takes the whole 400 N m - 10.5 kN bolt tension at limit, above preload, and 21 kN at
+      ultimate, above the 14.8 kN bolt UTS. Neither works.
+    requirement:
+    - Two PTFE bearing rows separated by at least 100 mm across the moment (couple arm), each row at least 80x10 mm
+      - 2.0 kN, 2.5 MPa at limit and 5.0 MPa at ultimate; filled PTFE (glass or bronze) on hard-anodised 6061 or
+      stainless strips.
+    - Running clearance 0.05 to 0.10 mm total, no preload on the pads, so thermal sliding sees only dead load
+    - Stops at +-3.5 mm kept (as drawn)
+  thermal_reaction:
+    case: Parked on Port Sirnendis (1.281 m/s2), the only state where the root slides thermally
+    pad_normal_N: 128     # 12.8 N m dead moment over 0.1 m
+    friction_N: 38        # mu 0.15 static, PTFE, two rows
+    verdict: Well under the 500 N limit once the guide meets the requirement. During a landing the guide may stick;
+      that is fine, it need not slide then.
+  receiver_and_welds: Not reviewed - the F to G receiver change voids the local frame pass, and root path follows
+    docs/ships/explorer-wingframe-root-choice.yaml
+replication: Hold until a revised guide meeting the requirement is drawn and screened (505 states, 16 cones, tools)
+remaining:
+- Product feet material and strength from the product author
+- Weld and receiver sizing once the G receiver ties to the foundation
+- Panel thermal distortion beyond local guide travel
+scope:
+  active_record_created: false
+  product_changed: false
