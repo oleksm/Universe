@@ -1,0 +1,43 @@
+status: Chosen prototype internal termination for the coolant loop controller service study; not product release,
+  rating or selected fit
+source_task: 20261024T131438-blender-5b6e
+packet: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-fit-current-study/coolant-electrical-v1/handoff.json
+packet_sha256: a28ea41c81eea946b60a06d2e92f4612a584aa06c0dff3ae1dbef452fc2e5443
+rule: As the camera and altimeter choices - harness jackets stay on the plug side; inside, receptacle contacts take
+  hook-up wire. Sized for this unit's own draw.
+choice:
+  internal_power:
+    item: run.wire-2p5mm2
+    count: 3            # contacts 1 plus, 2 minus, 3 earth; spares 4..7 unwired
+    OD_m: 0.0031
+    bend_radius_m: 0.031
+    draw_A: 10.714      # 300 W at 28 V
+    single_wire_vacuum_A: 15
+    check: Shell 17 contacts take at most 2.5 mm2, so this is the largest wire it can carry. At the 0.8 factor the
+      registry already uses for three cores together (run.cable-dc-600v-3x2p5mm2 basis) the wires carry 12 A;
+      10.714 A is 89% of that, the same margin as the 3x2.5 mm2 harness outside. Only plus and minus carry load.
+      Loss is 0.79 W per metre per wire; a 0.15 m tail, both ways, drops 22 mV and warms each wire about 0.12 W.
+    margin_note: The whole power path (harness 12 A, contacts 15 A, wire 12 A) sits at 89%. If review wants more,
+      the step is shell 25 with 6 mm2 as for the air cooler, a product port change; not taken now.
+  internal_CAN:
+    item: run.wire-0p5mm2
+    per_port: 4
+    pairing: H/L twisted; the two shell 11 ports joined as a pass-through with one stub to the board
+  contacts: Full-size 2.5 mm2 shell 17 crimp contacts; reduced-barrel 0.5 mm2 contacts in the shell 11 inserts.
+    invented/review.
+  straight_tail_m: 0.01
+  board_allocation:
+    what: Pump motor driver, power input filter and CAN interface on one board in the drawn 160x40x140 mm case
+    end_reserved_for_wires_m: 0.045     # from the -X connector end: tails, R31 power bends, clips
+    box_m: [0.100, 0.028, 0.120]        # case X, Y, Z; inside the 4 mm end and side walls, beyond the wire end
+    heat: About 15 W of driver loss (95% at 300 W, invented/review); power devices on the case wall, not in air
+    mass: Inside the unit's existing nominal; no new mass row until the board is drawn
+    confidence: invented/review; no circuit, EMC or thermal design
+  wire_support: One lacing/clip point per bundle to the case
+remaining:
+- Drawn board, routing and clips with clearance in the case
+- External harness plug, grip and R59 bend at the -X face in the installed replay
+- Crimp, EMC, thermal, vibration qualification; controller end material and attachment review
+scope:
+  active_record_created: false
+  product_original_changed: false
