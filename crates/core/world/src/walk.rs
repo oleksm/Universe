@@ -611,36 +611,40 @@ impl Walker {
             self.feet += motion / n as f64;
             let up = up_at(self.feet);
             // Out of walls (sideways), off ceilings (down), onto ledges it's
-            // already over (up): the knee and the head.
-            for _ in 0..4 {
+            // already over (up): the knee and the head. One contact at a time,
+            // the deepest, then asked again: a surface made of many triangles
+            // overlapping the body pushes it out once, not once a triangle.
+            for _ in 0..8 {
                 let mut clear = true;
                 for h in [STEP + BODY_RADIUS, HEIGHT - BODY_RADIUS] {
                     contacts.clear();
                     for c in colliders {
                         c.contacts(self.feet + up * h, BODY_RADIUS, &mut contacts);
                     }
-                    for &(nrm, depth) in &contacts {
-                        let rise = nrm.dot(up);
-                        let push = if rise > SLOPE {
-                            up
-                        } else if rise < -0.7 {
-                            if v_up > 0.0 {
-                                v_up = 0.0;
-                            }
-                            -up
-                        } else {
-                            match (nrm - up * rise).try_normalize() {
-                                Some(side) => side,
-                                None => continue,
-                            }
-                        };
-                        self.feet += push * (depth / push.dot(nrm).max(0.2)).min(BODY_RADIUS);
-                        let into = v_side.dot(push);
-                        if into < 0.0 && push != up && push != -up {
-                            v_side -= push * into;
-                        }
-                        clear = false;
+                    let deepest = contacts
+                        .iter()
+                        .filter_map(|&(nrm, depth)| {
+                            let rise = nrm.dot(up);
+                            let push = if rise > SLOPE {
+                                up
+                            } else if rise < -0.7 {
+                                -up
+                            } else {
+                                (nrm - up * rise).try_normalize()?
+                            };
+                            Some((push, (depth / push.dot(nrm).max(0.2)).min(BODY_RADIUS)))
+                        })
+                        .max_by(|a, b| a.1.total_cmp(&b.1));
+                    let Some((push, by)) = deepest else { continue };
+                    if push == -up && v_up > 0.0 {
+                        v_up = 0.0;
                     }
+                    self.feet += push * by;
+                    let into = v_side.dot(push);
+                    if into < 0.0 && push != up && push != -up {
+                        v_side -= push * into;
+                    }
+                    clear = false;
                 }
                 if clear {
                     break;
@@ -692,4 +696,26 @@ mod tests {
         assert!((d - STEP).abs() < 1e-9, "{d}");
         assert!(floor(&at(&only_steep), DVec3::ZERO, DVec3::Y, 0.05).is_none());
     }
+    /// The same wall made of more triangles pushes no further: a body 10 mm into it moves 10 mm out whether the wall
+    /// is 2 triangles or 64 (the push was once summed, a triangle each).
+    #[test]
+    fn walker_push_out_ignores_triangle_count() {
+        let wall = |k: usize| -> Vec<[DVec3; 3]> {
+            let mut t = Vec::new();
+            for i in 0..k {
+                let (z0, z1) = (-2.0 + 4.0 * i as f64 / k as f64, -2.0 + 4.0 * (i + 1) as f64 / k as f64);
+                t.push([DVec3::new(1.0, -1.0, z0), DVec3::new(1.0, 3.0, z0), DVec3::new(1.0, 3.0, z1)]);
+                t.push([DVec3::new(1.0, -1.0, z0), DVec3::new(1.0, 3.0, z1), DVec3::new(1.0, -1.0, z1)]);
+            }
+            t
+        };
+        for k in [1, 32] {
+            let mesh = WalkMesh::new(&wall(k));
+            let colliders = [Collider::Mesh { mesh: &mesh, at: DVec3::ZERO, rot: glam::DQuat::IDENTITY }];
+            let mut w = Walker { feet: DVec3::new(1.0 - BODY_RADIUS + 0.01, 0.0, 0.0), velocity: DVec3::ZERO };
+            w.step(&colliders, &|_| DVec3::Y, 0.0, &|_| false, &Stride { wish: DVec3::ZERO, jump: 0.0, climb: 0.0 }, 0.01);
+            assert!((w.feet.x - (1.0 - BODY_RADIUS)).abs() < 1e-3, "{} triangles: feet at x {}", 2 * k, w.feet.x);
+        }
+    }
+
 }

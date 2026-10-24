@@ -73,9 +73,10 @@ pub fn hull_from_record(bytes: &[u8], visual: &str, record: Option<&crate::regis
     }
     let count = |prefix: &str| read.nodes.iter().filter(|n| n.0.starts_with(prefix)).count() as u8;
     let inferred_slots = standard_slots(read.class.unwrap_or(2), count("mount_cargo").max(1), count("mount_hardpoint"), count("mount_utility"));
-    let slots = match record.filter(|h| !h.slots.is_empty()) {
+    let slots = match record {
         // Keep registry names/sizes for represented kinds (including additional
-        // air/water/cabin slots). Unimplemented kinds stay explicitly unfitted.
+        // air/water/cabin slots). Unimplemented kinds stay explicitly unfitted. A record's slots are its slots, none
+        // included (a bare stage): inferred only for a model no record describes.
         Some(h) => h.slots.iter().filter_map(|s| {
             crate::modules::SlotKind::from_record(s.kind)
                 .map(|kind| (s.name.clone(), kind, s.size as u8))
@@ -469,6 +470,13 @@ mod tests {
         let spec = hull_from_gltf(&glb, "assets/models/mc07.glb").unwrap();
         assert!(!spec.commissioned && spec.thrusters.is_empty());
         assert!(spec.limits[0].starts_with("not commissioned: no main drive"), "{}", spec.limits[0]);
+        // (A registered record with no slots: none, not the standard ones.)
+        let mut bare = crate::registry::registry().hull("hull.mc-07").unwrap().clone();
+        bare.slots.clear();
+        bare.fit.clear();
+        bare.thrusters.clear();
+        let stage = hull_from_record(&glb, "assets/models/mc07.glb", Some(&bare)).unwrap();
+        assert!(stage.slots.is_empty() && !stage.commissioned, "{:?}", stage.slots);
     }
 
     /// A hull's engines as its record binds them: exactly, or refused (a missing nozzle or slot, twice, a share

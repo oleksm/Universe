@@ -3,7 +3,7 @@ bound: 3 mechanisms, 2 exits, 6 moving floors
 gear feet: 3 (ground plane y -2.193 m, spread 0.000 m)
 rear_ramp: contact RearRamp_Toe closed y -0.553, deployed y -2.193: gap over the gear plane -0.000 m
 crew_ladder: contact CrewLadder_Foot closed y -0.775, deployed y -2.193: gap over the gear plane -0.000 m
-exit rear (Walk): open closed false / deployed true; top DVec3(-3.49036915415123e-5, -0.649806256878541, 3.7366786579446893), foot Some(DVec3(-3.5235645222986866e-5, -2.193139681045833, 6.521308297945367)) (foot over gear plane -0.000 m)
-exit belly (Climb): open closed false / deployed true; top DVec3(-3.436724974919193e-5, -0.5631395536543589, -0.7633217890901356), foot Some(DVec3(-3.4365232210999256e-5, -2.193139631914155, -0.6998503006596382)) (foot over gear plane -0.000 m)
+exit rear (Walk): open closed false / deployed true; top DVec3(-3.4903691541490556e-5, -0.6498062568785405, 3.7366786579446893), foot Some(DVec3(-3.523564522296512e-5, -2.1931396810458326, 6.521308297945367)) (foot over gear plane -0.000 m)
+exit belly (Climb): open closed false / deployed true; top DVec3(-3.436724974917018e-5, -0.5631395536543584, -0.7633217890901356), foot Some(DVec3(-3.436523221097751e-5, -2.1931396319141547, -0.6998503006596382)) (foot over gear plane -0.000 m)
 walk rear: 41 samples, 0 without floor, 0 too steep, worst step 0.041 m (walker 0.45), last floor +0.007 m over the gear plane
 climb belly: length 1.631 m, held at 21/21 points along it; foot -0.000 m over the gear plane
