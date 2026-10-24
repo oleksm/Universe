@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.clastic-grain
+  name: Clastic grain
+  about: 'On clastic rock (planet-field.rock code 9) on land: 2 coarse near high ground (within 2 hops of relief over
+    1.5 km, or local relief over 600 m), 1 fine in low basins far from it, 0 elsewhere. Proximal coarse, distal fine.'
+unit: '1'
+per: sample
+producer:
+  where: planet-forge crates/forge-core/src/models/tectonic/landscape.rs fn clastic_grain (planet-process.relief-landscape)
+  file: checkpoint fields/*.npy
+  key: planet-field.clastic-grain
+missing: '0: not clastic, or not land'
+cautions:
+- A proxy, not a sediment model; thresholds are the pass's params grain source relief 1500 m, grain coarse hops 2,
+  grain coarse relief 600 m.
+- 0 on a clastic sample means sea, not a grain size.
+levels:
+- planet-level.10000-km
+- planet-level.1000-km
+basis:
+- of:
+  - identity
+  - producer
+  - missing
+  tier: derived
+  source: planet-forge 31308fd crates/forge-core/src/models/tectonic/landscape.rs
+  note: Describe-only save (M4 C1); clastic land 43-52 % fine, 19-27 % coarse on e126s42-44 as planets reports.
+status: draft

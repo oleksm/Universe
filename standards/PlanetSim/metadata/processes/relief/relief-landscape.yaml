@@ -126,6 +126,8 @@ writes:
   field: planet-field.boundary-type-sample
 - name: boundary-speed-sample
   field: planet-field.boundary-speed-sample
+- name: clastic-grain
+  field: planet-field.clastic-grain
 params:
 - name: obliquity
   meaning: Provisional axial tilt of the seasonal screening model; not a measured per-body obliquity.
@@ -707,6 +709,11 @@ basis:
   source: planet-forge 6988989 crates/forge-core/src/models/tectonic/landscape.rs
   note: 'M4 C2: also saves wave-energy, tide-index, wind-turn, warm-month, cold-month, dry-season, boundary-type-sample
     and boundary-speed-sample (Describe-only).'
+- of:
+  - writes
+  tier: derived
+  source: planet-forge 31308fd crates/forge-core/src/models/tectonic/landscape.rs
+  note: 'M4 C1: also saves clastic-grain.'
 - of:
   - params
   - clock

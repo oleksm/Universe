@@ -1997,7 +1997,7 @@
 - { record: planet-factor.rock-layers, at: "2026-10-24T16:40:16Z", status: "", summary: "changed: basis, kind, reading, reads", sha: "2c84d8610b03cfaf" }
 - { record: planet-factor.rock-perm, at: "2026-10-24T16:40:16Z", status: "", summary: "changed: basis, kind, reading, reads", sha: "b2e8eee92c16301f" }
 - { record: planet-factor.rock-soluble, at: "2026-10-24T16:44:26Z", status: "", summary: "changed: signal, basis, kind, unit, reads, reading, class_map", sha: "d38fdcf29ced48e6" }
-- { record: planet-factor.rock-type, at: "2026-10-24T16:33:36Z", status: "", summary: "changed: basis, kind, unit, reads, signal, class_map, reading", sha: "daa93a8e51429b60" }
+- { record: planet-factor.rock-type, at: "2026-10-24T19:14:07Z", status: "", summary: "changed: basis, class_map", sha: "6b86487c8d86878d" }
 - { record: planet-factor.sea-level, at: "2026-10-24T16:33:36Z", status: "", summary: "changed: basis, kind, unit, reads, reading", sha: "fab3c3f06977dd71" }
 - { record: planet-factor.sed-supply, at: "2026-10-24T16:40:16Z", status: "", summary: "changed: basis, kind, reading, reads", sha: "3984f2479a97654b" }
 - { record: planet-factor.slope-relief, at: "2026-10-24T16:40:16Z", status: "", summary: "changed: basis, kind, reading, reads, signal", sha: "95ef04ce1809b6be" }
@@ -2267,6 +2267,7 @@
 - { record: planet-field.boundary-to, at: "2026-10-19T03:59:59Z", status: "", summary: "first tracked", sha: "d041ae28f49601aa" }
 - { record: planet-field.boundary-type-sample, at: "2026-10-24T18:54:40Z", status: "", summary: "first tracked", sha: "c248d6251ac36fa8" }
 - { record: planet-field.centre-pressure, at: "2026-10-17T21:42:08Z", status: "", summary: "first tracked", sha: "919358ba2d09cf15" }
+- { record: planet-field.clastic-grain, at: "2026-10-24T19:14:07Z", status: "", summary: "first tracked", sha: "eec04e964074cf38" }
 - { record: planet-field.cmb-gravity, at: "2026-10-17T21:42:08Z", status: "", summary: "first tracked", sha: "aa266f20692bdd39" }
 - { record: planet-field.cmb-heat-flow, at: "2026-10-17T21:42:08Z", status: "", summary: "first tracked", sha: "5b1b8ca139d36f95" }
 - { record: planet-field.cmb-pressure, at: "2026-10-17T21:42:08Z", status: "", summary: "first tracked", sha: "f431c6f10291ff73" }
@@ -2885,7 +2886,7 @@
 - { record: planet-process.relief-folds, at: "2026-10-18T04:31:28Z", status: "", summary: "changed: params", sha: "6239f9c88bcdbdf3" }
 - { record: planet-process.relief-great-escarpment, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, implementations, basis, cautions", sha: "1b86d131321d45e7" }
 - { record: planet-process.relief-hotspot-chain, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, params, implementations, basis, cautions", sha: "812b079f77675a13" }
-- { record: planet-process.relief-landscape, at: "2026-10-24T18:54:40Z", status: "", summary: "changed: writes, basis", sha: "0c26a0dcfeedb0b8" }
+- { record: planet-process.relief-landscape, at: "2026-10-24T19:16:38Z", status: "", summary: "changed: writes, basis", sha: "10d054d25f1c5531" }
 - { record: planet-process.relief-layer-hooks, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "94dc2c1de9d8543e" }
 - { record: planet-process.relief-orogen-axis, at: "2026-10-20T13:26:52Z", status: "", summary: "changed", sha: "27c8f96902527c1a" }
 - { record: planet-process.relief-rift-floor-axis, at: "2026-10-17T23:24:33Z", status: "", summary: "changed: reads, writes, implementations, basis, cautions", sha: "62ccfbe193197698" }

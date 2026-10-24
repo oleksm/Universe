@@ -148,6 +148,21 @@ class PatternPreferences(unittest.TestCase):
         self.assertEqual(lod.entry_score(r, e, {'fields': {'rock': 8}}), 1)
         self.assertIsNone(lod.entry_score(r, e, {'fields': {'rock': 9}}))
 
+    def test_class_split_by_a_second_field(self):
+        r = self.registry()
+        r['planet-factor']['planet-factor.test'].update(kind='categorical', signal={'field': 'planet-field.rock'},
+            class_map=[{'key': 'fine', 'codes': [9], 'and': [{'field': 'planet-field.grain', 'codes': [1], 'possible': [0]}]},
+                       {'key': 'coarse', 'codes': [9], 'possible': [11], 'and': [{'field': 'planet-field.grain', 'codes': [2], 'possible': [0]}]}])
+        e = {'factor': 'planet-factor.test', 'weight': 1, 'want': 'in', 'classes': ['coarse']}
+        self.assertEqual(lod.entry_score(r, e, {'fields': {'rock': 9, 'grain': 2}}), 1)
+        self.assertEqual(lod.entry_score(r, e, {'fields': {'rock': 9, 'grain': 1}}), 0)
+        for sig in ({'rock': 9, 'grain': 0}, {'rock': 9}, {'rock': 9, 'grain': 1.5}, {'rock': 11, 'grain': 2}):
+            self.assertIsNone(lod.entry_score(r, e, {'fields': sig}))
+        e['want'] = 'not-in'
+        self.assertEqual(lod.entry_score(r, e, {'fields': {'rock': 9, 'grain': 1}}), 1)
+        e.update(want='in', classes=['fine', 'coarse'])
+        self.assertEqual(lod.entry_score(r, e, {'fields': {'rock': 9, 'grain': 1}}), 1)
+
     def test_gate_only_or_trigger_owned_patterns_cannot_place(self):
         r = self.registry()
         p = r['planet-pattern']['high']

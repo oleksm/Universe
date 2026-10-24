@@ -57,6 +57,23 @@ def _class(sig, layer):
     return None
 
 
+def _member(c, value, sig):
+    """A class's membership of a code: True, False, or None (unknown: unresolved, possible, or an and-field unknown)."""
+    if value in c.get("possible", []):
+        return None
+    if c.get("unresolved"):
+        return None if not c["codes"] or value in c["codes"] else False
+    if value not in c["codes"]:
+        return False
+    for cond in c.get("and", []):
+        v = _value(sig, cond["field"])
+        if v is None or not float(v).is_integer() or v in cond.get("possible", []):
+            return None
+        if v not in cond["codes"]:
+            return False
+    return True
+
+
 def holds(cond, sig):
     """Inclusive SI min/max; legacy op/value remains for layer classification only."""
     v = _value(sig, cond["field"])
@@ -158,13 +175,16 @@ def entry_score(R, entry, sig):
             return None
         mapping = {c["key"]: c for c in factor.get("class_map", [])}
         selected = entry.get("classes", [])
-        known = {x for c in mapping.values() for x in c["codes"]}
+        known = {x for c in mapping.values() for x in c["codes"] + c.get("possible", [])}
         if value is None or value not in known or not selected or any(k not in mapping for k in selected):
             return None
-        inside = any(value in mapping[k]["codes"] for k in selected if not mapping[k].get("unresolved"))
-        ambiguous = any(c.get("unresolved") and (not c["codes"] or value in c["codes"]) for c in (mapping[k] for k in selected))
-        if not inside and ambiguous:
+        member = [_member(mapping[k], value, sig) for k in selected]
+        if True in member:
+            inside = True
+        elif None in member:
             return None
+        else:
+            inside = False
         return float(inside if want == "in" else not inside)
 
     if factor.get("kind") == "categorical":
