@@ -110,6 +110,22 @@ writes:
   field: planet-field.cover
 - name: tect-setting
   field: planet-field.tect-setting
+- name: wave-energy
+  field: planet-field.wave-energy
+- name: tide-index
+  field: planet-field.tide-index
+- name: wind-turn
+  field: planet-field.wind-turn
+- name: warm-month
+  field: planet-field.warm-month
+- name: cold-month
+  field: planet-field.cold-month
+- name: dry-season
+  field: planet-field.dry-season
+- name: boundary-type-sample
+  field: planet-field.boundary-type-sample
+- name: boundary-speed-sample
+  field: planet-field.boundary-speed-sample
 params:
 - name: obliquity
   meaning: Provisional axial tilt of the seasonal screening model; not a measured per-body obliquity.
@@ -685,6 +701,12 @@ basis:
   source: planet-forge d9e9475 docs/m4-cover-setting-fields-2026-10-24.md
   note: 'M4 C3: writes planet-field.cover and planet-field.tect-setting, and reads arc-last-active and hotspot-last-active
     for the magmatic-arc and hotspot settings.'
+- of:
+  - writes
+  tier: derived
+  source: planet-forge 6988989 crates/forge-core/src/models/tectonic/landscape.rs
+  note: 'M4 C2: also saves wave-energy, tide-index, wind-turn, warm-month, cold-month, dry-season, boundary-type-sample
+    and boundary-speed-sample (Describe-only).'
 - of:
   - params
   - clock

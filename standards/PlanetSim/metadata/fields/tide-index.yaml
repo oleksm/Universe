@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.tide-index
+  name: Tide index
+  about: 'A tide index from the shelf''s width: a proxy for tidal range, not a modelled tide.'
+unit: m
+per: sample
+producer:
+  where: planet-forge crates/forge-core/src/models/tectonic/landscape.rs (planet-process.relief-landscape)
+  file: checkpoint fields/*.npy
+  key: planet-field.tide-index
+cautions:
+- Shelf-width proxy (0 to about 10 m in e126s43); no ocean tide model behind it.
+levels:
+- planet-level.10000-km
+- planet-level.1000-km
+basis:
+- of:
+  - identity
+  - unit
+  - producer
+  tier: derived
+  source: planet-forge 6988989 crates/forge-core/src/models/tectonic/landscape.rs (Ground docs, save list ~l.567)
+  note: Describe-only save of what the pass computed (M4 C2); ranges checked on e126s43 ck_001124.
+status: draft
