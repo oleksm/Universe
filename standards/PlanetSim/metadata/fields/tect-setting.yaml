@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.tect-setting
+  name: Tectonic setting
+  about: The tectonic setting of each sample, from the relief-landscape pass's own masks and inputs, the more specific
+    rule first.
+unit: '1'
+per: sample
+producer:
+  where: planet-forge crates/forge-core/src/models/tectonic/landscape.rs (planet-process.relief-landscape)
+  file: checkpoint fields/*.npy
+  key: planet-field.tect-setting
+class_of: planet-layer.tect-setting
+missing: '0: unclassified'
+cautions:
+- First match wins, in this order - oceanic 1, transform 12, magmatic-arc 8, hotspot 11, rift-extensional 9, active-orogen
+  7, foreland-basin 10, back-arc 13, intermontane-basin 14, old-orogen 6, craton-shield 2, platform 3, passive-margin 5.
+- hotspot (11) is active now only (hotspot-last-active >= 0); extinct tracks need C4 history.
+- back-arc (13) needs fault type (C2) and intermontane-basin (14) needs subsidence (C3); never assigned yet.
+- Code 4 is not used.
+derived_from:
+- planet-field.crust-kind
+- planet-field.crust-age
+- planet-field.fold
+- planet-field.arc-last-active
+- planet-field.hotspot-last-active
+levels:
+- planet-level.10000-km
+- planet-level.1000-km
+basis:
+- of:
+  - identity
+  - producer
+  - class_of
+  - missing
+  - derived_from
+  tier: derived
+  source: planet-forge d9e9475 docs/m4-cover-setting-fields-2026-10-24.md
+  note: Rules and order as the spec's table; boundary types and region masks come from the plates table and features,
+    not fields.
+status: draft

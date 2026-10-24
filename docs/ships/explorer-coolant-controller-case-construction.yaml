@@ -20,8 +20,10 @@ lid:
   plate: 6061-T6, 2 mm
   joint: Lid seats on a 1.5 mm 6061 internal backing flange riveted or welded inside the case rim, giving a 6 mm land
   gasket: Silicone 1 mm, conductive filled for EMC continuity across the lid; dust/splash only, not a pressure seal
-  fasteners: 8 captive M3 A2 stainless screws at no more than 60 mm pitch into steel self-clinching nuts in the
-    backing flange (rated for sheet of 1.5 mm and up)
+  fasteners: Captive M3 A2 stainless screws into steel self-clinching nuts in the backing flange (rated for sheet
+    of 1.5 mm and up). Pitch at most 60 mm measured ALONG THE GASKET CENTRELINE, stepped foot reliefs and corners
+    included, not as a straight chord; one screw within 15 mm of each corner or step. Count is what that needs, at
+    least 8 (clarified for 20261024T134321-blender-a66c).
   stops: Compression stops so the gasket closes to 0.75 mm and no further
   invented/review: true
 board_heat: The 15 W driver loss stays on a case wall that is not the lid (docs/ships/explorer-coolant-internal-termination-choice.yaml)
