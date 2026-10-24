@@ -350,3 +350,52 @@ all_host_seam_update:
   scope: All-host analytical upper-plane clipping/constrained triangles fixes projected coverage; not a pressure
     closure. Preserve small negative port cavity shells as signed voids pending topology review, never absolute-mass
     sum.
+paired_rear_floor_quantity_review:
+  path: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/paired-rear-floor-reconstruction.json
+  sha256: 337ee51cf978e428263229277216cf2ff25ce1a22c75244beb484b5ad558e2dc
+  source_sha256: 8fc3a7e3ab384395592c35dde78b59a440830bbdae1f4a7ed59e55c07af8927e
+  status: Draft geometric quantity supported for this derived floor candidate; no source adoption or engineering
+    acceptance inferred
+  top_loop_vertices: 12
+  bottom_loop_vertices: 12
+  source_plane_fit_max_error_m:
+  - 3.814697246973253e-08
+  - 6.548563624697579e-08
+  rear_mesh_volume_m3: 0.02415195817804356
+  rear_mesh_mass_kg: 65.2102870807176
+  independent_loop_loft_volume_m3: 0.02415210399999851
+  independent_loop_vs_mesh_difference_m3: 1.458219549485551e-07
+  independent_loop_vs_mesh_mass_difference_kg: 0.00039371927836109877
+  joined_candidates:
+  - name: STUDY floor baseline12mm with paired rear
+    status: Error.NoError
+    volume_m3: 0.30784369119352917
+    mass_kg: 831.1779662225288
+    oriented_shell_volumes:
+    - 0.30784369119352917
+    join_material_overlap_m3: 0.0
+  - name: STUDY floor patched12mm with paired rear
+    status: Error.NoError
+    volume_m3: 0.28786113897715837
+    mass_kg: 777.2250752383276
+    oriented_shell_volumes:
+    - 0.28786113897715837
+    join_material_overlap_m3: 0.0
+  blender_mesh_checks:
+  - name: STUDY paired rear floor transition
+    nonmanifold_edges: 0
+    signed_volume_m3: 0.02415195817804469
+  - name: STUDY floor baseline12mm with paired rear
+    nonmanifold_edges: 0
+    signed_volume_m3: 0.30784369119353083
+  - name: STUDY floor patched12mm with paired rear
+    nonmanifold_edges: 0
+    signed_volume_m3: 0.2878611389771581
+  quantity_basis: Use mesh-derived quantities consistently. Exact12mm analytic planar mass and float32 rebuilt mesh
+    differ slightly; do not mix them in the additive rollup. The65.207kg notification was stale; current report65.210287kg
+    reproduces2700*dV.
+  net_replacement: Intact831.177966kg is the derived replacement for the original floor object before newgearwell
+    changes.777.225075kg uses earlier3patches, not finalV6largerpan/panel footprint. Retire actual final patches
+    once, add newpans/frame separately.
+  remaining: Actual ramp motion/contact, cumulative hull replacement adoption and finalV6net cut accounting; physical
+    pressure/load claims remain separate.
