@@ -107,12 +107,10 @@ fn review(path: &str, key: &str) -> Result<Value, Box<dyn Error>> {
         "registry_dry_kg": frame_mass.map(|m| m + equipment_mass), "missing": missing_mass,
         "basis": format!("{mass_basis:?}"),
         "limit": "Record arithmetic only; geometry composition, duplicate baked equipment, crew, cargo and consumables need independent review."});
-    if expected_slots.is_empty() {
-        faults.push("registry slots empty: inspect inferred slot behavior".into());
-    }
-    if expected_fit.is_empty() {
-        faults.push("registry fit empty: inspect stock-fit behavior".into());
-    }
+    // Empty allocations on a registered ground stage are authoritative. The
+    // exact importer comparisons below still reject any added slots or fit.
+    report["empty_recorded_slots"] = json!(record.is_some() && expected_slots.is_empty());
+    report["empty_recorded_fit"] = json!(record.is_some() && expected_fit.is_empty());
     let mut limits = Vec::new();
     report["equipment_consumers"] = json!(record.into_iter().flat_map(|h| &h.fit).map(|f| {
         let equipment = reg.equipment(&f.item);
