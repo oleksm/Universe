@@ -1109,12 +1109,16 @@ impl Ground {
             let mut dir_sum = DVec3::ZERO;
             for &j in &js {
                 let (s0, n, e0, en) = (tu[5 * j] as usize, tu[5 * j + 1] as usize, tu[5 * j + 2] as usize, tu[5 * j + 3] as usize);
+                // (A base face goes only where the pyramid's land covers all of it (its corners, its sides' middles and
+                // its centre): one across the coast or round an inlet stays, under the pyramid's coast, or its sea
+                // would be a hole (black teeth along every shore).)
+                let covered = |p: DVec3| pyramid.is_some_and(|py| py.covered(p.normalize()));
+                let at = |v: u32| d.pos[v as usize];
                 tris.extend((s0..s0 + n).map(|t| [tri[3 * t], tri[3 * t + 1], tri[3 * t + 2]]).filter(|t| {
-                    !pyramid.is_some_and(|p| p.covered((d.pos[t[0] as usize] + d.pos[t[1] as usize] + d.pos[t[2] as usize]).normalize()))
+                    let [a, b, c] = t.map(at);
+                    ![a, b, c, a + b, b + c, c + a, a + b + c].into_iter().all(covered)
                 }));
-                edges.extend((e0..e0 + en).map(|e| [te[2 * e], te[2 * e + 1]]).filter(|e| {
-                    !pyramid.is_some_and(|p| p.covered((d.pos[e[0] as usize] + d.pos[e[1] as usize]).normalize()))
-                }));
+                edges.extend((e0..e0 + en).map(|e| [te[2 * e], te[2 * e + 1]]).filter(|e| ![at(e[0]), at(e[1]), at(e[0]) + at(e[1])].into_iter().all(covered)));
                 dir_sum += DVec3::new(tf[6 * j] as f64, tf[6 * j + 1] as f64, tf[6 * j + 2] as f64);
             }
             if tris.is_empty() && edges.is_empty() { continue; }
