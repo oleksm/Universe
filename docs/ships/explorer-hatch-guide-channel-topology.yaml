@@ -1,0 +1,65 @@
+status: chosen replacement guide/entry topology for reversible construction; no motion/pressure acceptance
+request: 20261023T233824-blender-02bb
+bindings:
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-insert-review.json
+  : cb4861150ee40c789a49089f50eeb2d2f4400b9cf86348d91d250638762ddaf2
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/crew-hatch.py: eca8a8c89732033088cc3789a317485c682277da1365e41767f2562e2844cd55
+finding: 'Existing solid35mm-wide guide is not a channel. Static PTFE receiver relief does not resolve travel: guide
+  clashes occur in15of17sampled states, and entry/final seats meet coaming/floor/belly/rim. Some reported moving
+  carrier versus original shoe contacts may be historical old/new replacement pairs; classify by exact retirement
+  map before declaring collision.'
+chosen_topology:
+  case: One fixed sealed side-pocket cassette on the existing cockpit-facing (-X) side of the circular hatch, surrounding
+    the entire two-leaf storage and carrier travel volume. The cassette pressure wall is continuous and joins the
+    coaming/actual pressure skin through a named closed seam. It is not the open groove itself. No cut open to the
+    cabin or exterior is excused by calling it a guide.
+  channels: Replace each solid guide with a built-up6061 C-channel assembly inside that cassette, with separate
+    upper and lower running levels for floor and belly carriers. Open slot faces the moving carrier stem; captive
+    PTFE shoes run on finite webs/lips. Channel is a guide, not a pressure seal. Use5mm6061 web/lips (stock.al6061-pl-5)
+    as a prototype starting section; widen the new channel outward if the full carrier/stem/retainer envelope needs
+    more than the old35mm width. Retain positive end/side webs rather than milling the whole old bar away.
+  entry: 'Use a short vertical unseat/reseat entry branch connected to the straight storage channel at each level.
+    Upper leaf first moves away from its seal downward, lower leaf upward; neither translates across the seal until
+    fully unseated. Reverse: translate home first, then seat normally. Build the branch and transition as actual
+    continuous bearing surfaces with chamfered entry, not a swept void with no support. Keep the authored15mm/10mm
+    offsets only if the current measured leaf/seat/entry clear them; otherwise revise offsets explicitly and invalidate
+    old pose/export checks.'
+  carrier: Redraw the four carrier ears with jogged/outboard stems so the guide stem/retaining fasteners do not
+    cross the continuous circular seal land, clear bore or closed floor/belly surface. Preserve actual PTFE working
+    thickness and retained shoe; no shortening to zero or hiding the endstop. Position all insert-retaining M2hardware
+    on the accessible carrier side within the channel clearance envelope. Distinguish insert-retaining endstop from
+    the fixed travel limit.
+  coaming: Preserve the circular clear bore and the full continuous closed-state gasket/seat annulus. This decision
+    authorizes a separately drawn local pocket-throat/coaming replacement only around the existing pocket mouth,
+    with a closed surrounding cassette wall and finite lands above/below the leaf passage. It does not authorize
+    cutting an open longitudinal slot through the seal annulus or automatic Boolean subtraction of the motion envelope
+    from the entire coaming. First route entry/stems around the seal land; any remaining unavoidable land crossing
+    requires a new explicit joint section before cutting.
+  boundary: Assign which leaf seals the pressure boundary, the actual gasket/contact route and the cassette enclosing
+    wall in one section drawing. A guide slot must lie wholly inside this declared enclosure or on its dry side.
+    Keep structural rail attachments distinct from thin pressurecase walls. When the hatch opens to outside, require
+    cabin equalization before unseating; do not claim an airlock or pressure-retaining open hatch.
+  stops_and_service: Fixed travel stops sit at the remote pocket end, outside normal carrier travel and crew opening.
+    Add a removable channel-end cap/keeper for shoe/carrier installation; installation/removal sequence must fit
+    without opening welded pressure seams. Actual cap fasteners/tool approach are counted parts. If cap is part
+    of the pressurecase, give it an explicit finite gasket and non-pierced blind fastener seat.
+  prototype_dimensions: Choose0.5mm running clearance per free side between moving metal/retainers and fixed channel,
+    except named PTFE bearing faces. Use3mm6061 cassette wall as a draft construction starting point (stock.al6061-sh-3),
+    finite supported corners/end closures and explicit pressure-host seam. These are geometry seeds, not pressure/thermal/manufacturing
+    tolerances or strength ratings.
+first_build: Construct one real side cross-section and the near-mouth L-entry with both leaf levels, actual shoe/stem/retainers
+  and continuous coaming seal seat. Demonstrate closed, unseated, transition and stored poses before mirroring/full-length
+  replication. Do not spend another pass trimming individual clashes in the unchanneled solid bar.
+evidence:
+- Named fixed/uppermoving/lowermoving ownership and all old-to-new guide/carrier/seat/retainer retirements. Repeated
+  oldshoe/newcarrier contacts must not be double-counted.
+- Actual slot/branch dimensions, retained bearing contacts and minimum positive wall/land thickness. No surface-no-hit
+  claim without checking containment and support.
+- Full unseat-translate-seat trajectory including intermediate poses near branch/coaming/floor/rim transitions,
+  actual metal/shoe/retainer and attachment brackets. Keep intended bearing contacts distinct from interpenetration.
+- Pressure-boundary section and named closed seam loops; current existing floor/belly/coaming cannot be labelled
+  non-pressure merely to permit a cut.
+- Frozen candidate positive material volumes, stock/density/mass and seam/cap/fastener quantities after exact original
+  retirement. Whole-sweep void subtraction is not a material or support design.
+limits: Authorizes explicit reversible geometry/quantity work under owner finish instruction, not pressure/load/crew/mission
+  acceptance. Numerical ratings are not required merely to construct and count this declared prototype.
