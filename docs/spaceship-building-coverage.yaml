@@ -159,6 +159,7 @@ coverage:
   - ship-check.assembly-state-coverage
   - ship-check.crew-routes
   - ship-check.socket-qualification
+  - ship-rule.base-blocks
 - source_section: '6.2'
   source_title: Store enough evidence to reproduce a result
   records:

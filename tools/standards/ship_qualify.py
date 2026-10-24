@@ -26,6 +26,10 @@ def load(folder):
 
 
 def glb_nodes(rel):
+    if os.path.isabs(rel) and os.path.isfile(rel):
+        b = open(rel, "rb").read()
+        n = struct.unpack("<I", b[12:16])[0]
+        return {x.get("name", "") for x in json.loads(b[20:20 + n]).get("nodes", [])}
     for base in (ROOT, GAME):
         p = os.path.join(base, rel)
         if os.path.isfile(p):
@@ -39,7 +43,7 @@ def dims(phys):
     return [phys.get("length"), phys.get("width"), phys.get("height")]
 
 
-def qualify(hull, mounts, equipment):
+def qualify(hull, mounts, equipment, model=None):
     """Faults and unchecked notes for one hull record: (criterion, message)."""
     faults, unchecked = [], []
     f = lambda c, m: faults.append((c, m))
@@ -54,7 +58,7 @@ def qualify(hull, mounts, equipment):
         if s["name"] in slots:
             f("S1", f"slot {s['name']} declared twice")
         slots[s["name"]] = s
-    nodes = glb_nodes(hull["model"]) if hull.get("model") else None
+    nodes = glb_nodes(model) if model else (glb_nodes(hull["model"]) if hull.get("model") else None)
     if nodes is None and (slots or hull.get("thrusters")):
         unchecked.append(("S5/T2", "no model to read: markers and nozzles not checked"))
     room = 0.0

@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.base-blocks
+  name: Base blocks a ship must carry, and what is optional
+  about: Which socket kinds a hull must offer and fill to be commissioned (fly), and which are optional; read by
+    tools/standards/ship.py and held to the game's BASE_BLOCKS.
+status: draft
+implementation: existing
+owner: registry
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: 'The game''s list, crates/core/world/src/modules.rs BASE_BLOCKS and ship.rs build (an engine stands for the drive,
+    cold gas for the thrusters; inert modules do not count). Owner 2026-10-24: requirements live in the registry so any
+    ship can be validated.'
+statement: A ship is commissioned (flies) only when every required block below is filled with a working, not inert,
+  module; a hull-and-sockets delivery must offer at least one socket for each, empty. Optional blocks add ability and
+  are the player's choice.
+blocks:
+- {need: power, kinds: [power], required: true, note: 'A plant, or batteries alone if their rate covers the draw'}
+- {need: main propulsion, kinds: [drive], also_by: main_engine, required: true, note: 'A drive, or an engine pushing along the nose'}
+- {need: attitude, kinds: [thrusters], also_by: cold_gas_engine, required: true, note: 'Thrusters, or cold-gas engines'}
+- {need: tank, kinds: [tank], required: true}
+- {need: flight computer, kinds: [computer], required: true}
+- {need: transponder, kinds: [transponder], required: true}
+- {need: sensors, kinds: [sensors], required: true, note: A camera or an altimeter suffices}
+- {need: comm, kinds: [comm], required: true}
+- {need: life support, kinds: [life_support], required: true, note: 'Uncrewed is not a mode today'}
+- {need: lift, kinds: [lift], required: false, note: Hover and landing on a world; an engine pushing up serves too}
+- {need: thermal, kinds: [thermal], required: false, note: 'Heat is not simulated yet; physically needed'}
+- {need: avionics, kinds: [avionics], required: false, note: Autopilots and the hyperdrive interlock}
+- {need: command, kinds: [command], required: false, note: 'No command station is required to fly'}
+- {need: cargo, kinds: [cargo], required: false}
+- {need: capacitor, kinds: [capacitor], required: false}
+- {need: hyperdrive, kinds: [hyperdrive], required: false}
+- {need: utility, kinds: [utility], required: false}
+- {need: hardpoint, kinds: [hardpoint], required: false}
+- {need: handling, kinds: [handling], required: false}
+- {need: access, kinds: [access], required: false}
+- {need: gear, kinds: [gear], required: false, note: A hull's own edited gear needs no socket}
+applies_to:
+- Socket inventory and commissioning of any hull
+verification:
+- tools/standards/ship.py validate reports each required block offered (socket) and filled (fit).
+- test_ship_cli holds the required kinds to the game's BASE_BLOCKS.
+limitations:
+- The list is the game's commissioning rule, not a mission requirement; a mission may need more (lift, thermal).
+related:
+- ship-check.socket-qualification
+- ship-rule.scope

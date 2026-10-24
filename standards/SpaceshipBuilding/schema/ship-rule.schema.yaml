@@ -2,8 +2,8 @@ $schema: http://json-schema.org/draft-07/schema#
 title: Ship Workflow Rule
 x-kind:
 - ship-rule
-description: 'standards/SpaceshipBuilding/metadata/rules/<name>.yaml: reusable workflow
-  definitions, never ship instances or runtime state.'
+description: 'standards/SpaceshipBuilding/metadata/rules/<name>.yaml: reusable workflow definitions, never ship
+  instances or runtime state.'
 type: object
 additionalProperties: false
 required:
@@ -44,8 +44,7 @@ properties:
     - proposed
     - existing
     - mixed
-    description: Whether the described capability exists; publishing a definition
-      does not implement it.
+    description: Whether the described capability exists; publishing a definition does not implement it.
   owner:
     enum:
     - owner
@@ -118,3 +117,34 @@ properties:
       - ship-artifact
       - ship-check
       - ship-decision
+  blocks:
+    type: array
+    description: 'Structured requirements a tool reads: one need each, the slot kinds that meet it, whether a ship
+      must carry it.'
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - need
+      - kinds
+      - required
+      properties:
+        need:
+          type: string
+          minLength: 1
+        kinds:
+          type: array
+          minItems: 1
+          items:
+            $ref: ../../dictionary.schema.yaml#/definitions/slot_kind
+        also_by:
+          enum:
+          - main_engine
+          - cold_gas_engine
+          description: 'An engine-kind slot whose fitted engine stands in: main_engine (not pressure-fed) for the
+            drive, cold_gas_engine (pressure-fed) for the thrusters.'
+        required:
+          type: boolean
+          description: 'true: every ship must carry it to be commissioned (fly); false: optional.'
+        note:
+          type: string
