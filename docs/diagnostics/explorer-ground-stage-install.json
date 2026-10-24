@@ -1,0 +1,14 @@
+{
+  "format": "freefall-hull-candidate-install/1",
+  "key": "hull.explorer-study",
+  "scope": "Bare uncommissioned groundstage. Edited gear hull-owned; empty equipment allocation; command deferred. No flight,pressure,load,human/suit certification.",
+  "model": "assets/models/explorer-study.glb",
+  "model_sha256": "5ba56b39d25098985064ff5839f5fe37cfd8c7178b4fcff68453cb6fb9184d24",
+  "model_bytes": 15868456,
+  "source_sha256": "e7077eb0713c581985b657beab698ab72f8a88b962fd778ef65afdac06161f0c",
+  "open_review_sha256": "2e55f0ca90a89966b8d57893f52b05e3b5ecbc1b7a4af770bb36ca4a1418b827",
+  "source_project": "blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2",
+  "intake": "14 source/export bindings independently verified. Canonical file exact copied closed bytes, no mesh edits.",
+  "registry": "Await final physical record/package binding and compiled registry. Proposed6829.395259kg is not independently promoted by installing this file.",
+  "validation": "Native registered importer, pose/route and package-exposure equality pending. This is a staged candidate, not final installation acceptance."
+}

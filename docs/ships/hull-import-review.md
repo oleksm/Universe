@@ -64,3 +64,8 @@ not commission that model. Normal world/player initialization still occurs.
 Keep equipment reference instances distinct in the review assembly, and exclude
 them from the hull-only export. `UNIVERSE_HULL` and hull-bound Studio import both
 invoke physical commissioning and are separate gates.
+
+An explicitly registered empty slot/fit allocation is valid for an uncommissioned
+ground stage. The report records `empty_recorded_slots` and `empty_recorded_fit`;
+added native slots or equipment still fail the exact comparisons. A clear comparison
+does not mean the stage is flight commissioned.
