@@ -42,8 +42,10 @@ rear_retention:
     flows under the steady retention load. Contacts are held by stainless retention clips in the insert; the plate
     backs them and is keyed against turning; holes 1.8 mm with a 0.3 mm lead-in for the 1.6 mm wire. Same direction as
     the shell 25 retention (docs/ships/explorer-shell25-insert-layout.yaml).
-  CAN: H/L twisted from the plate to the board terminal once its route is drawn; the short fan-out stays untwisted
-    only within the last 25 mm
+  CAN: H/L twisted as a pair between the two ends at no less than one full twist per 25 mm. Untwisted at most 50 mm at
+    EACH end - the contact end (straight tail plus first bend from the rear plate) and the board end (fan-out). At the
+    CAN bit rates here an untwisted 50 mm is electrically negligible; Blender's 36-46 mm contact-end tails comply
+    (20261024T164328-blender-0d34).
   invented/review: true
 remaining:
 - Drawn internal routing, clips and board mount with clearance
