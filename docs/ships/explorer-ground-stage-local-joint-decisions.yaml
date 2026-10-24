@@ -1,0 +1,60 @@
+status: Chosen local ground-stage prototype joints and bounded rear-entry shape correction; no ratings or runtime
+  acceptance
+basis:
+  tier: invented
+  review: true
+  authority: Owner full-auto completion; explicit concealed local insert edits, preserve bearing/sole exterior
+bindings:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/ground-interface-grooves-handoff.json: ca28985ed985d1025492aa95e1d2081245be634ba4ab633b5b3e05b42f549310
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/ground-interface-retainers-v2.json: fbc4d1514b53eb2a7a154cf77713281c5ade8029266251b34c4c22ac8cce80af
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/ground-interface-retainers-v2-check.json
+  : 5a26e42317b0e8214c34277aa028ebf1407285b956df61d95d44bca879514e3b
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/ground-interface-retainers-v2-access.json
+  : d3a92740881b4e8607a2cb07e6ccf1787687df1392f60fecd8419bd6ab390aa0
+scope: 'Ground stage includes hull-owned authored gear, intact reconstructed floor and actual existing hatch/ladder,
+  with no trial propulsion/roof/equipment installation.10/8mmcassette remains separate: do not silently replace
+  original15/10mmroot state proposal.'
+ptfe:
+  decision: Select four concealed inboard4mmdeep x2mmhigh grooves, keeping2mm top/bottom webs in the6mm shoe and
+    bearingY face unchanged. Use1.6mm tongue with0.2mm side clearance. Existing positive-X endplate prototype with2M2
+    per shoe is a starting construction, not accepted fit.
+  construction: Keep a rigidly supported6061carrier and removable keyed end keeper; real material tongue supports
+    the insert. No elastic snap-through assumed for PTFE. Remove whole leaf/carrier to a clear service bench before180mmshoe
+    withdrawal if installed withdrawal hits the front slot closures. Build the actual carrier-to-leaf removable
+    joint and accessible fasteners if absent; declaring bench service without a disassembly route is insufficient.
+  current_failures: RetainerV2access still collides with front slot closures during installed180mm withdrawal and
+    at some tool poses;61state report has guide/bracket conflicts and some added endplate hits. Repair placement/keeper
+    locally or use removable inboard split keeper, without changing bearing thickness or cutting pressure coaming.
+    Then rebase exact edits onto current ground candidate.
+  mass: Count groove removals, real supports/keepers and fasteners from actual solids. No old gross-minus-new guess
+    or reserve retirement; no full motion pass inferred from smaller intersections.
+epdm:
+  decision: Select concealed side groove3mmwide vertically,2.8mmpositive lip overlap and0.2mmgap, with two removable6061backing
+    halves per cap; preserve the full original ground-contact sole and exterior pad. No across-sole strap.
+  hardware: RetainerV2fourM3 per cap (8total) and measured3mmbacking engagement are prototype geometry only. Need
+    an actual backed load path and blind/threaded bosses or real nuts, installed tool/part removal route and no
+    rail-through-sole hole. Do not assume rubber stretch to install a closed hook.
+  fragments: Two explicitly identified positive rail microfragments (~5.34e-12m3 each) are detached material, not
+    cavity shells. Authorize retirement of only these named/bounded fragments in the local rail replacement map;
+    preserve other solids/shells. Their discarded volume/mass remains reported, not a largest-component cleanup.
+  checks: Demonstrate cap supported compression and pull-off lip contact, assembled/split states, no original sole
+    change, fresh full ladder/gear/guide/source and service checks. ExistingV2tool hits in closed pose are not waived.
+rear_entry:
+  request: 20261024T101712-blender-0748
+  choice: Raise/reprofile only the actual rear opening header/frame section3 and its matching pressure skin06-3/outercover06-3
+    local strip to clear the measured runtime Walker route. Preserve the lateral opening, rear cabin, body shoulders
+    and required exterior hierarchy; do not lower/shrink actor or widen/raise the entire roof. Extend/reseat the
+    leaf top closure and perimeter seal only as needed to mate to the revised header.
+  geometry_criterion: Reserve the actual two-sphere runtime Walker sweep (r0.35m, centres feet+0.80/1.45m) over
+    both boarding directions and support transitions, with a chosen extra50mm geometric margin at the named header/roof
+    surfaces. This is a project screen, not a human/suit/carry standard.
+  witness: 'At reported feetZ1.70356, actor topZ3.50356; corresponding provisional top reservation3.55356 at that
+    witness. This is not a constantZceiling: derive each point from actual supported feet/path and sphere contact,
+    including floor rise/turn.'
+  construction: Keep actual exterior panels as finite3mm6061facets and bounded local frame/member replacements;
+    record old/new outer sections, retained seam/backing/fastener contacts and leaf/hinge/motion/closure effects.
+    Show side/rear/clay before-after; no floating roof strip or header-only deletion that opens the cabin.
+  replay: Refresh exact export+state and current runtime boarding both ways after repair. Original .15m study was
+    restored/unselected and grants no current headroom pass. Suit/carry and physical crew qualification remain unselected.
+intake: Exact V2 state draft prepared separately; final mass/export/state must follow repaired integrated candidate.
+  No active hull record is created with provisional mass.
