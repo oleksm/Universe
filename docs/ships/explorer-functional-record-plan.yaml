@@ -945,3 +945,31 @@ conditional_ships_allocation:
           routed hardware.
   validation: Registry verified32rows per candidate, sum of equipment mass/known draw and row masses against current
     catalogue. Unknown auxiliary draw remains unknown. No geometry, routing, material or operational acceptance.
+current_formal_state_inputs:
+  path: docs/ships/explorer-mechanism-record-inputs.yaml
+  scope: Measured3 mechanisms/2 exits; not active hull record, no mass or installed allocation.
+  closed_sha256: 073396fa
+  open_sha256: bc1dfc02
+  source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+  verification: 951nodes/930meshes;75515vertex comparison after6 local targets;max error5.915025944602803e-7m. Schema/reference/unit-scale/quaternion
+    checks pass.
+placement_screen:
+  source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/review/functional-placement-screen.json
+  sha256: f82b3a57c270322832a2ea4acee4f3eaa3a31a8bfb22c0f8611da22e5865bc11
+  scope: Actual unscaled package mesh triangle intersection against954 authored source meshes at2end states. Not
+    continuous sweep, volume containment, crew/suit, installation, service, plume or thermal acceptance. Intersections
+    may include intended mounting contacts; none auto accepted. Source unchanged.
+  intersection_slots:
+  - fuelcell
+  - hydrolox_1
+  - hydrolox_2
+  - lift_port
+  - lift_starboard
+  - main_port
+  - main_starboard
+  - nitrogen
+  - reserve_battery
+  intersection_count: 9
+  remaining23: No surface intersections does not establish containment, access/crew, services, plumes or thermal
+    fit.
+  installed: false

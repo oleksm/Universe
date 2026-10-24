@@ -1,0 +1,193 @@
+status: Measured record inputs only; active hull record still requires whole mass, physical inventory and exact
+  installed allocation.
+source_manifest: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/formal-stage/manifest.json
+manifest_sha256: 84f417def6af761d1a173549521f41ea1a96802cf5567803da1a1318bf3945ec
+source_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
+formal_exports:
+  open:
+    pose: open
+    path: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/formal-stage/explorer-hull-open.glb
+    sha256: bc1dfc0203e84640f2b31335c8f449aa3bfc4004904456ba81bfad7865e5b4d5
+    bytes: 2875456
+    meshes: 930
+  closed:
+    pose: closed
+    path: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/formal-stage/explorer-hull-closed.glb
+    sha256: 073396fa6388153fc5d0b8acb6cedac7a1fd58dd8e07460516919ff2e3d62f8d
+    bytes: 2875388
+    meshes: 930
+hull_record_fields:
+  model: assets/models/explorer-study.glb
+  model_sha256: 073396fa6388153fc5d0b8acb6cedac7a1fd58dd8e07460516919ff2e3d62f8d
+  mechanisms:
+  - key: rear_ramp
+    kind: ramp
+    nodes:
+    - RearRamp_Pivot
+    - RearRamp_ExtensionPivot
+    states:
+    - key: closed
+      poses:
+      - node: RearRamp_Pivot
+        kind: rest
+      - node: RearRamp_ExtensionPivot
+        kind: rest
+    - key: deployed
+      poses:
+      - node: RearRamp_Pivot
+        kind: rigid
+        translation_m:
+        - 4.949999809265137
+        - 1.75
+        - 0.0
+        rotation_xyzw:
+        - 0.0
+        - 0.0
+        - -0.8651100993156433
+        - 0.5015820860862732
+      - node: RearRamp_ExtensionPivot
+        kind: rigid
+        translation_m:
+        - -0.10000002384185791
+        - 1.600000262260437
+        - 0.0
+        rotation_xyzw:
+        - 0.0
+        - 0.0
+        - 0.0
+        - 1.0
+    default: closed
+    deploys_when: landed
+    contact:
+      node: RearRamp_Toe
+      ground: required
+  - key: crew_hatch
+    kind: hatch
+    nodes:
+    - CrewHatch_FloorSlide
+    - CrewHatch_BellySlide
+    states:
+    - key: closed
+      poses:
+      - node: CrewHatch_FloorSlide
+        kind: rest
+      - node: CrewHatch_BellySlide
+        kind: rest
+    - key: deployed
+      poses:
+      - node: CrewHatch_FloorSlide
+        kind: rigid
+        translation_m:
+        - 1.399999976158142
+        - -0.014999999664723873
+        - 0.0
+        rotation_xyzw:
+        - 0.0
+        - 0.0
+        - 0.0
+        - 1.0
+      - node: CrewHatch_BellySlide
+        kind: rigid
+        translation_m:
+        - 1.399999976158142
+        - 0.009999999776482582
+        - 0.0
+        rotation_xyzw:
+        - 0.0
+        - 0.0
+        - 0.0
+        - 1.0
+    default: closed
+    deploys_when: landed
+  - key: crew_ladder
+    kind: ladder
+    nodes:
+    - CrewLadder_UpperPivot
+    - CrewLadder_LowerPivot
+    states:
+    - key: stowed
+      poses:
+      - node: CrewLadder_UpperPivot
+        kind: rest
+      - node: CrewLadder_LowerPivot
+        kind: rest
+    - key: deployed
+      poses:
+      - node: CrewLadder_UpperPivot
+        kind: rigid
+        translation_m:
+        - 0.5000000596046448
+        - 1.684999942779541
+        - 0.0
+        rotation_xyzw:
+        - 0.0
+        - 0.0
+        - -0.2022344321012497
+        - 0.979337215423584
+      - node: CrewLadder_LowerPivot
+        kind: rigid
+        translation_m:
+        - 0.0549999475479126
+        - -0.7999999523162842
+        - 0.0
+        rotation_xyzw:
+        - 0.0
+        - 0.0
+        - 0.0
+        - 1.0
+    default: stowed
+    deploys_when: landed
+    contact:
+      node: CrewLadder_Foot
+      ground: required
+  exits:
+  - key: rear
+    kind: walk
+    requires:
+    - mechanism: rear_ramp
+      state: deployed
+    top: RearRamp_Top
+    foot: RearRamp_Toe
+  - key: belly
+    kind: climb
+    requires:
+    - mechanism: crew_hatch
+      state: deployed
+    - mechanism: crew_ladder
+      state: deployed
+    top: CrewLadder_Top
+    foot: CrewLadder_Foot
+closed_geometry_bounds_m:
+  min_gltf:
+  - -3.2671084110838637
+  - 1.1800000012889125
+  - -5.111918653505248
+  max_gltf:
+  - 3.267097994680667
+  - 4.179999925196171
+  - 5.9200012461742855
+  length: 11.031919899679533
+  width: 6.534206405764531
+  height: 2.999999923907258
+verification:
+  unique_scene_nodes: 951
+  meshes: 930
+  mesh_vertices_compared: 75515
+  changed_local_nodes:
+  - CrewHatch_BellySlide
+  - CrewHatch_FloorSlide
+  - CrewLadder_LowerPivot
+  - CrewLadder_UpperPivot
+  - RearRamp_ExtensionPivot
+  - RearRamp_Pivot
+  replayed_max_vertex_component_error_m: 5.915025944602803e-07
+  schema_and_reference_checks: pass
+  unit_scale_and_quaternions: pass
+  model_hashes: pass
+limits:
+- Geometry replay validates the six local transforms against exported open pose only, not ground contact, continuous
+  motion, route or actor fit.
+- 24 edited gear meshes excluded; no gear mechanism or catalogue rating/mass claimed.
+- No whole current mass, physical solid volume, collision decomposition, installed equipment or real propulsion
+  markers are supplied.
+- Canonical model path is reserved; this input file does not install bytes or register a hull.
