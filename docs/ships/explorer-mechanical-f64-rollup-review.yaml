@@ -1,0 +1,95 @@
+status: Mesh64 reported baseline and scoped integrated regression bound;3return reconstruction required before wholemass
+requests:
+- 20261023T235949-blender-8b0f
+- 20261024T000024-blender-90fd
+bindings:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/cumulative-mechanical-v2-f64.json: 7efef87139d0fc095eab309a1d3b3b01475a4e5c00a0c182567306bac04d9f5f
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/cumulative-mechanical-v2-f64-meshes.json
+  : 45b52280712dc95df6de97b0f9b1c54f6569deffa01edea6fe88a7dbcb9e7f7a
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/integrated-mechanical-v2.json: a08e6e38223be206f9a38a71a187ac26ad9141ac467895ddcfe5c44c893471b6
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/integrated-mechanical-gear-service-sweep.json
+  : 93f5892691003a7b321fb53cced9714631c4c4ac2ac43350a637ea47bb14564f
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/volume-domain-audit.json: fe52a94d82c02a1a8962abe77f2b12964b0922d490bc3380683c74739b5f38d2
+rollup:
+  objects: 986
+  same_material_subtotal_kg: 6767.240865041886
+  separate_current_reserve_kg: 91.6
+  accepted_whole_mass_kg: null
+  remaining_material_families:
+  - a: material.aluminium-alloy-6061
+    b: material.high-strength-steel-4340
+    volume_m3: 0.0004779161875903266
+  - a: material.aluminium-alloy-6061
+    b: material.epdm-rubber
+    volume_m3: 1.2676091340392202e-05
+  - a: material.aluminium-alloy-6061
+    b: material.ptfe
+    volume_m3: 9.35996493952543e-05
+  - a: material.fused-silica
+    b: material.silicone-rubber
+    volume_m3: 2.4014431463419566e-10
+  verification: 986raw frozen signedmesh volumes computed positive and986reported density rows checked; source-binding
+    and union arithmetic checks pass. Mesh64 raw/arrangement differences above1e-7m3 remain exactly the3returns
+    listed.
+  domain_exceptions:
+  - name: Raised floor | perimeter return 0
+    raw_signed_volume_m3: 1.4484514560437312e-05
+    reported_Mesh64_volume_m3: 1.559081296901091e-05
+    difference_m3: -1.1062984085735972e-06
+  - name: Raised floor | perimeter return 7
+    raw_signed_volume_m3: 1.2823505479666578e-05
+    reported_Mesh64_volume_m3: 1.3209950583749471e-05
+    difference_m3: -3.8644510408289355e-07
+  - name: Raised floor | perimeter return 8
+    raw_signed_volume_m3: 1.5252429557803492e-05
+    reported_Mesh64_volume_m3: 1.61451754276436e-05
+    difference_m3: -8.927458698401061e-07
+  decision: Use this coherentMesh64 rollup as the current reported bare-subset comparison, not a final accepted
+    baremass. The earlier5skin/casing discrepancies resolve in64bit;3returns remain construction issues, not rounding
+    waivers. Keep all986raw faces unchanged until explicit replacement.
+  remaining: Frame/pans/collars/supports/equipment and patch/hardware/reserve reconciliation remain outside this
+    bare subset as declared. Do not add91.6kgtoeachsubledger.
+integrated_geometry:
+  candidate_sha256: ce7b800839d875f811b1a366026857987b6896618f420fa8cbd0cc18ca620591
+  edits: 134
+  new_objects: 36
+  decision: Bind134exact integrated edits to adopted37f3362c0sets. New ankle parts retain slider parents; prior
+    source+optics/service/collar replacements are separate. Worldroundtrip errors remain reported by Blender, not
+    an independent Registry re-import certificate.
+gear_regression:
+  gear_objects: 66
+  static_targets: 200
+  poses: 61
+  fixed_mount_contact_pairs: 21
+  moving_contact_pairs_reported: 0
+  decision: Accept the reported61pose regression as scoped no movinggear surface contacts against the200listed service/frame/floor/collar
+    targets on this exact candidate.21remaining pairs all involve fixed LandingLeg180_fixed and remain named mounting/contact
+    interfaces, not blanket removed collisions.
+  limits: BVH surface samples are not solid-containment, continuous sweep, whole originalhull, gearload/stability/ground
+    or flight qualification. Preserve explicit targetroster and actual90degreehinge witnesses. New channel/support
+    geometry invalidates affected regression cases.
+return_reconstruction_choice:
+  objects:
+  - Raised floor | perimeter return 0
+  - Raised floor | perimeter return 7
+  - Raised floor | perimeter return 8
+  stock: stock.al6061-sh-2
+  material: material.aluminium-alloy-6061
+  thickness_m: 0.002
+  intent: These are nonstructural cabin perimeter closeouts, like prior adopted2/5/6return design. Replace the accidentally
+    near-tangent/self-intersecting offset prisms with real2mm formed6061sheet; do not adopt convertedMesh64 solids
+    merely because their volume is positive. This is an explicit new physical gauge choice, not a claim that the
+    old prism measured2mm.
+  reference: 'Use the original firstfourvertex boundary loop(0,1,2,3) as the visible cabin-side design reference
+    for each of these8vertexprisms; preserve its corners/Z1.738..1.838 and source triangle diagonal/facet crease,
+    rather than a convexhull or flattened averageplane. In this source loop is the cabinward face: outboard is-Yforreturn0,+Yfor7/8.
+    Verify that side against original views before building.'
+  construction: Offset the actualreferencefacets outward by2mmnormal thickness; form a finite miter/bend between
+    them and bounded side/end closures. Keep positive material, original visibleface and clear cabin envelope; trim
+    backstock locally to actual adjacentretainedskin/floor without erasing thecloseout. No pressurewall or mainfloor
+    thinning.
+  retirement: Retire each oldreturn once, add one actualformedsolid(or explicitly namedjoinedfacetparts) and realattachmentstock;
+    preserve raw originals as historical evidence. Report new measuredvolume/mass including any increase; no density
+    reduction or chosen mass target.
+  scope: Separate reversible geometry/quantity work only; no structural/pressure/load claim. Freeze exact before/after
+    matched view and coherent64bit material-union quantities.
