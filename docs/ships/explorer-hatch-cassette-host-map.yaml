@@ -1,0 +1,79 @@
+status: chosen one-side entry and local pressure-host replacement design; not candidate acceptance
+request: 20261023T234739-blender-8a47
+bindings:
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-channel-entry.json
+  : 1327d18bf41ab62c67c75a1c0bd7377dfb7242f51e86a1db87535de4448d9165
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-channel-entry-meshes.json
+  : b946526f255a8333b1bbfacfed5613ffd79e79f950046df988b2b14aae66a592
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-channel-entry-review.json
+  : 9d94c38bcbc508a502f7f7b9687a33a9925834c1a7bb8c4030dc7ef9143dbb59
+reference_source_sha256: 8fc3a7e3ab384395592c35dde78b59a440830bbdae1f4a7ed59e55c07af8927e
+construction:
+  upper_stem: Replace high jog crossing the upper rim with a flat6mm6061radial arm spanningZ1.830..1.836 in the
+    closed source pose. Tie it to the upper leaf underside with a short supported attachment entirely inside the
+    circular clear bore, not across the fixed seal annulus. Upper rim underside is approximately1.844; retain real
+    clearance, do not notch it. Reposition the shoe/carrier if actual contacts need it; report new attachment faces.
+  upper_sequence: Choose10mm downward unseat instead of15mm for this new trial. The radial arm then spans1.820..1.826,
+    above the current coaming top1.816; leaf underside1.844 lowers to1.834, below upper rim underside. Rebuild branch/keeper
+    to this actual path and remeasure gasket release; these are source-frame construction targets, not a clearance
+    pass.
+  lower_stem: Replace low jog crossing lower rim with a flat6mmradial arm atZ1.598..1.604 closed. Tie it to belly
+    leaf top via an attachment inside clear bore. Preserve lower rim top approximately1.596; do not notch it.
+  lower_sequence: 'Choose8mm upward unseat instead of10mm for this trial: radial arm1.606..1.612 stays below coaming
+    bottom1.618; belly leaf lowerface1.590 rises to1.598 above lower rim1.596. Verify actual source faces and gasket-release
+    distance; if these targets fail actual mating geometry, adjust the arm/branch within the free vertical gap,
+    not the seal land.'
+  pocket_motion: 'Retain cockpit-facing(-X) slide and current1.40m travel as trial. The entire leaf, not just the
+    shoe, must fit inside the cassette: centreCX0.35-1.40=-1.05 withR0.643 means leaf reachesX-1.693 before wall/clearance.
+    Existing sidewall section endingX-1.258 is not a complete pocket; extend case to enclose the whole storage envelope
+    without changing hull shape silently. Include full transverse leaf envelope and retainers.'
+  driver: Unseat/reseat drive remains a counted physical mechanism with support/hold and recovery path. An open
+    vertical channel branch alone cannot hold the leaf through that phase. No animation implies drive or pressure
+    restraint.
+host_map:
+- host: Crew access floor | round opening
+  action: Replace only the cassette footprint strip/entry bridge outside preserved circular sealing land. Use a
+    new supported3mm6061bridge top at existing walkingZ1.850, bottom1.847 over the guide branch. This replaces local12mmfloor
+    stock only where necessary for the enclosed cassette, not whole floor thickness. Record exact cut polygon and
+    positive joins to retained floor; full local walking support/step review required. The clear circular hatch
+    bore/seat stays the current size.
+- host: Crew access belly | round opening
+  action: Replace only the cassette-mouth/bottom footprint outside the preserved lower rim/seat with the new continuous
+    cassette lower enclosure, conforming to real retained plate edges. This is an explicit local new closure, not
+    an open slot.
+- host: Core pressure skin 04-7
+  action: 'Author a local cassette pressure-pan host replacement: remove only the named intersecting patch after
+    its boundary loop and replacement wall are drawn.3mm6061new case walls/end/bottom with a continuous conforming
+    closed perimeter to retained04-7skin and actual coaming throat. Preserve original outer shape where possible;
+    any new exterior protrusion is a visible explicit design change for assembled review, not hidden by the word
+    pocket.'
+- host: Crew hatch upper rim; Crew hatch lower rim; Crew hatch circular coaming
+  action: Retain full sealing annulus and clear bore. Revised flat arms run in existing vertical gaps; no automatic
+    receiver pocket/cut into these hosts. Side-pocket throat joins above/below actual sealing faces and has its
+    own continuous enclosing wall.
+- host: Crew hatch round floor leaf; Crew hatch round belly leaf
+  action: Preserve leaf sealing perimeter; union or explicitly bolt new supported arm attachment to each moving
+    leaf only at its inner-bore-side attachment region. Classify this designed material joint separately from fixed-part
+    collision. Count attachment stock/fasteners and keep state ownership with that leaf.
+- host: Crew hatch floor carrier seat -1; Crew hatch belly carrier seat -1; Crew hatch track floor bracket (-1,
+    1.9)
+  action: Explicitly retire the old one-side seats/bracket only when their new support/guide counterparts exist.
+    New carrier seating is in the cassette rail; new fixed rail ties to actual surrounding floor/frame with drawn
+    brackets outside travel. Mirror counterparts only after this side works.
+pressure_topology: Closed cabin pressure is retained by a declared continuous coaming-to-seated-leaf seal and fixed
+  cassette enclosure. No moving stem pierces that enclosure. With either exterior opening unsealed, the cabin must
+  be equalized before crew operation; this is not a pressure-isolating airlock. Keep cassette service-cap gasket/fastener
+  path explicit.
+evidence:
+- Actual source-coordinate cross-section with all six preserved circular seal faces/clearbore and revised10/8mm
+  strokes, closed/unseated/transition/stored plus intermediate contact tests.
+- Bounded cut loops, original/retained/replacement material volumes and named coaming/skin/floor seam ownership;
+  positive backed lands and full-cassette closure.
+- Actual drive/support through vertical branch, fixed supports/keeper/endcaps and counted fasteners; no old seat/bracket
+  ghost collision or silent retirement.
+- Fullsource surface/solid/containment check including pressure04-7,floor,belly,rims,old-to-new attachments and
+  actual deployment/crew envelope. Local section clear is not installation clear.
+- Current rest/deployed transforms and new motion export bindings; old15/10mm source poses/GLB checks are invalid
+  after this redesign.
+limits: Prototype construction and quantity direction; no pressure, floor load, mechanism drive, crew or functional
+  game acceptance.
