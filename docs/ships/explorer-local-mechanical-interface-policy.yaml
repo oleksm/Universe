@@ -1,0 +1,1405 @@
+status: chosen local prototype construction; implement in separate candidate and measure actual solids
+request: 20261023T232357-blender-1981
+bindings:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/cumulative-glazing-v7.json: f6810f739da52dd8cb81df52b1024d60df5e5c3d4a8515b8bf20a01024399ab5
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-roster.json
+  : 2c6acbc4991ee2ad2ca2d035393095499a923d92c97db842023120142eb881e8
+quantity_review:
+  objects: 974
+  per_object_density_arithmetic: 974 verified
+  material_union_subtotal_kg: 6784.421393738188
+  hidden_reserve_kg: 96.1
+  whole_mass: null
+  remaining_material_families: 7
+  mechanical_named_pairs: 324
+  assignment_counts:
+    rear_journal_pressure_recess: 6
+    pivot_bores: 10
+    PTFE_slide_shoe: 4
+    EPDM_foot_cap: 2
+    gear_ankle_socket: 9
+    cover_head_seat: 291
+    latch_seat: 2
+  scope: Arithmetic/evidence review only. Glazing V7 independent residuals and combined joints still need local
+    dispositions; previous core/glass conflict passes do not transfer.
+policies:
+  cover_head_seat:
+    match: captive fixing or quarter-turn on its own named cover/receiver only
+    choice: Preserve steel head and authored outer top. Cut a bounded shallow head seat in the matched aluminium
+      cover to the actual head intrusion, with a small measured assembly clearance. Retain a positive backing ligament
+      and driver access. No through-hole into a named pressure skin; a cover seat cannot authorize pressure-skin
+      removal.
+    quantity: Count preserved head steel once; subtract actual aluminium seat only once from the receiver union.
+      Hidden shank/thread/nut hardware stays a separately identified mass assumption in the existing reserve until
+      actual geometry/stock replaces that reserve. Do not assert a fastened load path from head-only geometry.
+    exception: If shallow seat would perforate the cover or consume its support, raise that head locally or add
+      a supported seat boss with new stock/volume; do not delete the cover web.
+  rear_journal_pressure_recess:
+    match: Rear closure fixed journal +/-1 versus Core pressure skin 06-7 and reconstructed Crew access floor |
+      round opening
+    choice: 'Keep the measured hinge axis and steel journals. Design two stationary sealed inboard blisters/recesses
+      around the journals: each journal remains on the exterior/dry side of the new pressure boundary, with a closed
+      aluminium back/top and sides continuously joined to the actual surrounding skin. This explicitly replaces
+      the intersected local skin patch; no rotating shaft pressure seal or open bored skin is chosen.'
+    prototype_stock: 3 mm 6061 formed/welded pocket walls and closed cap from stock.al6061-sh-3, shaped from actual
+      journal and pin swept envelope with a 2 mm geometric assembly gap as a draft target; no pressure or load rating.
+      Actual bearing-support bracket remains mechanically separate from the thin pressure pocket.
+    floor: Create matching bounded local floor reliefs around the fixed pockets, with supported covers/edge transitions
+      and recorded raised local profile; do not cut the entire rear floor. Keep the central boarding route clear
+      and re-measure feet support, trip/step and headroom. If the cover makes the route fail, revise the local journal
+      support/pocket position before adoption.
+    motion: Check journal, pin, leaf and new pocket over the full two-leaf sequence, not just closed pose. Rear
+      ramp leaf receives a local hinge relief and real attached lug/knuckle around the pin; maintain door perimeter
+      sealing continuously outside the hinge pocket. A relief that opens the door seal needs a rebuilt seal path,
+      not a collision waiver.
+    retirement: Retire exact old skin/floor patch material once in the edit map, add every pocket/cap/support and
+      seal quantity. No whole-skin retirement or double subtraction at floor/skin/journal triples.
+  gear_ankle_socket:
+    match: Three LandingLeg180_slider objects versus clipped trapezoid pads and six ankle ribs
+    choice: Preserve titanium slider geometry and exterior sole/pad footprint. Form an aluminium blind socket in
+      each pad at its measured slider end and cope the ribs to the actual titanium side surface. Retain a positive
+      blind bottom ligament and real bearing shoulder. Treat the foot assembly as mechanically clamped to the slider
+      end, not overlapping welded Ti/Al.
+    prototype_joint: Add a split 6061 collar tied into both ankle ribs with two separated nominal M6 steel through-fastener
+      stations and captive nuts accessible from the sides. Raw 6061 and stock.st4340-fg are draft custom parts.
+      Place holes outside the titanium slider; do not drill/thin the hollow slider. Recess/raise the collar if necessary
+      to keep the pad sole/ground area unchanged. Count actual clamp and fastener solids separately.
+    gap: Use 0.25 mm radial slip-fit clearance as a draft geometric target where no bearing contact is intended;
+      identify the actual shoulder/contact surface separately. This is not a manufacturing fit, preload or load
+      rating.
+    motion: Confirm pad/rib/collar/slider co-move with fixed local relation across folding and compression. If slider
+      actually slides relative to these parts, stop treating this as a fixed clamp and rebuild the correct articulated
+      foot joint. No sweep subtraction of the titanium travel envelope into a vanished pad.
+  PTFE_slide_shoe:
+    match: Four crew hatch slide shoes versus corresponding carrier ears
+    choice: Preserve finite PTFE shoe thickness and bearing face. Cut a bounded shoulder/dovetail seat in the aluminium
+      carrier, retain positive backing and end stop or removable retaining tab; expose actual sliding face. No all-volume
+      PTFE subtraction or unretained loose insert. Recheck hatch travel and count retaining hardware.
+  EPDM_foot_cap:
+    match: Crew ladder foot caps or gear soles versus their aluminium backing
+    choice: Preserve ground-contact sole/foot-cap exterior and finite rubber thickness. Recess the aluminium receiver
+      locally to support the cap interior, with positive backing and a real lip/retaining strip; count strip/hardware.
+      Do not reduce pad area or bury all rubber in metal. No traction or compressive rating.
+  pivot_bores:
+    match: Rear ramp pivot pins, ladder fold pins and folding hinge output shafts versus named metal leaf/rail/cheek
+      receivers
+    choice: Keep steel pins/shafts. Bore matching coaxial aluminium receivers and build finite supported knuckles/bearing
+      lands and axial retaining shoulders. Draft 0.25 mm radial running clearance for rotating receivers; fixed
+      mounting contact is labelled separately. Preserve continuous useful receiver webs, add a counted local boss
+      if needed, never cut away an entire thin rail. No inferred bearing life/load rating.
+  latch_seat:
+    match: Crew hatch quarter turn +/-1 versus its named latch recess
+    choice: Make the shallow actual latch-body seat and a supported back receiver/catch. Keep continuous hatch seal
+      and non-pierced boundary behind it, with actual operating/tool path; no pressure-boundary through-cut from
+      a quarter-turn visual marker.
+named_pair_assignments:
+- receiver: Rear ramp main leaf
+  other: Rear closure fixed journal 1
+  policy: rear_journal_pressure_recess
+  reported_overlap_m3: 8.41718289862465e-05
+- receiver: Rear ramp main leaf
+  other: Rear closure fixed journal -1
+  policy: rear_journal_pressure_recess
+  reported_overlap_m3: 8.417182898624645e-05
+- receiver: Crew access floor | round opening
+  other: Rear closure fixed journal -1
+  policy: rear_journal_pressure_recess
+  reported_overlap_m3: 7.87871357949397e-05
+- receiver: Crew access floor | round opening
+  other: Rear closure fixed journal 1
+  policy: rear_journal_pressure_recess
+  reported_overlap_m3: 7.878713579493938e-05
+- receiver: Rear ramp main leaf
+  other: Rear ramp pivot pin 1
+  policy: pivot_bores
+  reported_overlap_m3: 5.650653088441506e-05
+- receiver: Rear ramp main leaf
+  other: Rear ramp pivot pin -1
+  policy: pivot_bores
+  reported_overlap_m3: 5.650647886508494e-05
+- receiver: Core pressure skin 06-7
+  other: Rear closure fixed journal -1
+  policy: rear_journal_pressure_recess
+  reported_overlap_m3: 3.9165733328822446e-05
+- receiver: Core pressure skin 06-7
+  other: Rear closure fixed journal 1
+  policy: rear_journal_pressure_recess
+  reported_overlap_m3: 3.9165733328822405e-05
+- receiver: Crew hatch floor carrier ear -1
+  other: Crew hatch floor slide shoe -1
+  policy: PTFE_slide_shoe
+  reported_overlap_m3: 2.3400166264564565e-05
+- receiver: Crew hatch floor carrier ear 1
+  other: Crew hatch floor slide shoe 1
+  policy: PTFE_slide_shoe
+  reported_overlap_m3: 2.340012334891728e-05
+- receiver: Crew hatch belly carrier ear -1
+  other: Crew hatch belly slide shoe -1
+  policy: PTFE_slide_shoe
+  reported_overlap_m3: 2.3399701348283287e-05
+- receiver: Crew hatch belly carrier ear 1
+  other: Crew hatch belly slide shoe 1
+  policy: PTFE_slide_shoe
+  reported_overlap_m3: 2.339965843348927e-05
+- receiver: Crew ladder lower rail -1
+  other: Crew ladder fold pin -1
+  policy: pivot_bores
+  reported_overlap_m3: 9.054301842582584e-06
+- receiver: Crew ladder lower rail 1
+  other: Crew ladder fold pin 1
+  policy: pivot_bores
+  reported_overlap_m3: 9.054294132892987e-06
+- receiver: Crew ladder fold cheek (1, 0.23500000000000001)
+  other: Crew ladder fold pin 1
+  policy: pivot_bores
+  reported_overlap_m3: 6.2086592745374736e-06
+- receiver: Crew ladder fold cheek (1, 0.28500000000000003)
+  other: Crew ladder fold pin 1
+  policy: pivot_bores
+  reported_overlap_m3: 6.2086592745374685e-06
+- receiver: Crew ladder fold cheek (-1, -0.23500000000000001)
+  other: Crew ladder fold pin -1
+  policy: pivot_bores
+  reported_overlap_m3: 6.208659274537468e-06
+- receiver: Crew ladder fold cheek (-1, -0.28500000000000003)
+  other: Crew ladder fold pin -1
+  policy: pivot_bores
+  reported_overlap_m3: 6.208659274537465e-06
+- receiver: Crew ladder lower rail -1
+  other: Crew ladder foot cap -1
+  policy: EPDM_foot_cap
+  reported_overlap_m3: 6.185065209074247e-06
+- receiver: Crew ladder lower rail 1
+  other: Crew ladder foot cap 1
+  policy: EPDM_foot_cap
+  reported_overlap_m3: 6.185015158644038e-06
+- receiver: Port aft gear | ankle rib 1
+  other: Port aft gear | LandingLeg180_slider
+  policy: gear_ankle_socket
+  reported_overlap_m3: 4.310047403338956e-06
+- receiver: Starboard aft gear | ankle rib 1
+  other: Starboard aft gear | LandingLeg180_slider
+  policy: gear_ankle_socket
+  reported_overlap_m3: 4.310046911026524e-06
+- receiver: Starboard aft gear | ankle rib -1
+  other: Starboard aft gear | LandingLeg180_slider
+  policy: gear_ankle_socket
+  reported_overlap_m3: 4.310042558206688e-06
+- receiver: Port aft gear | ankle rib -1
+  other: Port aft gear | LandingLeg180_slider
+  policy: gear_ankle_socket
+  reported_overlap_m3: 4.310042558206668e-06
+- receiver: Nose gear | ankle rib -1
+  other: Nose gear | LandingLeg180_slider
+  policy: gear_ankle_socket
+  reported_overlap_m3: 4.310020336690917e-06
+- receiver: Nose gear | ankle rib 1
+  other: Nose gear | LandingLeg180_slider
+  policy: gear_ankle_socket
+  reported_overlap_m3: 4.310014256060173e-06
+- receiver: Rear opening frame | section 2
+  other: Core removable outer cover 06-4 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 4.073868866894543e-06
+- receiver: Rear opening frame | section 2
+  other: Core removable outer cover 06-4 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 4.0738688668943715e-06
+- receiver: Rear opening frame | section 3
+  other: Core removable outer cover 06-3 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 4.0737888164770286e-06
+- receiver: Rear opening frame | section 3
+  other: Core removable outer cover 06-3 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 4.073788816476964e-06
+- receiver: Rear opening frame | section 4
+  other: Core removable outer cover 06-2 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 4.07377802799484e-06
+- receiver: Rear opening frame | section 4
+  other: Core removable outer cover 06-2 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 4.073769168351714e-06
+- receiver: Rear opening frame | section 1
+  other: Core removable outer cover 06-5 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 4.073741747094803e-06
+- receiver: Rear opening frame | section 5
+  other: Core removable outer cover 06-1 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 4.073733912420853e-06
+- receiver: Rear opening frame | section 5
+  other: Core removable outer cover 06-1 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 4.073733912420826e-06
+- receiver: Rear opening frame | section 1
+  other: Core removable outer cover 06-5 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 4.0737260777468765e-06
+- receiver: Starboard aft gear | clipped trapezoid pad
+  other: Starboard aft gear | LandingLeg180_slider
+  policy: gear_ankle_socket
+  reported_overlap_m3: 3.958877149170612e-06
+- receiver: Port aft gear | clipped trapezoid pad
+  other: Port aft gear | LandingLeg180_slider
+  policy: gear_ankle_socket
+  reported_overlap_m3: 3.95887714917061e-06
+- receiver: Nose gear | clipped trapezoid pad
+  other: Nose gear | LandingLeg180_slider
+  policy: gear_ankle_socket
+  reported_overlap_m3: 3.9588761771309595e-06
+- receiver: Folding hinge compact cheek 1
+  other: Folding hinge output shaft 1
+  policy: pivot_bores
+  reported_overlap_m3: 2.290987238190059e-06
+- receiver: Folding hinge compact cheek -1
+  other: Folding hinge output shaft -1
+  policy: pivot_bores
+  reported_overlap_m3: 2.2909853756693794e-06
+- receiver: Shoulder -1 service panel 0-4
+  other: Shoulder -1 service panel 0-4 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 1.2299186273166914e-06
+- receiver: Shoulder -1 service panel 0-4
+  other: Shoulder -1 service panel 0-4 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0953310057776104e-06
+- receiver: Shoulder -1 service panel 0-4
+  other: Shoulder -1 service panel 0-4 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0497124580747108e-06
+- receiver: Shoulder -1 service panel 0-4
+  other: Shoulder -1 service panel 0-4 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0289350008358876e-06
+- receiver: Aft housing -1 service panel 2-4
+  other: Aft housing -1 service panel 2-4 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 9.656149742698008e-07
+- receiver: Aft housing 1 service panel 2-2
+  other: Aft housing 1 service panel 2-2 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 9.65334369543912e-07
+- receiver: Aft housing 1 service panel 2-2
+  other: Aft housing 1 service panel 2-2 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 9.65056193219637e-07
+- receiver: Aft housing -1 service panel 2-4
+  other: Aft housing -1 service panel 2-4 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 9.637895014941977e-07
+- receiver: Aft housing -1 service panel 2-4
+  other: Aft housing -1 service panel 2-4 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 8.938595174875058e-07
+- receiver: Aft housing 1 service panel 2-2
+  other: Aft housing 1 service panel 2-2 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 8.927500639257122e-07
+- receiver: Aft housing -1 service panel 2-4
+  other: Aft housing -1 service panel 2-4 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 8.886101690354756e-07
+- receiver: Aft housing 1 service panel 2-2
+  other: Aft housing 1 service panel 2-2 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 8.867405893085058e-07
+- receiver: Shoulder 1 service panel 1-3 access identifier
+  other: Shoulder 1 service panel 1-3 quarter-turn catch 0
+  policy: cover_head_seat
+  reported_overlap_m3: 8.282587159442607e-07
+- receiver: Shoulder -1 service panel 1-3 access identifier
+  other: Shoulder -1 service panel 1-3 quarter-turn catch 0
+  policy: cover_head_seat
+  reported_overlap_m3: 8.282449217001139e-07
+- receiver: Shoulder -1 service panel 1-5 access identifier
+  other: Shoulder -1 service panel 1-5 quarter-turn catch 0
+  policy: cover_head_seat
+  reported_overlap_m3: 7.940659170802463e-07
+- receiver: Aft housing 1 service panel 0-2
+  other: Aft housing 1 service panel 0-2 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 7.086031309843675e-07
+- receiver: Aft housing -1 service panel 0-4
+  other: Aft housing -1 service panel 0-4 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 7.076816926986956e-07
+- receiver: Aft housing -1 service panel 0-4
+  other: Aft housing -1 service panel 0-4 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 6.769350783921206e-07
+- receiver: Aft housing 1 service panel 0-2
+  other: Aft housing 1 service panel 0-2 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 6.766468007778688e-07
+- receiver: Aft housing 1 service panel 0-2
+  other: Aft housing 1 service panel 0-2 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 6.680954456669394e-07
+- receiver: Aft housing -1 service panel 0-4
+  other: Aft housing -1 service panel 0-4 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 6.674880131578848e-07
+- receiver: Core removable outer cover 06-4
+  other: Core removable outer cover 06-4 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 6.611900040326584e-07
+- receiver: Core removable outer cover 06-2
+  other: Core removable outer cover 06-2 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 6.600619972471684e-07
+- receiver: Aft housing 1 service panel 0-2
+  other: Aft housing 1 service panel 0-2 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 6.373890281008262e-07
+- receiver: Aft housing -1 service panel 0-4
+  other: Aft housing -1 service panel 0-4 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 6.373511861746618e-07
+- receiver: Core removable outer cover 06-2
+  other: Core removable outer cover 06-2 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 6.197958423659061e-07
+- receiver: Core removable outer cover 06-4
+  other: Core removable outer cover 06-4 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 6.192691761112554e-07
+- receiver: Shoulder 1 service panel 0-2
+  other: Shoulder 1 service panel 0-2 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 6.141562565531982e-07
+- receiver: Core removable outer cover 06-4
+  other: Core removable outer cover 06-4 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 5.031066020061764e-07
+- receiver: Core removable outer cover 06-2
+  other: Core removable outer cover 06-2 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 5.02993403363904e-07
+- receiver: Core removable outer cover 06-4
+  other: Core removable outer cover 06-4 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 4.817220616257817e-07
+- receiver: Core removable outer cover 06-2
+  other: Core removable outer cover 06-2 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 4.815780846350531e-07
+- receiver: Shoulder 1 service panel 0-2
+  other: Shoulder 1 service panel 0-2 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 4.468517485491957e-07
+- receiver: Crew hatch latch recess -1
+  other: Crew hatch quarter turn -1
+  policy: latch_seat
+  reported_overlap_m3: 4.408720604621586e-07
+- receiver: Crew hatch latch recess 1
+  other: Crew hatch quarter turn 1
+  policy: latch_seat
+  reported_overlap_m3: 4.408720604621474e-07
+- receiver: Shoulder 1 service panel 1-3 removable access leaf
+  other: Shoulder 1 service panel 1-3 quarter-turn catch 0
+  policy: cover_head_seat
+  reported_overlap_m3: 4.1934641228669976e-07
+- receiver: Shoulder -1 service panel 1-3 removable access leaf
+  other: Shoulder -1 service panel 1-3 quarter-turn catch 0
+  policy: cover_head_seat
+  reported_overlap_m3: 4.193456603585031e-07
+- receiver: Shoulder 1 service panel 1-3 removable access leaf
+  other: Shoulder 1 service panel 1-3 quarter-turn catch 1
+  policy: cover_head_seat
+  reported_overlap_m3: 4.1889753651474725e-07
+- receiver: Shoulder -1 service panel 1-3 removable access leaf
+  other: Shoulder -1 service panel 1-3 quarter-turn catch 1
+  policy: cover_head_seat
+  reported_overlap_m3: 4.188965610223848e-07
+- receiver: Shoulder 1 service panel 0-2
+  other: Shoulder 1 service panel 0-2 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 4.1806350169470473e-07
+- receiver: Shoulder -1 service panel 1-3 removable access leaf
+  other: Shoulder -1 service panel 1-3 quarter-turn catch 2
+  policy: cover_head_seat
+  reported_overlap_m3: 4.0546242723557987e-07
+- receiver: Shoulder 1 service panel 1-3 removable access leaf
+  other: Shoulder 1 service panel 1-3 quarter-turn catch 2
+  policy: cover_head_seat
+  reported_overlap_m3: 4.054612883380764e-07
+- receiver: Shoulder 1 service panel 1-3 removable access leaf
+  other: Shoulder 1 service panel 1-3 quarter-turn catch 3
+  policy: cover_head_seat
+  reported_overlap_m3: 4.0505294605006127e-07
+- receiver: Shoulder -1 service panel 1-3 removable access leaf
+  other: Shoulder -1 service panel 1-3 quarter-turn catch 3
+  policy: cover_head_seat
+  reported_overlap_m3: 4.050520767115342e-07
+- receiver: Shoulder -1 service panel 1-5 removable access leaf
+  other: Shoulder -1 service panel 1-5 quarter-turn catch 0
+  policy: cover_head_seat
+  reported_overlap_m3: 3.9718454389111114e-07
+- receiver: Shoulder 1 service panel 1-1 removable access leaf
+  other: Shoulder 1 service panel 1-1 quarter-turn catch 1
+  policy: cover_head_seat
+  reported_overlap_m3: 3.952255644120241e-07
+- receiver: Shoulder -1 service panel 1-5 removable access leaf
+  other: Shoulder -1 service panel 1-5 quarter-turn catch 2
+  policy: cover_head_seat
+  reported_overlap_m3: 3.471186369558938e-07
+- receiver: Shoulder 1 service panel 1-1 removable access leaf
+  other: Shoulder 1 service panel 1-1 quarter-turn catch 3
+  policy: cover_head_seat
+  reported_overlap_m3: 3.4545839643483387e-07
+- receiver: Shoulder 1 service panel 1-1 removable access leaf
+  other: Shoulder 1 service panel 1-1 quarter-turn catch 0
+  policy: cover_head_seat
+  reported_overlap_m3: 3.26702077022324e-07
+- receiver: Shoulder -1 service panel 1-5 removable access leaf
+  other: Shoulder -1 service panel 1-5 quarter-turn catch 1
+  policy: cover_head_seat
+  reported_overlap_m3: 3.2523272580302047e-07
+- receiver: Shoulder 1 service panel 1-1 removable access leaf
+  other: Shoulder 1 service panel 1-1 quarter-turn catch 2
+  policy: cover_head_seat
+  reported_overlap_m3: 2.881232702751799e-07
+- receiver: Shoulder -1 service panel 1-5 removable access leaf
+  other: Shoulder -1 service panel 1-5 quarter-turn catch 3
+  policy: cover_head_seat
+  reported_overlap_m3: 2.8683241679832295e-07
+- receiver: Aft housing -1 service panel 1-5 removable access leaf
+  other: Aft housing -1 service panel 1-5 quarter-turn catch 3
+  policy: cover_head_seat
+  reported_overlap_m3: 2.6417526363602825e-07
+- receiver: Aft housing 1 service panel 1-1 removable access leaf
+  other: Aft housing 1 service panel 1-1 quarter-turn catch 2
+  policy: cover_head_seat
+  reported_overlap_m3: 2.638113431677127e-07
+- receiver: Aft housing 1 service panel 1-3 removable access leaf
+  other: Aft housing 1 service panel 1-3 quarter-turn catch 3
+  policy: cover_head_seat
+  reported_overlap_m3: 2.5924648276697017e-07
+- receiver: Aft housing -1 service panel 1-3 removable access leaf
+  other: Aft housing -1 service panel 1-3 quarter-turn catch 3
+  policy: cover_head_seat
+  reported_overlap_m3: 2.5924646638143523e-07
+- receiver: Aft housing -1 service panel 1-3 removable access leaf
+  other: Aft housing -1 service panel 1-3 quarter-turn catch 2
+  policy: cover_head_seat
+  reported_overlap_m3: 2.591429440730654e-07
+- receiver: Aft housing 1 service panel 1-3 removable access leaf
+  other: Aft housing 1 service panel 1-3 quarter-turn catch 2
+  policy: cover_head_seat
+  reported_overlap_m3: 2.591429293113629e-07
+- receiver: Aft housing -1 service panel 1-5 removable access leaf
+  other: Aft housing -1 service panel 1-5 quarter-turn catch 1
+  policy: cover_head_seat
+  reported_overlap_m3: 2.5397424927475144e-07
+- receiver: Aft housing 1 service panel 1-1 removable access leaf
+  other: Aft housing 1 service panel 1-1 quarter-turn catch 0
+  policy: cover_head_seat
+  reported_overlap_m3: 2.535095779282073e-07
+- receiver: Aft housing 1 service panel 1-3 removable access leaf
+  other: Aft housing 1 service panel 1-3 quarter-turn catch 1
+  policy: cover_head_seat
+  reported_overlap_m3: 2.531149033747877e-07
+- receiver: Aft housing -1 service panel 1-3 removable access leaf
+  other: Aft housing -1 service panel 1-3 quarter-turn catch 1
+  policy: cover_head_seat
+  reported_overlap_m3: 2.531082409037848e-07
+- receiver: Aft housing -1 service panel 1-3 removable access leaf
+  other: Aft housing -1 service panel 1-3 quarter-turn catch 0
+  policy: cover_head_seat
+  reported_overlap_m3: 2.527874204512942e-07
+- receiver: Aft housing 1 service panel 1-3 removable access leaf
+  other: Aft housing 1 service panel 1-3 quarter-turn catch 0
+  policy: cover_head_seat
+  reported_overlap_m3: 2.527808401498822e-07
+- receiver: Aft housing 1 service panel 1-1 removable access leaf
+  other: Aft housing 1 service panel 1-1 quarter-turn catch 3
+  policy: cover_head_seat
+  reported_overlap_m3: 2.522386022502613e-07
+- receiver: Aft housing -1 service panel 1-5 removable access leaf
+  other: Aft housing -1 service panel 1-5 quarter-turn catch 2
+  policy: cover_head_seat
+  reported_overlap_m3: 2.5201132183664554e-07
+- receiver: Aft housing 1 service panel 1-1 removable access leaf
+  other: Aft housing 1 service panel 1-1 quarter-turn catch 1
+  policy: cover_head_seat
+  reported_overlap_m3: 2.409020050098707e-07
+- receiver: Aft housing -1 service panel 1-5 removable access leaf
+  other: Aft housing -1 service panel 1-5 quarter-turn catch 0
+  policy: cover_head_seat
+  reported_overlap_m3: 2.4044640498837717e-07
+- receiver: Shoulder -1 service panel 1-4
+  other: Shoulder -1 service panel 1-4 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 2.2599506744543312e-07
+- receiver: Shoulder 1 service panel 1-2
+  other: Shoulder 1 service panel 1-2 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 2.2596919907877553e-07
+- receiver: Shoulder 1 service panel 1-2
+  other: Shoulder 1 service panel 1-2 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 2.220138178487827e-07
+- receiver: Shoulder -1 service panel 1-4
+  other: Shoulder -1 service panel 1-4 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 2.21542966123353e-07
+- receiver: Shoulder 1 service panel 1-2
+  other: Shoulder 1 service panel 1-2 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 2.0808309966237094e-07
+- receiver: Shoulder -1 service panel 1-4
+  other: Shoulder -1 service panel 1-4 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 2.0793720685142314e-07
+- receiver: Shoulder 1 service panel 1-2
+  other: Shoulder 1 service panel 1-2 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 2.0687316792475648e-07
+- receiver: Shoulder -1 service panel 1-4
+  other: Shoulder -1 service panel 1-4 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 2.067925978309764e-07
+- receiver: Shoulder 1 service panel 1-1 access identifier
+  other: Shoulder 1 service panel 1-1 quarter-turn catch 0
+  policy: cover_head_seat
+  reported_overlap_m3: 1.9159018627644145e-07
+- receiver: Shoulder 1 casing 0-2
+  other: Shoulder 1 service panel 0-2 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 1.727478182544202e-07
+- receiver: Aft housing 1 service panel 2-1
+  other: Aft housing 1 service panel 2-1 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 1.5787641452726824e-07
+- receiver: Aft housing -1 service panel 2-5
+  other: Aft housing -1 service panel 2-5 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 1.5785111199388875e-07
+- receiver: Aft housing -1 service panel 2-3
+  other: Aft housing -1 service panel 2-3 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 1.39969837903506e-07
+- receiver: Aft housing 1 service panel 2-3
+  other: Aft housing 1 service panel 2-3 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 1.39969837903494e-07
+- receiver: Aft housing 1 service panel 2-3
+  other: Aft housing 1 service panel 2-3 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 1.3996983790348525e-07
+- receiver: Aft housing -1 service panel 2-3
+  other: Aft housing -1 service panel 2-3 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 1.3996983790348446e-07
+- receiver: Aft housing 1 service panel 2-1
+  other: Aft housing 1 service panel 2-1 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 1.3553285095667666e-07
+- receiver: Aft housing -1 service panel 2-5
+  other: Aft housing -1 service panel 2-5 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 1.3550762488703083e-07
+- receiver: Core removable outer cover 01-5
+  other: Core removable outer cover 01-5 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 1.267829389741258e-07
+- receiver: Core removable outer cover 01-1
+  other: Core removable outer cover 01-1 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 1.2677008078306668e-07
+- receiver: Aft housing -1 aft interface blind cover
+  other: Aft housing -1 aft interface blind cover captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 1.252921505608129e-07
+- receiver: Aft housing -1 aft interface blind cover
+  other: Aft housing -1 aft interface blind cover captive fixing 5
+  policy: cover_head_seat
+  reported_overlap_m3: 1.252921505608129e-07
+- receiver: Aft housing 1 aft interface blind cover
+  other: Aft housing 1 aft interface blind cover captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 1.252921505608129e-07
+- receiver: Aft housing 1 aft interface blind cover
+  other: Aft housing 1 aft interface blind cover captive fixing 5
+  policy: cover_head_seat
+  reported_overlap_m3: 1.252921505608129e-07
+- receiver: Shoulder -1 service panel 0-5
+  other: Shoulder -1 service panel 0-5 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 1.212681887814542e-07
+- receiver: Shoulder 1 service panel 0-1
+  other: Shoulder 1 service panel 0-1 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 1.2124278719886337e-07
+- receiver: Aft housing 1 service panel 0-3
+  other: Aft housing 1 service panel 0-3 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 1.194421530288675e-07
+- receiver: Aft housing -1 service panel 0-3
+  other: Aft housing -1 service panel 0-3 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 1.194421530288378e-07
+- receiver: Aft housing 1 service panel 0-3
+  other: Aft housing 1 service panel 0-3 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 1.1933134598083433e-07
+- receiver: Aft housing -1 service panel 0-3
+  other: Aft housing -1 service panel 0-3 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 1.193313459807969e-07
+- receiver: Aft housing -1 aft interface blind cover
+  other: Aft housing -1 aft interface blind cover captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 1.1800772320262609e-07
+- receiver: Aft housing -1 aft interface blind cover
+  other: Aft housing -1 aft interface blind cover captive fixing 6
+  policy: cover_head_seat
+  reported_overlap_m3: 1.1800772320262609e-07
+- receiver: Aft housing 1 aft interface blind cover
+  other: Aft housing 1 aft interface blind cover captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 1.1800772320262609e-07
+- receiver: Aft housing 1 aft interface blind cover
+  other: Aft housing 1 aft interface blind cover captive fixing 6
+  policy: cover_head_seat
+  reported_overlap_m3: 1.1800772320262609e-07
+- receiver: Core removable outer cover 02-5
+  other: Core removable outer cover 02-5 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 1.1559781662148833e-07
+- receiver: Core removable outer cover 02-1
+  other: Core removable outer cover 02-1 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 1.1559781662148267e-07
+- receiver: Aft housing -1 aft interface blind cover
+  other: Aft housing -1 aft interface blind cover captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 1.1509395225935137e-07
+- receiver: Aft housing -1 aft interface blind cover
+  other: Aft housing -1 aft interface blind cover captive fixing 7
+  policy: cover_head_seat
+  reported_overlap_m3: 1.1509395225935137e-07
+- receiver: Aft housing 1 aft interface blind cover
+  other: Aft housing 1 aft interface blind cover captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 1.1509395225935137e-07
+- receiver: Aft housing 1 aft interface blind cover
+  other: Aft housing 1 aft interface blind cover captive fixing 7
+  policy: cover_head_seat
+  reported_overlap_m3: 1.1509395225935137e-07
+- receiver: Core removable outer cover 01-5
+  other: Core removable outer cover 01-5 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 1.1307194856163443e-07
+- receiver: Core removable outer cover 01-1
+  other: Core removable outer cover 01-1 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 1.130591122303245e-07
+- receiver: Aft housing 1 service panel 2-3
+  other: Aft housing 1 service panel 2-3 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0928540191404007e-07
+- receiver: Aft housing 1 service panel 2-3
+  other: Aft housing 1 service panel 2-3 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0928540191398409e-07
+- receiver: Aft housing -1 service panel 2-3
+  other: Aft housing -1 service panel 2-3 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0928540191396286e-07
+- receiver: Aft housing -1 service panel 2-3
+  other: Aft housing -1 service panel 2-3 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0928540191395516e-07
+- receiver: Aft housing -1 aft interface blind cover
+  other: Aft housing -1 aft interface blind cover captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0732389641061879e-07
+- receiver: Aft housing -1 aft interface blind cover
+  other: Aft housing -1 aft interface blind cover captive fixing 4
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0732389641061879e-07
+- receiver: Aft housing 1 aft interface blind cover
+  other: Aft housing 1 aft interface blind cover captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0732389641061879e-07
+- receiver: Aft housing 1 aft interface blind cover
+  other: Aft housing 1 aft interface blind cover captive fixing 4
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0732389641061879e-07
+- receiver: Aft housing 1 service panel 2-1
+  other: Aft housing 1 service panel 2-1 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0676972178454017e-07
+- receiver: Aft housing -1 service panel 2-5
+  other: Aft housing -1 service panel 2-5 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 1.067317636893224e-07
+- receiver: Shoulder -1 service panel 0-5
+  other: Shoulder -1 service panel 0-5 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0532368413990995e-07
+- receiver: Shoulder 1 service panel 0-1
+  other: Shoulder 1 service panel 0-1 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0528558176601768e-07
+- receiver: Aft housing -1 service panel 0-5
+  other: Aft housing -1 service panel 0-5 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0289199528349407e-07
+- receiver: Aft housing 1 service panel 0-1
+  other: Aft housing 1 service panel 0-1 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0285769832339143e-07
+- receiver: Shoulder 1 service panel 0-2
+  other: Shoulder 1 service panel 0-2 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 1.0131829119517682e-07
+- receiver: Core removable outer cover 02-1
+  other: Core removable outer cover 02-1 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 9.884262878751933e-08
+- receiver: Core removable outer cover 02-5
+  other: Core removable outer cover 02-5 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 9.88426287874989e-08
+- receiver: Core removable outer cover 02-5
+  other: Core removable outer cover 02-5 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 9.882734104337537e-08
+- receiver: Core removable outer cover 02-1
+  other: Core removable outer cover 02-1 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 9.882734104335229e-08
+- receiver: Shoulder -1 casing 0-4
+  other: Shoulder -1 service panel 0-4 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 9.688749082367659e-08
+- receiver: Core removable outer cover 01-5
+  other: Core removable outer cover 01-5 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 9.464902584197452e-08
+- receiver: Core removable outer cover 01-1
+  other: Core removable outer cover 01-1 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 9.464444958097415e-08
+- receiver: Aft housing 1 service panel 2-1
+  other: Aft housing 1 service panel 2-1 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 9.38433920166474e-08
+- receiver: Aft housing -1 service panel 2-5
+  other: Aft housing -1 service panel 2-5 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 9.38055529121254e-08
+- receiver: Shoulder 1 service panel 0-3
+  other: Shoulder 1 service panel 0-3 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 9.169654524568717e-08
+- receiver: Shoulder -1 service panel 0-3
+  other: Shoulder -1 service panel 0-3 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 9.169654524566313e-08
+- receiver: Shoulder -1 service panel 0-3
+  other: Shoulder -1 service panel 0-3 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 9.169654524565752e-08
+- receiver: Shoulder 1 service panel 0-3
+  other: Shoulder 1 service panel 0-3 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 9.169654524564884e-08
+- receiver: Shoulder -1 service panel 0-5
+  other: Shoulder -1 service panel 0-5 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 9.163113985596426e-08
+- receiver: Shoulder 1 service panel 0-1
+  other: Shoulder 1 service panel 0-1 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 9.163113985595028e-08
+- receiver: Aft housing 1 service panel 0-3
+  other: Aft housing 1 service panel 0-3 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 9.083828318101068e-08
+- receiver: Aft housing -1 service panel 0-3
+  other: Aft housing -1 service panel 0-3 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 9.083828318100245e-08
+- receiver: Aft housing -1 service panel 0-3
+  other: Aft housing -1 service panel 0-3 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 9.083776752610149e-08
+- receiver: Aft housing 1 service panel 0-3
+  other: Aft housing 1 service panel 0-3 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 9.083776752610133e-08
+- receiver: Core removable outer cover 02-1
+  other: Core removable outer cover 02-1 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 8.606155020057632e-08
+- receiver: Core removable outer cover 02-5
+  other: Core removable outer cover 02-5 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 8.606155020057518e-08
+- receiver: Aft housing -1 service panel 0-5
+  other: Aft housing -1 service panel 0-5 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 8.58917019567061e-08
+- receiver: Aft housing 1 service panel 0-1
+  other: Aft housing 1 service panel 0-1 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 8.58572049480254e-08
+- receiver: Shoulder 1 casing 0-2
+  other: Shoulder 1 service panel 0-2 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 8.441378462374417e-08
+- receiver: Core removable outer cover 01-5
+  other: Core removable outer cover 01-5 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 8.416022454404773e-08
+- receiver: Core removable outer cover 01-1
+  other: Core removable outer cover 01-1 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 8.415341469061557e-08
+- receiver: Aft housing -1 service panel 0-5
+  other: Aft housing -1 service panel 0-5 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 8.147854191021643e-08
+- receiver: Aft housing 1 service panel 0-1
+  other: Aft housing 1 service panel 0-1 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 8.144404490150217e-08
+- receiver: Shoulder 1 service panel 0-3
+  other: Shoulder 1 service panel 0-3 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 8.0737054201679e-08
+- receiver: Shoulder -1 service panel 0-3
+  other: Shoulder -1 service panel 0-3 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 8.073705420164204e-08
+- receiver: Shoulder 1 service panel 0-3
+  other: Shoulder 1 service panel 0-3 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 8.073636673263196e-08
+- receiver: Shoulder -1 service panel 0-3
+  other: Shoulder -1 service panel 0-3 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 8.07363667325545e-08
+- receiver: Shoulder -1 service panel 1-5
+  other: Shoulder -1 service panel 1-5 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 7.780150181531902e-08
+- receiver: Shoulder 1 service panel 1-1
+  other: Shoulder 1 service panel 1-1 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 7.780034193083676e-08
+- receiver: Shoulder 1 service panel 1-3
+  other: Shoulder 1 service panel 1-3 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 7.774859772594497e-08
+- receiver: Shoulder -1 service panel 1-3
+  other: Shoulder -1 service panel 1-3 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 7.774859770351252e-08
+- receiver: Shoulder -1 service panel 1-3
+  other: Shoulder -1 service panel 1-3 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 7.774837704301856e-08
+- receiver: Shoulder 1 service panel 1-3
+  other: Shoulder 1 service panel 1-3 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 7.774837704296499e-08
+- receiver: Shoulder -1 service panel 1-3
+  other: Shoulder -1 service panel 1-3 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 7.325679749758208e-08
+- receiver: Shoulder 1 service panel 1-3
+  other: Shoulder 1 service panel 1-3 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 7.325679749756212e-08
+- receiver: Shoulder -1 service panel 1-3
+  other: Shoulder -1 service panel 1-3 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 7.32563816461763e-08
+- receiver: Shoulder 1 service panel 1-3
+  other: Shoulder 1 service panel 1-3 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 7.325044572775411e-08
+- receiver: Shoulder 1 service panel 2-3
+  other: Shoulder 1 service panel 2-3 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 7.164279297916986e-08
+- receiver: Shoulder -1 service panel 2-3
+  other: Shoulder -1 service panel 2-3 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 7.164279297913249e-08
+- receiver: Shoulder -1 service panel 2-3
+  other: Shoulder -1 service panel 2-3 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 7.164238628990317e-08
+- receiver: Shoulder 1 service panel 2-3
+  other: Shoulder 1 service panel 2-3 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 7.164238628984472e-08
+- receiver: Core removable outer cover 06-5
+  other: Core removable outer cover 06-5 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 6.981809851535195e-08
+- receiver: Core removable outer cover 06-1
+  other: Core removable outer cover 06-1 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 6.980242916739645e-08
+- receiver: Aft housing -1 service panel 0-5
+  other: Aft housing -1 service panel 0-5 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 6.971870568164546e-08
+- receiver: Aft housing 1 service panel 0-1
+  other: Aft housing 1 service panel 0-1 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 6.968420867299514e-08
+- receiver: Shoulder -1 service panel 2-3
+  other: Shoulder -1 service panel 2-3 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 6.929175132269817e-08
+- receiver: Shoulder 1 service panel 2-3
+  other: Shoulder 1 service panel 2-3 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 6.929175132267345e-08
+- receiver: Shoulder -1 service panel 2-3
+  other: Shoulder -1 service panel 2-3 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 6.929135797935263e-08
+- receiver: Shoulder 1 service panel 2-3
+  other: Shoulder 1 service panel 2-3 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 6.929135797930572e-08
+- receiver: Shoulder -1 service panel 0-5
+  other: Shoulder -1 service panel 0-5 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 6.520878677780937e-08
+- receiver: Shoulder 1 service panel 0-1
+  other: Shoulder 1 service panel 0-1 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 6.520878677780508e-08
+- receiver: Core removable outer cover 03-5
+  other: Core removable outer cover 03-5 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 6.51271947997388e-08
+- receiver: Core removable outer cover 03-1
+  other: Core removable outer cover 03-1 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 6.511379930826766e-08
+- receiver: Shoulder -1 aft interface blind cover
+  other: Shoulder -1 aft interface blind cover captive fixing 5
+  policy: cover_head_seat
+  reported_overlap_m3: 6.452788568127137e-08
+- receiver: Shoulder 1 aft interface blind cover
+  other: Shoulder 1 aft interface blind cover captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 6.452788568127137e-08
+- receiver: Core removable outer cover 06-5
+  other: Core removable outer cover 06-5 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 6.449217179920476e-08
+- receiver: Core removable outer cover 06-1
+  other: Core removable outer cover 06-1 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 6.446866777722497e-08
+- receiver: Shoulder -1 service panel 1-5
+  other: Shoulder -1 service panel 1-5 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 6.396322478454964e-08
+- receiver: Shoulder 1 service panel 1-1
+  other: Shoulder 1 service panel 1-1 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 6.39621046264948e-08
+- receiver: Shoulder 1 service panel 2-1
+  other: Shoulder 1 service panel 2-1 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 6.307610432775814e-08
+- receiver: Shoulder -1 service panel 2-5
+  other: Shoulder -1 service panel 2-5 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 6.307610125099105e-08
+- receiver: Shoulder -1 aft interface blind cover
+  other: Shoulder -1 aft interface blind cover captive fixing 6
+  policy: cover_head_seat
+  reported_overlap_m3: 6.167481829931487e-08
+- receiver: Shoulder 1 aft interface blind cover
+  other: Shoulder 1 aft interface blind cover captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 6.167481829931487e-08
+- receiver: Shoulder -1 service panel 1-5
+  other: Shoulder -1 service panel 1-5 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 6.077352719789682e-08
+- receiver: Shoulder 1 service panel 1-1
+  other: Shoulder 1 service panel 1-1 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 6.077348363782962e-08
+- receiver: Core removable outer cover 03-5
+  other: Core removable outer cover 03-5 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 6.011128436924784e-08
+- receiver: Core removable outer cover 03-1
+  other: Core removable outer cover 03-1 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 6.009788887780415e-08
+- receiver: Core removable outer cover 03-5
+  other: Core removable outer cover 03-5 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 6.009472312413465e-08
+- receiver: Core removable outer cover 03-1
+  other: Core removable outer cover 03-1 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 6.008292011334047e-08
+- receiver: Shoulder 1 aft interface blind cover
+  other: Shoulder 1 aft interface blind cover captive fixing 7
+  policy: cover_head_seat
+  reported_overlap_m3: 6.003616294652793e-08
+- receiver: Shoulder -1 aft interface blind cover
+  other: Shoulder -1 aft interface blind cover captive fixing 7
+  policy: cover_head_seat
+  reported_overlap_m3: 6.003582214372284e-08
+- receiver: Shoulder 1 aft interface blind cover
+  other: Shoulder 1 aft interface blind cover captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 6.003582214372284e-08
+- receiver: Shoulder -1 aft interface blind cover
+  other: Shoulder -1 aft interface blind cover captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 5.997545904061637e-08
+- receiver: Shoulder 1 aft interface blind cover
+  other: Shoulder 1 aft interface blind cover captive fixing 4
+  policy: cover_head_seat
+  reported_overlap_m3: 5.7486598898242615e-08
+- receiver: Shoulder -1 aft interface blind cover
+  other: Shoulder -1 aft interface blind cover captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 5.7425894992337836e-08
+- receiver: Shoulder -1 aft interface blind cover
+  other: Shoulder -1 aft interface blind cover captive fixing 4
+  policy: cover_head_seat
+  reported_overlap_m3: 5.742556900703924e-08
+- receiver: Shoulder 1 aft interface blind cover
+  other: Shoulder 1 aft interface blind cover captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 5.742556900703924e-08
+- receiver: Shoulder 1 service panel 2-1
+  other: Shoulder 1 service panel 2-1 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 5.6962169535701046e-08
+- receiver: Shoulder -1 service panel 2-5
+  other: Shoulder -1 service panel 2-5 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 5.696194387252427e-08
+- receiver: Dorsal maintenance cover
+  other: Dorsal maintenance cover captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 5.685171523017134e-08
+- receiver: Dorsal maintenance cover
+  other: Dorsal maintenance cover captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 5.685171523007086e-08
+- receiver: Dorsal maintenance cover
+  other: Dorsal maintenance cover captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 5.68043877715932e-08
+- receiver: Dorsal maintenance cover
+  other: Dorsal maintenance cover captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 5.680438777157336e-08
+- receiver: Core removable outer cover 03-5
+  other: Core removable outer cover 03-5 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 5.5457440627876804e-08
+- receiver: Core removable outer cover 03-1
+  other: Core removable outer cover 03-1 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 5.544563761706889e-08
+- receiver: Shoulder -1 service panel 2-5
+  other: Shoulder -1 service panel 2-5 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 5.399237379995289e-08
+- receiver: Shoulder 1 service panel 2-1
+  other: Shoulder 1 service panel 2-1 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 5.39923737999491e-08
+- receiver: Shoulder 1 casing 0-2
+  other: Shoulder 1 service panel 0-2 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 5.252311886514064e-08
+- receiver: Shoulder 1 service panel 1-1
+  other: Shoulder 1 service panel 1-1 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 5.058902108813619e-08
+- receiver: Shoulder -1 service panel 1-5
+  other: Shoulder -1 service panel 1-5 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 5.0588741046744166e-08
+- receiver: Shoulder 1 service panel 2-1
+  other: Shoulder 1 service panel 2-1 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 4.8940644419459735e-08
+- receiver: Shoulder -1 service panel 2-5
+  other: Shoulder -1 service panel 2-5 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 4.894064441944645e-08
+- receiver: Aft housing -1 service panel 1-5
+  other: Aft housing -1 service panel 1-5 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 4.8895337853435134e-08
+- receiver: Aft housing 1 service panel 1-1
+  other: Aft housing 1 service panel 1-1 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 4.889362274887985e-08
+- receiver: Aft housing -1 service panel 1-3
+  other: Aft housing -1 service panel 1-3 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 4.879723789205912e-08
+- receiver: Aft housing 1 service panel 1-3
+  other: Aft housing 1 service panel 1-3 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 4.879723789205768e-08
+- receiver: Aft housing -1 service panel 1-3
+  other: Aft housing -1 service panel 1-3 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 4.879723789203165e-08
+- receiver: Aft housing 1 service panel 1-3
+  other: Aft housing 1 service panel 1-3 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 4.8797237892030305e-08
+- receiver: Core removable outer cover 06-3
+  other: Core removable outer cover 06-3 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 4.807284832725871e-08
+- receiver: Core removable outer cover 06-3
+  other: Core removable outer cover 06-3 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 4.807284832708991e-08
+- receiver: Aft housing 1 service panel 1-3
+  other: Aft housing 1 service panel 1-3 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 4.709249909826296e-08
+- receiver: Aft housing -1 service panel 1-3
+  other: Aft housing -1 service panel 1-3 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 4.7092499098154356e-08
+- receiver: Aft housing 1 service panel 1-3
+  other: Aft housing 1 service panel 1-3 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 4.709223254415247e-08
+- receiver: Aft housing -1 service panel 1-3
+  other: Aft housing -1 service panel 1-3 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 4.709223254411986e-08
+- receiver: Aft housing -1 service panel 1-5
+  other: Aft housing -1 service panel 1-5 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 4.694352739162987e-08
+- receiver: Aft housing 1 service panel 1-1
+  other: Aft housing 1 service panel 1-1 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 4.694094156328114e-08
+- receiver: Core removable outer cover 04-1
+  other: Core removable outer cover 04-1 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 4.6695119462621117e-08
+- receiver: Core removable outer cover 04-5
+  other: Core removable outer cover 04-5 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 4.66932478613396e-08
+- receiver: Core removable outer cover 04-2
+  other: Core removable outer cover 04-2 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 4.601203136182366e-08
+- receiver: Aft housing 1 service panel 1-1
+  other: Aft housing 1 service panel 1-1 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 4.560914241832369e-08
+- receiver: Aft housing -1 service panel 1-5
+  other: Aft housing -1 service panel 1-5 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 4.560913363779175e-08
+- receiver: Core removable outer cover 04-1
+  other: Core removable outer cover 04-1 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 4.515123653028514e-08
+- receiver: Core removable outer cover 04-5
+  other: Core removable outer cover 04-5 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 4.514936492906856e-08
+- receiver: Core removable outer cover 04-2
+  other: Core removable outer cover 04-2 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 4.441229736138108e-08
+- receiver: Core removable outer cover 04-2
+  other: Core removable outer cover 04-2 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 4.399421580190621e-08
+- receiver: Aft housing -1 service panel 1-5
+  other: Aft housing -1 service panel 1-5 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 4.3375252209266257e-08
+- receiver: Aft housing 1 service panel 1-1
+  other: Aft housing 1 service panel 1-1 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 4.337525220911453e-08
+- receiver: Aft housing 1 service panel 1-2
+  other: Aft housing 1 service panel 1-2 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 4.268324117472269e-08
+- receiver: Aft housing -1 service panel 1-4
+  other: Aft housing -1 service panel 1-4 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 4.264157648690065e-08
+- receiver: Core removable outer cover 04-4
+  other: Core removable outer cover 04-4 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 3.955342044924094e-08
+- receiver: Shoulder -1 service panel 2-4
+  other: Shoulder -1 service panel 2-4 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 3.849573861101373e-08
+- receiver: Shoulder -1 service panel 2-4
+  other: Shoulder -1 service panel 2-4 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 3.846053349780668e-08
+- receiver: Core removable outer cover 04-4
+  other: Core removable outer cover 04-4 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 3.805138366477638e-08
+- receiver: Core removable outer cover 04-4
+  other: Core removable outer cover 04-4 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 3.768748929750089e-08
+- receiver: Shoulder 1 service panel 2-2
+  other: Shoulder 1 service panel 2-2 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 3.6799132083910194e-08
+- receiver: Shoulder 1 service panel 2-2
+  other: Shoulder 1 service panel 2-2 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 3.6754814797431135e-08
+- receiver: Core removable outer cover 06-3
+  other: Core removable outer cover 06-3 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 3.6662793180028574e-08
+- receiver: Core removable outer cover 06-3
+  other: Core removable outer cover 06-3 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 3.666279311394382e-08
+- receiver: Core removable outer cover 05-5
+  other: Core removable outer cover 05-5 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 3.532947268720596e-08
+- receiver: Core removable outer cover 05-1
+  other: Core removable outer cover 05-1 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 3.532947268720596e-08
+- receiver: Core removable outer cover 04-3
+  other: Core removable outer cover 04-3 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 3.4831170920023984e-08
+- receiver: Core removable outer cover 04-3
+  other: Core removable outer cover 04-3 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 3.483117077884924e-08
+- receiver: Core removable outer cover 05-2
+  other: Core removable outer cover 05-2 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 3.371593742987285e-08
+- receiver: Core removable outer cover 05-2
+  other: Core removable outer cover 05-2 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 3.3705197236992576e-08
+- receiver: Core removable outer cover 05-2
+  other: Core removable outer cover 05-2 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 3.358232598206288e-08
+- receiver: Core removable outer cover 04-3
+  other: Core removable outer cover 04-3 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 3.2510972712513736e-08
+- receiver: Core removable outer cover 04-3
+  other: Core removable outer cover 04-3 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 3.251097258998252e-08
+- receiver: Shoulder -1 service panel 2-4
+  other: Shoulder -1 service panel 2-4 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 3.1977818687646385e-08
+- receiver: Shoulder 1 service panel 2-2
+  other: Shoulder 1 service panel 2-2 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 3.1654425910201726e-08
+- receiver: Core removable outer cover 05-4
+  other: Core removable outer cover 05-4 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 3.1373951326150124e-08
+- receiver: Core removable outer cover 05-4
+  other: Core removable outer cover 05-4 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 3.136423521840257e-08
+- receiver: Core removable outer cover 05-4
+  other: Core removable outer cover 05-4 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 3.123368944972339e-08
+- receiver: Core removable outer cover 05-3
+  other: Core removable outer cover 05-3 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 2.9029621804108207e-08
+- receiver: Core removable outer cover 05-3
+  other: Core removable outer cover 05-3 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 2.9029621698250635e-08
+- receiver: Core removable outer cover 05-3
+  other: Core removable outer cover 05-3 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 2.8593574933912178e-08
+- receiver: Core removable outer cover 05-3
+  other: Core removable outer cover 05-3 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 2.8593574839065637e-08
+- receiver: Aft housing 1 service panel 1-2
+  other: Aft housing 1 service panel 1-2 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 2.6749253143540342e-08
+- receiver: Aft housing -1 service panel 1-4
+  other: Aft housing -1 service panel 1-4 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 2.6278271344744814e-08
+- receiver: Aft housing 1 service panel 1-2
+  other: Aft housing 1 service panel 1-2 captive fixing 3
+  policy: cover_head_seat
+  reported_overlap_m3: 2.554971828510205e-08
+- receiver: Aft housing -1 service panel 1-4
+  other: Aft housing -1 service panel 1-4 captive fixing 2
+  policy: cover_head_seat
+  reported_overlap_m3: 2.5089868408194673e-08
+- receiver: Shoulder -1 service panel 2-4
+  other: Shoulder -1 service panel 2-4 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 1.2765849056408928e-08
+- receiver: Shoulder 1 service panel 2-2
+  other: Shoulder 1 service panel 2-2 captive fixing 1
+  policy: cover_head_seat
+  reported_overlap_m3: 9.168503599510253e-09
+- receiver: Shoulder 1 casing 0-2
+  other: Shoulder 1 service panel 0-2 captive fixing 0
+  policy: cover_head_seat
+  reported_overlap_m3: 4.765479790965104e-10
+execution:
+- Apply exact named receiver policy only. An aluminium object touched by a steel head is not permission to cut every
+  steel overlap on that object. New/unclassified pairs are explicit exceptions.
+- Build one representative cover seat, rear hinge pressure recess and gear ankle before replication; preserve before/after
+  geometry, coordinates and real contact/gap ownership. Then freeze full edit map and new stock quantities.
+- At triple and higher intersections partition the local joint together, including floor/skin and actual new parts.
+  Never sum pair overlap volumes to derive removed mass.
+- Separate modeled physical material from hidden reserve. Newly modeled hardware replaces the specifically allocated
+  reserve amount; do not add both silently or zero an unrelated reserve. Retain unmodeled hardware assumptions explicitly.
+- Replay all static material unions and the actual motion/crew-route/ground-contact cases, check positive material
+  topology and retained cavity voids. Publish whole candidate mass only after all remaining families and actual
+  additions/retirements are reconciled.
+limits: Prototype material/geometry choices under owner finish authority, not pressure/structural/bearing/mission
+  qualification; no need await those ratings to build/count real parts.
