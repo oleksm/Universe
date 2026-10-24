@@ -1,0 +1,50 @@
+request: 20261024T121122-planets-b221
+status: conditional-proxy-awaiting-producer-contract
+registry_baseline: f3e12afc630899ecf5d34be95f0702f3a5e4df92
+reviewed_sources:
+- standards/PlanetSim/metadata/factors/slope-relief.yaml
+- standards/PlanetSim/metadata/factors/base-level.yaml
+- standards/PlanetSim/metadata/fields/local-relief.yaml
+- /home/alexm/git/planet-forge/tools/land/gates.py
+- /home/alexm/git/planet-forge/tools/land/drivers.py
+- /home/alexm/git/planet-forge/tools/land/refine.py
+- /home/alexm/planet-data/land/test_place/gates.json
+choices:
+- factor: planet-factor.slope-relief
+  decision: Conditional land-supplied proxy is appropriate; no active binding yet.
+  field: planet-field.local-relief
+  requirements:
+  - Supply the exact formula, horizontal support/window, terrain revision, units and valid-data mask.
+  - Distinguish cell height minus neighbourhood minimum from neighbourhood maximum minus minimum.
+  - Specify reduction to the evaluator lattice; maximum, mean and nearest sample are different observations.
+  - Record the producer and input hashes, grid spacing and boundary handling in run provenance.
+  - Mark the reading as proxy, not a direct observation of slope, elevation and relief together.
+  - Keep the coarse checkpoint reading unknown where the land product is absent.
+  - Review the old invented 100 to 1500 m ramp against the chosen support; do not transfer it as calibrated.
+  reason: >-
+    The existing field means sample height above the lowest neighbouring sample.
+    refine.py contains a transient neighbourhood maximum-minus-minimum relief and
+    a separate height-above-channel computation; these are not automatically that field.
+    The inspected gates.py only explicitly adds routed discharge to drivers.
+- factor: planet-factor.base-level
+  decision: Keep unavailable; do not bind to static local relief or height above channel.
+  reason: >-
+    The factor explicitly describes base-level history (fall/rise of sea, lake or
+    trunk-river level). Static terrain differences do not supply the signed change,
+    reference level or event age. A future history reading must name those quantities.
+consumer_followup:
+  owner: planets
+  task: 20261024T121424-registry-9793
+  findings:
+  - Band evaluation currently ignores the exported soft edge.
+  - Pattern/entry when conditions and time decay are not applied by the inspected evaluator.
+  - Optional score denominator currently drops unknown weights, changing the agreed score semantics.
+  - Categorical evaluation needs finite and integer validation before casting.
+  - An unresolved class with no possible codes must remain unknown everywhere, including not-in.
+  acceptance: Executable counterexamples and exact producer provenance before interpreting placement as contract-compliant.
+change_scope:
+  records_changed: false
+  schemas_changed: false
+  e3_written: false
+  e4_written: false
+  note: Existing snapshots and rules remain frozen; a later adopted reading requires a new versioned export.
