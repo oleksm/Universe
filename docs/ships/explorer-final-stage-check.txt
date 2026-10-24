@@ -1,0 +1,9 @@
+imported: commissioned false (not commissioned: no Power: every ship must carry one)
+bound: 3 mechanisms, 2 exits, 6 moving floors
+gear feet: 3 (ground plane y -2.194 m, spread 0.000 m)
+rear_ramp: contact RearRamp_Toe closed y -0.554, deployed y -2.194: gap over the gear plane -0.000 m
+crew_ladder: contact CrewLadder_Foot closed y -0.776, deployed y -2.194: gap over the gear plane -0.000 m
+exit rear (Walk): open closed false / deployed true; top DVec3(-3.730500039030316e-5, -0.6507288406601726, 3.734394617915264), foot Some(DVec3(-3.763695407177773e-5, -2.1940622648274646, 6.519024257915942)) (foot over gear plane -0.000 m)
+exit belly (Climb): open closed false / deployed true; top DVec3(-3.676855859798279e-5, -0.5640621374359904, -0.7656058291195615), foot Some(DVec3(-3.676654105916493e-5, -2.194062207210914, -0.70213432102078)) (foot over gear plane -0.000 m)
+walk rear: 41 samples, 0 without floor, 0 too steep, worst step 0.041 m (walker 0.45), last floor +0.007 m over the gear plane
+climb belly: length 1.631 m, held at 21/21 points along it; foot -0.000 m over the gear plane
