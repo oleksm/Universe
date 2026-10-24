@@ -2,8 +2,8 @@
 identity:
   key: ship-rule.scope
   name: Workflow scope
-  about: Apply this workflow to original inhabitable ship designs; keep the registry definitions separate from
-    concrete ship instances.
+  about: Apply this workflow to original inhabitable ship designs; keep the registry definitions separate from concrete
+    ship instances.
 status: draft
 implementation: proposed
 owner: ships
@@ -11,32 +11,52 @@ sources:
 - document: docs/spaceship-building-workflow-proposal.md
   section: 1.1 Scope and intended outcome
   note: Owner-authorized workflow definition; project values and results are not instantiated.
-statement: 'Apply this workflow to original inhabitable ship designs; keep the registry definitions separate
-  from concrete ship instances.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 1.1.1 Mandatory delivery stop
+  note: 'Owner scope correction, 2026-10-24 (relayed by blender 20261024T175224-blender-1b98): hull and sockets
+    only; modules placed later by players in the shipyard.'
+statement: 'Apply this workflow to original inhabitable ship designs; keep the registry definitions separate from
+  concrete ship instances.
 
 
   The target is a distinctive ship with the visual ambition associated with Star Citizen: recognizable proportions,
-  a convincing cockpit, inhabitable spaces, readable mechanisms and consistent construction detail. This is
-  not a reproduction of CIG''s current private pipeline or a request to copy a particular vessel. The workflow
-  must support original small ships first and larger, multi-zone vessels later, without turning each into an
-  unrelated procedural script or a single unmanageable prompt.
+  a convincing cockpit, inhabitable spaces, readable mechanisms and consistent construction detail. This is not
+  a reproduction of CIG''s current private pipeline or a request to copy a particular vessel. The workflow must
+  support original small ships first and larger, multi-zone vessels later, without turning each into an unrelated
+  procedural script or a single unmanageable prompt.
 
 
-  The deliverable is a coordinated design: custom hull geometry where identity requires it; referenced equipment
-  where the registry already supplies it; an assembly document defining placement; explicit access and motion
-  data; and evidence showing what has actually been checked. An attractive exterior alone is insufficient.
-  A populated box with a vaguely pointed nose is also insufficient, even when its dimensions pass.
+  Mandatory delivery stop. The deliverable is the owner-authorized artifact, not automatically a fully equipped
+  or commissioned ship. Record the delivery boundary at intake and carry it through every task, dependency, QC decision
+  and release. For hull and sockets only: deliver the owned hull, its authorized mechanisms, socket interfaces and
+  required clearance data with an empty installed fit; equipment selection, placement and configuration belong to
+  players in the shipyard. Stop when the exact hull/socket package and its empty-fit shipyard handoff pass the applicable
+  checks. Do not continue into equipment selection, instance placement, product-specific holders or frames, fuel
+  allocation, controls trimming, propulsion nozzles or flight commissioning; a missing flight system is outside
+  the deliverable, not a hull defect. ''Full auto'', ''continue'', ''finish'', ''ready'' and ''install'' authorize
+  progress within the recorded boundary and never widen it; an equipped ship is a separate, explicitly requested
+  task. A hull-only consumer gap is reported and resolved inside the hull/socket scope, never by adding a loadout.
+  A deferred module renamed hull-owned, its mounting frame, or equipment-driven floor/skin cuts violate the boundary;
+  product-specific nozzle/slot poses cannot be laundered into generic sockets; reservations are data, not rendered
+  instances. A later explicit scope change is a new task: it invalidates dependent evidence and does not retroactively
+  approve earlier out-of-scope work, which is kept as history and removed from the active view, release roster and
+  installation queue.
 
 
-  The existing short guidelines (external repository `blender:docs/spaceship-building-guidelines.md`) remain
-  the quick working agreement. This detailed proposal adds requirements, artifacts, authority, state transitions
-  and failure handling. “Must” below describes the proposed acceptance contract, not a claim that the relevant
-  tool already exists.'
+  The existing short guidelines (external repository `blender:docs/spaceship-building-guidelines.md`) remain the
+  quick working agreement. This detailed proposal adds requirements, artifacts, authority, state transitions and
+  failure handling. “Must” below describes the proposed acceptance contract, not a claim that the relevant tool
+  already exists.'
 applies_to:
 - Scope and intended outcome
+- Mandatory delivery stop (1.1.1)
 verification:
 - Check type/instance and workflow-definition files are separate.
 - Verify modelling holds are not released by workflow publication.
+- Record deliverable, allowed outputs, exclusions and terminal condition before delegating; a hull-and-sockets task
+  ends at the empty-fit shipyard handoff.
+- 'Reject: full auto/finish/ready used to add equipment, holders, fuel, nozzles or commissioning to a hull-and-sockets
+  task; a hull blocked because it cannot fly; product nozzle/slot poses presented as generic sockets.'
 limitations:
 - This is a reusable workflow definition, not a ship approval or evidence that a proposed tool exists.
 related: []

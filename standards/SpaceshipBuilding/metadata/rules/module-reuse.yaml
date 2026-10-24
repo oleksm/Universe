@@ -2,16 +2,15 @@
 identity:
   key: ship-rule.module-reuse
   name: Discover modules before architecture
-  about: Use the existing modular inventory and supported placement consumer before sizing interior or cockpit
-    spaces.
+  about: Use the existing modular inventory and supported placement consumer before sizing interior or cockpit spaces.
 status: draft
 implementation: mixed
 owner: ships
 sources:
 - document: docs/spaceship-building-workflow-proposal.md
   section: 3.5 Co-design cockpit, routes and hull
-  note: 'Owner correction, 2026-10-21: discover and reuse existing modules before interior sizing; no custom
-    fit-out substitutes.'
+  note: 'Owner correction, 2026-10-21: discover and reuse existing modules before interior sizing; no custom fit-out
+    substitutes.'
 - document: docs/spaceship-building-workflow-proposal.md
   section: 3.5 Co-design cockpit, routes and hull
   note: 'Owner deferred-module correction,2026-10-22: correct reuse/ownership does not authorize current inclusion;
@@ -20,6 +19,10 @@ sources:
   section: changes.delivery-scope
   note: Owner-authorized earlier-decision/intent-first amendment, 2026-10-23. The 16 supplied case specifications
     are not executed tests or ship acceptance.
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 1.1.1 Mandatory delivery stop
+  note: 'Owner scope correction, 2026-10-24 (relayed by blender 20261024T175224-blender-1b98): hull and sockets
+    only; modules placed later by players in the shipyard.'
 statement: 'Before G3 aisle, cabin or cockpit sizing, discover reusable modules for the agreed functions. Search
   the current registry and the actual Studio/runtime catalogue; inspect installed model availability and the supported
   placement consumer. Record candidate keys, record revision/hash, real envelope, mass, mount/port frames, service
@@ -102,7 +105,12 @@ statement: 'Before G3 aisle, cabin or cockpit sizing, discover reusable modules 
 
   Current delivery inclusion scope: Enforce the existing included/deferred ledger on actual inherited, hidden, generated,
   rendered and exported objects. Future command seat/dashboard and other deferred equipment stay absent; preserve
-  reference clearance data separately. Catalogue reuse alone is not permission to include a module.'
+  reference clearance data separately. Catalogue reuse alone is not permission to include a module.
+
+
+  In a hull-and-sockets delivery (ship-rule.scope, 1.1.1) every module is deferred: discovery may inform socket
+  interfaces and clearance data only. No instance is selected, placed, held, framed, fuelled or commissioned, and
+  the installed fit stays empty; players choose modules in the shipyard.'
 applies_to:
 - G3 arrangement, cockpit and interior fit-out, and material revisions affecting module allocation.
 verification:
@@ -110,17 +118,18 @@ verification:
 - Reconcile selected instance IDs, geometry ownership, transforms and single-count BOM against export and runtime
   layout.
 - Exercise the four declaration failure cases, then verify actual mesh and consumer evidence separately.
-- Audit all inherited/source/build/export object ownership, including cockpit products; do not rely only on
-  new-object names.
+- Audit all inherited/source/build/export object ownership, including cockpit products; do not rely only on new-object
+  names.
 - Bind each clearance and allowance to its provenance, actual model/frame, witness and dependent claim; unknowns
   cannot pass.
-- Reconcile per-delivery installed/deferred scope with actual source objects, build outputs, renders, export
-  and BOM/fit roster. Catalogue ownership, selection for a future arrangement or correct reuse does not authorize
-  current inclusion; hidden/disabled geometry still counts as present in the source.
+- Reconcile per-delivery installed/deferred scope with actual source objects, build outputs, renders, export and
+  BOM/fit roster. Catalogue ownership, selection for a future arrangement or correct reuse does not authorize current
+  inclusion; hidden/disabled geometry still counts as present in the source.
 - Verify current delivery inclusion scope against the current declared source, scope, required states and applicable
   evidence; unknowns do not establish the dependent claim.
 - 'Required rejection example: Deferred command seat exists as a hidden inherited object or procedural substitute.
   This is a review case specification, not an executed result.'
+- In a hull-and-sockets delivery the per-delivery ledger shows every module deferred and the registered fit empty.
 limitations:
 - A definition or declaration check does not allocate a module, prove geometric fit or implement an unsupported
   placement/holder layer.

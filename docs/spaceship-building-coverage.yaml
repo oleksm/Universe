@@ -228,8 +228,9 @@ refinements:
 source_document_in_registry: docs/spaceship-building-workflow-proposal.md
 source_sha256_basis: Original research proposal before normalization and subsequent owner refinements; normalized_document_sha256
   identifies the current archived proposal.
-normalized_document_sha256: c6f8eea98412488345c0aacb283031c499f84e56e8efcd412a556495c8af0fcf
+normalized_document_sha256: 61e04c589afd87915a8d9fc2e0b6c9a0061d0be45319f3c2b82e5b8922f05957
 owner_refinements:
+- 'Owner scope correction 2026-10-24 (relayed by blender 20261024T175224-blender-1b98; blender docs/spaceship-generation-workflow-spec.md sha256 b34c08ad): 1.1 deliverable is the owner-authorized artifact; 1.1.1 mandatory delivery stop - hull and sockets only, empty fit, modules placed by players in the shipyard; full auto/finish/ready never widen the boundary. Covered by ship-rule.scope (1.1).'
 - Feature-first intake; confirmed consolidated brief; derived prompt before whole-ship sketch.
 - Rehearsal provenance, exact prompt witnesses, hidden-feature limits and stale-input negative cases.
 - Discover existing modules and supported placement consumer before G3 sizing; no custom fit-out substitutes.

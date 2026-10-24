@@ -16,6 +16,9 @@ depends_on:
 entry:
 - Installed package and named compatible consumer revision available.
 exit:
+- 'Hull-and-sockets delivery: truthful empty-fit registration, socket/frame validation and the hull mechanism, walking
+  and rendering checks complete it - stop. Equipment installation, commissioned flight and mission systems are outside
+  scope, never a block (ship-rule.scope 1.1.1).'
 - Actual placement, walking, playback/interlock and GPU claims independently verified or explicitly pending.
 failure:
 - Preserve package outcome separately; route consumer failure to engine and asset defect to modeller.
@@ -32,5 +35,6 @@ rules:
 - ship-rule.lifecycle
 - ship-rule.authority
 - ship-rule.claim-boundaries
-decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
-  forks; technical roles resolve routine repairs within those constraints.
+- ship-rule.scope
+decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope forks;
+  technical roles resolve routine repairs within those constraints.

@@ -61,6 +61,27 @@ class ShipWorkflow(unittest.TestCase):
                 if source["document"].startswith("docs/"):
                     self.assertTrue((root / source["document"]).is_file(), source["document"])
 
+    def test_hull_and_sockets_delivery_stop_stays_defined(self):
+        meta = HERE.parent / "metadata"
+        load = lambda p: yaml.safe_load((meta / p).read_text())
+        scope = load("rules/scope.yaml")["statement"]
+        for phrase in ("hull and sockets only", "empty installed fit", "players in the shipyard",
+                       "never widen it", "not a hull defect", "cannot be laundered into generic sockets"):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, scope)
+        for word in ("'Full auto'", "'continue'", "'finish'", "'ready'", "'install'"):
+            self.assertIn(word, scope)
+        self.assertIn("installed fit stays empty", load("rules/module-reuse.yaml")["statement"])
+        for stage in ("stages/brief.yaml", "stages/architecture.yaml", "stages/integration.yaml"):
+            with self.subTest(stage=stage):
+                self.assertTrue(any("1.1.1" in line for line in load(stage)["exit"]))
+
+    def test_explorer_is_a_hull_and_sockets_delivery(self):
+        """Owner 2026-10-24: hull + sockets only. No full-auto request may install a loadout on it."""
+        rec = yaml.safe_load((HERE.parents[2] / "standards/SFO/metadata/hulls/explorer-study.yaml").read_text())
+        self.assertEqual(rec.get("fit", []), [])
+        self.assertEqual(rec.get("thrusters", []), [])
+
     def test_path_defines_key(self):
         self.assertEqual(key_of("SpaceshipBuilding/metadata/checks/raw-frame.yaml", {}),
                          "ship-check.raw-frame")

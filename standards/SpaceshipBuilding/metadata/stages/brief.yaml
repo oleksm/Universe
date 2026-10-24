@@ -19,10 +19,11 @@ exit:
 - Six feature areas considered in small rounds; inherited answers preserved and priorities explicit.
 - Consolidated feature brief confirmed by owner or explicit delegation; required conflicts resolved and remaining
   unknowns bounded.
+- 'Delivery boundary recorded: deliverable, allowed outputs, exclusions and terminal condition (for hull and sockets:
+  empty fit, player shipyard; ship-rule.scope 1.1.1).'
 failure:
 - Resolve essential missing inputs before detailed geometry.
-- Do not commission a whole-ship sketch from an incomplete or unconfirmed brief; clarification diagrams remain
-  permitted.
+- Do not commission a whole-ship sketch from an incomplete or unconfirmed brief; clarification diagrams remain permitted.
 inputs: []
 outputs:
 - ship-artifact.requirements
@@ -35,5 +36,6 @@ rules:
 - ship-rule.authority
 - ship-rule.claim-boundaries
 - ship-rule.feature-intake
-decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope
-  forks; technical roles resolve routine repairs within those constraints.
+- ship-rule.module-reuse
+decision: Carry existing authorization/delegation forward. Owner resolves identity and major aesthetic/scope forks;
+  technical roles resolve routine repairs within those constraints.

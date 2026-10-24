@@ -12,9 +12,21 @@ Contents: [1. Scope and existing systems](#1-preserve-identity-while-integrating
 
 The target is a distinctive ship with the visual ambition associated with Star Citizen: recognizable proportions, a convincing cockpit, inhabitable spaces, readable mechanisms and consistent construction detail. This is not a reproduction of CIG's current private pipeline or a request to copy a particular vessel. The workflow must support original small ships first and larger, multi-zone vessels later, without turning each into an unrelated procedural script or a single unmanageable prompt.
 
-The deliverable is a coordinated design: custom hull geometry where identity requires it; referenced equipment where the registry already supplies it; an assembly document defining placement; explicit access and motion data; and evidence showing what has actually been checked. An attractive exterior alone is insufficient. A populated box with a vaguely pointed nose is also insufficient, even when its dimensions pass.
+The deliverable is the owner-authorized artifact, not automatically a fully equipped or commissioned ship. Record the delivery boundary at intake and carry it through every task, dependency, QC decision and release. For **hull and sockets only**, deliver the owned hull, its authorized mechanisms, socket interfaces and required clearance data, with empty installed fit. Actual equipment selection, placement and configuration belong to players in the shipyard. An equipment catalogue or a successful fit study is not authority to include that equipment.
 
 The existing short guidelines (external repository `blender:docs/spaceship-building-guidelines.md`) remain the quick working agreement. This detailed proposal adds requirements, artifacts, authority, state transitions and failure handling. “Must” below describes the proposed acceptance contract, not a claim that the relevant tool already exists.
+
+### 1.1.1 Mandatory delivery stop
+
+For a hull-and-sockets job, stop after the exact hull/socket package and its empty-fit shipyard handoff pass the applicable checks. Do not continue into equipment selection, instance placement, product-specific holders or frames, fuel allocation, controls trimming, propulsion nozzles, or flight commissioning. A missing flight system is outside this deliverable, not a hull defect that authorizes filling it in.
+
+“Full auto”, “continue”, “finish”, “ready”, and “install” authorize progress within the recorded delivery boundary; they do not widen it. An equipped ship is a separate explicitly requested task. Lack of a usable hull-only consumer is a consumer-contract gap to report and resolve within the hull/socket scope, never permission to add a loadout to satisfy an importer.
+
+Before delegating work, the task must state the deliverable, allowed outputs, exclusions and terminal condition. Before changing geometry, verify that the change belongs to that deliverable. Before preview/export/install, audit actual source collections (including hidden copies), exported nodes, fit records, mass inputs and socket identities. A deferred module renamed “hull-owned”, its mounting frame, or equipment-driven floor/skin cuts still violate the boundary. Product-specific nozzle/slot poses cannot be laundered into generic sockets. Reservations are separate data, not rendered module instances.
+
+At G7/G8, evaluate only authorized claims. Hull/socket integration means truthful empty-fit registration, socket/frame validation and applicable hull mechanism, walking and rendering checks. Equipment installation, commissioned flight and mission-system checks are not prerequisites for completing that hull deliverable. Mark them outside scope and stop; do not mark the whole task blocked because the empty hull cannot fly.
+
+A later explicit scope change creates a new task and invalidates dependent evidence as needed. It does not retroactively approve earlier out-of-scope work. Preserve such work as history; remove it from the active Blender view, release roster and installation queue.
 
 ### 1.2 Findings that shape the proposal
 

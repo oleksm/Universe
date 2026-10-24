@@ -1,3 +1,4 @@
+withdrawn: 'Owner scope correction 2026-10-24 (blender 20261024T175224-blender-1b98, 20261024T175800-blender-27de): the Explorer is a hull-and-sockets delivery. This equipped/flight work is history only - not a promotion, not the active record. hull.explorer-study stays the accepted bare 6829.395 kg ground stage with fit, slots and thrusters empty; sockets bind to the bare hull, not to these study poses (standards/SpaceshipBuilding ship-rule.scope 1.1.1).'
 status: Countable prototype quantities bound for the Explorer game prototype's whole mass (engine prototype gates);
   measured drawn material and named allowances only, no physical qualification
 rule: Blender's root recomputes the whole same-material union of the final hull export; that figure is the record's
