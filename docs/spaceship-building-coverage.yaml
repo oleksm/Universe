@@ -158,6 +158,7 @@ coverage:
   - ship-check.release
   - ship-check.assembly-state-coverage
   - ship-check.crew-routes
+  - ship-check.socket-qualification
 - source_section: '6.2'
   source_title: Store enough evidence to reproduce a result
   records:

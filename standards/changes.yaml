@@ -3409,6 +3409,7 @@
 - { record: ship-check.release, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "8e44bacc56de8691" }
 - { record: ship-check.requirements, at: "2026-10-22T00:31:15Z", status: "", summary: "changed: method", sha: "bbbc7c2900be7193" }
 - { record: ship-check.runtime, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "f64d017484fa3abe" }
+- { record: ship-check.socket-qualification, at: "2026-10-24T23:24:09Z", status: "", summary: "first tracked", sha: "f9a28cf5a5ec0d1e" }
 - { record: ship-decision.autonomy, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "9321abdc1cef3af7" }
 - { record: ship-decision.budgets, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "45c194c39189f5d0" }
 - { record: ship-decision.coordinate-profile, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "4740475ec7a79441" }

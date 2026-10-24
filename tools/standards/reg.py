@@ -165,7 +165,8 @@ def cmd_check(opt, pages):
              ("supply records", [sys.executable, "tools/standards/supply_chains.py", "--check"], None),
              ("stock chains", [sys.executable, "tools/standards/production_chain.py"], None),
              ("ports", [sys.executable, "tools/standards/equipment_ports.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
-             ("mounts", [sys.executable, "tools/standards/mounting.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o))]
+             ("mounts", [sys.executable, "tools/standards/mounting.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
+             ("ship qualification", [sys.executable, "tools/standards/ship_qualify.py"], None)]   # ship-check.socket-qualification; reported, gate with --check once MC-07 has its mount markers
     failed = 0
     for name, cmd, ok in steps:
         r = sh(cmd)
