@@ -1,0 +1,61 @@
+status: chosen adoption into separate combined candidate for geometry quantities; not live installation or complete
+  pressure/service qualification
+request: 20261023T232658-blender-aff8
+bindings:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/service-receiver-seat-repair.json: ad6490d716249ab87f0486413b6b75fb40a9cd7ca655934d47b235fc1fedfc34
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/service-receiver-seat-meshes.json: a373b21937847e99b911a0eb545edc377982eecc286efe65c6eee00f5079f1d2
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/all-gearwell-service-v2-check.json: 36921b4430d39dc1570486a002dd4d45d170e07af60249f59fb5a29a546d5093
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/all-gearwell-service-v2-meshes.json: 39284ebcb0e74a0e758870a57ab81f273ebbadf7b9a52b8177c151afc4ac0c0b
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/all-gearwell-service-v2-joins.json: 7b864fd7330b72b9997800d463aec181452e3f9aeb913847a313078b789f09bb
+independent_checks:
+- source: Nose gear compact cover roof
+  indexed_edges_two_incident: true
+  independent_signed_volume_m3: 0.00202308591991185
+  reported_removed_kg: 0.20927982780247256
+  retired_coupons: 4
+- source: Cockpit floor | continuous forward deck
+  indexed_edges_two_incident: true
+  independent_signed_volume_m3: 0.022351914700126336
+  reported_removed_kg: 0.0839177377709565
+  retired_coupons: 0
+- source: Raised floor | perimeter return 9
+  indexed_edges_two_incident: true
+  independent_signed_volume_m3: 0.0014965082667607104
+  reported_removed_kg: 0.041957618410014254
+  retired_coupons: 0
+- source: Port aft gear compact cover roof
+  indexed_edges_two_incident: true
+  independent_signed_volume_m3: 0.00202308591728553
+  reported_removed_kg: 0.2092797411258305
+  retired_coupons: 4
+- source: Starboard aft gear compact cover roof
+  indexed_edges_two_incident: true
+  independent_signed_volume_m3: 0.0020230860145996517
+  reported_removed_kg: 0.20927966591425098
+  retired_coupons: 4
+removed_6061_object_sum_kg: 0.7537145910235248
+decision:
+- Adopt the five exact named receiver replacements into the next combined candidate. Three gear roofs are cosmetic
+  non-pressure covers; bounded openings for actual named service parts are intentional. Forward deck and perimeter
+  return9 are locally seated to the new fixed pan; retain top walking height and positive supported material.
+- Explicitly retire the twelve newly generated positive interior machining coupons listed by volume and bounds.
+  This is a chosen machining removal, not a general largest-component filter. Preserve original negative void shells
+  and any other unclassified islands.
+- Retire each of the five original receivers once, then recompute the combined same-material union with the157service
+  parts. The reported object-wise removal sum is not automatically the net hull mass change, because receiver and
+  new-pan volumes may overlap other aluminium objects.
+- Keep all actual pressure-skin hosts unchanged by these five repairs. The new closed pan geometry still needs its
+  own complete skin-host seam/closure and fixed-riser/base review; this receiver map alone does not certify it.
+- Use the actual157-part V2 input/hash. The check report wording that says169 is historical and must be corrected
+  on the next report, not treated as a different validated roster.
+- The reported21sampled paths have empty hit maps within the service set:9nut/9fork/3panel. Nine internal overlaps
+  are labelled nominal screw/receiver thread engagement; retain their named ownership and net-material mass policy.
+  No untested fullframe/hull/gear tool path or rated screw acceptance follows.
+verification_limits: 'Registry independently verified input hashes, five frozen-mesh positive signed volumes/indexed
+  edge incidence and density/removal arithmetic, plus all21 reported path-result rows. It did not independently
+  replay Boolean construction, path sampling, skin containment, support loads or manifold vertex neighborhoods.
+  Blender source script inspected: coupon removal is specific to these cover roofs and must not become a general
+  component deletion rule.'
+next: Combine exact five receiver replacements and157service parts with current glazing/mechanical candidate and
+  real pressure-skin hosts; freeze actual contact dispositions, complete retirement map, net quantities and source/export
+  hashes. Do not wait for engineering ratings merely to count those constructed parts.
