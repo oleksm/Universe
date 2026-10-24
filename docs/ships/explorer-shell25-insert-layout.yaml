@@ -1,0 +1,33 @@
+status: Chosen prototype insert layout for connector.circular-shell-25 (4 contacts); invented/review, for the air cooler
+  service study and any later shell 25 drawing; not a sourced arrangement
+source_task: 20261024T135834-blender-404f
+finding: The record says 4 crimped contacts up to 16 mm2 in a 40x40x75 mm mated pair, but the shared template model is
+  the shell 17's 7-contact insert. Scaling cannot make 4 contacts from 7, so shell 25 needs its own insert layout.
+  The record (written by tools/standards/kit_catalogue.py) gets an insert field only when the connector schema has one;
+  until then this file is the layout.
+roles: Same contact letters and roles as the existing shell 25 port on equipment.power.converter-270v-10kw dc-out-1
+  - A plus, B minus, C earth, D spare.
+insert:
+  face_diameter_m: 0.030          # inside the 40 mm shell
+  contacts: 4
+  pitch_circle_diameter_m: 0.016
+  pin_diameter_m: 0.005           # one contact size for wires up to 16 mm2; 6 mm2 uses a reduced crimp barrel
+  positions_deg:                  # from the master key at 0 deg, clockwise looking at the pin (male) face
+    A: 45
+    B: 135
+    C: 225
+    D: 315
+  spacing: 11.3 mm centre to centre, 6.3 mm insulation between pins - ample at 600 V
+  earth_first: Contact C pin stands 1.0 mm proud of A, B and D (first to make, last to break)
+  socket_half: Female insert mirrors the positions; socket bore 5.0 mm with spring contact
+keying:
+  master_key: One 4 mm wide key at 0 deg on the receptacle shell wall, keyway in the plug
+  bayonet: The family's three bayonet pins, as the shell 17 template, scaled
+  mismating: Shell 25 cannot mate with shell 17 by diameter; the master key fixes rotation
+halves: Load equipment male (pins), source and harness female (sockets), as the cable choices
+  (docs/ships/explorer-service-cable-fluid-prototype-choices.yaml); the converter's dc-out-1 is female as a source.
+basis:
+  tier: invented
+  review: true
+  note: Of the order of MIL-DTL-38999 class power inserts (large power contacts on a small circle, longer earth pin);
+    from memory, to be sourced. No contact current, voltage or vibration rating follows from the layout.
