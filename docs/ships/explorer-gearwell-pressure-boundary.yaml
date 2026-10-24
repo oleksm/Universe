@@ -266,3 +266,87 @@ planar_floor_reconstruction_review:
   - V6new panel/rim extent differs from earlier three cutpatches; final net floor retirement must use actual chosen
     joint geometry.
   - No whole floor mass or source replacement accepted.
+floor_intent_confirmation:
+  report: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/floor-solid-reconstruction.json
+  report_sha256: f837c30870998e0008fbae350bce7cffe8af502f545350d69e5ed75d93352101
+  snapshot: /home/alexm/.agents/reviews/registry/20261023-floor-intent-confirmed-input.json
+  hatch_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/crew-hatch.py
+  hatch_source_sha256: eca8a8c89732033088cc3789a317485c682277da1365e41767f2562e2844cd55
+  decision: Confirm intended floor cut:64gon at(.35,0),radius.70 per original coaming outer-seat profile. Clear
+    radius.65 is separate; do not substitute it.
+  matched_hole_vertices: 64
+  geometry_repair:
+    hatch_centre:
+    - 0.35
+    - 0
+    hatch_radius_m: 0.7
+    segments: 64
+    source: source/crew-hatch.py CX/CY/RO/N; aperture is coaming outer seat, clear radius.65 remains separate
+    outer_simplify_tolerance_m: 1.0e-05
+    added_area_m2: 0.03328722499767368
+    removed_area_m2: 0.0009209850144999893
+    net_mass_delta_kg: 1.0486558246855893
+  updated_planar_baseline_kg: 765.9699611820978
+  updated_planar_after_earlier_three_patches_kg: 712.0169097039233
+  whole_floor_mass_accepted: false
+rear_return_pairing_decision:
+  top_source_triangles:
+  - 206
+  - 441
+  - 442
+  - 443
+  - 444
+  - 445
+  - 446
+  - 447
+  - 448
+  - 449
+  bottom_source_triangles:
+  - 205
+  - 432
+  - 433
+  - 434
+  - 435
+  - 436
+  - 437
+  - 438
+  - 439
+  - 440
+  top_plane: z=2.410-(2/15)x
+  bottom_plane: z=2.398-(2/15)x
+  max_source_residual_m: 6.548563624697579e-08
+  flat_join_x_m: 4.2
+  flat_join_top_bottom_z_m:
+  - 1.85
+  - 1.838
+  construction: Pair original top and bottom footprint loops, preserving their distinct edge offsets and actual
+    rear ramp-entry sections. Loft actual side closures. Do not treat steep edge faces or underside-only fragments
+    as walking faces; no blanket downward12mm extrusion.
+  task: 20261023T205945-registry-2006
+  rejected_trial: floor-return-reconstruction.json upper-envelope candidate extends below source; its65.453kg is
+    not usable mass.
+all_host_seam_update:
+  report: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/gearwell-conforming-seams.json
+  sha256: 1474469a26dd7acf8f15997e8f103e6f325ed8a6f25022331cab1cbff40a8ff9
+  projected_gaps_m2:
+  - 0
+  - 0
+  - 0
+  parts:
+  - gear: Nose gear
+    pan_candidate_kg: 18.426706762717238
+    signed_shell_volumes_m3:
+    - 0.006824706208413791
+  - gear: Port aft gear
+    pan_candidate_kg: 18.558845381328638
+    signed_shell_volumes_m3:
+    - 0.006873646624194672
+    - -4.6458698365714306e-18
+    - -1.866655423982122e-10
+  - gear: Starboard aft gear
+    pan_candidate_kg: 18.558845730988704
+    signed_shell_volumes_m3:
+    - 0.006873646567032853
+  scope: All-host analytical upper-plane clipping/constrained triangles fixes projected coverage; not a pressure
+    closure. Preserve small negative port cavity shells as signed voids pending topology review, never absolute-mass
+    sum.
