@@ -57,7 +57,7 @@ open_to_ready:                 # owner of each in brackets
 - Crew reservation kept for a future module. The owner deferred the command seat and dashboard - no custom
   substitute and no inclusion authorised. Crew COM stays the floor-region bound; the control requirement for that
   future module is kept separate [owner]
-- Thermal model and daytime cooling umbilical [registry]
+- Thermal model [registry]; daytime cooling umbilical requirement in docs/ships/explorer-ground-cooling-umbilical.yaml, ship-side receptacles to place and draw [ships, blender]
 - Installed fit record, wet mass record, commissioning (thrust on) [registry, engine]
 scope:
   active_record_created: false

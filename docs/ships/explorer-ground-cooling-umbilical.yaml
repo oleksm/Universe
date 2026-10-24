@@ -1,0 +1,20 @@
+status: Requirement for daytime ground cooling of the Explorer at an airless port; a service-interface requirement,
+  not a port facility record or a rating
+source: docs/ships/explorer-flight-readiness-ledger.yaml heat_at_the_site (radiators reject about nothing on sunlit
+  ground at local noon; the ship's load is about 7.7 kW)
+requirement:
+  duty_W: 10000                   # the 7.7 kW load plus 30% margin
+  fluid: The ship loop's water-glycol (3800 J/kg K, as the coolant loop record)
+  flow_kg_s: 0.263                # 10 kW over a 10 K rise
+  ship_loop_return_K_max: 323     # port returns the loop at or below 50 C
+  interface: interface.hose-union-dn25 pair (supply and return), ship half male, port hose half female - the existing
+    union (2.5 MPa, 823 K catalogue), about 0.5 m/s in the DN25 bore
+  design_pressure_Pa: 1000000     # as the loop's chosen 1 MPa differential (prototype requirement, not a rating)
+  ship_side: A ground-service receptacle pair on the pad side of the hull, teed into one coolant loop with check valves
+    and a manual isolation valve each; Ships places it, Blender draws it
+  dry_break: Self-sealing couplings on both halves so no coolant is lost or frozen out in vacuum on disconnect
+  alternative: Shade (a pad canopy or hangar) meets the same need with no connection; either closes the daytime stop
+  operation: Connected whenever parked in daylight; disconnected for flight - a hop then rides on the loop's heat
+    capacity (about 420 s at 7.7 kW)
+port_side: What a port offers is the port's; this file says what the ship needs. No port record changed.
+invented/review: true
