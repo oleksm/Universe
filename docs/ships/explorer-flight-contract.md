@@ -119,3 +119,8 @@ battery there).
   cell's heat isn't simulated.
 - **Commissioning:** the steady draw must be within plant output plus battery rate. A plant or a battery fills the
   power base block.
+- **No source choice:** the plant serves first and the packs only the remainder. There's no control to run on the
+  battery while the plant has output and fuel.
+- **Engines' electric draw:** each fitted module's recorded `needs.power`, the chemical engines' included, is part of
+  the steady draw, constant whether they fire or not (not scaled by throttle). Throttle floors aren't enforced.
+- **Life support:** its power draw only; no air, water or CO2 is consumed.
