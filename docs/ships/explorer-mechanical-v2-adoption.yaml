@@ -1,0 +1,97 @@
+status: adopt89receiver repairs and45ankle parts as explicit prototype geometry only
+request: 20261023T234821-blender-e304
+bindings:
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-roster.json
+  : 2c6acbc4991ee2ad2ca2d035393095499a923d92c97db842023120142eb881e8
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-policy-v2.json
+  : fcb2cab23e5c4514bc71e5d04cba67b0152d3cb6fdda69ecee6095947e1e13e4
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-policy-v2-meshes.json
+  : f0d043f535e92629ff872138f75ad66befd20d49271c08fd8af4339274174432
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-policy-v2-review.json
+  : ef10f4a4726307ef2d66a9e8fcf4a42524a5276264caf0a61c9b68a8b07218c1
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-policy-v2-motion.json
+  : 545534d36abb53bd7db6bc907ceb39bba8c634646afafc3eca943d79468db377
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-ptfe.json: 2e8de5a2870e1e23c5a3f1c695c2a6b13ce545398fc482ec00029ec5fe860329
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-ptfe-meshes.json
+  : b2f39aa225e9f9d3e303eb060c573fd3fa3412d2f537cf5ed484b3df88ef2d13
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-epdm.json: b57815f981d987d2bc1c9e373d9c1ea7f2957bfef823e27eb52311911138e9e2
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-epdm-meshes.json
+  : 413e7468fc8ac0f571e5d4ae1f1a3eaa38f6a12a8ed362143e386d4170c4a115
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/source/material-finish-mechanical-policy-v2.blend
+  : 8a6ba5282bb28832d6e32d25227a18c50c5b399e73829525622808fafd697f9b
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-gear-v2.json
+  : dcbe38c02764117d2c8ed84235c8a7d228477fe70646a29ad33dc42f03fbfea0
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-gear-v2-meshes.json
+  : 0ab5d5e74e7b1bf18dd8fee9cc62c1b321e2c2ba2b82673f0cb32f5ad3be3587
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-gear-v2-internal.json
+  : 6b407691f0c8bcc8b19c7483c083d3c774c6caccdd376820f13b857eae3587ed
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-gear-v2-contacts.json
+  : 182183f7060baf8caac53b0102c7fec6f563dbb10d6cb314eca5dd98790e266f
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-gear-v2-sweep.json
+  : 1d5c7e30fb1258426fba57b0aee1e75df6640fbc5cb38a231c31caceff2ca64b
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-insert-v2-review.json
+  : a7040f885818ed1dab4f1f5337b1e8b3584a92bde6c2d2e0d1494cea1c228cc7
+independent_verification:
+- set: material-finish-mechanical-policy-v2-meshes.json
+  meshes: 89
+  positive_signed_volumes: true
+  indexed_edge_exceptions: []
+  max_raw_vs_reported_volume_delta_m3: 4.161699042708189e-07
+- set: material-finish-mechanical-gear-v2-meshes.json
+  meshes: 45
+  positive_signed_volumes: true
+  indexed_edge_exceptions: []
+  max_raw_vs_reported_volume_delta_m3: 1.2580578831293543e-10
+receiver_set:
+  replace_objects: 89
+  named_head_seats: 291
+  running_bores: 8
+  objectwise_aluminium_removed_kg: 0.4488617616629553
+  decision: Adopt only the exactV2 bounded receiver seats and8running bores in the pinned source objects. Preserve
+    steel head/pin geometry; no pressure-skin objects in the repaired set.89old receivers are replaced once. Shallow
+    seats do not establish shanks, receptacles or a fastened loadpath.
+  limit: Reported minimum1.066438854mm retained centre section is not global minimum ligament or strength. Centreline
+    checks and local25percent removed-volume screen are not acceptance of thin webs under load.
+ankle_set:
+  new_and_replacement_parts: 45
+  old_aluminium_parts_replaced: 9
+  gross_45part_mass_kg: 48.748253045997814
+  old_9part_mass_kg: 41.220471
+  decision: Adopt actual finite spherical pad cups, two split6061capture halves per leg and sixM6throughfastener/nutcage
+    sets as new hull-owned geometry. Keep Ti ball/slider and soles unchanged. Aluminium cages are welded to aluminium
+    collars, not to titanium; steel nuts load before cage closure, whole collar removal for nut service remains
+    explicit.
+  contacts:
+  - pad: Nose gear | clipped trapezoid pad
+    Ti: Nose gear | LandingLeg180_slider
+    coincident_cup_face_m2: 0.001698030026666672
+    triangles: 96
+    criterion: All3vertices+centroidnearest2umactualTi;not strength/manufacturingfit
+  - pad: Port aft gear | clipped trapezoid pad
+    Ti: Port aft gear | LandingLeg180_slider
+    coincident_cup_face_m2: 0.0016980307835956802
+    triangles: 96
+    criterion: All3vertices+centroidnearest2umactualTi;not strength/manufacturingfit
+  - pad: Starboard aft gear | clipped trapezoid pad
+    Ti: Starboard aft gear | LandingLeg180_slider
+    coincident_cup_face_m2: 0.0016980307835956802
+    triangles: 96
+    criterion: All3vertices+centroidnearest2umactualTi;not strength/manufacturingfit
+  motion_scope: 61actual gear poses1..480 report intended pad/Ti and pad/sole/perimeter contacts; no new collar/hardware
+    versus source hull hits reported. Surface contact is not automatically interference or a load rating; positive-volume
+    classification at these named moving contacts and continuous sweep remain open.
+  quantity: Count all45parts by their declaredAl6061/Steel4340densities and replace9oldAlparts once. Do not apply
+    the gross48.748kg as an additive new full assembly. Material unions must include preservedTi and soles; hidden
+    leg-drive reserve is separate from these external ankle parts.
+excluded_from_adoption:
+- Failed PTFE guide/entry studies remain construction trials under d257a7e4d, not installed motion.
+- EPDMcap/backing prototype lacks positive pull-off retention and is not adopted as finished.
+- Rearjournal sealed pockets/floorrelief/leafknuckles and2hatchquarter-turn receivers remain unbuilt.
+- New head shanks/receptacles, strength/tool qualification and complete current combinedassembly checks remain open.
+next: Apply only89+45sets and exact source retirements into current candidate, preserving source hierarchy/axes
+  and new material identities. Recompute mixed-material/net quantities and actual clearance/contact dispositions;
+  no geometry or load acceptance transferred from V1.
+quantity_domain: 'Independent raw triangle volumes and old report manifold quantities are not asserted identical:
+  maximum receiver difference4.161699043e-7m3, ankle1.258057883e-10m3. Use actual frozen geometry in one explicit64bit
+  material/union domain for the next rollup, not a mix of old float32 removals and64bit additions. Reported0.448861762kg
+  receiver removal is reference arithmetic, not a net whole-hull deduction.'
