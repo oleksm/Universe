@@ -1,0 +1,32 @@
+registry_commit: f3e12afc630899ecf5d34be95f0702f3a5e4df92
+snapshot: /home/alexm/planet-data/registry_e4
+manifest_sha256: 03abef508ba7bf06c5866123a295027584b60e103d55a9c0b5acb184eb82009b
+standard_files: 5534
+exporter_commit: e3400ff
+rules_sha256: 7f75ee98a1ed5c955262360f86deabc645eef2af3e0ca68c539049cccd526003
+audit:
+  stage: rules_export
+  commit: f3e12afc630899ecf5d34be95f0702f3a5e4df92
+  factors: 62
+  factors_by_reading:
+    verified: 1
+    proxy: 15
+    unavailable: 46
+  patterns: 261
+  trigger_owned: 79
+  entries: 1485
+  required: 53
+  unresolved: 230
+  catalogue_kinds_without_pattern: 0
+  aliases: 3
+  vocabulary_ids: 185
+  faults: 0
+  notes: 33
+old_snapshot: registry_e3 untouched
+limits: Contract/coverage snapshot, not proof of completed M3 placement or scientific calibration.
+main_integration:
+  commit: c3f37ab49
+  source: engine task20261024T115250-engine-6ebe
+  workspace_build: exit0, generated reader included
+  workspace_lib_tests: exit0
+  push: none

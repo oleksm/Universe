@@ -1,0 +1,727 @@
+scope: Existing catalogue counterpart lookup and explicit product-interface reconciliation direction. No fitted
+  service route, connector installation, pressure/thermal/electrical qualification or active hull fit is claimed.
+authority: Owner functional Explorer continuation; Ships task20261024T113718-ships-a9a6 and Blender task20261024T114557-blender-902a.
+ground_record: hull.explorer-study@308238a07, closed5ba56b39; remains empty fit.
+bindings:
+  /home/alexm/git/universe-fso/standards/SFO/metadata/equipment/sensors-camera-s1.yaml: e2cd57fac18a3917420ee472af692b234f710cc80657fcfb887dd5a386fad947
+  /home/alexm/git/freefall-assets/models/sensors-camera-s1/v1/manifest.json: 7d687b8482e249c7954e617528a33c8f9f13dd2a92590b85dc971c008f5b9506
+  /home/alexm/git/freefall-assets/models/sensors-camera-s1/v1/model.glb: d65c81286d2379e0f26e1604b50c3521aa25f53de52544c67f1f2dc7bf0d1c86
+  /home/alexm/git/universe-fso/standards/SFO/metadata/equipment/sensors-altimeter-s1.yaml: d49068310bb0121cab6c63b9bdfa5be2f141fb6c11456bc15ca775dc22e4ec3c
+  /home/alexm/git/freefall-assets/models/sensors-altimeter-s1/v1/manifest.json: 2eb71f63b6111d40bad672d50bbe4bc2241e2d9322a6ffbbf625bae4fe0645fb
+  /home/alexm/git/freefall-assets/models/sensors-altimeter-s1/v1/model.glb: 100d699142a104abf54b9fae37c79fa81e1ee872fec7a5578a7749afda3cb920
+  /home/alexm/git/universe-fso/standards/SFO/metadata/equipment/thermal-air-cooler-s0.yaml: a1262322f88cd2a204f83decf914a8f1539707096712674568c27692c444b56f
+  /home/alexm/git/freefall-assets/models/thermal-air-cooler-s0/v1/manifest.json: daf36c6fa4d5ba3c44a636eaed58c957ea975e699cd139ec0228d27724df69af
+  /home/alexm/git/freefall-assets/models/thermal-air-cooler-s0/v1/model.glb: b49353309dfd93c0f1b5909b249e6ef4bccad42da22a631506e17611427ef9aa
+  /home/alexm/git/universe-fso/standards/SFO/metadata/equipment/thermal-coolant-loop-s0.yaml: 40a5fd314c8f6b3aa9e7bd8db4f099c9ae3cd53325799a62c845c4e5bde11c09
+  /home/alexm/git/freefall-assets/models/thermal-coolant-loop-s0/v1/manifest.json: 8c118d91793d323d6b12e49ef3d7fcb35fc46b80664b674fd2a913482668b8c2
+  /home/alexm/git/freefall-assets/models/thermal-coolant-loop-s0/v1/model.glb: d7131ee49c864efe2ae0e43424ff483ad1c16a588f008fb1cd4f67047176f3ac
+  /home/alexm/git/universe-fso/standards/SFO/metadata/equipment/life-support-s0.yaml: c986c01be11745a7069af5d90c1f5bb280b1287005f675990824f34eef2c7f68
+  /home/alexm/git/freefall-assets/models/life-support-s0/v1/manifest.json: ce6cd03944161bb31bfb6a5ebf7201f021e70a8b21f757e07f05d44f12e41dde
+  /home/alexm/git/freefall-assets/models/life-support-s0/v1/model.glb: e1a3ee9aaddfadfb14e91419544b3081253936696d5cbb05389e7bade5f77006
+  /home/alexm/git/universe-fso/standards/SFO/metadata/connectors/circular-shell-11.yaml: e860a5918ea9d2de7b1f1a021078438bdb411a576a663143f810b7219e37b02d
+  /home/alexm/git/universe-fso/standards/SFO/metadata/interfaces/circular-shell-11.yaml: 04956df1cec8e0ae775db97702cf036a0926ef7048b9089d9509885260c390d7
+  /home/alexm/git/universe-fso/standards/SFO/metadata/templates/circular-connector.yaml: e800f8b5aa71544a234393978720f72180553e3859bd26597c29569e65e97424
+  /home/alexm/git/freefall-assets/models/circular-connector/v1/manifest.json: 9d5f685f357cbc0cca608d1bd0b7172193145c85b4a2850bdb4751cf604684b1
+  /home/alexm/git/freefall-assets/models/circular-connector/v1/model.glb: 0308c403aecf65e346b33c0ed8067304cda1353c3ae11eeb6f2ea17ef423e9f6
+  /home/alexm/git/universe-fso/standards/SFO/metadata/connectors/circular-shell-17.yaml: 12b86ec38b6915963697c37b34f9f2fcb2ddf7d41322567af881a56e588d6a16
+  /home/alexm/git/universe-fso/standards/SFO/metadata/interfaces/circular-shell-17.yaml: e9522c583f186ef58502a56339a380ed9b07d0ec6621aa9c0e4d4753f561b59d
+  /home/alexm/git/universe-fso/standards/SFO/metadata/connectors/hose-union-dn25.yaml: 02a5541d0aa77a90ed6cddaee705e8e4974d9305a4d8d63b5da5426bce73a86e
+  /home/alexm/git/universe-fso/standards/SFO/metadata/interfaces/hose-union-dn25.yaml: 31272dd2a5b2735a53f03c0bdc85556a18cfb7432e379f5e0e6d3622a06015d2
+  /home/alexm/git/universe-fso/standards/SFO/metadata/templates/union.yaml: 3450ba43d5c17d70d27ef31c4feb3f4636e5e718d915c6e4d653c50b416597db
+  /home/alexm/git/freefall-assets/models/union/v1/manifest.json: 09ded711be76999b9142c782db174bc8f8f83e4e2bf49ae0181cd2f6a0d3b1ad
+  /home/alexm/git/freefall-assets/models/union/v1/model.glb: 18ccd7b08b55997ae3efd692a44005b02de596e7a7837436c9b7cb43a2c5681c
+  /home/alexm/git/blender/inventory-tools/build_camera_s1.py: 855f9de25105e87db8e2de4e977c550cb4604cc41df9a59aae69a49ab837c63b
+  /home/alexm/git/blender/inventory-tools/build_altimeter_s1.py: 52bb77b64c76ab25731ad8a627e2d597f37b8f0d43b8985609e8947b013e3767
+  /home/alexm/git/blender/inventory-tools/build_air_cooler_s0.py: d77e86647d47fec8a9b4c70c6170462b3a9cf49afb2ba0a349153aadfee19dde
+  /home/alexm/git/blender/inventory-tools/build_coolant_loop_s0.py: 7543b1158c2934443caf89603d4d86a7130553e23781aa19ea120b909948d001
+products:
+- key: equipment.sensors.camera.s1
+  record: /home/alexm/git/universe-fso/standards/SFO/metadata/equipment/sensors-camera-s1.yaml
+  model: /home/alexm/git/freefall-assets/models/sensors-camera-s1/v1/model.glb
+  model_sha256: d65c81286d2379e0f26e1604b50c3521aa25f53de52544c67f1f2dc7bf0d1c86
+  mass_kg: 2
+  power_W: 10
+  actual_service_nodes:
+  - power_data
+  declared_nonload_ports:
+  - id: dc-in
+    flow: in
+    medium: power
+    interface: interface.circular-shell-17
+    half: male
+    make: manual
+    connector: connector.circular-shell-17
+    voltage: 28.0
+    current: 0.36
+    power: 10.0
+    channel: dc-28v
+    pins:
+    - contact: '1'
+      role: plus
+    - contact: '2'
+      role: minus
+    - contact: '3'
+      role: earth
+    - contact: '4'
+      role: spare
+    - contact: '5'
+      role: spare
+    - contact: '6'
+      role: spare
+    - contact: '7'
+      role: spare
+    at:
+    - -0.037
+    - 0.05
+    - 0.025
+    facing:
+    - 0.0
+    - 0.0
+    - 1.0
+    note: place from the model's empty power_data
+  - id: data-1
+    flow: both
+    medium: signal
+    interface: interface.circular-shell-11
+    half: female
+    make: manual
+    connector: connector.circular-shell-11
+    channel: can-a
+    pins:
+    - contact: '1'
+      role: signal-high
+    - contact: '2'
+      role: signal-low
+    - contact: '3'
+      role: return
+    - contact: '4'
+      role: screen
+    - contact: '5'
+      role: spare
+    - contact: '6'
+      role: spare
+    - contact: '7'
+      role: spare
+    at:
+    - 0.004
+    - 0.05
+    - 0.025
+    facing:
+    - 0.0
+    - 0.0
+    - 1.0
+    note: place from the model's empty power_data
+  - id: data-2
+    flow: both
+    medium: signal
+    interface: interface.circular-shell-11
+    half: female
+    make: manual
+    connector: connector.circular-shell-11
+    channel: can-a
+    pins:
+    - contact: '1'
+      role: signal-high
+    - contact: '2'
+      role: signal-low
+    - contact: '3'
+      role: return
+    - contact: '4'
+      role: screen
+    - contact: '5'
+      role: spare
+    - contact: '6'
+      role: spare
+    - contact: '7'
+      role: spare
+    at:
+    - 0.041
+    - 0.05
+    - 0.025
+    facing:
+    - 0.0
+    - 0.0
+    - 1.0
+    note: place from the model's empty power_data
+- key: equipment.sensors.altimeter.s1
+  record: /home/alexm/git/universe-fso/standards/SFO/metadata/equipment/sensors-altimeter-s1.yaml
+  model: /home/alexm/git/freefall-assets/models/sensors-altimeter-s1/v1/model.glb
+  model_sha256: 100d699142a104abf54b9fae37c79fa81e1ee872fec7a5578a7749afda3cb920
+  mass_kg: 8
+  power_W: 40
+  actual_service_nodes: []
+  declared_nonload_ports:
+  - id: dc-in
+    flow: in
+    medium: power
+    interface: interface.circular-shell-17
+    half: male
+    make: manual
+    connector: connector.circular-shell-17
+    voltage: 28.0
+    current: 1.43
+    power: 40.0
+    channel: dc-28v
+    pins:
+    - contact: '1'
+      role: plus
+    - contact: '2'
+      role: minus
+    - contact: '3'
+      role: earth
+    - contact: '4'
+      role: spare
+    - contact: '5'
+      role: spare
+    - contact: '6'
+      role: spare
+    - contact: '7'
+      role: spare
+    at:
+    - -0.15
+    - 0.037
+    - 0.06
+    facing:
+    - -1.0
+    - 0.0
+    - 0.0
+    note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  - id: data-1
+    flow: both
+    medium: signal
+    interface: interface.circular-shell-11
+    half: female
+    make: manual
+    connector: connector.circular-shell-11
+    channel: can-a
+    pins:
+    - contact: '1'
+      role: signal-high
+    - contact: '2'
+      role: signal-low
+    - contact: '3'
+      role: return
+    - contact: '4'
+      role: screen
+    - contact: '5'
+      role: spare
+    - contact: '6'
+      role: spare
+    - contact: '7'
+      role: spare
+    at:
+    - -0.15
+    - -0.004
+    - 0.06
+    facing:
+    - -1.0
+    - 0.0
+    - 0.0
+    note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  - id: data-2
+    flow: both
+    medium: signal
+    interface: interface.circular-shell-11
+    half: female
+    make: manual
+    connector: connector.circular-shell-11
+    channel: can-a
+    pins:
+    - contact: '1'
+      role: signal-high
+    - contact: '2'
+      role: signal-low
+    - contact: '3'
+      role: return
+    - contact: '4'
+      role: screen
+    - contact: '5'
+      role: spare
+    - contact: '6'
+      role: spare
+    - contact: '7'
+      role: spare
+    at:
+    - -0.15
+    - -0.041
+    - 0.06
+    facing:
+    - -1.0
+    - 0.0
+    - 0.0
+    note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- key: equipment.thermal.air-cooler.s0
+  record: /home/alexm/git/universe-fso/standards/SFO/metadata/equipment/thermal-air-cooler-s0.yaml
+  model: /home/alexm/git/freefall-assets/models/thermal-air-cooler-s0/v1/model.glb
+  model_sha256: b49353309dfd93c0f1b5909b249e6ef4bccad42da22a631506e17611427ef9aa
+  mass_kg: 15
+  power_W: 400
+  actual_service_nodes: []
+  declared_nonload_ports:
+  - id: dc-in
+    flow: in
+    medium: power
+    interface: interface.circular-shell-17
+    half: male
+    make: manual
+    connector: connector.circular-shell-17
+    voltage: 28.0
+    current: 14.29
+    power: 400.0
+    channel: dc-28v
+    pins:
+    - contact: '1'
+      role: plus
+    - contact: '2'
+      role: minus
+    - contact: '3'
+      role: earth
+    - contact: '4'
+      role: spare
+    - contact: '5'
+      role: spare
+    - contact: '6'
+      role: spare
+    - contact: '7'
+      role: spare
+    at:
+    - -0.25
+    - 0.037
+    - 0.09
+    facing:
+    - -1.0
+    - 0.0
+    - 0.0
+    note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  - id: data-1
+    flow: both
+    medium: signal
+    interface: interface.circular-shell-11
+    half: female
+    make: manual
+    connector: connector.circular-shell-11
+    channel: can-a
+    pins:
+    - contact: '1'
+      role: signal-high
+    - contact: '2'
+      role: signal-low
+    - contact: '3'
+      role: return
+    - contact: '4'
+      role: screen
+    - contact: '5'
+      role: spare
+    - contact: '6'
+      role: spare
+    - contact: '7'
+      role: spare
+    at:
+    - -0.25
+    - -0.004
+    - 0.09
+    facing:
+    - -1.0
+    - 0.0
+    - 0.0
+    note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  - id: data-2
+    flow: both
+    medium: signal
+    interface: interface.circular-shell-11
+    half: female
+    make: manual
+    connector: connector.circular-shell-11
+    channel: can-a
+    pins:
+    - contact: '1'
+      role: signal-high
+    - contact: '2'
+      role: signal-low
+    - contact: '3'
+      role: return
+    - contact: '4'
+      role: screen
+    - contact: '5'
+      role: spare
+    - contact: '6'
+      role: spare
+    - contact: '7'
+      role: spare
+    at:
+    - -0.25
+    - -0.041
+    - 0.09
+    facing:
+    - -1.0
+    - 0.0
+    - 0.0
+    note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- key: equipment.thermal.coolant-loop.s0
+  record: /home/alexm/git/universe-fso/standards/SFO/metadata/equipment/thermal-coolant-loop-s0.yaml
+  model: /home/alexm/git/freefall-assets/models/thermal-coolant-loop-s0/v1/model.glb
+  model_sha256: d7131ee49c864efe2ae0e43424ff483ad1c16a588f008fb1cd4f67047176f3ac
+  mass_kg: 30
+  power_W: 300
+  actual_service_nodes:
+  - port_inlet
+  - port_outlet
+  declared_nonload_ports:
+  - id: dc-in
+    flow: in
+    medium: power
+    interface: interface.circular-shell-17
+    half: male
+    make: manual
+    connector: connector.circular-shell-17
+    voltage: 28.0
+    current: 10.71
+    power: 300.0
+    channel: dc-28v
+    pins:
+    - contact: '1'
+      role: plus
+    - contact: '2'
+      role: minus
+    - contact: '3'
+      role: earth
+    - contact: '4'
+      role: spare
+    - contact: '5'
+      role: spare
+    - contact: '6'
+      role: spare
+    - contact: '7'
+      role: spare
+    at:
+    - -0.25
+    - 0.037
+    - 0.09
+    facing:
+    - -1.0
+    - 0.0
+    - 0.0
+    note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  - id: data-1
+    flow: both
+    medium: signal
+    interface: interface.circular-shell-11
+    half: female
+    make: manual
+    connector: connector.circular-shell-11
+    channel: can-a
+    pins:
+    - contact: '1'
+      role: signal-high
+    - contact: '2'
+      role: signal-low
+    - contact: '3'
+      role: return
+    - contact: '4'
+      role: screen
+    - contact: '5'
+      role: spare
+    - contact: '6'
+      role: spare
+    - contact: '7'
+      role: spare
+    at:
+    - -0.25
+    - -0.004
+    - 0.09
+    facing:
+    - -1.0
+    - 0.0
+    - 0.0
+    note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  - id: data-2
+    flow: both
+    medium: signal
+    interface: interface.circular-shell-11
+    half: female
+    make: manual
+    connector: connector.circular-shell-11
+    channel: can-a
+    pins:
+    - contact: '1'
+      role: signal-high
+    - contact: '2'
+      role: signal-low
+    - contact: '3'
+      role: return
+    - contact: '4'
+      role: screen
+    - contact: '5'
+      role: spare
+    - contact: '6'
+      role: spare
+    - contact: '7'
+      role: spare
+    at:
+    - -0.25
+    - -0.041
+    - 0.09
+    facing:
+    - -1.0
+    - 0.0
+    - 0.0
+    note: 'place invented (the model has no empty for it): on its -x end face, for review'
+- key: equipment.life-support.s0
+  record: /home/alexm/git/universe-fso/standards/SFO/metadata/equipment/life-support-s0.yaml
+  model: /home/alexm/git/freefall-assets/models/life-support-s0/v1/model.glb
+  model_sha256: e1a3ee9aaddfadfb14e91419544b3081253936696d5cbb05389e7bade5f77006
+  mass_kg: 150
+  power_W: 2000
+  actual_service_nodes: []
+  declared_nonload_ports:
+  - id: dc-in
+    flow: in
+    medium: power
+    interface: interface.circular-shell-17
+    half: male
+    make: manual
+    connector: connector.circular-shell-17
+    voltage: 270.0
+    current: 7.41
+    power: 2000.0
+    channel: dc-270v
+    pins:
+    - contact: '1'
+      role: plus
+    - contact: '2'
+      role: minus
+    - contact: '3'
+      role: earth
+    - contact: '4'
+      role: spare
+    - contact: '5'
+      role: spare
+    - contact: '6'
+      role: spare
+    - contact: '7'
+      role: spare
+    at:
+    - -0.4
+    - 0.037
+    - 0.18
+    facing:
+    - -1.0
+    - 0.0
+    - 0.0
+    note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  - id: data-1
+    flow: both
+    medium: signal
+    interface: interface.circular-shell-11
+    half: female
+    make: manual
+    connector: connector.circular-shell-11
+    channel: can-a
+    pins:
+    - contact: '1'
+      role: signal-high
+    - contact: '2'
+      role: signal-low
+    - contact: '3'
+      role: return
+    - contact: '4'
+      role: screen
+    - contact: '5'
+      role: spare
+    - contact: '6'
+      role: spare
+    - contact: '7'
+      role: spare
+    at:
+    - -0.4
+    - -0.004
+    - 0.18
+    facing:
+    - -1.0
+    - 0.0
+    - 0.0
+    note: 'place invented (the model has no empty for it): on its -x end face, for review'
+  - id: data-2
+    flow: both
+    medium: signal
+    interface: interface.circular-shell-11
+    half: female
+    make: manual
+    connector: connector.circular-shell-11
+    channel: can-a
+    pins:
+    - contact: '1'
+      role: signal-high
+    - contact: '2'
+      role: signal-low
+    - contact: '3'
+      role: return
+    - contact: '4'
+      role: screen
+    - contact: '5'
+      role: spare
+    - contact: '6'
+      role: spare
+    - contact: '7'
+      role: spare
+    at:
+    - -0.4
+    - -0.041
+    - 0.18
+    facing:
+    - -1.0
+    - 0.0
+    - 0.0
+    note: 'place invented (the model has no empty for it): on its -x end face, for review'
+existing_counterparts:
+- key: connector.circular-shell-11
+  interface: interface.circular-shell-11
+  provides: both
+  physical:
+    length: 0.022
+    width: 0.022
+    height: 0.05
+    mass: 0.0313
+  rating:
+    voltage: 600
+    current: 8
+  template: template.circular-connector
+  reference: connector.circular-shell-17
+  model: /home/alexm/git/freefall-assets/models/circular-connector/v1/model.glb
+  model_sha256: 0308c403aecf65e346b33c0ed8067304cda1353c3ae11eeb6f2ea17ef423e9f6
+  root_nodes:
+  - female
+  - male
+  interface_media:
+  - power
+  rating_confidence:
+  - of:
+    - physical
+    - built_of
+    tier: invented
+    review: true
+    note: Scaled from the shell 17's measured mass by the old ratio; From memory of makers' catalogues; to be sourced.
+  - of:
+    - rating
+    tier: invented
+    review: true
+    note: Of the order of military circular connectors (MIL-DTL-38999 class); From memory of makers' catalogues;
+      to be sourced.
+- key: connector.circular-shell-17
+  interface: interface.circular-shell-17
+  provides: both
+  physical:
+    length: 0.03
+    width: 0.03
+    height: 0.06
+    mass: 0.0627
+  rating:
+    voltage: 600
+    current: 15
+  template: template.circular-connector
+  reference: connector.circular-shell-17
+  model: /home/alexm/git/freefall-assets/models/circular-connector/v1/model.glb
+  model_sha256: 0308c403aecf65e346b33c0ed8067304cda1353c3ae11eeb6f2ea17ef423e9f6
+  root_nodes:
+  - female
+  - male
+  interface_media:
+  - power
+  rating_confidence:
+  - of:
+    - physical
+    - built_of
+    tier: derived
+    review: true
+    note: 'From blender''s model (2026-10-18): 30 x 30 x 60 mm mated, seven contacts (six on a 10 mm circle and
+      one at the centre), 2 mm pins, three bayonet pins.'
+  - of:
+    - rating
+    tier: invented
+    review: true
+    note: Of the order of military circular connectors (MIL-DTL-38999 class); From memory of makers' catalogues;
+      to be sourced.
+- key: connector.hose-union-dn25
+  interface: interface.hose-union-dn25
+  provides: both
+  physical:
+    length: 0.085
+    width: 0.085
+    height: 0.09
+    mass: 1.38
+  rating:
+    pressure: 2500000.0
+    temperature: 823.0
+  template: template.union
+  reference: connector.hose-union-dn25
+  model: /home/alexm/git/freefall-assets/models/union/v1/model.glb
+  model_sha256: 18ccd7b08b55997ae3efd692a44005b02de596e7a7837436c9b7cb43a2c5681c
+  root_nodes:
+  - female
+  - male
+  interface_media:
+  - gas
+  - liquid
+  rating_confidence:
+  - of:
+    - physical
+    tier: derived
+    review: true
+    note: 'From blender''s model (2026-10-18): 73.6 mm hex across flats (85 across corners) x 90 mm, round DN 25
+      bore, captive nut and metal cone seat, 1.375 kg of 304.'
+valid_existing_selections:
+  dc_in: For an actually implemented male interface.circular-shell-17 equipment inlet, harness half is female connector.circular-shell-17.
+    Product record voltages/currents remain unchanged. This is a logical mate selection, not proof the cap implements
+    it.
+  CAN: For actually implemented female interface.circular-shell-11 equipment CAN sockets, harness halves are male
+    connector.circular-shell-11. Both declared bus connectors remain until explicitly revised; no hidden port deletion.
+  reference_frame: template.circular-connector manifest states mating plane glTFY0 with authored male/female roots.
+    Use the actual complementary root in the common mating frame; do not infer separation/locking path from the
+    mated bounding box.
+  coolant: No direct matching product coolant interface found. DN25 union is an existing separate catalogue candidate,
+    not an established mate to20mm/14mm bores or38mm visual caps. Actual transition and seat/retention/material
+    choices are necessary.
+physical_findings:
+- product: equipment.sensors.camera.s1
+  actual: One10mm bore in rear housing,18mmOD collar,11.4mmOD closed cap and ONE power_data datum.
+  conflict: Generated dc-in plus2CAN ports do not exist as3physical sockets. shell17 is30mm across, shell11 is22mm
+    across; neither is proven to mate to this10mm entry.
+  direction: Keep original product/model untouched. Separate rear service-plate/pigtail study may replace the one
+    cap/collar with physically built interfaces; an actual seal/strain-relief/retention and wiring assignment are
+    required, not a decorative plug over the closed cap.
+- product: equipment.sensors.altimeter.s1
+  actual: No service empties or identified power/CAN mating geometry; generated-X locations explicitly invented.
+  direction: A separate backed service-plate study must identify real housing wall and actual connectors before
+    any port locations are changed. Preserve optics, mount and envelope.
+- product: equipment.thermal.coolant-loop.s0
+  actual: Actual inlet/outlet datums;20mmID/24mmOD tube ends with30mmOD collars and31mmOD closed caps. Power/data
+    are capped14mm exterior proxies; registry has no coolant-port rows.
+  direction: Select and construct a real product-side terminal/adapter with declared material and retained pressure
+    boundary. A20to25mm transition to an existing union is a design candidate only. Preserve0.53kg/s and30kg whole-loop
+    allocation, including12kg distributed lines/coldplates; do not count that kit twice.
+- product: equipment.thermal.air-cooler.s0
+  actual: Two14mmID/20mmOD tubes with21mmOD caps and one closed electrical proxy; no registered coolant-port rows.
+  direction: Requires actual fluid termination/adapter and electrical service reconciliation, preserving front/rear
+    air faces. The declared20kW air rejection is not available in vacuum; a cabin heat-exchange use would need an
+    explicit direction/duty/airflow review.
+- product: equipment.life-support.s0
+  actual: Inventory binds zero service empties, rear+Y60x40mm power/data cap faces, one data cap vs2CAN ports, two38mmOD
+    coolant caps without bore/material/interface information. Generated service coordinates face-X.
+  direction: Use a separate rear service-panel study at measured+Yfaces, not the generated-X fiction. Candidate
+    shell17 power and2shell11 CAN sockets must actually be built and retained; keep2000W at270V (~7.41A), not the
+    lower speculative basis estimate. Two fluid terminals and air intake/return assignment still need explicit construction.
+  inventory: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-fit-current-study/life-support-interface-inventory.json
+remaining_contract_gaps:
+- No connector locking angle, insertion/extraction stroke or full specified tool body/handling path in the static
+  reference package; measure/design them explicitly.
+- No actual fluid mating-seat standard/material/pressure-temperature duty chosen for these product caps. Outer diameter
+  alone is not an interface.
+- Shell11 interface currently lists power medium although equipment records use it for CAN; do not silently promote
+  this to a verified signal/EMC standard.
+- Do not derive pressure rating, torque, preload, vacuum current derating or mission endurance from artwork or catalogue
+  dimensional envelopes.
+next_work: Product author owns reversible separately saved service-panel/terminal studies with before/after retirement
+  map, new service datums and measured mass; registry then reconciles equipment_ports.py and records, never hand-edits
+  generated ports or installs an unverified version.
+methods: Registry and manifest data read directly; installed model hashes checked. Bore/cap dimensions transcribed
+  from named authoring scripts and independently supplied current inventories; not a fresh mesh-metrology/fit certificate.

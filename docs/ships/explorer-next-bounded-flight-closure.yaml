@@ -1,0 +1,102 @@
+status: Concrete next design/review allocation; no equipment installed and no first-flight acceptance
+ground_baseline:
+  record: hull.explorer-study@308238a07
+  source_sha256: e7077eb0713c581985b657beab698ab72f8a88b962fd778ef65afdac06161f0c
+  model_sha256: 5ba56b39d25098985064ff5839f5fe37cfd8c7178b4fcff68453cb6fb9184d24
+  bare_mass_kg: 6829.395259018859
+  slots: []
+  fit: []
+  thrusters: []
+  runtime_identity: hull.import.explorer_study; hull.explorer-study aliases the same handle after engine469d05276
+mission:
+  owner_choice: One person, no cargo, short airless-moon trips.
+  engineering_proof: 120s software session, at most15s vertical hop and2m height are an existing bounded study target,
+    not accepted sortie duration.
+  selected_next_site: Port Sirnendis on Heath D I for the bounded engineering proof; engine independently placed
+    the ground stage there.
+  body: body.treistun.treistun-d-i
+  settlement: settlement.treistun.port-sirnendis
+  gravity_m_s2: 1.2809
+  pads: 16
+  site_source: engine469d05276; task20261024T114311-engine-4272, docs/ships/explorer-ground-install-live.md
+  remaining: Exact pad/terrain/thermal scene, payload/person/suit, complete equipment/foundation/services mass and
+    operating controls remain to be bound before a hop.
+working_trial:
+  roster: /home/alexm/.agents/reviews/ships/explorer-final-ground-20261024/flight-trial-roster-31-layout-v6-compact-optics.json
+  count: 31
+  scope: LayoutV6 compact optics + RCSV5 trial; all31 remain uninstalled; no clearance acceptance.
+  rule: Latest search baseline only. V5 RCS and compactV7 are rejected for adoption; V6 does not make them fitted.
+    No old geometry/clearance acceptance transfers.
+  life_support_pose_source_m:
+  - 0.6
+  - 1.65
+  - 2.15
+  coolant_loop1_pose_source_m:
+  - 0.8
+  - -1.4
+  - 2.2
+  command: deferred; not added to the ground hull
+mass:
+  equipment_tare_kg: 1622.8
+  hydrolox_illustrative_fill_kg: 500
+  nitrogen_illustrative_fill_kg: 100
+  subtotal_kg: 9052.19525901886
+  not_whole_flight_mass: Add actual person/suit, NEW net supports/foundation/joints/services, wiring/plumbing and
+    separately owned consumables. Retire overlaps/reserves exactly once; no previous frame or gear rating transfers.
+next_choices:
+- owner: ships + blender
+  choice: Use the V3 bounded central-spine/bypass search, not rejected V1 above-floor crosspipe or failed V2 long
+    straight rails.
+  scope: Keep walking top unchanged. Separate candidate only; actual gear/floor/skin/tool clearances and finite
+    supports before detail or mass adoption.
+  evidence: /home/alexm/.agents/reviews/ships/explorer-final-ground-20261024/foundation-v3-central-spine-bypass-decision.json
+- owner: registry + blender
+  choice: Existing shell17 harness female for implemented power inlet; existing shell11 harness male for implemented
+    CAN sockets. Actual product-side geometry must be reconciled in separate studies.
+  scope: No generic caps counted as connectors and no coolant pressure mate invented. Preserve originals and accepted
+    ground bytes.
+  evidence: docs/ships/explorer-optics-cooling-service-contract-audit.yaml
+- owner: registry + ships + blender
+  choice: Retain the failed45degree/+100mm/5m RCS reservation. Explore a separately versioned outward-facing nozzle
+    product; no cone shrink, missing jet or hull cut to pass.
+  scope: The current radial block remains unchanged and unselected; prototype thrust/mass/control/plume remain to
+    be measured/reviewed.
+- owner: ships + engine
+  choice: Recompute first-hop thrust, fuel, auxiliary/battery/fuelcell and thermal duty at actual1.2809m/s2.
+  scope: PairCHS1 is10..50kN nominal; at the draft subtotal weight~11.60kN. Do not reuse prior1.8..1.9gravity envelope,
+    add aircooler20kW as vacuum rejection, or infer a qualified duration from O2 alone.
+  required: Native operating controls and physical part-load heat, transient energy, radiator exposure/scene, life-support
+    supplies and pressure containment stay explicit.
+release_sequence:
+- Coarse separate support/service/product-interface candidates and actual positive-control RCS geometry.
+- Compose exact candidate without touching installed ground baseline; full motions, crew/service paths, ownership/retirement
+  map and measured net whole mass/COM.
+- Bind real nozzles and supported slots/fit/thrusters; compare registered import to exact source/current export,
+  inventory and duty limits.
+- Run bounded software proof only after all above gates; keep flight commissioning and physical mission qualification
+  separately stated.
+bindings:
+  /home/alexm/.agents/reviews/ships/explorer-final-ground-20261024/flight-trial-roster-31-layout-v6-compact-optics.json: b0c404f16fd548b0169558122817d6711af78d049bb8b569c5637166acad9299
+  /home/alexm/.agents/reviews/ships/explorer-final-ground-20261024/foundation-v3-central-spine-bypass-decision.json: 80f40deeaea695a90d38163730f306f1354d6239e05c4943e66d12fd80b342a0
+  /home/alexm/.agents/reviews/ships/explorer-final-ground-20261024/rcs-compact-support-reservation-disposition.json: df060b8429b8107beee657bff9b91786ed5514b27645935cd8a4958bf183df0d
+  /home/alexm/git/universe-fso/docs/ships/explorer-optics-cooling-service-contract-audit.yaml: f52a97d452f19d31532d84ed1ed74af767efea4223cc89004a500f98ad78caf4
+  /home/alexm/.agents/reviews/ships/explorer-final-ground-20261024/sirnendis-proof/sirnendis-bounded-proof.json: a733b83a8c83fef47596ee5b513dc81658d6976dbfa00ed41e71c1d89ba68b37
+bounded_proof_followup:
+  file: /home/alexm/.agents/reviews/ships/explorer-final-ground-20261024/sirnendis-proof/sirnendis-bounded-proof.json
+  scope: Recomputed bounded engineering screen only; NOT flight approval, installed equipment, wholemass or native
+    flight replay
+  known_subtotal_ideal_hop:
+    mass_kg: 9052.19525901886
+    height_m: 2
+    seconds: 15
+    CH_hydrolox_kg: 39.441928867895555
+    FC120s_hydrolox_kg_full_battery: 0.07099300699300698
+    limits: Ideal analytical screen at incomplete subtotal, no person/new hardware, no actual controller/RCS/feed/mission
+      acceptance.
+  initial_state_choice: For the next bounded software proof require an initially full battery; plant autocharge
+    at lowerSOC is a different thermal case. Bind actual state in replay, do not assume it.
+  native_power: Plant supplies demand first and recharges packs; no selectiveFCoff while HLOX remains. FC heat and
+    LS consumable depletion are not simulated. Existing nominal pack efficiency is0.97.
+  known_heat_J_full_pack: 1009088.8780532137
+  qualification: Nameplate19.2kWradiation does not establish scene rejection, transient storage or a120sphysical
+    mission; all omitted auxiliaries and thermal state stay open.

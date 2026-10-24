@@ -1,0 +1,125 @@
+status: Chosen prototype cable and fluid-terminal construction; exact CAD/replay/mass remain required, originals
+  and accepted ground unchanged
+source_task: 20261024T115843-blender-7381
+cables:
+  life_support_power:
+    item: run.cable-dc-600v-3x2p5mm2
+    voltage_V: 270
+    draw_A: 7.407407407407407
+    cable_OD_m: 0.0074
+    vacuum_catalogue_current_A: 12
+    connector: connector.circular-shell-17
+    equipment_half: male
+    harness_half: female
+    bend_radius_m: 0.059
+    mass_per_m_kg: 0.1092
+    confidence: Existing cable/current figures are draft invented/review, not a qualification.3x1mm2 rated6A is
+      insufficient and is not selected.
+  CAN:
+    item: run.cable-data-can
+    cable_OD_m: 0.0044
+    connector: connector.circular-shell-11
+    equipment_half: female
+    harness_half: male
+    bend_radius_m: 0.035
+    mass_per_m_kg: 0.0355
+    conductors: H,L,return and screen to existing declared contact roles; retain two physically built bus ports.
+  other_power: Camera/altimeter/coolant-loop300W@28V can use the same existing3x2.5mm2/shell17 combination; coolant
+    nominal10.714A remains below its12A catalogue vacuum figure. Do not change voltage or draw silently.
+  air_cooler_exception:
+    draw_A: 14.285714285714286
+    finding: 14.286A exceeds3x2.5mm2 harness12A vacuum rating. Shell17 alone does not make that cable adequate.
+      Do not use a single-wire15A rating for a bundled harness.
+    selected_study_cable: run.cable-dc-600v-3x6mm2
+    OD_m: 0.0099
+    vacuum_catalogue_current_A: 22
+    bend_radius_m: 0.079
+    connector: connector.circular-shell-25
+    direction: If the400W cooler is retained for operation, its separate revised product-side panel study must explicitly
+      implement shell25 power (equipment male/harness female), replacing the old shell17 declaration only after
+      exact versioned handoff. Existing product/ports remain unchanged for now. No atmospheric20kW rejection credited
+      in vacuum.
+glands_and_strain_relief:
+  material: material.silicone-rubber liners with6061split saddles/backshell retainers; steelM3fasteners with finite
+    positive captive retention. These are newly counted prototype parts, not existing rated glands.
+  power_free_liner_ID_m: 0.0076
+  CAN_free_liner_ID_m: 0.0046
+  air_cooler_free_liner_ID_m: 0.0101
+  contact: Maintain actual jacketOD7.4/4.4/9.9mm. Build liner/contact geometry and compression stops around that
+    jacket; do not shrink cable mesh or force it through existing5.6/4.107mm bores. No arbitrary elastomer compression
+    or pullout rating inferred.
+  grip_length_m: 0.012
+  grip_basis: Chosen prototype minimum contact length, subject to pull/bend/service testing, not a sourced capability.
+  construction: Separate mechanical strain saddle from the connector contact insert; positively retain saddle/liner
+    and stop metal edges cutting the jacket. Bend starts beyond grip at the actual cable minimum radius. Include
+    actual fastener tool and removal path.
+  seal_scope: Dust/moisture/abrasion protection only at these equipment connectors. This is not the cabin pressure
+    boundary, hermeticity or a vacuum/outgassing certificate.
+fluid_terminal_choices:
+  counterpart: connector.hose-union-dn25
+  interface: interface.hose-union-dn25
+  product_side_half: male
+  hull_hose_half: female
+  seal_at_union: Existing304metal cone/seat pair, as actually authored by template.union. Do not substitute a flat
+    cap for that seat.
+  selection_scope: DN25chosen as the existing detachable interface AFTER an explicit reducer/retained terminal.
+    No directDN25mate to14/20mmbores or38mmODcaps is asserted.
+  working_design_requirements:
+    pressure_differential_Pa: 1000000
+    temperature_K:
+    - 273.15
+    - 363.15
+    basis: Invented prototype boundary-design envelope for review, not an achieved rating, pump head, normal operating
+      pressure or mission temperature guarantee. Existing union envelope does not rate the new transition.
+    fluid: Retain declared water-glycol;3800J/kg/K is the existing nominal sizing assumption, not a selected supplier
+      blend/batch. Material compatibility and viscosity still require the actual blend before pressure/flow qualification.
+  coolant_loop:
+    new_terminal_material: material.stainless-steel-304
+    proximal_bore_m: 0.02
+    proximal_OD_m: 0.024
+    target_flow_kg_s: 0.53
+    target_heat_W: 20000
+    target_delta_K: 10
+    construction: 'Separate revised end/terminal study: keep the20mmflow passage, construct an actual bored collar
+      and304reducer to the realDN25union tail. The authoring PortCollar is a solid cylinder proxy, so removing only
+      the cap does not prove an open bore. Weld only to explicitly assigned304parent stock, never infer parent metallurgy
+      from paint. Count old end/collar/cap retirement exactly once.2mmoriginal straight-wall vs thicker new reducer
+      remains explicit.'
+  life_support:
+    new_terminal_material: material.stainless-steel-304
+    chosen_bore_m: 0.014
+    chosen_straight_OD_m: 0.02
+    target_heat_W: 2400
+    target_delta_K: 10
+    derived_flow_kg_s: 0.06315789473684211
+    construction: New retained shouldered bulkhead terminals through the separate rear service panel, backing nuts/anti-rotation
+      and a finite staticseal; replace visual38mmcaps deliberately.14mmbore is a chosen new internal service interface,
+      not a measurement under the caps.304transition to the actual union tail. No hidden hose/plumbing or pressure
+      rating inherited.
+  air_cooler:
+    product_side_material: material.aluminium-alloy-6061
+    proximal_bore_m: 0.014
+    proximal_OD_m: 0.02
+    union_tail_material: material.stainless-steel-304
+    construction: Explicit separate6061header-side terminal and mechanically retained304union transition; noAl/304fusion-weld
+      claim. Use a bolted finite flange/retainer with EPDMstaticface gasket and anti-extrusion land. Chosen prototype44mmOD
+      flange,4D4.5holes on34mmPCD,1.5mmfree gasket/1.2mmclosed gland with positive stops. Actual bore/seat and supported
+      joint must be built and checked before any rating.
+    thermal_scope: Externalair rejection unavailable on the selected airless moon. A cabin-air role would need a
+      separate direction/duty/airflow definition; no20kWvacuum credit.
+  tools: Union reference is73.6mm across flats. Use two complete matching spanner/counterhold studies; specify jaw
+    clearance, thickness, handle, sweep, threads/loosening and extraction from actual geometry. The90mm mated envelope
+    is not a guaranteed90mm withdrawal stroke. No generic service sphere or rated torque is supplied.
+handoff_required:
+- Actual product-side terminal/panel geometry and connectivity, no solid proxy blocking the passage.
+- Exact existing male/female connector copies, contact IDs, datums and per-product updated generator mapping.
+- Positive retention/seals with explicit finite material boundaries and counted mass/retirements.
+- Full tools/cablebends/productremoval and current hull/mechanism/other-equipment/crew replays.
+- Record/material/port/visualversion update only after the product author supplies exact bytes; active groundfit
+  remains empty.
+bindings:
+  /home/alexm/git/universe-fso/standards/SFO/metadata/runs/cable-dc-600v-3x2p5mm2.yaml: b84f94b7cee07e64195b55ad08d4539821aa52bca8eccfa46159e312fa768460
+  /home/alexm/git/universe-fso/standards/SFO/metadata/runs/cable-data-can.yaml: a5b9890d872afb927d31886daee802a794f94bb6059f22c0fb03d5bf497c5c76
+  /home/alexm/git/universe-fso/standards/SFO/metadata/runs/cable-dc-600v-3x6mm2.yaml: 0532b85a180d3e0fd3c33ffaf5e48e4577186bf9ee01825e52dd7e389e45774a
+  /home/alexm/git/universe-fso/standards/SFO/metadata/connectors/hose-union-dn25.yaml: 02a5541d0aa77a90ed6cddaee705e8e4974d9305a4d8d63b5da5426bce73a86e
+  /home/alexm/git/universe-fso/standards/SFO/metadata/equipment/life-support-s0.yaml: c986c01be11745a7069af5d90c1f5bb280b1287005f675990824f34eef2c7f68

@@ -1,0 +1,69 @@
+status: Chosen separate product/interface study; no active record, geometry or fit acceptance
+existing_product: equipment.engine.cg.s1 remains unchanged:4radial nozzles,500N aggregate target,700m/s draft exhaust,15kg
+  catalogue mass. No jet disabled or rotated silently in that product.
+reserved_key: equipment.engine.cg.outboard-s1
+reason: V5 has10/16failed chosen cone reservations; compactV7 has4body clashes/8blocked axes. Neither is adopted.
+retained_reservation:
+  half_angle_rad: 0.7853981633974483
+  outlet_margin_m: 0.1
+  length_m: 5
+  basis: Existing chosen geometric review reservation, not measured plume physics; keep every failure witness.
+plume_evidence:
+  sources:
+  - url: https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19930017372.pdf
+    title: Measurement and analysis of a small nozzle plume in vacuum, NASA1993
+    use: Nitrogen-vacuum plume pressure and flow angles are measured as a spatial field; one ideal cone is not a
+      physical cutoff.
+  - url: https://ntrs.nasa.gov/api/citations/19960022260/downloads/19960022260.pdf
+    title: SAFER cold-gas nitrogen plume impingement analysis
+    use: Uses source/surface distance, angular separation and surface orientation; cold gas can impart momentum
+      to spacecraft surfaces.
+  missing:
+  - nozzle exit gas state and validated plume angular/pressure distribution
+  - surface momentum/thermal/contamination limits and actual duty
+  - backflow and surface interaction assumptions
+  decision: No defensible safe half-angle/height can be inferred from500N and700m/s alone. heat_to_hull=0 in the
+    software product is not proof of zero external plume impingement.
+prototype_construction:
+  frame: 'Product glTF: mounting baseY0, outward+Y. Every jet is an actual separately retained valve/nozzle assembly
+    pointing into the outward hemisphere.'
+  cant_rad: 0.5235987755982988
+  outward_unit_vectors:
+  - - 0.5
+    - 0.8660254037844386
+    - 0
+  - - -0.5
+    - 0.8660254037844386
+    - 0
+  - - 0
+    - 0.8660254037844386
+    - 0.5
+  - - 0
+    - 0.8660254037844386
+    - -0.5
+  cant_basis: Invented30degree design-search choice gives a15degree geometric margin between the retained45degree
+    cone and a flat mounting plane. It is not a plume-angle measurement, full-hull clearance or authority proof.
+  nozzle_policy: Reuse actual original nozzle contours as rigid subassemblies for the comparison study, never mesh
+    scaling; new manifold/retention/gas routing must be real counted geometry. New pressure loss or performance
+    is not inherited as a qualification.
+  mount_policy: Define a real finite base with measured positive hold-down and gas/power/data service interfaces;
+    old engine-s1 generic1.485m feet are not this compact mount. A provisional8mm6061base/4D6.6bores is a study
+    construction choice, not a certified M6load contract.
+  envelope: Original0.4m cube and15kg are comparison targets, not required dimensions/mass and not values to copy
+    into a new record. Measure complete prototype and report changed allocation honestly.
+targets_not_ratings:
+  nozzles: 4
+  aggregate_thrust_N: 500
+  exhaust_m_s: 700
+  nominal_share_per_nozzle: 0.25
+  material: nitrogen
+  basis: Existing reference product draft performance for comparative allocation only; pressure/feed/flow/nozzle
+    condition reconciliation required before a new catalogue function is asserted.
+acceptance_work:
+- Actual support/service body clearance at full mechanism states and existing geometryreservation on all16nozzles.
+- Measured whole mass/COM/inertia and net supports.
+- Actual nozzle matrices/shares; signed positive/bounded6DOF authority and per-jet duty/flow, not rank6alone.
+- Product-specific gas/feed/thermal/plume limitations, with geometric review separated from physical qualification.
+owner: Blender separate reversible product study; Ships layout/control review; Registry record only after exact
+  measured handoff.
+ground_unchanged: true
