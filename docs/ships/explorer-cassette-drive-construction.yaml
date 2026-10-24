@@ -1,0 +1,64 @@
+status: Selected prototype construction architecture; exact placement and counted stock dimensions delegated for
+  fit study, not complete drive adoption
+request: 20261024T081805-blender-b30e
+binding:
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-cassette-v3-handoff.json
+  : 476db66445498192d311bc4a0950d0340df7cf8f75d70747a05eb746dd702227
+verified_handoff_files:
+- review/material-finish-mechanical-cassette-v3-check.json
+- review/material-finish-mechanical-cassette-v3-derived.png
+- review/material-finish-mechanical-cassette-v3-meshes.json
+- review/material-finish-mechanical-cassette-v3-original.png
+- review/material-finish-mechanical-cassette-v3-section.png
+- review/material-finish-mechanical-cassette-v3.json
+- source/material-finish-mechanical-cassette-v3-check.py
+- source/material-finish-mechanical-cassette-v3-render.py
+- source/material-finish-mechanical-cassette-v3.blend
+- source/material-finish-mechanical-cassette-v3.py
+choice: Use independent screw-driven unseat/reseat and fore-aft traverse stages for each leaf. Retain the existing
+  purely vertical upper10mm/lower8mm entry motion before any1.4m X traverse. Reject a sloping cam that starts fore-aft
+  motion while the round leaf is still seated.
+prototype_roster:
+  leaf_assemblies: 2
+  per_leaf:
+    traverse_screws: 2
+    traverse_captive_nuts: 2
+    unseat_screws: 2
+    unseat_captive_nuts: 2
+    screw_end_supports: 8
+    supported_side_carriages: 2
+    vertical_guided_crossheads: 2
+    positive_unseated_hold_stations: 2
+    closed_and_open_traverse_stops: 4
+    removable_channel_end_keepers: 2
+  scope: Explicit construction roster for design; sizes, bearing/fastener subparts and synchronization/recovery
+    hardware require a fitted drawing. Counts do not establish mass or installed mechanism.
+construction: 'Mount two dry-side parallel X screw/nut stages on actual side-channel backing, driving supported
+  carriages. Each carriage carries a separate vertical screw stage and keyed crosshead attached to the existing
+  leaf arm: upper10mm down, lower8mm up. Add actual captured-thread nuts, thrust/end support blocks, antirotation
+  guides and positive hold/lock engagement at travel position. Do not presume a screw is self-locking. Side-stage
+  synchronization and anti-rack hardware must be drawn; two independent free-running screws are not a synchronized
+  drive.'
+sequence:
+- Release seat hold only with deliberate control/manual input; unseat both sides together.
+- Engage positive vertical travel holds before X motion; retain load path throughout the branch, not just at endpoints.
+- Traverse within captive guides to a real end stop, engage parked hold.
+- Reverse sequence for closing, with positive X closed-position hold before vertical reseat; no operator/control
+  position in the moving leaf or ladder sweep.
+service: Build a retained bolted end keeper and separately gasketed removable dry-side service cap on the stationary
+  case, with backing flange, finite gasket land, blind bosses/captive hardware and counted fasteners. Locate inside
+  accessible dry-side space; do not drill a drive shaft through the pressure pan/skin or put a cap across the leaf
+  throat. Positive-lock release and manual screw-drive recovery must be accessible with the leaf in each failed
+  position. Preserve tools/crew escape path.
+fit_boundary: Current case interiorX[-1.699,.347],Y[-.853,.853],Z[1.593,1.847] is a limit to test, not proven spare
+  room. Keep true circular seal/bore and existing floorbridge height. If the drives cannot fit, report named clashes
+  and propose a bounded local case revision; no hidden hull expansion or reduced leaf/crew envelope.
+accounting: Use actual hull-owned6061 backing/brackets,4340 screw/hardware and explicit nut/bearing material choice
+  in the fitted design. No new equipment product/rating is created. Retain the existing hidden actuator/lock/harness
+  reserve unchanged until exact matching explicit mechanism coverage can replace a named reserve portion. Drive
+  architecture alone does not retire reserve or provide motor torque/power.
+next: Ships task20261024T082054-registry-d2f2 supplies exact dimensioned stock/fasteners/actuation and synchronization/manual
+  recovery arrangement. Blender remains sole geometry writer and runs full branch/traverse/reseat/source/ladder/gear/service
+  checks.
+limits: The41sampled V3 local no-hit cases exclude unbuilt drive and full source. No qualification or wholemass;
+  motor, torque, speed, pressure loads, holding capacity and emergency crew procedure remain unproven.
