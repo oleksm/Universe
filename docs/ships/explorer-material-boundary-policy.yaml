@@ -170,3 +170,25 @@ named_conflict_review:
   study_task: 20261023T202605-registry-9628
   remaining: Named intents are inference, not accepted joints; higher-order/same-material arrangements and13rejected
     inputs remain to reconcile.
+derived_study_review:
+  path: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/boundary-repair-study.json
+  sha256: e6af8ccef179824b6cb460852f686427446ab47f991275e0164fbf38eb255f27
+  status: NOT READY TO APPLY
+  preserved_panes: 13
+  operations: 48
+  cluster_residual_intersections_m3:
+    pane_seal_overlap_m3: 1.0214920780032217e-10
+    pane_namedframe_overlap_m3: 2.51706971134708e-10
+    seal_namedframe_overlap_m3: 3.608713137562559e-11
+  dorsal_remaining_intersections:
+  - object: Core removable outer cover 05-3
+    remaining_volume_m3: 0.00032764483116199945
+  - object: Core pressure skin 05-3
+    remaining_volume_m3: 6.753013796139887e-05
+  reason: 'NOT READY TO APPLY: targeted material overlaps cleared but aft frames lose~56.5percent volume and one
+    sill~51.4percent; retaining web/loads unresolved. Derived screenshot inspected; live source unchanged.'
+  visual_review: Both bound before/derived images inspected; exterior similarity cannot establish continuous retaining
+    frame/webs.
+  next: Separate frame-core and pane-seat/seal-carrier redesign with sections, min webs and finite contact lands.
+    No blind deeper frame cuts or pressure-skin deduction. Explicitly report incompatible intent/geometry.
+  whole_mass_accepted: false

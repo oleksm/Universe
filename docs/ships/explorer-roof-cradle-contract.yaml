@@ -1173,3 +1173,32 @@ thermal_guide_map_review:
     no fixed-plate direct clamp.
   limits: Uniform planar growth/contraction map only, not general thermal warping or joint/strength qualification.
     Geometry framev3 still failed.
+primary_frame_v4_study:
+  proposal: /home/alexm/.agents/reviews/ships/explorer-functional-20261023/roof-primary-frame-v4.json
+  sha256: 9333505ade79170dc91da67831a70326b282aa18e24b59c18df815e856a24ebb
+  status: Uninstalled redesign seed; actual geometry screen pending
+  members: 23
+  cut_stock_subtotal_kg: 314.62188611283295
+  complete_frame_mass_kg: null
+  chosen_topology: Retain new twin portal/ladder primary frame path but place upper200x8 crossbars atZ3.85, sideposts/railsY+/-1.3,
+    lower rails/crossbarsZ1.98. Upper crossbar underside3.75 gives1.90m above existing1.85floor. Lower160x5 rail
+    underside1.90 clears nominal floor by50mm; lower200x5 crossbar underside1.88 clears by30mm. These are scalar
+    planning gaps, not collision/crew acceptance. Standoffs shorten to uppercrossbar crown3.95..seat underside4.242.
+    Actual tankfoot(3.3+/-0.2789,+/-0.2789,4.25) unchanged.
+  limits: Bulk straight/unnotched elastic screens only. Frame joints, rail splices, stability, buckling, unequal
+    tankCOM, actual body/gear loads, shear and guide retention unknown;9g onebeam case has no guaranteed margin/allowable.
+    All old v3 numeric stress/headroom discarded.
+  endpoints:
+    new_members: V4endpoint centreline intersections must receive actual node/gusset geometry. No implied positive
+      contact at any crossing/tube tangent. Existing tankfeet have four newshoes captured per named guide map;their
+      two bolts move together.
+    gear: V4rails now atY+/-1.3,Z1.98, not coincident with editedgear. Measure stationary fixedassembly bearing
+      faces/bores; draw new local transfer nodes including vertical/lateraloffset and pressure-floor sealing. Nose
+      crossbar atX-2.85,Z1.98 toactualnosefixed;aftnodesX~3.5 toactualport/starboardfixed. No movingleg/coverloadcredit.
+      Do not extend rails down tooldfailedfeet.
+    pressure: Four roofstandoffs still require deliberatelydesigned sealed structuralbosses; gearadapters may require
+      floor pressure transitions. Classify proposed penetrations individually, no livehull cuts/no accidental skinhits
+      accepted.
+    thermal: Preserve exact saddle1fixedXY,2freeX,4freeY,3freeXY capturedshoes; revised standoffnames unchanged.
+      No ordinalmapping or eight directboltsclampingfixedplate.
+  separate_study_only: true
