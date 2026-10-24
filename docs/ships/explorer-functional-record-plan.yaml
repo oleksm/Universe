@@ -1014,3 +1014,148 @@ owner_roof_tank_study:
   requests:
   - 20261023T193818-registry-56c6
   - 20261023T193818-registry-2b33
+  first_candidate:
+    study: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/roof-tank-study/study.json
+    study_sha256: 552c741e7ce80c39c3479bb079970bbb6f6ff961e7aec3c180ff6eab50e5cd94
+    screen: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/review/roof-tank-placement-screen.json
+    screen_sha256: 67e1799db3e904ff61003f69180f06a402668adb8ca8e4ad71129cf062921bae
+    source_origin_m:
+    - 3.3
+    - 0
+    - 4.25
+    tank_bounds_m:
+    - - 2.4632606506347656
+      - -0.8974030613899231
+      - 4.25
+    - - 4.136739253997803
+      - 0.8974030613899231
+      - 5.988326072692871
+    sampled_frames: 17
+    tank_hull_surface_intersections: 0
+    scope: Actual unscaled package mesh triangle intersection against954 authored source meshes at2end states. Not
+      continuous sweep, volume containment, crew/suit, installation, service, plume or thermal acceptance. Intersections
+      may include intended mounting contacts; none auto accepted. Source unchanged.
+    saddle_datums:
+    - name: mount_saddle_1
+      package_gltf:
+      - 0.2789084434509279
+      - 0.0
+      - -0.27890855073928833
+      source:
+      - 3.5789084434509277
+      - 0.27890855073928833
+      - 4.25
+      status: actual package empty; mechanical contact and rated attachment unqualified
+    - name: mount_saddle_2
+      package_gltf:
+      - -0.2789085388183592
+      - 0.0
+      - -0.27890855073928833
+      source:
+      - 3.0210914611816406
+      - 0.27890855073928833
+      - 4.25
+      status: actual package empty; mechanical contact and rated attachment unqualified
+    - name: mount_saddle_3
+      package_gltf:
+      - -0.2789085388183592
+      - 0.0
+      - 0.27890855073928833
+      source:
+      - 3.0210914611816406
+      - -0.27890855073928833
+      - 4.25
+      status: actual package empty; mechanical contact and rated attachment unqualified
+    - name: mount_saddle_4
+      package_gltf:
+      - 0.2789084434509279
+      - 0.0
+      - 0.27890855073928833
+      source:
+      - 3.5789084434509277
+      - -0.27890855073928833
+      - 4.25
+      status: actual package empty; mechanical contact and rated attachment unqualified
+    actual_package_saddle_pitch_m: 0.5578169822692871
+    image_scope: Initial4views inspected; corrected full-stern top and full-toe side inspected after reframe. Views
+      are authored study pose, not closed-state/motion proof or whole-ship appearance acceptance.
+    record_activation: false
+    limits:
+    - inner service/removal and cryogenic isolation
+    - plume and vent routing
+    - other equipment and comm/fin conflicts
+    - new cradle/frame actual stock/attachments/loads
+    - loaded CG and fuel mission
+    - owner whole-ship appearance review
+    views:
+    - name: side
+      path: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/roof-tank-study/side.png
+      sha256: e95f9d6e78033f97cbaa031983d23cb84c2d0413f04fa479f8650d61b7f9c904
+      camera:
+        matrix_world:
+        - - 1.0
+          - 0.0
+          - 0.0
+          - 1.0
+        - - 0.0
+          - 0.00909037422388792
+          - -0.9999586939811707
+          - -22.0
+        - - 0.0
+          - 0.9999586939811707
+          - 0.00909037422388792
+          - 3.0
+        - - 0.0
+          - 0.0
+          - 0.0
+          - 1.0
+        ortho_scale: 18.0
+        resolution:
+        - 1200
+        - 800
+    - name: top
+      path: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/roof-tank-study/top.png
+      sha256: e319b3dd15e3d0a7e420ce3214b438ebbd5a730c56a091497e57c377925ee7c9
+      camera:
+        matrix_world:
+        - - 1.0
+          - 0.0
+          - 0.0
+          - 1.0
+        - - 0.0
+          - 1.0
+          - 0.0
+          - 0.0
+        - - 0.0
+          - 0.0
+          - 1.0
+          - 25.0
+        - - 0.0
+          - 0.0
+          - 0.0
+          - 1.0
+        ortho_scale: 20.0
+        resolution:
+        - 1200
+        - 800
+    - name: front
+      path: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/roof-tank-study/front.png
+      sha256: 461c06317280eabe848b3d2505428fe388a06629f9a062cc5bb2df822abe7e82
+    - name: three-quarter
+      path: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/roof-tank-study/three-quarter.png
+      sha256: 3e24aa034709bff397e4640bb2cc99e9d5bced612f005dd8b46a1b4ceb1f6b15
+    screen_scope: 'Tank only: zero surface intersections in 17 sampled poses against source meshes. Cradle, continuous
+      sweeps, access, service, vents/plumes and rated frame attachments unresolved.'
+    ships_review:
+      path: /home/alexm/.agents/reviews/ships/explorer-functional-20261023/roof-tank-study-v1.json
+      sha256: 1a8d61dd58fb44084792c56d85ac5f6dc7c9140a7311d7362cb19757b53965de
+      recommendation: Continue one centreline 500kg tank geometric/cradle study first. Do not add second tank until
+        mission fuel/reserve and loaded CG/landing analysis justify it.
+      single_full_tank_kg: 615
+      cradle_and_services_excluded: true
+      actual_mounting_gap: Actual saddle square0.557817m and8bored foot sites disagree with generic5.292m/M42 feet.
+        New physical interface/cradle contract remains necessary.
+      mass_balance: Absolute craft CG and landing margins unknown until current whole mass and COM distributions
+        exist.
+      fuel_only_screen: 500kg gives44s for one50kN CHS1pair or22s for fourCHS1atfull thrust, before reserves/cell/unusable;
+        no mission selected.
