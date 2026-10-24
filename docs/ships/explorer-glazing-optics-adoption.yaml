@@ -1,0 +1,138 @@
+status: geometry/quantity adoption into next combined prototype candidate; no live release or pressure/load acceptance
+requests:
+- 20261023T233124-blender-6739
+- 20261023T233124-blender-6c08
+bindings:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-optics-report-v2.json: 4874a9d7e62cbbb003141a01ae084f713328a80706311f13e7dfdb78cae60eee
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-optics-check-v2.json: ec6a2520bed7fbedbc95199577ecb5319acf6abc2bd5e1b9be137f58ebbefe58
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-optics-meshes-v2.json: d14a9157879eff4bee7f747e39ee25055df3cf5ac167eb7dda754bc87570dbd8
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-optics-edit-map-v2.json
+  : 28fe685f0f684aed3642a5c66fea1d697fa5dbd3fbed3fee4ab48e09ae9dca79
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/glazing-joint-cluster-v7.json: 2a4a6d7253591dca76b91fcfb875e3c0cfc6c8c80e62351960305d892bc3c8f5
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/glazing-joint-final-audit-v7.json: e0fa0ce44fa0084624e0e58f14c8e8fedb23e1b8623e6484d9ad043af5d8f459
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/glazing-joint-cluster-meshes-v7.json: 37b7b58bf74b9ebae3c081e034b0f2aaf69d1feb1dced523780f5c8ce1b92890
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/glazing-joint-edit-map-v7.json: 1422d97f1fb408c919a5766885df2dd265256afcb84ae9279c43727bddd5ca1e
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/glazing-joint-v7-view-witness.json: 1e0aa0ef809a52af512f5be521d135ebd6637939a16439b1ed8dc651ff52fc88
+optics:
+  replacement_parts: 32
+  retired_sources: 56
+  gross_new_part_mass_kg: 74.25859959014416
+  gross_old_part_mass_kg: 99.77288614209644
+  gross_part_delta_kg: -25.51428655195228
+  decision: Adopt finite dorsal ring and eight actual leaf gasket rings with continuous6061 receiver ledges, shoulder
+    lens seats and six normal-only light assembly reseats plus toe-kick optical seat. Preserve pressure skins. Same-name
+    replacement is replacement, not an added duplicate. Use report new_roles material/density/assembly map.
+  materials: 6061 receivers and seats retain2700kg/m3; silicone1075; fusedsilica2203. Existing chosen material schedule
+    governs. New3mm receiverledge from stock.al6061-sh-3; finite silicone from stock.chem-silicone-rubber. No paint/density
+    change or unrecorded thin-pane substitution.
+  verification: 32frozen meshes positive signed volumes and indexededge incidence checked;32operation volumes and8new
+    receiver-role density rows verified. Report full974 Al/glass-or-silicone float64 hits above1e-10m3 is empty;
+    individual float32 mating residuals remain reported. Registry did not rerun the Boolean checks.
+  scope: 74.258599590kg versus99.772886142kg are gross named-part totals, not net complete-hull delta. No optical/electrical/seal
+    rating or light photometry acceptance.
+glazing:
+  parts: 84
+  pane_source_identities: 15
+  retirements: 62
+  support_stations: 30
+  M4_stations: 38
+  end_tabs: 8
+  decision: Adopt V7 named pane-edge replacements, finite seals, removable beads, actual localM4 seats/annular bearingpads,
+    fixed spanning carrier and end tabs as bounded prototype geometry. Preserve all fifteen source-to-replacement
+    identities; original glass is retired, not immutable. Newfixed-stock skin seats and G10lug-tip reliefs are included
+    in this exact hash.
+  verification: '84frozen meshes positive signed volumes and indexededge incidence verified.15panes each declare2supported
+    stations;38fasteners and8included endtabs verified. Hashes and matched camera/pose settings verified for6views.
+    Source-neighbor classification recomputed against62actual retirements: old pane/stock intersections are historical,
+    one remaining named skin contact is a numerical witness requiring bounded disposition.'
+  visual_review: Registry inspected matched front and port before/after plus starboard derived. Faceted canopy and
+    paired front windshields remain recognizable; side mullions are visibly narrower and lighter. Adoption covers
+    this construction candidate, not owner aesthetic approval or unchanged appearance. No interior driver-removal
+    or pressure/load claim.
+  numerical_residuals:
+  - a: G01 removable bead Joint pane 01 | Cockpit glazing 01-2 pane 1
+    b: G01 finite seal Joint pane 01 | Cockpit glazing 01-2 pane 1
+    intersection_m3: 1.2869551913415126e-10
+    disposition: requires_local_joint_or_partition_classification
+    independent_float32_full_vertex_slab_overlap_along_pane_normal_m: 2.2997647697309276e-07
+  - a: G03 removable bead Joint pane 03 | Cockpit glazing 01-4 pane 1
+    b: G03 finite seal Joint pane 03 | Cockpit glazing 01-4 pane 1
+    intersection_m3: 1.5561230598273635e-10
+    disposition: requires_local_joint_or_partition_classification
+    independent_float32_full_vertex_slab_overlap_along_pane_normal_m: 2.0007404710753462e-07
+  - a: G05 removable bead Joint pane 05 | Cockpit glazing 02-2 pane 1
+    b: G05 finite seal Joint pane 05 | Cockpit glazing 02-2 pane 1
+    intersection_m3: 1.106806788564691e-10
+    disposition: requires_local_joint_or_partition_classification
+    independent_float32_full_vertex_slab_overlap_along_pane_normal_m: 1.9153357300183416e-07
+  - a: G09 removable bead Joint pane 09 | Cockpit glazing 03-2 pane 1
+    b: G09 finite seal Joint pane 09 | Cockpit glazing 03-2 pane 1
+    intersection_m3: 1.7695690403794836e-10
+    disposition: requires_local_joint_or_partition_classification
+    independent_float32_full_vertex_slab_overlap_along_pane_normal_m: 2.0646012410807657e-07
+  - a: G10 removable bead Joint pane 10 | Cockpit glazing 03-3 pane 0
+    b: G10 finite seal Joint pane 10 | Cockpit glazing 03-3 pane 0
+    intersection_m3: 5.737564771689474e-10
+    disposition: requires_local_joint_or_partition_classification
+    independent_float32_full_vertex_slab_overlap_along_pane_normal_m: 2.386818653832279e-07
+  - a: G12 removable bead Joint pane 12 | Cockpit glazing 03-4 pane 1
+    b: G12 finite seal Joint pane 12 | Cockpit glazing 03-4 pane 1
+    intersection_m3: 3.14976454487567e-10
+    disposition: requires_local_joint_or_partition_classification
+    independent_float32_full_vertex_slab_overlap_along_pane_normal_m: 1.5262003971727722e-07
+  - a: G14 removable bead Joint pane 14 | Visor | windshield 1
+    b: G14 finite seal Joint pane 14 | Visor | windshield 1
+    intersection_m3: 1.8677508137354587e-10
+    disposition: requires_local_joint_or_partition_classification
+    independent_float32_full_vertex_slab_overlap_along_pane_normal_m: 2.989503364858592e-07
+  - a: G03 finite seal Joint pane 03 | Cockpit glazing 01-4 pane 1
+    b: Joint pane 03 | Cockpit glazing 01-4 pane 1
+    intersection_m3: 1.9312279350166656e-10
+    disposition: requires_local_joint_or_partition_classification
+    independent_float32_full_vertex_slab_overlap_along_pane_normal_m: 2.3742466304099707e-07
+  - a: G05 finite seal Joint pane 05 | Cockpit glazing 02-2 pane 1
+    b: Joint pane 05 | Cockpit glazing 02-2 pane 1
+    intersection_m3: 1.0601315991243336e-10
+    disposition: requires_local_joint_or_partition_classification
+    independent_float32_full_vertex_slab_overlap_along_pane_normal_m: 1.1265268051730004e-07
+  - a: G12 finite seal Joint pane 12 | Cockpit glazing 03-4 pane 1
+    b: Joint pane 12 | Cockpit glazing 03-4 pane 1
+    intersection_m3: 2.3571293354504e-10
+    disposition: requires_local_joint_or_partition_classification
+    independent_float32_full_vertex_slab_overlap_along_pane_normal_m: 1.7152796427666317e-07
+  - a: G13 finite seal Joint pane 13 | Visor | windshield -1
+    b: Joint pane 13 | Visor | windshield -1
+    intersection_m3: 1.2656723765226245e-10
+    disposition: requires_local_joint_or_partition_classification
+    independent_float32_full_vertex_slab_overlap_along_pane_normal_m: 1.9074853252476487e-07
+  - a: G14 finite seal Joint pane 14 | Visor | windshield 1
+    b: Joint pane 14 | Visor | windshield 1
+    intersection_m3: 1.6165730478421084e-10
+    disposition: requires_local_joint_or_partition_classification
+    independent_float32_full_vertex_slab_overlap_along_pane_normal_m: 2.1045402043284867e-07
+  independent_residual_method: Conservative full-vertex float32 projection slab overlap along recorded pane normal,
+    not exact local penetration. All12named pairs below0.301micrometre by this method. Different from Blender local
+    face witness0.113..0.262micrometre; do not substitute one method for the other.
+  named_residual_pair_volume_mass_overcount_bound_kg: 8.794931009086704e-06
+  residual_bound_scope: Conservative sum of pair residual volumes times maximum2700kg/m3 density for these named
+    material contacts only. An uncertainty bound, not a proposed Boolean mass deduction or full-model error bound.
+  skin_contact:
+  - new: Glazing fixed6061 carrier backbone bracket tab cage cluster
+    source: Wedge nose | continuous pressure skin
+    intersection_m3: 7.868550047803194e-10
+    disposition: unclassified_remaining_neighbor
+  residual_policy: Treat only these exact hashed named mating-face residuals as bounded numerical-contact accounting,
+    not gross interpenetration. Keep their reported volumes/locations and a mass uncertainty bound; no global clash
+    tolerance or seal-compression allowance. Float64 signed material interfaces and Blender local witness still
+    bind their own scope.
+combined_adoption:
+- The two retirement sets are disjoint. Apply each exact old-to-new map once, retaining originals only as historical
+  references excluded from candidate/render/export/mass.
+- Recompute all material unions and local mixed-material partitions after optics, glazing, service receiver and
+  mechanical-joint repairs are combined. Never add these gross parts to a candidate that already contains them.
+- New pressurepan/frame/equipment and supported hidden reserves remain separate until actual modeled quantities,
+  retirements and reserve offsets are reconciled.
+- Final current source/export and wholemass record remain pending this combined accounting; geometry quantity adoption
+  does not await engineeringratings but does not invent them.
+limits: Registry verifies frozen-mesh arithmetic/topology-incidence, evidence integrity and scoped visible geometry;
+  it did not independently replay full Boolean/path/manufacturing/pressure/strength/crew checks.
