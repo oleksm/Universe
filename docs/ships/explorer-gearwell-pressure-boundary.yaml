@@ -144,3 +144,53 @@ initial_pan_study:
     with detachable cassette; no assumed lid removal through welded collar/frame.'
   next: Explicit floor patch replacement, corner closure, full matching skin seams and stationary riser closure
     in separate study. Ray hits/sidewall zero intersections do not establish closed pressure envelope.
+closure_candidate_review:
+  bindings_report: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/gearwell-closure-bindings.json
+  sha256: f107af343d1e0d5bf52113173ff0af696aee314ab5c5553e37387c3459ccb03a
+  pinned_inputs_verified: 7
+  status: FAILED candidate; separate study only
+  skin_seams:
+  - gear: Nose gear
+    named_skin_hosts:
+    - Core pressure skin 02-7
+    - Core pressure skin 03-7
+    uncovered_ring_area_m2: 0.0005623513846896295
+    material_shells: 1
+    closure_accepted: false
+  - gear: Port aft gear
+    named_skin_hosts:
+    - Core pressure skin 05-7
+    - Core pressure skin 06-7
+    uncovered_ring_area_m2: 4.017505185087762e-07
+    material_shells: 1
+    closure_accepted: false
+  - gear: Starboard aft gear
+    named_skin_hosts:
+    - Core pressure skin 05-7
+    - Core pressure skin 06-7
+    uncovered_ring_area_m2: 0.0
+    material_shells: 1
+    closure_accepted: false
+  floor_cut:
+    original: Crew access floor | round opening
+    before_nonmanifold_edges: 724
+    after_nonmanifold_edges: 1064
+    volume_status: invalid; signed volume values not physical mass
+  chosen_floor_reconstruction: Reconstruct actual walkface planar regions from outer/inner loops at original1.850top/1.838bottom
+    (12mm actual). Preserve circular hatch and all intended voids, moving ramps/ladder separately. Build valid6061solid
+    baseline, then replace named gearwellpatches with8mmnewpressurelids; no cabin fill/global remesh. Retire original
+    through exact map and compare extents/areas/volume. Raw alloy feed covers12mm actual form, not forced nominal5mm
+    plate.
+  seam_repair: Inspect all actual named pressure-skin triangles under ring, not only point-ray-selected hosts or
+    centroid sample. Conform across true host transitions; if genuine hole, explicit bounded3mm6061patch to realskin
+    edges in separate study, no blind projection fill.
+  tasks:
+    floor: 20261023T205122-registry-3c0d
+    seam: explorer-gearwell-nose-seam-repair
+    service_sequence: 20261023T204700-registry-09e4
+  unaccepted:
+  - whole floor mass
+  - nose/port pressure seam closure
+  - riser/collar/base
+  - maintenance sequence
+  - whole cabin pressure/engineering qualification
