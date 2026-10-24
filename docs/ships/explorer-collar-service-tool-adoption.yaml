@@ -1,0 +1,122 @@
+status: scoped integrated construction and service-route evidence adoption; no wholemass/torque/pressure/load release
+requests:
+- 20261023T235049-blender-448e
+- 20261023T235402-blender-a486
+- 20261023T235436-blender-c8a0
+bindings:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/roof-collar-final-integrated.json: a2cf8fc557dd011779e95e1c86f0a1601be3acaadf204e04364dd5a0a8786f14
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/roof-collar-final-integrated-static.json
+  : 6fa36d2ab43524fdfb5b863f7ff89399d3bed042988beabef2e0be2174bbf49a
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/roof-collar-final-gear-sweep.json: c11a787395982620b7fe8f8cc3a204863b9d6e6e880abeb87852028104bac213
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/roof-collar-final-integrated-contact-audit.json
+  : 73ba12665650753f76a85179d5b559f943b84587cd70efe5b9636b2c9064c79e
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/roof-collar-final-integrated-views.json
+  : 1609d50b96cb0196e4e29ba01601bad3a96425a4129b11f77bd23712c57172cb
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/panel-short-tool-collar-replay.json: a6d60d82a792bc6faf347de5b1f02200d4e0c934afa117117f346d0bdfa65829
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/panel-drive-sockets.json: 59a95694f29fd8e25e883185cd99aaa483f1fe8aab9ecd68299937bb3ca88911
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/panel-drive-sockets-meshes.json: 1051309c671243eb8e1389250994fbce1bf1d85a5b72005998021c4989da14f3
+integrated_collar:
+  candidate_sha256: 17113f9f2e66ef1dcf252384cde72ccb2761ff7ec40371ca7699988de63c30d1
+  added_collar_weld_parts: 16
+  host_replacements: 4
+  unchanged_frame_roster: 23
+  static_source_roster: 1146
+  static_targets: 20
+  classified_surface_pairs: 67
+  gear_sample_poses: 61
+  gear_vs20target_surface_hits: 0
+  bounded_named_float32_contacts:
+  - a: Core pressure skin 06-3
+    b: ROOF COLLAR roof_boss_4_conforming_06-3
+    triangle_pairs: 1637
+    classification: designed mating interface float32 residual below0.5um; exact64package disjoint
+    residual_measure:
+      intersection_vertex_count: 1637
+      max_depth_to_host_surface_m: 2.3613239773542905e-07
+      intersection_bounds:
+      - 3.498811939350267
+      - 0.1789085566997528
+      - 3.935948676647171
+      - 3.67197585105896
+      - 0.37890854477882385
+      - 4.0040202140808105
+    volume_m3: 1.1869901272690012e-09
+    solid_status:
+    - Error.NoError
+    - Error.NoError
+  - a: Core pressure skin 05-3
+    b: ROOF COLLAR roof_boss_1_conforming_05-3
+    triangle_pairs: 1515
+    classification: designed mating interface float32 residual below0.5um; exact64package disjoint
+    residual_measure:
+      intersection_vertex_count: 1518
+      max_depth_to_host_surface_m: 3.7622540318361157e-07
+      intersection_bounds:
+      - 2.9210541248321533
+      - -0.37889181231946206
+      - 4.011024459128157
+      - 3.0995679356614394
+      - -0.1789085566997528
+      - 4.014156341552734
+    volume_m3: 1.414938967833879e-09
+    solid_status:
+    - Error.NoError
+    - Error.NoError
+  - a: Core pressure skin 05-3
+    b: ROOF COLLAR roof_boss_2_conforming_05-3
+    triangle_pairs: 1303
+    classification: designed mating interface float32 residual below0.5um; exact64package disjoint
+    residual_measure:
+      intersection_vertex_count: 1309
+      max_depth_to_host_surface_m: 4.1062522492514416e-07
+      intersection_bounds:
+      - 2.9210541248321533
+      - 0.1789085566997528
+      - 4.010717838751038
+      - 3.117046778807373
+      - 0.37889181231946206
+      - 4.014156341552734
+    volume_m3: 2.2298176594028637e-09
+    solid_status:
+    - Error.NoError
+    - Error.NoError
+  decision: Retain integrated candidate17113f9f as the scoped collar/host replacement evidence.16additions and4host
+    substitutions match c6789bd19;23frame transform/geometry hash declarations retained.61gearpose samples have
+    no hits against these20targets; this is not the whole ship motion test.
+  visual: Registry inspected both fullship port/starboard views bound to17113f9f. Faceted exterior/window layout
+    remains readable; small collar tops visible. Internal frame joints/caps and fine pressure seams cannot be assessed
+    from these images. No owner appearance approval inferred.
+  contact_policy: 67named pair dispositions retained. Inherited skin/frame aluminium overlap is counted once in
+    union, not waved through as clearance. Inherited head/gasket contacts go to their separate adopted receiver/optics
+    repairs. Only the3measured float32 mating residuals have the stated<0.5micrometre depth witness; do not extend
+    that depth bound to other None rows or the whole candidate.
+short_tool:
+  candidate_sha256: 17113f9f2e66ef1dcf252384cde72ccb2761ff7ec40371ca7699988de63c30d1
+  screw_stations: 78
+  sample_rows: 7254
+  own_panel_contact_rows: 156
+  unexpected_tool_frame_rows_reported: 0
+  decision: Adopt the specific compact short-bit/ratchet geometric route as replacing the failed long-driver assumption
+    for these78panel stations on this candidate. Preserve156own-panel contact rows as named prior volume-classified
+    seat/thread contacts; no generic collision exclusion.
+  tool: AF4x12mm bit with compact ring/head and recorded lift/lateral/ratchet phases. The report models bit_D5 envelope;
+    driver fit is separately tied to the newAF4socket design. Exact tool product, hand handling, retention, reachable
+    force and rated torque are not demonstrated.
+  change_policy: New supports, joints, frame or other obstructions invalidate affected toolroute cases. The replay
+    precedes new78socket meshes; cutting cavities removes material without increasing external envelope, but actual
+    socket engagement and torque are not proven by that monotonic clearance observation.
+drive_sockets:
+  replacement_screws: 78
+  across_flats_m: 0.004
+  depth_m: 0.002
+  nominal_remaining_head_floor_m: 0.001
+  removed_steel_volume_m3: 2.161599407845979e-06
+  removed_steel_mass_kg: 0.016968555351590937
+  decision: Adopt exact78same-name screw replacements with actualAF4blind hex drives. Keep axes, shanks and external
+    head envelopes. Each removed volume independently equals hexarea times2mmdepth; positive signedvolume/edge-incidence
+    checked for78meshes. Original screws retire once, no new screw count or independent reserve credit.
+  limit: 1mmheadfloor is a geometric remainder, not strip/torque/preload capacity. Do not call this a standardized
+    ratedM6product. Thread receiver, tool engagement, service retention and pressure-cover function remain separate.
+verification_limits: Registry verified data consistency, source/view hashes, roster/case coverage, exactnamedcontact
+  classification and78socketmesh/arithmetic checks. It did not replay7254tool samples,61gear BVHs,67solid contacts
+  or a full continuous motion/pressure/torque analysis.
