@@ -1,0 +1,35 @@
+status: independent packet integrity and arithmetic review; not product acceptance
+packet: /home/alexm/git/blender/engine-cg-outboard-s1/proposal-v01/handoff-v2.json
+packet_sha256: 783538047ff8a20b94ab64d94b82ff5e788307a86f45d925d7cf25fd3a8ca1b2
+model_sha256: ccadaf821a80ab404cf1a09164b86ffd6f2ee1e79b214e17a7bfa704c814efef
+checks:
+  hashed_files: 33
+  hash_mismatches: 0
+  contract_hash_matches: true
+  raw_glb_nozzle_world_matrix_max_error: 0.0
+  mass_rows_sum_kg: 25.7823387761176
+  visible_kg: 17.7823387761176
+  hidden_invented_review_reserve_kg: 8
+  accounted_draft_kg: 25.7823387761176
+  inertia_eigenvalues_positive: true
+  comparison_exhaust_resultant_125N_per_jet:
+  - 1.1789906313096205e-05
+  - 433.01270722075236
+  - 1.83998876135405e-05
+visual_review:
+  view: v2-three-quarter.png
+  finding: Four canted nozzle mouths and a separate service panel visible; coarse
+    box enclosure. No assembled spacecraft appearance judgment.
+remaining:
+- Ships signed bounded authority about current spacecraft COM and fill cases
+- All ship cones, supports, services and mechanisms at actual placements
+- Defined inlet mate, feed pressure/flow and regulator/valve behavior
+- Positive retention of reserved internals and enclosure service access
+- Actual performance, loads, pressure and impingement qualification
+scope:
+  active_record_created: false
+  installed_ground_changed: false
+  old_CGS1_changed: false
+  thrust_target_inherited_as_rating: false
+note: 125 N per jet is a comparison target. Four canted jets give approximately 433.013
+  N outward exhaust resultant, not 500 N normal thrust; spacecraft reaction is opposite.
