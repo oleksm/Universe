@@ -17,7 +17,8 @@ layout_m:            # boxes are maxima inside the cavity; trim clear of drawn h
     min: [-0.130, -0.045, 0.013]
     max: [0.030, 0.080, 0.133]
     size: [0.160, 0.125, 0.120]
-    need: Clear receive aperture at least 0.100 m diameter along +Z, under the optic rim
+    need: The drawn 49 mm OpticRim bore (r 0.0245, centre y 0.025) is the receive aperture; the optics box sits behind
+      it along +Z. The earlier 100 mm need is withdrawn (20261024T131658-blender-1c4e).
   electronics:       # ranging, power conditioning, CAN interface as a card stack
     min: [0.036, -0.045, 0.013]
     max: [0.130, 0.080, 0.133]
@@ -33,8 +34,16 @@ mass_split_kg:       # invented/review; proposed for the record at release
     keeps 8 kg until the product is released with these parts.
 wiring: Unchanged from docs/ships/explorer-altimeter-internal-termination-choice.yaml (0.5 mm2, 3 power, 4 per CAN
   port); wires run in the service strip to the electronics end.
-if_still_no_fit: Report the trimmed sizes. Registry then lowers the optics need (aperture) and says what range that
-  costs; housing and wires stay.
+aperture_check:
+  source_task: 20261024T131658-blender-1c4e
+  aperture_m: 0.049
+  function_kept: 5 km range, 0.1 m accuracy (record function unchanged)
+  link_budget: Lambertian regolith albedo 0.12 at 5 km returns rho*A/(pi*R^2) = 2.88e-12 of the pulse. A 1 mJ
+    1064 nm pulse gives about 15,400 photons at the aperture, about 2,300 photoelectrons at 0.5 optics x 0.3 APD
+    efficiency - far above detection. Airless, so no path loss.
+  basis: invented/review; pulse energy, efficiencies and albedo are chosen orders of magnitude, no sun-background
+    or filter design
+if_still_no_fit: Report the trimmed sizes. Registry then revises the box split again; housing, aperture and wires stay.
 scope:
   active_record_created: false
   product_original_changed: false
