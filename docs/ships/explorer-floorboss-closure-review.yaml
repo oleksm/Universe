@@ -1,0 +1,63 @@
+status: Nine frozen meshes accepted as scoped local geometry/quantity evidence; complete closure adoption pending
+  outer welds and integrated composition
+request: 20261024T081727-blender-aabc
+bindings:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/equipment-v4-floor-boss-closure.json: 8cb46c2ad66ed6ffb3ef74fa847ca45b43588bf48ad3fca6e79ffdfeebe90264
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/equipment-v4-floor-boss-closure-meshes.json
+  : dba02930e0c3d54d354b657d80b74bb5ebaece5913caefadd5629d4f5c9d24f8
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/source/build-v4-floor-boss-closure.py: 895dbf2746ee8bc15312308a3d9e69c719cfd26a5500b0994db684716cc9612c
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/all-gearwell-service-v2-meshes.json: 39284ebcb0e74a0e758870a57ab81f273ebbadf7b9a52b8177c151afc4ac0c0b
+checks:
+- name: Crew access floor | service openings
+  raw_signed_volume_m3: 0.28307264880759736
+  reported_mass_kg: 764.2961517805101
+  indexed_edges_incidence_two: true
+- name: ENGINE floor boss collar 1.2 -1.3
+  raw_signed_volume_m3: 5.2505043518255114e-05
+  reported_mass_kg: 0.1417636174980436
+  indexed_edges_incidence_two: true
+- name: ENGINE floor boss weld 1.2 -1.3
+  raw_signed_volume_m3: 9.529945603641686e-07
+  reported_mass_kg: 0.002573085312969175
+  indexed_edges_incidence_two: true
+- name: ENGINE floor boss collar 1.2 1.3
+  raw_signed_volume_m3: 5.25050435194622e-05
+  reported_mass_kg: 0.14176361749804356
+  indexed_edges_incidence_two: true
+- name: ENGINE floor boss weld 1.2 1.3
+  raw_signed_volume_m3: 9.529945603644623e-07
+  reported_mass_kg: 0.0025730853129691637
+  indexed_edges_incidence_two: true
+- name: ENGINE floor boss collar 2.2 -1.3
+  raw_signed_volume_m3: 5.250504351955414e-05
+  reported_mass_kg: 0.14176361749804334
+  indexed_edges_incidence_two: true
+- name: ENGINE floor boss weld 2.2 -1.3
+  raw_signed_volume_m3: 9.529945603601932e-07
+  reported_mass_kg: 0.00257308531296925
+  indexed_edges_incidence_two: true
+- name: ENGINE floor boss collar 2.2 1.3
+  raw_signed_volume_m3: 5.2505043519215e-05
+  reported_mass_kg: 0.1417636174980433
+  indexed_edges_incidence_two: true
+- name: ENGINE floor boss weld 2.2 1.3
+  raw_signed_volume_m3: 9.5299456036659e-07
+  reported_mass_kg: 0.002573085312969254
+  indexed_edges_incidence_two: true
+quantities:
+  floor_before_kg: 765.3543909729566
+  floor_after_kg: 764.2961517805101
+  floor_removed_kg: 1.0582391924465362
+  eight_new_parts_gross_kg: 0.5773468112440506
+  object_sum_delta_kg: -0.48089238120248556
+  scope: Object-sum arithmetic, not independently recomputed same-material Boolean union or wholemass.
+missing_attachment: Script builds only boss/ring weld at radius50mm; ring90mm outer edge touches floor face but
+  no finite ring/floor weld exists. Complete construction requires4actual outer welds and current contact replay.
+chosen_followup: 'Add nominal2mmleg6061outer fillet at actual floor underside: radial/Z triangle(0.090,1.836),(0.092,1.838),(0.090,1.838),
+  translated per4boss axes. Actual host underside is1.83800006; derive coordinates from it. Preserve walktop and
+  existing service/hatch voids.'
+composition: Retire exact current service-floor parent once. Add9part evidence only as a partial set; do not add
+  intact831.178kgfloor. Compose pending cassette/floorbridge and latest receiver edits before final joint/mass/route
+  adoption.
+limitations: Raw indexed-edge incidence and signed-volume arithmetic independently checked; Boolean cuts/intersections,
+  assembly fit, service routes and pressure/load capability not independently replayed.
