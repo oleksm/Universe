@@ -51,6 +51,12 @@ socket_definition:              # resolves 20261024T183823-blender-e52c
     walkways, and an exterior face for engines, RCS, sensors, comm and radiators. Orientation - +Z out of the host face,
     engines' thrust axis as the zones say.
   not_now: No bearings, ratings, receivers, holders or product poses; no mass delta.
+  holder_offset_m: 0            # marker on the host face: the game places the product at the marker; a holder comes with the fit
+  envelope_overlap: Neighbouring sockets' maximum envelopes may overlap (Blender's 6 pairs - main/RCS, RCS/thermal,
+    comm/tanks). Each is the largest piece that could fit, not a fitted product. Whether two fitted products clash is a
+    fit-time check in the shipyard on the products actually chosen, not a hull fault.
+  candidate_check: tools/standards/ship.py validate on Blender's socket-only-v1 record-candidate.json with
+    explorer-sockets-closed.glb (0e90811d) and -open.glb (1689f10d) - PASS, 25 sockets, fit empty.
   done_when: tools/standards/ship_qualify.py on the exported hull passes S1-S5 with fit and thrusters empty; then the
     registry adds the 25 slots.
 
