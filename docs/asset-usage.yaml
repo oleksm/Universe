@@ -62,3 +62,4 @@ equipment:   # key: [designs using it, instances]
   equipment.transponder.s1: [1, 1]
   equipment.utility.pumps.s1: [1, 1]
   equipment.utility.reaction-wheels.s2: [1, 1]
+  equipment.engine.cg.outboard-s1: [1, 4]   # the Explorer study (registry, 2026-10-24), not in the 2026-10-11 audit

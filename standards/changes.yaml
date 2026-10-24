@@ -614,6 +614,7 @@
 - { record: equipment.drive.torch.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "26fafb39c8701a53" }
 - { record: equipment.drive.torch.s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "24c9d3643266e805" }
 - { record: equipment.engine.ca.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "d65081d0b1101e52" }
+- { record: equipment.engine.cg.outboard-s1, at: "2026-10-24T22:04:51Z", status: draft, summary: "changed", sha: "03ae1c31db08c894" }
 - { record: equipment.engine.cg.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "36106cff07e69fe4" }
 - { record: equipment.engine.cg.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "0c3184a35b5722ec" }
 - { record: equipment.engine.ch.s1, at: "2026-10-23T00:34:57Z", status: draft, summary: "changed: function, basis", sha: "e444108a156f73da" }

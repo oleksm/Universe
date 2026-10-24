@@ -1,0 +1,73 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.engine.cg.outboard-s1
+  name: "Outboard cold gas pod, 0.5 kN"
+  maker: org.kestrel
+  revision: draft
+  slot: engine
+  description: "The cold gas block's four nozzles, unscaled, canted 30 degrees out from the pod's axis, on an 8 mm base
+    plate with its own regulator, valves and controller: for a wingtip, where the plumes clear the hull. 125 N a nozzle
+    as a target, so about 433 N outward from all four. Pulsed, not throttled."
+size_class: 1
+physical:
+  mass: 25.7823387761176
+  volume: 0.0694
+  length: 0.4728
+  width: 0.44
+  height: 0.3338
+needs:
+  power: 50
+built_of:
+  parts: engine-cg-outboard-s1
+  list:
+    - { code: ORC1-01, name: "Nozzle heads, feed and fittings", description: "The four original nozzle contours, the 12x2 feed and the head fittings in 304.", mass: 7.2319265142641065, length: 0.44, width: 0.44, height: 0.3338, item: stock.st304-pl-3, quantity: 8.32, module: module.machining-centre }
+    - { code: ORC1-02, name: "Base, enclosure and service panel", description: "The 8 mm 6061 base with four 6.6 mm holes, the enclosure and the retained electrical panel.", mass: 10.325153942580924, length: 0.44, width: 0.44, height: 0.3338, item: stock.al6061-pl-5, quantity: 11.87, module: module.machining-centre }
+    - { code: ORC1-03, name: "Fasteners", mass: 0.19631735726074814, length: 0.05, width: 0.05, height: 0.05, item: stock.st4340-bar-120, quantity: 0.23, module: module.machining-centre }
+    - { code: ORC1-04, name: "Contacts and seals", description: "Connector contacts (copper) and seals (EPDM), as drawn.", mass: 0.028940961, length: 0.05, width: 0.05, height: 0.05, item: good.electronics, quantity: 0.029, module: module.assembly-shop }
+    - { code: ORC1-05, name: "Jet valves and actuation", description: "Four normally-closed fast valves, 1 kg each; a reserved allowance, not drawn.", mass: 4, length: 0.06, width: 0.07, height: 0.09, item: stock.st304-pl-3, quantity: 4.6, module: module.machining-centre,
+        basis: [{ of: [physical.mass], tier: invented, review: true, note: "Named hidden allowance of the outboard RCS study (docs/ships/explorer-rcs-outward-product-study.yaml); retire it when a drawn valve replaces it." }] }
+    - { code: ORC1-06, name: "Regulator, filter and isolation", description: "The pod regulator to 1.27 MPa, a 25 um filter and a latching isolation valve (docs/ships/explorer-rcs-feed-criteria.yaml); a reserved allowance, not drawn.", mass: 2, length: 0.08, width: 0.08, height: 0.1, item: stock.st304-pl-3, quantity: 2.3, module: module.machining-centre,
+        basis: [{ of: [physical.mass], tier: invented, review: true, note: "Named hidden allowance; retire it when drawn." }] }
+    - { code: ORC1-07, name: "Controller, drivers and harness", description: "A reserved allowance, not drawn.", mass: 2, length: 0.1, width: 0.08, height: 0.04, item: good.electronics, quantity: 2, module: module.assembly-shop,
+        basis: [{ of: [physical.mass], tier: invented, review: true, note: "Named hidden allowance; retire it when drawn." }] }
+making:
+  module: module.assembly-shop
+function:
+  kind: engine
+  cycle: cold_gas
+  thrust: 500
+  exhaust: 700
+  efficiency: 1
+  burns: material.nitrogen
+  throttle: 0
+  gimbal: 0
+  isotropic_loss: 0
+  shield_pass: 1
+  reaction_offset: 0
+  heat_to_hull: 0
+visual:
+  format: "freefall-model/1"
+  path: "models/engine-cg-outboard-s1/v1"
+  manifest_sha256: "50b37ec5a04524f7fe838eb932c63b755eb4c6575ef0c08506662888e5717bf8"
+  version: 1
+  triangles: 46524
+life: 473364000
+revision:
+  status: draft
+  owner: registry
+  on_conflict: propose
+  because: Game-prototype identity for the Explorer's outboard RCS (engine's prototype gates); feed pressure, valves,
+    pulse performance and ratings are limits, not qualified
+basis:
+  - { of: [physical], tier: derived, review: true, source: "/home/alexm/git/blender/engine-cg-outboard-s1/proposal-v01/handoff-v2.json", note: "Blender's outboard RCS V2 (GLB ccadaf82): 17.782 kg visible material by same-material unions plus 8 kg named hidden allowance = 25.782 kg accounted draft; size from the GLB bounds. Not a qualified whole-product mass." }
+  - { of: [function], tier: derived, review: true, source: "docs/ships/explorer-rcs-feed-criteria.yaml", note: "125 N a nozzle is the comparison target (four: 500 N of jet thrust, about 433 N outward resultant). The drawn 10 mm throat and 28 mm exit give Cf 1.63 and 648 to 701 m/s at 250 to 293 K, about 0.98 MPa chamber pressure; 700 m/s kept as the cold gas family's figure. Target, not a rating." }
+  - { of: [needs], tier: invented, review: true, note: "As the cold gas block's 50 W: valves and controller; review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }
+# ports and internal: written by tools/standards/equipment_ports.py, change them there.
+ports:
+- {id: dc-in, flow: in, medium: power, interface: interface.circular-shell-17, half: male, make: manual, connector: connector.circular-shell-17, voltage: 28.0, current: 1.79, power: 50.0, channel: dc-28v, pins: [{contact: '1', role: plus}, {contact: '2', role: minus}, {contact: '3', role: earth}, {contact: '4', role: spare}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.236, 0.037, 0.1], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}
+- {id: data-1, flow: both, medium: signal, interface: interface.circular-shell-11, half: female, make: manual, connector: connector.circular-shell-11, channel: can-a, pins: [{contact: '1', role: signal-high}, {contact: '2', role: signal-low}, {contact: '3', role: return}, {contact: '4', role: screen}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.236, -0.004, 0.1], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}
+- {id: data-2, flow: both, medium: signal, interface: interface.circular-shell-11, half: female, make: manual, connector: connector.circular-shell-11, channel: can-a, pins: [{contact: '1', role: signal-high}, {contact: '2', role: signal-low}, {contact: '3', role: return}, {contact: '4', role: screen}, {contact: '5', role: spare}, {contact: '6', role: spare}, {contact: '7', role: spare}], at: [-0.236, -0.041, 0.1], facing: [-1.0, 0.0, 0.0], note: 'place invented (the model has no empty for it): on its -x end face, for review'}
+internal:
+- {kind: joined, ports: [data-1, data-2], note: 'the control bus passes through, so units daisy-chain on it'}
