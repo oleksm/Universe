@@ -40,9 +40,20 @@ not_offered:
 - command - the owner deferred the command seat and dashboard; no socket, no datum (future reservation only)
 - gear - the edited gear is hull-owned
 - cargo - no cargo in the mission
-per_socket_evidence: As the contract - stable id, hull-owned receiver geometry with measured bearing lands (rule.joint-bearing-evidence),
-  exact mount_<name> rigid frame in the accepted hull frame, structural path and clearances, bare mass delta and new GLB sha.
-  Receiver strength stays 'unknown' until qualified; no product foot rating reused.
+socket_definition:              # resolves 20261024T183823-blender-e52c
+  what_a_socket_is: A logical shipyard frame - an exact mount_<name> rigid node in the bare hull model plus the record's
+    typed slot and mount. No receiver geometry is built into the bare hull, and its mass does not change.
+  holder: The mount's own holder (its record's holder - a deck panel on the deck track or a cradle on the frame's struts,
+    both registry kit stock) is installed with the player's fit and carries its own mass and bearing evidence
+    (rule.joint-bearing-evidence applies then, to the fitted holder, not to the bare hull).
+  placement_rule: Put each marker where the hull already offers the host the holder needs - deck track or floor for deck
+    mounts, frame struts or a structural face for cradles - with the mount's envelope clear of hull, mechanisms and
+    walkways, and an exterior face for engines, RCS, sensors, comm and radiators. Orientation - +Z out of the host face,
+    engines' thrust axis as the zones say.
+  not_now: No bearings, ratings, receivers, holders or product poses; no mass delta.
+  done_when: tools/standards/ship_qualify.py on the exported hull passes S1-S5 with fit and thrusters empty; then the
+    registry adds the 25 slots.
+
 compact_mounts: 'Re-based 2026-10-24 on the compact class 1 mounts (mount.<kind>-s1c, rule.mounts-margin): the size-1 mounts were
   sized by the class''s largest piece and did not fit the hull (ship-check.socket-qualification S3/S4). Comm stays on
   mount.comm-s1 (its products are 3 m dishes). Checked with tools/standards/ship_qualify.py: S3/S4 pass; a trial fit of
