@@ -1,5 +1,6 @@
-status: supported draft geometric quantities for eight replacement candidates, not net whole mass
-request: 20261023T221438-blender-3ebc
+status: supported draft quantities for all twelve formerly rejected local replacements, plus separately reviewed
+  floor replacement; net whole mass still pending
+request: 20261023T221726-blender-6384
 source_sha256: 8fc3a7e3ab384395592c35dde78b59a440830bbdae1f4a7ed59e55c07af8927e
 bindings:
   /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/closure-plate-reconstruction.json: d5538ba838bbcb49492a575eef84a2bd0f9bd2571324763da69c69ea723867e8
@@ -9,6 +10,9 @@ bindings:
   standards/SFO/metadata/mill-stock/AL6061-SH-2.yaml: 71117e5c00ea7af0eec43a4eeb8273ae76bb45e69b827196793b184bf20abfef
   /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/belly-intent-rebuild.json: fcceadef24f72d09e1276343a25a39c42127bae51d820ac2a88d58d5efb78506
   /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/crew-hatch.py: eca8a8c89732033088cc3789a317485c682277da1365e41767f2562e2844cd55
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/warped-skin-reconstruction.json: bbbda05b9e2f44698379a71fd5f71ba33283907ca2448b67327850a59783bdcf
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/warped-skin-meshes.json: fe24b1af495a30780901ecbcfb0506201adf3cfe0524f1003cdf3af4790fca0d
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/warped-skin-exterior-witness.json: 939fc35244db2ea0900cc2a0a33baddfd4424744ab8f6c6a005e09dd1bac5164
 decision: Adopt these quantities into the candidate replacement ledger as prototype geometry at existing2700kg/m3,
   with exact original retirement/new replacement names. Do not wait for pressure/load ratings; do not claim those
   ratings. Actual cumulative export/source adoption and contact/material partitions remain separate.
@@ -125,6 +129,178 @@ parts:
   stock_decision: Raw6061feed for measured~6mm finished sheet; do not thin to earlier nominal cover gauge or invent
     laminate.
   scope: Supported draft geometry quantity, not pressure/load/runtime acceptance.
+- source_name: Shoulder 1 casing 2-4
+  replacement_role: unsimplified warped casing solid from original paired envelopes
+  material: material.aluminium-alloy-6061
+  feedstock: stock.al6061-ingot
+  volume_m3: 0.0016968862156479618
+  candidate_mass_kg: 4.581592782249497
+  construction_report_volume_m3: 0.0016969001782353103
+  construction_report_mass_kg: 4.5816304812353374
+  simplification_applied: false
+  original_bounds_source_m:
+  - - -0.250713586807251
+    - 1.6100000143051147
+    - 3.6952574253082275
+  - - 1.1200000047683716
+    - 1.913023591041565
+    - 4.179999828338623
+  derived_bounds_source_m:
+  - -0.2507136020953172
+  - 1.6100000134566836
+  - 3.6952574236561886
+  - 1.120000031097616
+  - 1.9130235876186115
+  - 4.179999817191096
+  signed_boundary_shell_volumes_m3:
+  - 0.0016969001782907685
+  - 2.5169584027661535e-18
+  - 9.624411073520293e-13
+  - -9.880119437839048e-13
+  - 0.0
+  - 9.75781955236954e-19
+  - -8.124302501150045e-16
+  - -1.512179459903917e-23
+  - -9.327721320598993e-15
+  - -1.0135822828158348e-15
+  - -7.383350763867495e-15
+  - -4.325005136881588e-19
+  - 3.659390153852189e-26
+  - -3.0582927145479884e-22
+  - -1.7014562569733944e-16
+  - -1.5020748655850992e-15
+  - -4.1527537244595786e-17
+  - -9.527166339843326e-15
+  - -1.1040301549895435e-16
+  - -1.1885758221774455e-20
+  - 5.161607022330893e-22
+  - -3.2298478707349337e-21
+  independent_projection_check:
+    points_checked: 674
+    uncovered_projected_vertices: 0
+    max_outside_distance_along_projection_axis_m: 6.481513321204575e-07
+    barycentric_tolerance: 0.0001
+    scope: Directional vertex containment only, not continuous Euclidean exterior equivalence; thin-edge tolerances
+      and void topology still explicit.
+  geometry_decision: Support exact frozen unsimplified exported mesh quantity and scoped matched exterior repair.
+    Keep signed void shells; no convex hull, assumed uniform gauge, simplification, pressure/load or continuous
+    exterior-equivalence claim.
+- source_name: Shoulder -1 casing 2-2
+  replacement_role: unsimplified warped casing solid from original paired envelopes
+  material: material.aluminium-alloy-6061
+  feedstock: stock.al6061-ingot
+  volume_m3: 0.001739893328806157
+  candidate_mass_kg: 4.697711987776624
+  construction_report_volume_m3: 0.0017399158593914671
+  construction_report_mass_kg: 4.6977728203569615
+  simplification_applied: false
+  original_bounds_source_m:
+  - - -0.25073492527008057
+    - -1.9130204916000366
+    - 3.6872565746307373
+  - - 1.1200000047683716
+    - -1.6100000143051147
+    - 4.179999828338623
+  derived_bounds_source_m:
+  - -0.25073493153562904
+  - -1.9130204875376606
+  - 3.687256575201561
+  - 1.1200000299941058
+  - -1.610000009330955
+  - 4.179999821158511
+  signed_boundary_shell_volumes_m3:
+  - 0.0017399158638779614
+  - -3.407253368066087e-12
+  - -1.079239102170368e-12
+  independent_projection_check:
+    points_checked: 257
+    uncovered_projected_vertices: 0
+    max_outside_distance_along_projection_axis_m: 8.495300814329899e-07
+    barycentric_tolerance: 0.0001
+    scope: Directional vertex containment only, not continuous Euclidean exterior equivalence; thin-edge tolerances
+      and void topology still explicit.
+  geometry_decision: Support exact frozen unsimplified exported mesh quantity and scoped matched exterior repair.
+    Keep signed void shells; no convex hull, assumed uniform gauge, simplification, pressure/load or continuous
+    exterior-equivalence claim.
+- source_name: Aft housing 1 casing 1-4
+  replacement_role: unsimplified warped casing solid from original paired envelopes
+  material: material.aluminium-alloy-6061
+  feedstock: stock.al6061-ingot
+  volume_m3: 0.00323291108563133
+  candidate_mass_kg: 8.72885993120459
+  construction_report_volume_m3: 0.0032329334854454385
+  construction_report_mass_kg: 8.728920410702685
+  simplification_applied: false
+  original_bounds_source_m:
+  - - 3.0295605659484863
+    - 1.6843971014022827
+    - 3.377516269683838
+  - - 5.21999979019165
+    - 2.0031046867370605
+    - 3.9800000190734863
+  derived_bounds_source_m:
+  - 3.0295605379048904
+  - 1.6843971093253198
+  - 3.3775162691525233
+  - 5.219999837630864
+  - 2.003104693729856
+  - 3.9800000192107716
+  signed_boundary_shell_volumes_m3:
+  - 0.0032329334877275783
+  - -1.0376447693704466e-13
+  - -2.1783795896495003e-12
+  independent_projection_check:
+    points_checked: 250
+    uncovered_projected_vertices: 0
+    max_outside_distance_along_projection_axis_m: 1.1968010842034957e-07
+    barycentric_tolerance: 0.0001
+    scope: Directional vertex containment only, not continuous Euclidean exterior equivalence; thin-edge tolerances
+      and void topology still explicit.
+  geometry_decision: Support exact frozen unsimplified exported mesh quantity and scoped matched exterior repair.
+    Keep signed void shells; no convex hull, assumed uniform gauge, simplification, pressure/load or continuous
+    exterior-equivalence claim.
+- source_name: Aft housing 1 casing 0-4
+  replacement_role: unsimplified warped casing solid from original paired envelopes
+  material: material.aluminium-alloy-6061
+  feedstock: stock.al6061-ingot
+  volume_m3: 0.0007964482195917914
+  candidate_mass_kg: 2.1504101928978367
+  construction_report_volume_m3: 0.0007964426728970444
+  construction_report_mass_kg: 2.15039521682202
+  simplification_applied: false
+  original_bounds_source_m:
+  - - 2.359999895095825
+    - 1.7099000215530396
+    - 3.406585931777954
+  - - 3.0319066047668457
+    - 2.092970609664917
+    - 3.9800000190734863
+  derived_bounds_source_m:
+  - 2.35999988740389
+  - 1.7099000225186494
+  - 3.4065859320086234
+  - 3.0319066088505653
+  - 2.092970600754307
+  - 3.9800000205401838
+  signed_boundary_shell_volumes_m3:
+  - 0.0007964426728970279
+  - -7.723798969713896e-22
+  - -1.6940658945086007e-21
+  - 8.780932173641485e-18
+  - 9.021618674234842e-18
+  - -1.0842021724855044e-19
+  - 1.799376326244258e-22
+  - -2.098375686676667e-19
+  independent_projection_check:
+    points_checked: 325
+    uncovered_projected_vertices: 0
+    max_outside_distance_along_projection_axis_m: 2.004366567701435e-06
+    barycentric_tolerance: 0.0001
+    scope: Directional vertex containment only, not continuous Euclidean exterior equivalence; thin-edge tolerances
+      and void topology still explicit.
+  geometry_decision: Support exact frozen unsimplified exported mesh quantity and scoped matched exterior repair.
+    Keep signed void shells; no convex hull, assumed uniform gauge, simplification, pressure/load or continuous
+    exterior-equivalence claim.
 totals:
   closure_plates_kg: 83.93806938661754
   returns_kg: 4.320091491881756
@@ -132,6 +308,9 @@ totals:
   max_area_difference_mass_equivalent_kg: 1.7913950761951786e-05
   belly_kg: 58.30452732836315
   eight_candidate_parts_kg: 146.56268820686245
+  warped_casings_frozen_mesh_kg: 20.15857489412855
+  warped_casings_construction_report_kg: 20.158718929117004
+  twelve_candidate_parts_frozen_or_reported_basis_kg: 166.721263100991
 net_rollup_rules:
 - Retire each invalid original once; measure actual new same-material/physical interface overlap, do not add raw
   part sums blindly to global unions.
@@ -140,5 +319,18 @@ net_rollup_rules:
   assignments and any removed matter in edit map.
 - Newframe/pans/equipment and96.1kg hidden dry reserves stay separate until actual complete added/replaced quantities
   exist.
-- 'Remaining4rejected source objects: Shoulder1casing2-4, Shoulder-1casing2-2, Aft housing1casing1-4 and0-4. Confirm
-  cumulative candidate roster; material conflicts and final frame/pans still separate.'
+- All12formerly rejected non-floor objects now have supported local draft replacement quantities; the separate intact
+  floor replacement is831.177966kg. Rebuild cumulative candidate and verify no unresolved object remains before
+  whole mass; material partitions/contact trimming still required.
+exterior_review:
+  witness: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/warped-skin-exterior-witness.json
+  sha256: 939fc35244db2ea0900cc2a0a33baddfd4424744ab8f6c6a005e09dd1bac5164
+  matched_view_pairs_inspected: 3
+  source_mesh_hash_matches: true
+  images_bound: 6
+  result: No gross panel-outline or landmark change in these assembled views. Some outward-visible sampled differences
+    reach1.33334mm; do not claim all discrepancy is internal. Scoped prototype repair supported with these measured
+    limits.
+  maximum_outward_visible_sample_distance_m: 0.001333339954726398
+  independent_mesh_mass_difference_from_construction_report_kg: -0.0001440349884553882
+  not_proven: Continuous Hausdorff equality, other views/poses, attachment/pressure/load acceptance.
