@@ -36,6 +36,8 @@ bindings:
     sha256: cf26c7a76ce0381aeaea51270134055c5ba0e40c0383193a71efb93bea2e7c0c
   /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/cradle-lower-contact-probes.json:
     sha256: 18cf88ba72b48e5420112527161d30421acb202fb3b8424253f121a59ca5688c
+  /home/alexm/.agents/reviews/ships/explorer-functional-20261023/tank-product-services-com-v1.json:
+    sha256: 2a343299bf117d4a843c059e5467defb5f5b6f486e7f2236b44fdf2e83a60cca
 frames:
   package: glTF +Y up. Primary mount identity at base centre; metre, unit scale. Saddle datums independently read
     from actual GLB.
@@ -296,6 +298,16 @@ services:
     - -1
     - 0
     basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
+    read_only_source_vertex_check_min_radius_m: 0.04930785
+    polygon_note: 16-sided bore. Listed diameter is cutter circumcircle; ideal inscribed diameter D*cos(pi/16),
+      before manufacturing/seal tolerance. Capped panel may block passage; no hydraulic area/valve certification.
+    inscribed_polygon_bore_diameter_m: 0.0967208452508244
+    connector_standard: null
+    mating_half: null
+    seal_material: null
+    rated_pressure_pa: null
+    rated_temperature_k: null
+    rated_mass_flow_kg_s: null
 - node: port_H2_filldrain
   circuit: H2
   function: filldrain
@@ -342,6 +354,16 @@ services:
     - -1
     - 0
     basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
+    read_only_source_vertex_check_min_radius_m: 0.01344757
+    polygon_note: 16-sided bore. Listed diameter is cutter circumcircle; ideal inscribed diameter D*cos(pi/16),
+      before manufacturing/seal tolerance. Capped panel may block passage; no hydraulic area/valve certification.
+    inscribed_polygon_bore_diameter_m: 0.02637841234113393
+    connector_standard: null
+    mating_half: null
+    seal_material: null
+    rated_pressure_pa: null
+    rated_temperature_k: null
+    rated_mass_flow_kg_s: null
 - node: port_H2_pressurant
   circuit: H2
   function: pressurant
@@ -388,6 +410,16 @@ services:
     - -1
     - 0
     basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
+    read_only_source_vertex_check_min_radius_m: 0.01195339
+    polygon_note: 16-sided bore. Listed diameter is cutter circumcircle; ideal inscribed diameter D*cos(pi/16),
+      before manufacturing/seal tolerance. Capped panel may block passage; no hydraulic area/valve certification.
+    inscribed_polygon_bore_diameter_m: 0.02344747763656349
+    connector_standard: null
+    mating_half: null
+    seal_material: null
+    rated_pressure_pa: null
+    rated_temperature_k: null
+    rated_mass_flow_kg_s: null
 - node: port_H2_vent
   circuit: H2
   function: vent
@@ -434,6 +466,16 @@ services:
     - -1
     - 0
     basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
+    read_only_source_vertex_check_min_radius_m: 0.01793011
+    polygon_note: 16-sided bore. Listed diameter is cutter circumcircle; ideal inscribed diameter D*cos(pi/16),
+      before manufacturing/seal tolerance. Capped panel may block passage; no hydraulic area/valve certification.
+    inscribed_polygon_bore_diameter_m: 0.035171216454845236
+    connector_standard: null
+    mating_half: null
+    seal_material: null
+    rated_pressure_pa: null
+    rated_temperature_k: null
+    rated_mass_flow_kg_s: null
 - node: port_H2_relief
   circuit: H2
   function: relief
@@ -480,6 +522,16 @@ services:
     - -1
     - 0
     basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
+    read_only_source_vertex_check_min_radius_m: 0.00896506
+    polygon_note: 16-sided bore. Listed diameter is cutter circumcircle; ideal inscribed diameter D*cos(pi/16),
+      before manufacturing/seal tolerance. Capped panel may block passage; no hydraulic area/valve certification.
+    inscribed_polygon_bore_diameter_m: 0.017585608227422618
+    connector_standard: null
+    mating_half: null
+    seal_material: null
+    rated_pressure_pa: null
+    rated_temperature_k: null
+    rated_mass_flow_kg_s: null
 - node: port_H2_gauge
   circuit: H2
   function: gauge
@@ -526,6 +578,16 @@ services:
     - -1
     - 0
     basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
+    read_only_source_vertex_check_min_radius_m: 0.00567787
+    polygon_note: 16-sided bore. Listed diameter is cutter circumcircle; ideal inscribed diameter D*cos(pi/16),
+      before manufacturing/seal tolerance. Capped panel may block passage; no hydraulic area/valve certification.
+    inscribed_polygon_bore_diameter_m: 0.011137551877367658
+    connector_standard: null
+    mating_half: null
+    seal_material: null
+    rated_pressure_pa: null
+    rated_temperature_k: null
+    rated_mass_flow_kg_s: null
 - node: port_O2_outlet
   circuit: O2
   function: outlet
@@ -567,6 +629,16 @@ services:
     - 1
     - 0
     basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
+    read_only_source_vertex_check_min_radius_m: 0.04333113
+    polygon_note: 16-sided bore. Listed diameter is cutter circumcircle; ideal inscribed diameter D*cos(pi/16),
+      before manufacturing/seal tolerance. Capped panel may block passage; no hydraulic area/valve certification.
+    inscribed_polygon_bore_diameter_m: 0.08499710643254266
+    connector_standard: null
+    mating_half: null
+    seal_material: null
+    rated_pressure_pa: null
+    rated_temperature_k: null
+    rated_mass_flow_kg_s: null
 - node: port_O2_filldrain
   circuit: O2
   function: filldrain
@@ -608,6 +680,16 @@ services:
     - 1
     - 0
     basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
+    read_only_source_vertex_check_min_radius_m: 0.01344757
+    polygon_note: 16-sided bore. Listed diameter is cutter circumcircle; ideal inscribed diameter D*cos(pi/16),
+      before manufacturing/seal tolerance. Capped panel may block passage; no hydraulic area/valve certification.
+    inscribed_polygon_bore_diameter_m: 0.02637841234113393
+    connector_standard: null
+    mating_half: null
+    seal_material: null
+    rated_pressure_pa: null
+    rated_temperature_k: null
+    rated_mass_flow_kg_s: null
 - node: port_O2_pressurant
   circuit: O2
   function: pressurant
@@ -649,6 +731,16 @@ services:
     - 1
     - 0
     basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
+    read_only_source_vertex_check_min_radius_m: 0.01195339
+    polygon_note: 16-sided bore. Listed diameter is cutter circumcircle; ideal inscribed diameter D*cos(pi/16),
+      before manufacturing/seal tolerance. Capped panel may block passage; no hydraulic area/valve certification.
+    inscribed_polygon_bore_diameter_m: 0.02344747763656349
+    connector_standard: null
+    mating_half: null
+    seal_material: null
+    rated_pressure_pa: null
+    rated_temperature_k: null
+    rated_mass_flow_kg_s: null
 - node: port_O2_vent
   circuit: O2
   function: vent
@@ -690,6 +782,16 @@ services:
     - 1
     - 0
     basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
+    read_only_source_vertex_check_min_radius_m: 0.00896506
+    polygon_note: 16-sided bore. Listed diameter is cutter circumcircle; ideal inscribed diameter D*cos(pi/16),
+      before manufacturing/seal tolerance. Capped panel may block passage; no hydraulic area/valve certification.
+    inscribed_polygon_bore_diameter_m: 0.017585608227422618
+    connector_standard: null
+    mating_half: null
+    seal_material: null
+    rated_pressure_pa: null
+    rated_temperature_k: null
+    rated_mass_flow_kg_s: null
 - node: port_O2_relief
   circuit: O2
   function: relief
@@ -731,6 +833,16 @@ services:
     - 1
     - 0
     basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
+    read_only_source_vertex_check_min_radius_m: 0.00896506
+    polygon_note: 16-sided bore. Listed diameter is cutter circumcircle; ideal inscribed diameter D*cos(pi/16),
+      before manufacturing/seal tolerance. Capped panel may block passage; no hydraulic area/valve certification.
+    inscribed_polygon_bore_diameter_m: 0.017585608227422618
+    connector_standard: null
+    mating_half: null
+    seal_material: null
+    rated_pressure_pa: null
+    rated_temperature_k: null
+    rated_mass_flow_kg_s: null
 - node: port_O2_gauge
   circuit: O2
   function: gauge
@@ -772,6 +884,16 @@ services:
     - 1
     - 0
     basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
+    read_only_source_vertex_check_min_radius_m: 0.00567787
+    polygon_note: 16-sided bore. Listed diameter is cutter circumcircle; ideal inscribed diameter D*cos(pi/16),
+      before manufacturing/seal tolerance. Capped panel may block passage; no hydraulic area/valve certification.
+    inscribed_polygon_bore_diameter_m: 0.011137551877367658
+    connector_standard: null
+    mating_half: null
+    seal_material: null
+    rated_pressure_pa: null
+    rated_temperature_k: null
+    rated_mass_flow_kg_s: null
 service_contract:
   circuits: H2 and O2 remain independent; each retains outlet, fill/drain, pressurant, vent, relief and gauge. No
     geometric marker is proof of compatible coupling or connected line.
@@ -794,6 +916,38 @@ service_contract:
     tank-only17pose zero-hit screen does not cover these.
   mass: Allocate service hardware/runs/fluids and cradle separately;115kg tank tare already includes its fittings
     allocation. New external manifold/lines/controls are not free and not counted twice.
+  delivery_requirements:
+    one_engine25kn_full_hydrolox_kg_s: 5.681818181818182
+    one_pair50kn_full_h2_kg_s: 1.7482517482517481
+    one_pair50kn_full_lox_kg_s: 9.615384615384615
+    four100kn_full_h2_kg_s: 3.4965034965034962
+    four100kn_full_lox_kg_s: 19.23076923076923
+    fuelcell_additional_nominal_hydrolox_kg_h: 2.1297902097902095
+    scope: Consumer demand screens, not tank deliverable flow. Fuelcell physical O/F/feed and startup/transient/pressure-drop/inlet
+      NPSH data missing. No arbitrary velocity/bore-pressure calculation accepted.
+    pressure_temperature_status: 0.35MPa provisional shell sizing is neither service rating nor relief setpoint;
+      7MPa engine coolant is not tank feed pressure; no actual delivery pressure/temp bands found.
+    mating_half_status: Capped hollow necks, no maintained thread, flange, bayonet, male/female/seal seat contract.
+      Half UNKNOWN; marker/cap is not a qualified connector.
+  vent_relief_design_cases:
+  - case: Nominal parked and powered operation
+    inputs: External radiation/conduction, solar/ground/radiator/engine flux, insulation condition, liquid state/ullage
+      and pressurant schedule; independent boiloff of each circuit.
+  - case: Fill/drain/chilldown and warm restart
+    inputs: Supply conditions, displacement gas, chilldown heat load, fill limits, two-phase pressure losses and
+      safe purge/vent sequencing.
+  - case: Pressurant regulator fail-open / trapped liquid
+    inputs: Upstream source maximum pressure/flow, isolation failures, blocked-in warmed liquid expansion and circuit
+      relief coverage.
+  - case: Abnormal heat / insulation degradation
+    inputs: Defined credible exposure/vacuum loss/blanket damage or fire if atmosphere selected; heat transfer,
+      fluid properties and pressure boundaries. No fire mission assumed.
+  - case: Discharge backpressure / attitude / blocked destination
+    inputs: Outlet backpressure, route losses, two-phase/choked flow, thrust/landing attitude, drain/trap/ice exposure
+      and isolated path failures. Keep H2/O2 separated.
+  vent_sizing_status: No relief setpoints, certified valve flow coefficients, discharge pressure/temp, heat input/enthalpy
+    or failure envelope. Cannot derive vent capacity or required bore from thrust demand. Setpoints must coordinate
+    supported pressure limits, accumulation and backpressure; no guessed values.
 mass_and_com:
   tank_tare_kg: 115
   contents_capacity_kg: 500
@@ -822,6 +976,138 @@ mass_and_com:
     - 5.98832607
   region_scope: external package AABB only, very broad containing-region bound; not fluid compartment shape or fill
     model
+  conditional_bounds:
+    dry_mass:
+      total_kg: 115
+      components:
+      - component: shell_and_lands
+        mass_kg: 44
+        containing_box_blender_m:
+        - - -0.7367394308184594
+          - -0.7367394308184594
+          - 0.16484730588843066
+        - - 0.7367394308184594
+          - 0.7367394308184594
+          - 1.6383261675253493
+      - component: bulkhead
+        mass_kg: 21.5
+        containing_box_blender_m:
+        - - -0.7347394308184594
+          - -0.7347394308184594
+          - 0.16684730588843066
+        - - 0.7347394308184594
+          - 0.7347394308184594
+          - 1.6363261675253495
+      - component: insulation
+        mass_kg: 22.5
+        containing_box_blender_m:
+        - - -0.8367394308184594
+          - -0.8367394308184594
+          - 0.06484730588843068
+        - - 0.8367394308184594
+          - 0.8367394308184594
+          - 1.7383261675253494
+      - component: saddles
+        mass_kg: 7
+        containing_box_blender_m:
+        - - -0.3597067892551422
+          - -0.3597067892551422
+          - 0.0
+        - - 0.3597067892551422
+          - 0.3597067892551422
+          - 0.2062111794948578
+      - component: fittings
+        mass_kg: 20
+        containing_box_blender_m:
+        - - -0.8367392420768738
+          - -0.8974030613899231
+          - 0.0
+        - - 0.8367393612861633
+          - 0.8974030613899231
+          - 1.738326072692871
+      exact_com: null
+      reason: 43 meshes represent exterior only; 44kg shell/21.5kg bulkhead/22.5kg insulation/7kg saddles/20kg fittings
+        are allocations, not a complete spatial mass ledger. Visible fittings5.722kg and saddle solids6.517kg do
+        not locate all115kg.
+      universal_conditional_containing_box_source_m:
+      - - 2.463260757923126
+        - -0.8974030613899231
+        - 4.25
+      - - 4.136739361286163
+        - 0.8974030613899231
+        - 5.988326072692871
+      weighted_component_conditional_com_box_source_m:
+      - - 2.5496278062752356
+        - -0.760922423170512
+        - 4.356952721027668
+      - - 4.050372214456814
+        - 0.760922423170512
+        - 5.837736543065671
+      bounds_conditions: Assume all allocated mass lies within stated component design envelope, saddles within
+        measured support union and all omitted fitting internals within complete fitted box. If hidden parts extend
+        outside, enlarge bounds. Boxes are conservative potential COM regions, not best estimates or accepted load
+        inputs.
+    liquid_com:
+      exact_compartment_geometry: null
+      full_mass_kg:
+        LOX: 423.0769230769231
+        LH2: 76.92307692307692
+      geometry_basis:
+        inner_sphere_radius_m: 0.7347394308184594
+        sphere_centre_source_m:
+        - 3.3
+        - 0
+        - 5.15158673670689
+        sphere_volume_m3: 1.6614552629439139
+        density_kg_m3:
+          LOX: 1141
+          LH2: 70.8
+        density_status: Existing local design/check assumptions, not service-temperature ranges or verified thermodynamic
+          state.
+      bound_method: For each independent liquid mass at fixed uniform density, assume only containment inside ideal
+        inner sphere. Extremal centroid lies in spherical cap with V=pi*(2R^3/3-R^2*z+z^3/3); first moment=pi*(R^2-z^2)^2/4.
+        Norm(COM-centre)<=moment/V. Direction arbitrary. Ignores partition/bulkhead and therefore relaxes constraints;
+        does not claim liquid occupies whole sphere or provide settled fill surface. Each circuit fraction may vary
+        independently.
+      fill_bounds:
+      - fraction_of_each_nominal_liquid_mass: 0
+        lox_mass_kg: 0.0
+        lh2_mass_kg: 0.0
+        lox_com_radius_from_sphere_centre_m: null
+        lh2_com_radius_from_sphere_centre_m: null
+      - fraction_of_each_nominal_liquid_mass: 0.1
+        lox_mass_kg: 42.307692307692314
+        lh2_mass_kg: 7.6923076923076925
+        lox_com_radius_from_sphere_centre_m: 0.6483083192253966
+        lh2_com_radius_from_sphere_centre_m: 0.5841569869191376
+      - fraction_of_each_nominal_liquid_mass: 0.25
+        lox_mass_kg: 105.76923076923077
+        lh2_mass_kg: 19.23076923076923
+        lox_com_radius_from_sphere_centre_m: 0.5961126481050437
+        lh2_com_radius_from_sphere_centre_m: 0.4900518796209043
+      - fraction_of_each_nominal_liquid_mass: 0.5
+        lox_mass_kg: 211.53846153846155
+        lh2_mass_kg: 38.46153846153846
+        lox_com_radius_from_sphere_centre_m: 0.5352684206734015
+        lh2_com_radius_from_sphere_centre_m: 0.3760713824865837
+      - fraction_of_each_nominal_liquid_mass: 0.75
+        lox_mass_kg: 317.3076923076923
+        lh2_mass_kg: 57.69230769230769
+        lox_com_radius_from_sphere_centre_m: 0.48691910434669644
+        lh2_com_radius_from_sphere_centre_m: 0.28080045183004504
+      - fraction_of_each_nominal_liquid_mass: 1
+        lox_mass_kg: 423.0769230769231
+        lh2_mass_kg: 76.92307692307692
+        lox_com_radius_from_sphere_centre_m: 0.4448744580894191
+        lh2_com_radius_from_sphere_centre_m: 0.19279097047353783
+      empty_case: Mass0 => COM undefined, contributes zero moment. Use actual residual/unusable inventory separately.
+      limits: Not a baffle/slosh/settling model, gas/pressurant mass not included; real partition orientation/volume,
+        liquid densities versus T/P, acceleration history, pickup/wetting and residuals unknown. Do not treat H2/O2
+        service faces as compartment centroids.
+      wet_com_formula: r=(115*r_dry+m_LOX*r_LOX+m_LH2*r_LH2)/(115+m_LOX+m_LH2), then add separate cradle/services.
+        Bound each positive term; do not substitute tank bbox centre.
+  bounds_review: Independent analytical arithmetic check reproduces ten nonempty spherical-cap radius bounds. Conditional
+    containing regions only; no precise COM, real compartment/slosh model, accepted load input or whole-ship CG.
 assignments:
   blender: Current cradle geometry, contact faces/axes and lower frame endpoints; stock/cut sizes, actual solids/mass
     and service/removal envelopes. Registry task20261023T201558-registry-8a82.
