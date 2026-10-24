@@ -232,7 +232,8 @@ fn walk(
     let m = parent * glam::Mat4::from_cols_array_2d(&node.transform().matrix());
     let part = node
         .name()
-        .and_then(|n| parts.iter().position(|p| n.contains(p)))
+        // (`=Name`: that node exactly; any other: a node whose name holds it.)
+        .and_then(|n| parts.iter().position(|p| p.strip_prefix('=').map_or(n.contains(p), |exact| n == exact)))
         .map_or(part, |k| k as u8 + 1);
     let normal_m = glam::Mat3::from_mat4(m).inverse().transpose();
     // (Collision parts, `COL_*`, are the hull's shape for physics, not drawn.)

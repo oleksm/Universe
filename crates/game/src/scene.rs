@@ -877,7 +877,14 @@ fn nav_lights(frame: &mut Frame, lights: [DVec3; 3], pos: DVec3, turned: DQuat, 
 /// A ship's hull: its imported model as made (glTF: see `world::import`), or
 /// its shape in paint scheme `scheme` with its engine bells and canopy.
 fn hull(frame: &mut Frame, app: &App, ship: &universe_sim::world::Ship, scheme: usize, t: &Transform) {
-    if let Some(m) = ship.spec().visual.as_deref().and_then(crate::models::pbr) {
+    // (A hull whose record declares mechanisms: each owned node a part of its own, drawn where its state puts it.)
+    let mechanisms = ship.spec().mechanisms.as_deref();
+    let parts: Vec<String> = mechanisms.map_or_else(Vec::new, |h| h.part_names());
+    let model = |path: &str| match mechanisms {
+        Some(_) => crate::models::pbr_parts(path, &parts.iter().map(String::as_str).collect::<Vec<_>>()),
+        None => crate::models::pbr(path),
+    };
+    if let Some(m) = ship.spec().visual.as_deref().and_then(model) {
         // (Its hull is centred on its centre of mass; the model is in the frame it was made in.)
         let shape = ship.spec().shape();
         let (rot, c) = (t.rotation.as_dquat(), shape.made_centre);
@@ -892,6 +899,14 @@ fn hull(frame: &mut Frame, app: &App, ship: &universe_sim::world::Ship, scheme: 
             && let Some(mesh) = crate::models::layout(plan, shape)
         {
             frame.in_scene(|frame| frame.model_colored(&mesh, t, 0.55, 1.0));
+        }
+        if let Some(h) = mechanisms {
+            for (k, (_, moved)) in h.moves(&h.states(&ship.mechanisms)).iter().enumerate().take(u8::MAX as usize) {
+                let (_, turn, shift) = moved.to_scale_rotation_translation();
+                let position = t.position + rot * (shift + turn * -c);
+                frame.model_pbr_part(&m, &Transform { position, rotation: (rot * turn).as_quat(), ..*t }, k as u8 + 1);
+            }
+            return;
         }
         // Its ramp (part 1), swung down about its hinge as far as it is.
         if let Some(r) = &shape.ramp {

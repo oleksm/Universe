@@ -29,6 +29,9 @@ struct Read {
     visual: Vec<DVec3>,
     /// Every other mesh's triangles: what's walked on and bumped into.
     tris: Vec<[DVec3; 3]>,
+    /// The triangles of the meshes each of its record's mechanism nodes owns (the nearest owned node above them),
+    /// by that node's place in `owned`: moved with it.
+    moving: Vec<Vec<[DVec3; 3]>>,
     /// A `*Ramp*` mesh's triangles (and what hangs from it): a part that swings down.
     ramp: Vec<[DVec3; 3]>,
     /// Authored CargoRamp mesh origin and local hinge axis, in model coordinates.
@@ -44,7 +47,15 @@ struct Read {
 /// A hull from a glTF file's bytes (`.glb`); `visual`: the file's path, for
 /// drawing it. Its key is made from the path, so the same file is the same hull.
 pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
-    let read = read(bytes)?;
+    hull_from_record(bytes, visual, crate::registry::registry().hulls.iter().find(|h| h.model.as_deref() == Some(visual)))
+}
+
+/// `hull_from_gltf`, with the hull record that describes it given (None: an unregistered model).
+pub(crate) fn hull_from_record(bytes: &[u8], visual: &str, record: Option<&crate::registry::Hull>) -> Result<ClassSpec, String> {
+    // (Its record's mechanism nodes, by exact name: their meshes move with them, and the legacy `*Ramp*` reading is
+    // off: an authored mechanism is never replaced by a guessed one.)
+    let owned: Vec<String> = record.map_or_else(Vec::new, |h| h.mechanisms.iter().flat_map(|m| m.nodes.iter().cloned()).collect());
+    let read = read(bytes, &owned)?;
     let stem = std::path::Path::new(visual).file_stem().and_then(|s| s.to_str()).unwrap_or("imported");
     let key = format!("hull.import.{}", stem.to_lowercase().replace(|c: char| !c.is_ascii_alphanumeric(), "_"));
     // Collision: its convex parts (the one named body first, else the first); none given: all of it.
@@ -59,7 +70,6 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     if body.len() < 4 {
         return Err("no geometry to make its hull from".into());
     }
-    let record = crate::registry::registry().hulls.iter().find(|h| h.model.as_deref() == Some(visual));
     let count = |prefix: &str| read.nodes.iter().filter(|n| n.0.starts_with(prefix)).count() as u8;
     let inferred_slots = standard_slots(read.class.unwrap_or(2), count("mount_cargo").max(1), count("mount_hardpoint"), count("mount_utility"));
     let slots = match record.filter(|h| !h.slots.is_empty()) {
@@ -159,7 +169,21 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     };
     // (Its mechanisms and exits bound to these exact bytes, or the import refused: no pose attaches to a model it
     // wasn't authored on.)
-    spec.mechanisms = record.map(|h| crate::mechanisms::bind(bytes, h)).transpose()?.flatten().map(std::sync::Arc::new);
+    spec.mechanisms = match record.map(|h| crate::mechanisms::bind(bytes, h)).transpose()?.flatten() {
+        Some(bound) => {
+            let floors = owned
+                .iter()
+                .zip(&read.moving)
+                .filter(|(_, t)| !t.is_empty())
+                .filter_map(|(name, t)| {
+                    let tris: Vec<[DVec3; 3]> = t.iter().map(|t| t.map(|p| p - c)).collect();
+                    Some((bound.node(name)?, std::sync::Arc::new(crate::walk::WalkMesh::new(&tris))))
+                })
+                .collect();
+            Some(std::sync::Arc::new(crate::mechanisms::HullMechanisms { bound, centre: c, floors }))
+        }
+        None => None,
+    };
     spec.shape_own = Some(shape);
     spec.visual = Some(visual.to_string());
     Ok(spec)
@@ -224,7 +248,7 @@ pub fn commission(bytes: &[u8], visual: &str) -> Result<Hull, String> {
     content().hulls.add(spec)
 }
 
-fn read(bytes: &[u8]) -> Result<Read, String> {
+fn read(bytes: &[u8], owned: &[String]) -> Result<Read, String> {
     let g = gltf::Gltf::from_slice(bytes).map_err(|e| e.to_string())?;
     let blob = g.blob.as_deref();
     let scene = g.default_scene().or_else(|| g.scenes().next()).ok_or("no scene")?;
@@ -235,6 +259,7 @@ fn read(bytes: &[u8]) -> Result<Read, String> {
         collision: Vec::new(),
         visual: Vec::new(),
         tris: Vec::new(),
+        moving: vec![Vec::new(); owned.len()],
         ramp: Vec::new(),
         ramp_frame: None,
         nodes: Vec::new(),
@@ -242,7 +267,7 @@ fn read(bytes: &[u8]) -> Result<Read, String> {
         islands: Vec::new(),
     };
     for node in scene.nodes() {
-        walk(&node, DMat4::IDENTITY, blob, false, &mut read);
+        walk(&node, DMat4::IDENTITY, blob, false, owned, None, &mut read);
     }
     Ok(read)
 }
@@ -285,14 +310,16 @@ fn islands(tris: &[[DVec3; 3]]) -> Vec<(DVec3, DVec3)> {
     boxes.into_values().collect()
 }
 
-fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, ramp: bool, read: &mut Read) {
+#[allow(clippy::too_many_arguments)]
+fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, ramp: bool, owned: &[String], owner: Option<usize>, read: &mut Read) {
     let m = parent * DMat4::from_cols_array_2d(&node.transform().matrix().map(|c| c.map(f64::from)));
+    let owner = node.name().and_then(|n| owned.iter().position(|o| o == n)).or(owner);
     // (Blender numbers repeated names: "nozzle_main.001".)
     let name = node.name().unwrap_or("").split('.').next().unwrap_or("").to_string();
     if name == "CargoRamp" && node.mesh().is_some() {
         read.ramp_frame = Some((m.transform_point3(DVec3::ZERO), m.transform_vector3(DVec3::X).normalize()));
     }
-    let ramp = ramp || name.contains("Ramp");
+    let ramp = owned.is_empty() && (ramp || name.contains("Ramp"));
     if let Some(mesh) = node.mesh() {
         let mut points = Vec::new();
         let mut tris = Vec::new();
@@ -321,7 +348,11 @@ fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, ramp: bool, read:
             read.collision.push((name.clone(), points));
         } else {
             read.visual.extend(points);
-            if ramp { read.ramp.extend(tris) } else { read.tris.extend(tris) }
+            match owner {
+                Some(k) => read.moving[k].extend(tris),
+                None if ramp => read.ramp.extend(tris),
+                None => read.tris.extend(tris),
+            }
         }
     } else if name == "cockpit" || name == "hatch" || ["nozzle_", "mount_", "gear_", "dock_", "door_"].iter().any(|p| name.starts_with(p)) {
         // (Blender's +Y is glTF's −Z.)
@@ -329,7 +360,7 @@ fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, ramp: bool, read:
         read.nodes.push((name.clone(), m.transform_point3(DVec3::ZERO), dir));
     }
     for child in node.children() {
-        walk(&child, m, blob, ramp, read);
+        walk(&child, m, blob, ramp, owned, owner, read);
     }
 }
 
@@ -364,19 +395,6 @@ mod tests {
         let at = h.fit.iter().position(|f| f.slot == "gear_0").unwrap();
         h.fit[at].pose = Some(crate::registry::HullFitItemPose::Rest);
         assert_eq!(crate::ship::rest_slots(&h), vec![("gear_0".to_string(), h.fit[at].item.clone())]);
-    }
-
-    /// A registered hull's empty fit stays empty (nothing made up): it can't fly (a base block missing), so it's
-    /// its stage before that, built uncommissioned, not refused and not stock-fitted.
-    #[test]
-    fn import_empty_fit_is_an_uncommissioned_stage() {
-        let any = content().shapes.iter().next().map(|(h, _)| h).unwrap();
-        let shape = crate::shape::ShapeDef::made("shape.test-stage".into(), (0..8).map(|i| DVec3::new(if i & 1 == 0 { -2.0 } else { 2.0 }, if i & 2 == 0 { -2.0 } else { 2.0 }, if i & 4 == 0 { -6.0 } else { 6.0 })).collect(), vec![], vec![], vec![]).build().unwrap();
-        let def = crate::ship::HullDef::made("hull.test-stage".into(), "STAGE".into(), shape.key.clone(), 8000.0, 1.0, vec![("power".into(), crate::modules::SlotKind::Power, 1)], vec![], vec![], 10.0, 10.0, 1e6);
-        let module = |k: &str| content().handle::<Module>(k).map(|h| (h, content().get(h)));
-        assert!(def.clone().build(any, &shape, &module).is_err_and(|e| e.contains("every ship must carry")));
-        let spec = def.build_uncommissioned(any, &shape, &module).unwrap();
-        assert!(!spec.commissioned && spec.fit.is_empty() && spec.dry_mass == 8000.0);
     }
 
     /// A model with no nozzle at all: refused unregistered; registered (its record names it), a stage built

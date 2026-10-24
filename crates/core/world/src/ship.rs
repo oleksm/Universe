@@ -112,7 +112,7 @@ pub struct ClassSpec {
     pub commissioned: bool,
     /// Its record's mechanisms and exits, bound to its model's exact bytes (`mechanisms::bind`); None: it declares
     /// none (the legacy ramp and hatch, read by name).
-    pub mechanisms: Option<std::sync::Arc<crate::mechanisms::Bound>>,
+    pub mechanisms: Option<std::sync::Arc<crate::mechanisms::HullMechanisms>>,
     /// Propellants of its own, apart from its fuel (cold nitrogen beside hydrolox): a ship of this class draws
     /// them through its device state (`Ship::own_propellants`).
     pub propellants: Vec<crate::ship_devices::Propellant>,
@@ -1039,6 +1039,10 @@ pub struct Ship {
     pub trim: crate::trim::Trim,
     #[serde(default)]
     pub held: u64,
+    /// Its hull's mechanisms' states (one per mechanism of `ClassSpec::mechanisms`, by index): physical, kept from
+    /// tick to tick (a deploy the ground refuses keeps the one before). Empty: each at its default.
+    #[serde(default)]
+    pub mechanisms: Vec<usize>,
     /// Taxiing on the ground between a pad and a spaceport's hangar (see
     /// `World::hangar_move`): out of the pads' count while it does.
     #[serde(default)]
@@ -1196,6 +1200,7 @@ impl Ship {
             manual: false,
             trim: Default::default(),
             held: 0,
+            mechanisms: Vec::new(),
             taxi: None,
             passengers: 0,
             bound_for: None,

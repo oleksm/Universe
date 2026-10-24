@@ -346,6 +346,7 @@ impl Universe {
     pub(crate) fn tick(&mut self, real_dt: f64, warp: f64, controls: &Controls) -> StepResult {
         self.tick += 1;
         self.log.clear();
+        self.settle_mechanisms();
         self.services.atc.because(self.tick, universe_protocol::Cause::Rules);
         // What the pilots posted that's due (or late) now (replaying: as logged).
         let due = if self.replay.replaying {
@@ -628,6 +629,24 @@ impl Universe {
 
     // The pilot's requests, to the ship's avionics (or, for `command`,
     // straight to its devices), taking effect at once.
+
+    /// Hull mechanisms (ramps, hatches, ladders, gear) take the states their ships' places call for (see
+    /// `crew::settle_mechanisms`), for the ships in the player's system: what's walked and drawn.
+    fn settle_mechanisms(&mut self) {
+        let here = self.vessels[crate::combat::PLAYER].system;
+        if !self.vessels.all().iter().any(|v| v.system == here && v.ship.spec().mechanisms.is_some()) {
+            return;
+        }
+        let sys = self.ship_system();
+        sys.positions(self.world.time, &mut self.positions);
+        let t = self.world.time;
+        for v in self.vessels.all_mut().iter_mut().filter(|v| v.system == here) {
+            let states = universe_world::crew::settle_mechanisms(&sys, &v.ship, t, &self.positions);
+            if states != v.ship.mechanisms {
+                v.ship.mechanisms = states;
+            }
+        }
+    }
 
     /// The pilot on foot (or getting up, sitting down) for `real_dt` real
     /// seconds. A new ship puts the pilot back in its seat.

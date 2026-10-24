@@ -142,7 +142,13 @@ pub fn layout(plan: &universe_sim::world::deckplan::DeckPlan, shape: &universe_s
 /// An imported hull's model (its glTF file), loaded once and kept; its
 /// `*Ramp*` meshes part 1 (drawn swung down: see `scene::hull`).
 pub fn pbr(path: &str) -> Option<universe_engine::PbrModel> {
-    let model = crate::visual_assets::request_native(std::path::Path::new(path), &["Ramp"])?;
+    pbr_parts(path, &["Ramp"])
+}
+
+/// An imported hull's model with these moving parts (part k + 1: the nodes `parts[k]` names; see
+/// `PbrModel::load_gltf_parts`).
+pub fn pbr_parts(path: &str, parts: &[&str]) -> Option<universe_engine::PbrModel> {
+    let model = crate::visual_assets::request_native(std::path::Path::new(path), parts)?;
     Some(model.model.with_lease(model.clone()))
 }
 

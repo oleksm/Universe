@@ -178,10 +178,89 @@ fn ramp_foot(sys: &StarSystem, ship: &Ship, body: usize, t: f64, center: DVec3) 
     dir * sys.bodies[body].surface_radius(dir)
 }
 
-/// Does `ship` have a ramp to walk down (and up), rather than a hatch you use?
+/// Does `ship` have a ramp to walk down (and up), rather than a hatch you use? A hull whose record declares its
+/// exits always does: by them, open or shut, never by the hatch's step (no teleport when they're shut).
 pub fn walks_out(ship: &Ship) -> bool {
-    ship.spec().shape().ramp.is_some()
+    ship.spec().shape().ramp.is_some() || ship.spec().mechanisms.as_ref().is_some_and(|m| !m.bound.exits.is_empty())
 }
+
+/// How far a mechanism's ground marker may sit into the ground (m), and above it (the walker's step): engine
+/// gameplay limits for "it meets the ground", not engineering compliance.
+const CONTACT_EMBED: f64 = 0.05;
+const CONTACT_GAP: f64 = crate::walk::STEP;
+
+/// The states `ship`'s mechanisms take now, from those it holds (`Ship::mechanisms`), as its record says they
+/// deploy: `always`, deployed; `landed`, deployed where its hatch opens (landed on a world), else its default;
+/// `pilot`, as held (no control yet); gear, deployed landed, stowed otherwise. A deploy whose ground marker doesn't
+/// meet standable ground (in the deployed pose, at the ship's attitude) keeps the state before. Empty: none.
+pub fn settle_mechanisms(sys: &StarSystem, ship: &Ship, t: f64, positions: &[DVec3]) -> Vec<usize> {
+    let Some(h) = ship.spec().mechanisms.as_deref() else { return Vec::new() };
+    let b = &h.bound;
+    let mut states = h.states(&ship.mechanisms);
+    let on = hatch_body(sys, ship).ok();
+    let landed = matches!(ship.state, ShipState::Landed { .. });
+    for (i, m) in b.mechanisms.iter().enumerate() {
+        let want = match (m.kind, m.deploys_when) {
+            (crate::registry::MechanismKind::Gear, _) => b.state(i, if landed { "deployed" } else { "stowed" }),
+            (_, crate::registry::MechanismDeploysWhen::Always) => b.state(i, "deployed"),
+            (_, crate::registry::MechanismDeploysWhen::Landed) => if on.is_some() { b.state(i, "deployed") } else { Some(m.default) },
+            (_, crate::registry::MechanismDeploysWhen::Pilot) => None,
+        };
+        let Some(want) = want.filter(|&w| w != states[i]) else { continue };
+        let mut candidate = states.clone();
+        candidate[i] = want;
+        let deploying = Some(want) == b.state(i, "deployed");
+        let meets = match (deploying, m.contact, on) {
+            (true, Some(node), Some(body)) => touches(sys, ship, body, t, positions[body], h.point(node, &candidate)),
+            (true, Some(_), None) => false,
+            _ => true,
+        };
+        if meets {
+            states = candidate;
+        }
+    }
+    states
+}
+
+/// Does a point of `ship` (its frame), landed on `body`, meet standable ground: within `CONTACT_EMBED` under it
+/// and `CONTACT_GAP` over it, along the world's down, where the ground is no steeper than the walker stands on?
+fn touches(sys: &StarSystem, ship: &Ship, body: usize, t: f64, center: DVec3, local: DVec3) -> bool {
+    let (at, rot) = placed(sys, ship, body, t, center);
+    let p = at + rot * local;
+    let b = &sys.bodies[body];
+    let up = p.normalize();
+    let ground = |d: DVec3| d * b.surface_radius(d);
+    let gap = p.length() - b.surface_radius(up);
+    let (north, east) = tangent(up);
+    let r = p.length();
+    let normal = (ground((p + east * 0.5) / r) - ground((p - east * 0.5) / r)).cross(ground((p + north * 0.5) / r) - ground((p - north * 0.5) / r)).normalize_or_zero();
+    (-CONTACT_EMBED..=CONTACT_GAP).contains(&gap) && normal.dot(up).abs() > crate::walk::SLOPE
+}
+
+/// The ship's open climb exits as segments in its frame (their top to their foot, in the states it holds): where
+/// there's a ladder to hold on to.
+fn ladders(ship: &Ship) -> Vec<(DVec3, DVec3)> {
+    let Some(h) = ship.spec().mechanisms.as_deref() else { return Vec::new() };
+    let states = h.states(&ship.mechanisms);
+    h.bound
+        .exits
+        .iter()
+        .filter(|e| e.kind == crate::registry::ExitKind::Climb && h.bound.open(e, &states))
+        .filter_map(|e| Some((h.point(e.top, &states), h.point(e.foot?, &states))))
+        .collect()
+}
+
+/// Is a point of `ship` (its frame) on one of its open ladders (within reach of the line from its top to its foot)?
+pub fn on_ladder(ship: &Ship, p: DVec3) -> bool {
+    ladders(ship).iter().any(|&(a, b)| {
+        let ab = b - a;
+        let k = ((p - a).dot(ab) / ab.length_squared().max(1e-9)).clamp(0.0, 1.0);
+        (a + ab * k).distance(p) < LADDER_REACH
+    })
+}
+
+/// How far from a ladder's line a walker's hands hold it (m).
+const LADDER_REACH: f64 = 0.6;
 
 /// Is `p` (ship frame) within `ship`'s bounds?
 fn within(ship: &Ship, p: DVec3) -> bool {
@@ -212,6 +291,16 @@ pub fn ship_colliders<'a>(ship: &'a Ship, at: DVec3, rot: DQuat, ramp: f64, out:
     if let Some(r) = &shape.ramp {
         let turn = r.turn(ramp);
         out.push(Collider::Mesh { mesh: &r.walk, at: at + rot * (r.hinge - turn * r.hinge), rot: rot * turn });
+    }
+    // (Its mechanisms' surfaces where their states put them.)
+    if let Some(h) = ship.spec().mechanisms.as_deref() {
+        let moves = h.moves(&h.states(&ship.mechanisms));
+        for (node, mesh) in &h.floors {
+            if let Some((_, m)) = moves.iter().find(|(n, _)| n == node) {
+                let (_, turn, shift) = m.to_scale_rotation_translation();
+                out.push(Collider::Mesh { mesh, at: at + rot * shift, rot: rot * turn });
+            }
+        }
     }
     match walk_mesh(ship) {
         Some(mesh) => out.push(Collider::Mesh { mesh, at, rot }),
@@ -365,7 +454,7 @@ impl Person {
                     colliders.push(Collider::Mesh { mesh: &l.mesh, at: DVec3::ZERO, rot: DQuat::IDENTITY });
                 }
                 let mut w = Walker { feet: *position, velocity: *velocity };
-                let climbable = |p: DVec3| layout.is_some_and(|l| l.climbing(p));
+                let climbable = |p: DVec3| layout.is_some_and(|l| l.climbing(p)) || on_ladder(ship, p);
                 w.step(&colliders, &|_| DVec3::Y, BOOTS, &climbable, &Stride { wish, jump, climb }, dt);
                 *position = w.feet;
                 *velocity = w.velocity;
@@ -413,7 +502,10 @@ impl Person {
                 // (The ship's ladders, where it rests: in its frame.)
                 let (ship_at, ship_rot) = placed(sys, ship, *body, t, positions[*body]);
                 let landed_here = hatch_body(sys, ship) == Ok(*body);
-                let climbable = |p: DVec3| landed_here && layout.is_some_and(|l| l.climbing(ship_rot.inverse() * (p - ship_at)));
+                let climbable = |p: DVec3| {
+                    let local = ship_rot.inverse() * (p - ship_at);
+                    landed_here && (layout.is_some_and(|l| l.climbing(local)) || on_ladder(ship, local))
+                };
                 w.step(&colliders, &|p: DVec3| p.normalize(), g, &climbable, &Stride { wish, jump, climb }, dt);
                 // Not into the sea.
                 if b.terrain.as_ref().is_some_and(|tr| universe_physics::Surface::liquid(tr, w.feet.normalize())) {
@@ -464,4 +556,60 @@ impl Person {
 fn body_yaw(position: DVec3, d: DVec3) -> f64 {
     let (north, east) = tangent(position.normalize());
     f64::atan2(-d.dot(east), d.dot(north))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// A hull its record gives a two-leaf ramp (walk and climb exits on it): through the real importer, its ramp's
+    /// leaf is a floor posed by the state the ship holds, the ladder is held only when open, there's no hatch step
+    /// (exits declared), and landed on a world the ramp deploys only where its toe meets the ground.
+    #[test]
+    fn declared_mechanisms_pose_floors_and_deploy_onto_the_ground() {
+        let (bytes, hull) = crate::mechanisms::tests::ramp_hull(1.0);
+        let spec = std::sync::Arc::new(crate::import::hull_from_record(&bytes, "test/ramp.glb", Some(&hull)).unwrap());
+        let h = spec.mechanisms.clone().unwrap();
+        assert!(spec.shape().ramp.is_none() && h.floors.len() == 1, "the authored ramp, not the legacy reading");
+        let mut ship = Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY);
+        ship = Ship::with_spec(spec, ship.position, ship.velocity, ship.orientation);
+        assert!(walks_out(&ship));
+        let (deployed, closed) = (h.bound.state(0, "deployed").unwrap(), h.bound.mechanisms[0].default);
+        let top = h.point(h.bound.exits[1].top, &[deployed]);
+        let leaf = |ship: &Ship| {
+            let mut c = Vec::new();
+            ship_colliders(ship, DVec3::ZERO, DQuat::IDENTITY, 0.0, &mut c);
+            match c[0] {
+                Collider::Mesh { rot, .. } => rot,
+                _ => unreachable!(),
+            }
+        };
+        assert!(!on_ladder(&ship, top) && leaf(&ship).angle_between(DQuat::IDENTITY) < 1e-9);
+        ship.mechanisms = vec![deployed];
+        assert!(on_ladder(&ship, top) && (leaf(&ship).angle_between(DQuat::IDENTITY) - std::f64::consts::FRAC_PI_2).abs() < 1e-9);
+
+        // Landed on a rocky world, the toe 0.1 m over the ground: deployed; 5 m over it: kept shut.
+        let star = crate::galaxy::GalaxyStar { position: DVec3::ZERO, class: crate::galaxy::StarClass::G, seed: 7 };
+        let sys = StarSystem::generate(0, &star);
+        let body = sys.bodies.iter().position(|b| b.kind == BodyKind::Rocky).unwrap();
+        let mut positions = Vec::new();
+        sys.positions(0.0, &mut positions);
+        let toe = h.point(h.bound.mechanisms[0].contact.unwrap(), &[deployed]);
+        let up = DVec3::new(0.3, 0.8, 0.5).normalize();
+        let q = DQuat::from_rotation_arc(DVec3::Y, up);
+        let turn = sys.bodies[body].rotation(0.0);
+        let place = |ship: &mut Ship, over: f64| {
+            let toe_at = q * toe;
+            let ground = sys.bodies[body].surface_radius((up * 1e6 + toe_at).normalize());
+            let centre = (up * 1e6 + toe_at).normalize() * (ground + over) - toe_at;
+            ship.position = positions[body] + turn * centre;
+            ship.orientation = turn * q;
+            ship.state = ShipState::Landed { body, local_position: centre, local_orientation: q };
+            ship.mechanisms = vec![closed];
+        };
+        place(&mut ship, 0.1);
+        assert_eq!(settle_mechanisms(&sys, &ship, 0.0, &positions), vec![deployed]);
+        place(&mut ship, 5.0);
+        assert_eq!(settle_mechanisms(&sys, &ship, 0.0, &positions), vec![closed]);
+    }
 }

@@ -58,6 +58,47 @@ pub struct Exit {
     pub foot: Option<usize>,
 }
 
+/// A hull's bound mechanisms with what moves with them: each owned node's surfaces (the hull's frame, centred as
+/// its shape is: model minus `centre`), walked on where its state puts them.
+#[derive(Clone, Debug)]
+pub struct HullMechanisms {
+    pub bound: Bound,
+    /// The model's point the hull's frame is centred on (`Shape::made_centre`).
+    pub centre: DVec3,
+    /// (owned node, its surfaces, hull frame).
+    pub floors: Vec<(usize, std::sync::Arc<crate::walk::WalkMesh>)>,
+}
+
+impl PartialEq for HullMechanisms {
+    fn eq(&self, other: &Self) -> bool {
+        self.bound == other.bound && self.centre == other.centre
+    }
+}
+
+impl HullMechanisms {
+    /// The states in use: `held` where it has one per mechanism, else every default.
+    pub fn states(&self, held: &[usize]) -> Vec<usize> {
+        if held.len() == self.bound.mechanisms.len() { held.to_vec() } else { self.bound.defaults() }
+    }
+
+    /// Each owned node's rigid move in the hull's frame (from the export's pose to these states').
+    pub fn moves(&self, states: &[usize]) -> Vec<(usize, DMat4)> {
+        let (to, from) = (DMat4::from_translation(-self.centre), DMat4::from_translation(self.centre));
+        self.bound.moves(states).into_iter().map(|(n, m)| (n, to * m * from)).collect()
+    }
+
+    /// A node's origin in the hull's frame with the mechanisms in these states.
+    pub fn point(&self, node: usize, states: &[usize]) -> DVec3 {
+        self.bound.point(node, states) - self.centre
+    }
+
+    /// The model's parts to draw apart, one per owned node in `moves`' order, by exact name (`=Name`; see the
+    /// renderer's `load_gltf_parts`): part k + 1 is `moves()[k]`.
+    pub fn part_names(&self) -> Vec<String> {
+        self.bound.owned().map(|n| format!("={}", self.bound.name(n))).collect()
+    }
+}
+
 /// The lower-case hex SHA-256 of a model's bytes.
 pub fn sha256(bytes: &[u8]) -> String {
     Sha256::digest(bytes).iter().map(|b| format!("{b:02x}")).collect()
@@ -196,15 +237,30 @@ impl Bound {
 
     /// Each mechanism-owned node's rigid move in model space, from the export's pose to these states' (what hangs
     /// from a node moves with it).
-    pub fn moves(&self, states: &[usize]) -> Vec<(String, DMat4)> {
+    pub fn moves(&self, states: &[usize]) -> Vec<(usize, DMat4)> {
         // (No states given: every node at its exported local transform, the export's own pose.)
         let (rest, now) = (self.world(&[]), self.world(states));
-        self.mechanisms.iter().flat_map(|m| m.owned.iter()).map(|&i| (self.nodes[i].name.clone(), now[i] * rest[i].inverse())).collect()
+        self.owned().map(|i| (i, now[i] * rest[i].inverse())).collect()
+    }
+
+    /// Every owned node, mechanism by mechanism.
+    pub fn owned(&self) -> impl Iterator<Item = usize> + '_ {
+        self.mechanisms.iter().flat_map(|m| m.owned.iter().copied())
+    }
+
+    /// The mechanism state named `key`, if `mechanism` has one.
+    pub fn state(&self, mechanism: usize, key: &str) -> Option<usize> {
+        self.mechanisms[mechanism].states.iter().position(|s| s == key)
     }
 
     /// A node's origin in model space with the mechanisms in these states.
     pub fn point(&self, node: usize, states: &[usize]) -> DVec3 {
         self.world(states)[node].transform_point3(DVec3::ZERO)
+    }
+
+    /// The node named exactly `name`, if the model has it.
+    pub fn node(&self, name: &str) -> Option<usize> {
+        self.nodes.iter().position(|n| n.name == name)
     }
 
     /// The node's exact name.
@@ -257,12 +313,12 @@ pub(crate) mod tests {
     }
 
     /// A hull with a two-leaf ramp (a pivot, an extension on it, a toe on that) and its walk exit.
-    fn ramp_hull(scale: f64) -> (Vec<u8>, r::Hull) {
+    pub(crate) fn ramp_hull(scale: f64) -> (Vec<u8>, r::Hull) {
         let bytes = glb(
             serde_json::json!([
                 {"name": "Hull", "mesh": 0, "children": [1, 4]},
                 {"name": "Ramp_Pivot", "translation": [0.0, -1.0, 3.0], "scale": [scale, scale, scale], "children": [2]},
-                {"name": "Ramp_Ext", "translation": [0.0, 0.0, 2.0], "children": [3]},
+                {"name": "Ramp_Ext", "mesh": 0, "translation": [0.0, 0.0, 2.0], "children": [3]},
                 {"name": "Ramp_Toe", "translation": [0.0, 0.0, 2.0]},
                 {"name": "Ramp_Top", "translation": [0.0, -1.0, 2.5]}
             ]),
@@ -271,6 +327,9 @@ pub(crate) mod tests {
         // (Down by 90° about +X: the ramp's +Z along it turns to −Y, the floor's down.)
         let down = DQuat::from_rotation_x(std::f64::consts::FRAC_PI_2);
         let mut hull = crate::registry::registry().hull("hull.mc-07").unwrap().clone();
+        hull.model = Some("test/ramp.glb".into());
+        hull.thrusters.clear();
+        hull.fit.clear();
         hull.model_sha256 = Some(sha256(&bytes));
         hull.mechanisms = serde_json::from_value(serde_json::json!([{
             "key": "rear_ramp", "kind": "ramp", "nodes": ["Ramp_Pivot", "Ramp_Ext"], "default": "closed", "deploys_when": "landed",
@@ -283,7 +342,11 @@ pub(crate) mod tests {
             ]
         }]))
         .unwrap();
-        hull.exits = serde_json::from_value(serde_json::json!([{"key": "rear", "kind": "walk", "requires": [{"mechanism": "rear_ramp", "state": "deployed"}], "top": "Ramp_Top"}])).unwrap();
+        hull.exits = serde_json::from_value(serde_json::json!([
+            {"key": "rear", "kind": "walk", "requires": [{"mechanism": "rear_ramp", "state": "deployed"}], "top": "Ramp_Top"},
+            {"key": "down", "kind": "climb", "requires": [{"mechanism": "rear_ramp", "state": "deployed"}], "top": "Ramp_Top", "foot": "Ramp_Toe"}
+        ]))
+        .unwrap();
         (bytes, hull)
     }
 
