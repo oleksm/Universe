@@ -1,0 +1,1318 @@
+status: draft-physical-design-schedule
+authority: Owner requests execution; Blender20261023T200239-blender-2859 asks Registry to choose physical materials/stock
+  and explicit hidden allowances. These are new design assumptions, not measured original intent or ratings.
+source_sha256: 8fc3a7e3ab384395592c35dde78b59a440830bbdae1f4a7ed59e55c07af8927e
+geometry_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/functional-record-geometry.json
+geometry_sha256: 89562f283e596264e6c505d6fa61a2c0582c28d0f98200aa802f7d208b54f22b
+ownership_source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/functional-ownership-proposal.json
+ownership_sha256: f343f417803b12267c1d86c43fe026fd0b83d9be4a6141de5dd8211ce9c2c066
+scope: 952 exact current owned mesh names in17 assemblies. Roof tank/cradle study and catalogue equipment are outside
+  this source and outside these allowances; command remains deferred.
+basis:
+  tier: invented
+  review: true
+  note: Materials/stock lanes and reserve amounts chosen explicitly for this prototype. Registry densities remain
+    their own existing basis. No pressure, fatigue, impact, heat, landing or human qualification follows.
+research:
+- url: https://www.hydro.com/en-CA/global/aluminium/products/extruded-profiles/alloys-for-extruded-aluminium-profiles/6061-alloy/
+  supports: 6061 family context only; no weld/temper allowables transferred.
+- url: https://www.nasa.gov/missions/artemis/orion/orion-window-testing-brings-artemis-1-closer-into-view/
+  supports: Spacecraft window assemblies use distinct pane materials/functions. Supports considering fused silica,
+    not declaring an Explorer pressure-window architecture or rating.
+- url: https://www.corning.com/media/worldwide/csm/documents/1e624b3034474193b5b00ea6f558dd3d2.pdf
+  supports: Fused-silica density order~2200kg/m3. Calculation deliberately retains registry2203kg/m3, not a new
+    certified material-grade value.
+mass_calculation:
+  mode: as-drawn reconciled material-solid volume times assigned registry density, plus separate explicit reserve
+  equation: assembly_budget_kg = sum(valid_finished_solid_volume_m3*object_density_kg_m3) + hidden_dry_allowance_kg
+  geometry: Blender owns seam/solid and duplicate/overlap reconciliation. Do not sum nonmanifold signed envelopes,
+    count the same matter twice or fill intended cabin/access voids. A legitimate material interface is not an overlap
+    deduction.
+  no_hidden_lightening: Do not reduce density, discard objects, shrink thickness, assume invisible hollow cores,
+    substitute selected nominal gauge or subtract guessed overlap to hit a target mass.
+  stock_policy: feedstock is the selected existing raw stock (or direct fused-silica material for custom blanks).
+    nominal_form_stock is a concrete preferred sheet/plate target, not an assertion a current thick/curved object
+    fits that blank. Preserve measured volume and use raw alloy feed when shape/gauge routing is not established.
+    Do not charge both raw and nominal stock as installed matter.
+  stock_quantity: Finished material mass is geometry*density. Reserve15% input over finished raw-metal material
+    mass for manufacturing offcut as a separate procurement estimate; offcut is NOT installed mass. Actual blank
+    nesting replaces this estimate. No15% factor on assembled hidden reserves, optics or rubbers.
+  hidden_allowances: Fixed additive DRY prototype budget targets below, declared once per assembly. They are not
+    installed catalogue modules, stock recipes, geometry, fluids/propellant, power ratings or as-built measured
+    mass. If later modeled/selected, replace the corresponding reserve explicitly rather than adding twice.
+  housing_envelopes: If a housing is only a solid visual envelope, label that conservative stock-volume charge plus
+    separate hardware reserve; do not pretend the interior is a resolved manufactured assembly. Reconcile actual
+    material walls and replace budget when designed.
+  cg: Report reserves as unlocated assembly mass with assembly bounding region; do not claim a measured COM at bbox
+    centre. Whole CG remains a separate calculation.
+  outputs: Report geometry-derived mass, hidden allowance, procurement offcut, excluded equipment and unresolved
+    geometry separately. A complete draft design budget is not as-built weighed mass.
+coverage:
+  objects: 952
+  assemblies: 17
+  owned_edited_gear_objects: 24
+  roster_basis: Exact current rows total952 and forward-shoulders176; refreshed ownership summary agrees.
+  role_counts:
+    al_cover: 342
+    al_deck: 41
+    al_frame: 87
+    al_label: 4
+    al_skin: 40
+    epdm_wear: 38
+    ptfe_slide: 4
+    silica_optic: 53
+    silicone_seal: 40
+    steel_hardware: 294
+    ti_gear: 9
+  hidden_dry_allowance_total_kg: 96.1
+material_roles:
+  al_skin:
+    material: material.aluminium-alloy-6061
+    density_kg_m3: 2700.0
+    feedstock: stock.al6061-ingot
+    feedstock_kind: stock
+    nominal_form_stock: stock.al6061-sh-3
+    basis: 'New prototype material choice: invented, review true. Density is the existing registry value, unchanged.'
+    reason: Pressure-skin geometry:6061 rolled/formed sheet target. Preserve actual reconciled thickness; no T6
+      or weld/pressure strength inferred.
+  al_cover:
+    material: material.aluminium-alloy-6061
+    density_kg_m3: 2700.0
+    feedstock: stock.al6061-ingot
+    feedstock_kind: stock
+    nominal_form_stock: stock.al6061-sh-2
+    basis: 'New prototype material choice: invented, review true. Density is the existing registry value, unchanged.'
+    reason: Nonpressure covers, trim and bezels;2mm sheet is a manufacturing target, not permission to thin current
+      geometry.
+  al_deck:
+    material: material.aluminium-alloy-6061
+    density_kg_m3: 2700.0
+    feedstock: stock.al6061-ingot
+    feedstock_kind: stock
+    nominal_form_stock: stock.al6061-pl-5
+    basis: 'New prototype material choice: invented, review true. Density is the existing registry value, unchanged.'
+    reason: Floors, thresholds, ramp leaves and treads;5mm plate target, current material volume retained.
+  al_frame:
+    material: material.aluminium-alloy-6061
+    density_kg_m3: 2700.0
+    feedstock: stock.al6061-ingot
+    feedstock_kind: stock
+    nominal_form_stock: stock.al6061-pl-8
+    basis: 'New prototype material choice: invented, review true. Density is the existing registry value, unchanged.'
+    reason: Frames, coamings, ribs, ears, brackets, rails and edited foot pads.8mm plate target where applicable;
+      raw alloy covers custom sections until actual blank is established.
+  al_label:
+    material: material.aluminium-alloy-6061
+    density_kg_m3: 2700.0
+    feedstock: stock.al6061-ingot
+    feedstock_kind: stock
+    nominal_form_stock: stock.al6061-sh-0p5
+    basis: 'New prototype material choice: invented, review true. Density is the existing registry value, unchanged.'
+    reason: Design marking/inset meshes as nonstructural metal labels/inlays at their actual volume. Colour does
+      not select physical material; no zero-mass decal assumption.
+  ti_gear:
+    material: material.titanium-alloy-ti-6al-4v
+    density_kg_m3: 4470.0
+    feedstock: stock.ti64-ingot
+    feedstock_kind: stock
+    nominal_form_stock: stock.ti64-pl-5
+    basis: 'New prototype material choice: invented, review true. Density is the existing registry value, unchanged.'
+    reason: New prototype choice for the9edited fixed/leg/slider meshes, compatible with the source family material
+      concept only. No190kg,180kN,stroke or rating transfer. Raw alloy feed avoids pretending5mm plate is the finished
+      complex shape.
+  steel_hardware:
+    material: material.high-strength-steel-4340
+    density_kg_m3: 7850.0
+    feedstock: stock.st4340-fg
+    feedstock_kind: stock
+    nominal_form_stock: null
+    basis: 'New prototype material choice: invented, review true. Density is the existing registry value, unchanged.'
+    reason: Machined pins, journals, shafts and visible fixings from forging stock. Heat treatment, proof load,
+      fastener size and galvanic isolation are not established by this mass choice.
+  silicone_seal:
+    material: material.silicone-rubber
+    density_kg_m3: 1075.0
+    feedstock: stock.chem-silicone-rubber
+    feedstock_kind: stock
+    nominal_form_stock: null
+    basis: 'New prototype material choice: invented, review true. Density is the existing registry value, unchanged.'
+    reason: Dry-hull gaskets and glazing bond/perimeter material. Not an approval for pressure sealing, adhesive
+      strength or hydrolox/cryogenic wetted service.
+  epdm_wear:
+    material: material.epdm-rubber
+    density_kg_m3: 1150.0
+    feedstock: stock.chem-epdm-rubber
+    feedstock_kind: stock
+    nominal_form_stock: null
+    basis: 'New prototype material choice: invented, review true. Density is the existing registry value, unchanged.'
+    reason: Replaceable soles, ladder foot caps and grip/anti-slip elements. Density only; no cold/vacuum,traction,wear
+      or landing-load rating inferred.
+  ptfe_slide:
+    material: material.ptfe
+    density_kg_m3: 2200.0
+    feedstock: stock.chem-ptfe
+    feedstock_kind: stock
+    nominal_form_stock: null
+    basis: 'New prototype material choice: invented, review true. Density is the existing registry value, unchanged.'
+    reason: Nonstructural hatch slide shoes/wear surfaces. Structural carrier ears/seats remain aluminium; no bearing/friction/life
+      claim.
+  silica_optic:
+    material: material.fused-silica
+    density_kg_m3: 2203.0
+    feedstock: material.fused-silica
+    feedstock_kind: material
+    nominal_form_stock: null
+    basis: 'New prototype material choice: invented, review true. Density is the existing registry value, unchanged.'
+    reason: All named pane/windshield/lens/diffuser solids use fused silica for the mass draft. Existing raw material
+      is the chosen custom-blank feed; generic soda-lime glass stock is not equivalent. No invented optical stock
+      SKU or window pressure/thermal rating.
+registry_source_sha256:
+  standards/SFO/metadata/materials/aluminium-alloy-6061.yaml: a4365ebfe17eea126461bf2b897bec0207b674bbdae79fb9d0d9ee8d1a5856bf
+  standards/SFO/metadata/materials/epdm-rubber.yaml: 81f5762b9ffd93aaa80e0d73434a6c679a83578fe1322c747dcfe679abb8287f
+  standards/SFO/metadata/materials/fused-silica.yaml: 9cea1619c54b369246dfed3540eeff68deea071795a733163500530990cc9639
+  standards/SFO/metadata/materials/high-strength-steel-4340.yaml: 4846a6f75f86b9c96533b54b492636efe4f748dfc0697ade9525a618e17eb11e
+  standards/SFO/metadata/materials/ptfe.yaml: 11facd796d3868ff92b73f1fa758fbda3040e35bbed2cccb90fbe9013dd640d6
+  standards/SFO/metadata/materials/silicone-rubber.yaml: 7db825244b00a9142e31449129a73be11fcee94e5c62eedf9cbf9d0c741537a5
+  standards/SFO/metadata/materials/titanium-alloy-ti-6al-4v.yaml: edb9cedc2daaa6ac27ec115aad9b082fed329cb2f4a750b43850c063c163afb0
+  standards/SFO/metadata/mill-stock/AL6061-INGOT.yaml: a4ab7e02f141392975a8cfb5bb61bcc728177baff3e4e54e2f8c7f602ff0feed
+  standards/SFO/metadata/mill-stock/AL6061-PL-5.yaml: 6857d1b3b139d2db5cb9e5b5ea3579b0f39048f1ab33462bc967c794451131a7
+  standards/SFO/metadata/mill-stock/AL6061-PL-8.yaml: e7722e242daf737580d93c733c9e2598b4aaf90b23ae532000e79d3e30d7337d
+  standards/SFO/metadata/mill-stock/AL6061-SH-0P5.yaml: 741957204fc027d298be19d881a91db37227153bc63f5a80004e0e52c68fa5b2
+  standards/SFO/metadata/mill-stock/AL6061-SH-2.yaml: 71117e5c00ea7af0eec43a4eeb8273ae76bb45e69b827196793b184bf20abfef
+  standards/SFO/metadata/mill-stock/AL6061-SH-3.yaml: dea65ce3b7eaac01ac3d1bb517593684b52a5224aefc4f72947b5ce625f07011
+  standards/SFO/metadata/stock/CHEM-EPDM-RUBBER.yaml: db4ee8734dfc98316ead762b2a258e5830a80775dc0bfe59611640c16ed91c78
+  standards/SFO/metadata/stock/CHEM-PTFE.yaml: 8fd1053185fd576e390242766078b6492fd5a22f856ba25af5eaf29b4ced4e8c
+  standards/SFO/metadata/stock/CHEM-SILICONE-RUBBER.yaml: c1d32869cfb4deb23fcb7fd260d9b06dadd3d776e9065a13974f1a98efd9c88f
+  standards/SFO/metadata/mill-stock/ST4340-FG.yaml: b7c5174f8d6a1e47d7c5d40d77c73eb0488e2da9ad8bbd9a100c54b9df4dfc4e
+  standards/SFO/metadata/mill-stock/TI64-INGOT.yaml: 173de2d789be85923e22c23c6068299e5f652edae2aa968ec0faaf3411bf1bd7
+  standards/SFO/metadata/mill-stock/TI64-PL-5.yaml: 677a77b357e9b8f633626c10b621459b14ec62595590fa06b9ef06cad5884584
+assemblies:
+- code: EXPL-01
+  assembly: access-panels-and-frame-returns
+  object_count: 112
+  material_role_counts:
+    al_cover: 64
+    al_deck: 8
+    silicone_seal: 8
+    steel_hardware: 32
+  hidden_dry_allowance_kg: 1.0
+  hidden_allowance_basis: Unrepresented latch/retention hardware and isolation washers; excludes all modeled fixings/gaskets.
+  objects:
+    Aft housing -1 service panel 1-3 access backing lip 0: al_cover
+    Aft housing -1 service panel 1-3 access backing lip 1: al_cover
+    Aft housing -1 service panel 1-3 access backing lip 2: al_cover
+    Aft housing -1 service panel 1-3 access backing lip 3: al_cover
+    Aft housing -1 service panel 1-3 access gasket: silicone_seal
+    Aft housing -1 service panel 1-3 access identifier: al_cover
+    Aft housing -1 service panel 1-3 handle: al_cover
+    Aft housing -1 service panel 1-3 handle foot -1: al_cover
+    Aft housing -1 service panel 1-3 handle foot 1: al_cover
+    Aft housing -1 service panel 1-3 quarter-turn catch 0: steel_hardware
+    Aft housing -1 service panel 1-3 quarter-turn catch 1: steel_hardware
+    Aft housing -1 service panel 1-3 quarter-turn catch 2: steel_hardware
+    Aft housing -1 service panel 1-3 quarter-turn catch 3: steel_hardware
+    Aft housing -1 service panel 1-3 removable access leaf: al_deck
+    Aft housing -1 service panel 1-5 access backing lip 0: al_cover
+    Aft housing -1 service panel 1-5 access backing lip 1: al_cover
+    Aft housing -1 service panel 1-5 access backing lip 2: al_cover
+    Aft housing -1 service panel 1-5 access backing lip 3: al_cover
+    Aft housing -1 service panel 1-5 access gasket: silicone_seal
+    Aft housing -1 service panel 1-5 access identifier: al_cover
+    Aft housing -1 service panel 1-5 handle: al_cover
+    Aft housing -1 service panel 1-5 handle foot -1: al_cover
+    Aft housing -1 service panel 1-5 handle foot 1: al_cover
+    Aft housing -1 service panel 1-5 quarter-turn catch 0: steel_hardware
+    Aft housing -1 service panel 1-5 quarter-turn catch 1: steel_hardware
+    Aft housing -1 service panel 1-5 quarter-turn catch 2: steel_hardware
+    Aft housing -1 service panel 1-5 quarter-turn catch 3: steel_hardware
+    Aft housing -1 service panel 1-5 removable access leaf: al_deck
+    Aft housing 1 service panel 1-1 access backing lip 0: al_cover
+    Aft housing 1 service panel 1-1 access backing lip 1: al_cover
+    Aft housing 1 service panel 1-1 access backing lip 2: al_cover
+    Aft housing 1 service panel 1-1 access backing lip 3: al_cover
+    Aft housing 1 service panel 1-1 access gasket: silicone_seal
+    Aft housing 1 service panel 1-1 access identifier: al_cover
+    Aft housing 1 service panel 1-1 handle: al_cover
+    Aft housing 1 service panel 1-1 handle foot -1: al_cover
+    Aft housing 1 service panel 1-1 handle foot 1: al_cover
+    Aft housing 1 service panel 1-1 quarter-turn catch 0: steel_hardware
+    Aft housing 1 service panel 1-1 quarter-turn catch 1: steel_hardware
+    Aft housing 1 service panel 1-1 quarter-turn catch 2: steel_hardware
+    Aft housing 1 service panel 1-1 quarter-turn catch 3: steel_hardware
+    Aft housing 1 service panel 1-1 removable access leaf: al_deck
+    Aft housing 1 service panel 1-3 access backing lip 0: al_cover
+    Aft housing 1 service panel 1-3 access backing lip 1: al_cover
+    Aft housing 1 service panel 1-3 access backing lip 2: al_cover
+    Aft housing 1 service panel 1-3 access backing lip 3: al_cover
+    Aft housing 1 service panel 1-3 access gasket: silicone_seal
+    Aft housing 1 service panel 1-3 access identifier: al_cover
+    Aft housing 1 service panel 1-3 handle: al_cover
+    Aft housing 1 service panel 1-3 handle foot -1: al_cover
+    Aft housing 1 service panel 1-3 handle foot 1: al_cover
+    Aft housing 1 service panel 1-3 quarter-turn catch 0: steel_hardware
+    Aft housing 1 service panel 1-3 quarter-turn catch 1: steel_hardware
+    Aft housing 1 service panel 1-3 quarter-turn catch 2: steel_hardware
+    Aft housing 1 service panel 1-3 quarter-turn catch 3: steel_hardware
+    Aft housing 1 service panel 1-3 removable access leaf: al_deck
+    Shoulder -1 service panel 1-3 access backing lip 0: al_cover
+    Shoulder -1 service panel 1-3 access backing lip 1: al_cover
+    Shoulder -1 service panel 1-3 access backing lip 2: al_cover
+    Shoulder -1 service panel 1-3 access backing lip 3: al_cover
+    Shoulder -1 service panel 1-3 access gasket: silicone_seal
+    Shoulder -1 service panel 1-3 access identifier: al_cover
+    Shoulder -1 service panel 1-3 handle: al_cover
+    Shoulder -1 service panel 1-3 handle foot -1: al_cover
+    Shoulder -1 service panel 1-3 handle foot 1: al_cover
+    Shoulder -1 service panel 1-3 quarter-turn catch 0: steel_hardware
+    Shoulder -1 service panel 1-3 quarter-turn catch 1: steel_hardware
+    Shoulder -1 service panel 1-3 quarter-turn catch 2: steel_hardware
+    Shoulder -1 service panel 1-3 quarter-turn catch 3: steel_hardware
+    Shoulder -1 service panel 1-3 removable access leaf: al_deck
+    Shoulder -1 service panel 1-5 access backing lip 0: al_cover
+    Shoulder -1 service panel 1-5 access backing lip 1: al_cover
+    Shoulder -1 service panel 1-5 access backing lip 2: al_cover
+    Shoulder -1 service panel 1-5 access backing lip 3: al_cover
+    Shoulder -1 service panel 1-5 access gasket: silicone_seal
+    Shoulder -1 service panel 1-5 access identifier: al_cover
+    Shoulder -1 service panel 1-5 handle: al_cover
+    Shoulder -1 service panel 1-5 handle foot -1: al_cover
+    Shoulder -1 service panel 1-5 handle foot 1: al_cover
+    Shoulder -1 service panel 1-5 quarter-turn catch 0: steel_hardware
+    Shoulder -1 service panel 1-5 quarter-turn catch 1: steel_hardware
+    Shoulder -1 service panel 1-5 quarter-turn catch 2: steel_hardware
+    Shoulder -1 service panel 1-5 quarter-turn catch 3: steel_hardware
+    Shoulder -1 service panel 1-5 removable access leaf: al_deck
+    Shoulder 1 service panel 1-1 access backing lip 0: al_cover
+    Shoulder 1 service panel 1-1 access backing lip 1: al_cover
+    Shoulder 1 service panel 1-1 access backing lip 2: al_cover
+    Shoulder 1 service panel 1-1 access backing lip 3: al_cover
+    Shoulder 1 service panel 1-1 access gasket: silicone_seal
+    Shoulder 1 service panel 1-1 access identifier: al_cover
+    Shoulder 1 service panel 1-1 handle: al_cover
+    Shoulder 1 service panel 1-1 handle foot -1: al_cover
+    Shoulder 1 service panel 1-1 handle foot 1: al_cover
+    Shoulder 1 service panel 1-1 quarter-turn catch 0: steel_hardware
+    Shoulder 1 service panel 1-1 quarter-turn catch 1: steel_hardware
+    Shoulder 1 service panel 1-1 quarter-turn catch 2: steel_hardware
+    Shoulder 1 service panel 1-1 quarter-turn catch 3: steel_hardware
+    Shoulder 1 service panel 1-1 removable access leaf: al_deck
+    Shoulder 1 service panel 1-3 access backing lip 0: al_cover
+    Shoulder 1 service panel 1-3 access backing lip 1: al_cover
+    Shoulder 1 service panel 1-3 access backing lip 2: al_cover
+    Shoulder 1 service panel 1-3 access backing lip 3: al_cover
+    Shoulder 1 service panel 1-3 access gasket: silicone_seal
+    Shoulder 1 service panel 1-3 access identifier: al_cover
+    Shoulder 1 service panel 1-3 handle: al_cover
+    Shoulder 1 service panel 1-3 handle foot -1: al_cover
+    Shoulder 1 service panel 1-3 handle foot 1: al_cover
+    Shoulder 1 service panel 1-3 quarter-turn catch 0: steel_hardware
+    Shoulder 1 service panel 1-3 quarter-turn catch 1: steel_hardware
+    Shoulder 1 service panel 1-3 quarter-turn catch 2: steel_hardware
+    Shoulder 1 service panel 1-3 quarter-turn catch 3: steel_hardware
+    Shoulder 1 service panel 1-3 removable access leaf: al_deck
+- code: EXPL-02
+  assembly: aft-equipment-housings
+  object_count: 170
+  material_role_counts:
+    al_cover: 76
+    al_frame: 4
+    al_label: 2
+    steel_hardware: 88
+  hidden_dry_allowance_kg: 2.0
+  hidden_allowance_basis: Unmodeled assembly clips, joint isolation and local joint sundries; no equipment contents.
+  objects:
+    Aft housing -1 aft interface blind cover: al_cover
+    Aft housing -1 aft interface blind cover captive fixing 0: steel_hardware
+    Aft housing -1 aft interface blind cover captive fixing 1: steel_hardware
+    Aft housing -1 aft interface blind cover captive fixing 2: steel_hardware
+    Aft housing -1 aft interface blind cover captive fixing 3: steel_hardware
+    Aft housing -1 aft interface blind cover captive fixing 4: steel_hardware
+    Aft housing -1 aft interface blind cover captive fixing 5: steel_hardware
+    Aft housing -1 aft interface blind cover captive fixing 6: steel_hardware
+    Aft housing -1 aft interface blind cover captive fixing 7: steel_hardware
+    Aft housing -1 casing 0-2: al_cover
+    Aft housing -1 casing 0-3: al_cover
+    Aft housing -1 casing 0-4: al_cover
+    Aft housing -1 casing 0-5: al_cover
+    Aft housing -1 casing 0-6: al_cover
+    Aft housing -1 casing 0-7: al_cover
+    Aft housing -1 casing 1-1: al_cover
+    Aft housing -1 casing 1-2: al_cover
+    Aft housing -1 casing 1-3: al_cover
+    Aft housing -1 casing 1-4: al_cover
+    Aft housing -1 casing 1-5: al_cover
+    Aft housing -1 casing 1-6: al_cover
+    Aft housing -1 casing 1-7: al_cover
+    Aft housing -1 casing 2-0: al_cover
+    Aft housing -1 casing 2-1: al_cover
+    Aft housing -1 casing 2-2: al_cover
+    Aft housing -1 casing 2-3: al_cover
+    Aft housing -1 casing 2-4: al_cover
+    Aft housing -1 casing 2-5: al_cover
+    Aft housing -1 casing 2-6: al_cover
+    Aft housing -1 casing 2-7: al_cover
+    Aft housing -1 end closure -1: al_cover
+    Aft housing -1 end closure 0: al_cover
+    Aft housing -1 restored exterior lower chamfer: al_cover
+    Aft housing -1 service panel 0-3: al_cover
+    Aft housing -1 service panel 0-3 captive fixing 0: steel_hardware
+    Aft housing -1 service panel 0-3 captive fixing 1: steel_hardware
+    Aft housing -1 service panel 0-3 captive fixing 2: steel_hardware
+    Aft housing -1 service panel 0-3 captive fixing 3: steel_hardware
+    Aft housing -1 service panel 0-4: al_cover
+    Aft housing -1 service panel 0-4 captive fixing 0: steel_hardware
+    Aft housing -1 service panel 0-4 captive fixing 1: steel_hardware
+    Aft housing -1 service panel 0-4 captive fixing 2: steel_hardware
+    Aft housing -1 service panel 0-4 captive fixing 3: steel_hardware
+    Aft housing -1 service panel 0-5: al_cover
+    Aft housing -1 service panel 0-5 captive fixing 0: steel_hardware
+    Aft housing -1 service panel 0-5 captive fixing 1: steel_hardware
+    Aft housing -1 service panel 0-5 captive fixing 2: steel_hardware
+    Aft housing -1 service panel 0-5 captive fixing 3: steel_hardware
+    Aft housing -1 service panel 1-3: al_cover
+    Aft housing -1 service panel 1-3 captive fixing 0: steel_hardware
+    Aft housing -1 service panel 1-3 captive fixing 1: steel_hardware
+    Aft housing -1 service panel 1-3 captive fixing 2: steel_hardware
+    Aft housing -1 service panel 1-3 captive fixing 3: steel_hardware
+    Aft housing -1 service panel 1-4: al_cover
+    Aft housing -1 service panel 1-4 captive fixing 0: steel_hardware
+    Aft housing -1 service panel 1-4 captive fixing 1: steel_hardware
+    Aft housing -1 service panel 1-4 captive fixing 2: steel_hardware
+    Aft housing -1 service panel 1-4 captive fixing 3: steel_hardware
+    Aft housing -1 service panel 1-5: al_cover
+    Aft housing -1 service panel 1-5 captive fixing 0: steel_hardware
+    Aft housing -1 service panel 1-5 captive fixing 1: steel_hardware
+    Aft housing -1 service panel 1-5 captive fixing 2: steel_hardware
+    Aft housing -1 service panel 1-5 captive fixing 3: steel_hardware
+    Aft housing -1 service panel 2-3: al_cover
+    Aft housing -1 service panel 2-3 captive fixing 0: steel_hardware
+    Aft housing -1 service panel 2-3 captive fixing 1: steel_hardware
+    Aft housing -1 service panel 2-3 captive fixing 2: steel_hardware
+    Aft housing -1 service panel 2-3 captive fixing 3: steel_hardware
+    Aft housing -1 service panel 2-4: al_cover
+    Aft housing -1 service panel 2-4 captive fixing 0: steel_hardware
+    Aft housing -1 service panel 2-4 captive fixing 1: steel_hardware
+    Aft housing -1 service panel 2-4 captive fixing 2: steel_hardware
+    Aft housing -1 service panel 2-4 captive fixing 3: steel_hardware
+    Aft housing -1 service panel 2-5: al_cover
+    Aft housing -1 service panel 2-5 captive fixing 0: steel_hardware
+    Aft housing -1 service panel 2-5 captive fixing 1: steel_hardware
+    Aft housing -1 service panel 2-5 captive fixing 2: steel_hardware
+    Aft housing -1 service panel 2-5 captive fixing 3: steel_hardware
+    Aft housing 1 aft interface blind cover: al_cover
+    Aft housing 1 aft interface blind cover captive fixing 0: steel_hardware
+    Aft housing 1 aft interface blind cover captive fixing 1: steel_hardware
+    Aft housing 1 aft interface blind cover captive fixing 2: steel_hardware
+    Aft housing 1 aft interface blind cover captive fixing 3: steel_hardware
+    Aft housing 1 aft interface blind cover captive fixing 4: steel_hardware
+    Aft housing 1 aft interface blind cover captive fixing 5: steel_hardware
+    Aft housing 1 aft interface blind cover captive fixing 6: steel_hardware
+    Aft housing 1 aft interface blind cover captive fixing 7: steel_hardware
+    Aft housing 1 casing 0-0: al_cover
+    Aft housing 1 casing 0-1: al_cover
+    Aft housing 1 casing 0-2: al_cover
+    Aft housing 1 casing 0-3: al_cover
+    Aft housing 1 casing 0-4: al_cover
+    Aft housing 1 casing 0-7: al_cover
+    Aft housing 1 casing 1-0: al_cover
+    Aft housing 1 casing 1-1: al_cover
+    Aft housing 1 casing 1-2: al_cover
+    Aft housing 1 casing 1-3: al_cover
+    Aft housing 1 casing 1-4: al_cover
+    Aft housing 1 casing 1-5: al_cover
+    Aft housing 1 casing 1-7: al_cover
+    Aft housing 1 casing 2-0: al_cover
+    Aft housing 1 casing 2-1: al_cover
+    Aft housing 1 casing 2-2: al_cover
+    Aft housing 1 casing 2-3: al_cover
+    Aft housing 1 casing 2-4: al_cover
+    Aft housing 1 casing 2-5: al_cover
+    Aft housing 1 casing 2-6: al_cover
+    Aft housing 1 casing 2-7: al_cover
+    Aft housing 1 end closure -1: al_cover
+    Aft housing 1 end closure 0: al_cover
+    Aft housing 1 restored exterior lower chamfer: al_cover
+    Aft housing 1 service panel 0-1: al_cover
+    Aft housing 1 service panel 0-1 captive fixing 0: steel_hardware
+    Aft housing 1 service panel 0-1 captive fixing 1: steel_hardware
+    Aft housing 1 service panel 0-1 captive fixing 2: steel_hardware
+    Aft housing 1 service panel 0-1 captive fixing 3: steel_hardware
+    Aft housing 1 service panel 0-2: al_cover
+    Aft housing 1 service panel 0-2 captive fixing 0: steel_hardware
+    Aft housing 1 service panel 0-2 captive fixing 1: steel_hardware
+    Aft housing 1 service panel 0-2 captive fixing 2: steel_hardware
+    Aft housing 1 service panel 0-2 captive fixing 3: steel_hardware
+    Aft housing 1 service panel 0-3: al_cover
+    Aft housing 1 service panel 0-3 captive fixing 0: steel_hardware
+    Aft housing 1 service panel 0-3 captive fixing 1: steel_hardware
+    Aft housing 1 service panel 0-3 captive fixing 2: steel_hardware
+    Aft housing 1 service panel 0-3 captive fixing 3: steel_hardware
+    Aft housing 1 service panel 1-1: al_cover
+    Aft housing 1 service panel 1-1 captive fixing 0: steel_hardware
+    Aft housing 1 service panel 1-1 captive fixing 1: steel_hardware
+    Aft housing 1 service panel 1-1 captive fixing 2: steel_hardware
+    Aft housing 1 service panel 1-1 captive fixing 3: steel_hardware
+    Aft housing 1 service panel 1-2: al_cover
+    Aft housing 1 service panel 1-2 captive fixing 0: steel_hardware
+    Aft housing 1 service panel 1-2 captive fixing 1: steel_hardware
+    Aft housing 1 service panel 1-2 captive fixing 2: steel_hardware
+    Aft housing 1 service panel 1-2 captive fixing 3: steel_hardware
+    Aft housing 1 service panel 1-3: al_cover
+    Aft housing 1 service panel 1-3 captive fixing 0: steel_hardware
+    Aft housing 1 service panel 1-3 captive fixing 1: steel_hardware
+    Aft housing 1 service panel 1-3 captive fixing 2: steel_hardware
+    Aft housing 1 service panel 1-3 captive fixing 3: steel_hardware
+    Aft housing 1 service panel 2-1: al_cover
+    Aft housing 1 service panel 2-1 captive fixing 0: steel_hardware
+    Aft housing 1 service panel 2-1 captive fixing 1: steel_hardware
+    Aft housing 1 service panel 2-1 captive fixing 2: steel_hardware
+    Aft housing 1 service panel 2-1 captive fixing 3: steel_hardware
+    Aft housing 1 service panel 2-2: al_cover
+    Aft housing 1 service panel 2-2 captive fixing 0: steel_hardware
+    Aft housing 1 service panel 2-2 captive fixing 1: steel_hardware
+    Aft housing 1 service panel 2-2 captive fixing 2: steel_hardware
+    Aft housing 1 service panel 2-2 captive fixing 3: steel_hardware
+    Aft housing 1 service panel 2-3: al_cover
+    Aft housing 1 service panel 2-3 captive fixing 0: steel_hardware
+    Aft housing 1 service panel 2-3 captive fixing 1: steel_hardware
+    Aft housing 1 service panel 2-3 captive fixing 2: steel_hardware
+    Aft housing 1 service panel 2-3 captive fixing 3: steel_hardware
+    Aft housing capped interface -1: al_cover
+    Aft housing capped interface 1: al_cover
+    Aft roof | sealed shell-to-compartment join -1: al_cover
+    Aft roof | sealed shell-to-compartment join 1: al_cover
+    Aft slope | closed jamb end -1: al_cover
+    Aft slope | closed jamb end 1: al_cover
+    Blind cover raised rib (-1, -0.19): al_frame
+    Blind cover raised rib (-1, 0.19): al_frame
+    Blind cover raised rib (1, -0.19): al_frame
+    Blind cover raised rib (1, 0.19): al_frame
+    Bridge inspection closure -1: al_cover
+    Bridge inspection closure 1: al_cover
+    Bridge orange access marking -1: al_label
+    Bridge orange access marking 1: al_label
+- code: EXPL-03
+  assembly: cockpit-core
+  object_count: 174
+  material_role_counts:
+    al_cover: 23
+    al_frame: 2
+    al_skin: 39
+    silica_optic: 13
+    silicone_seal: 25
+    steel_hardware: 72
+  hidden_dry_allowance_kg: 5.0
+  hidden_allowance_basis: Unrepresented glazing retention/bond/preload sundries and hull-joint/weld sundries; no
+    extra pane or command station.
+  objects:
+    Canopy aft frame -1: al_frame
+    Canopy aft frame 1: al_frame
+    Cockpit glazing 01-2 bonded perimeter 0-0: silicone_seal
+    Cockpit glazing 01-2 bonded perimeter 0-1: silicone_seal
+    Cockpit glazing 01-2 bonded perimeter 0-2: silicone_seal
+    Cockpit glazing 01-2 bonded perimeter 1-1: silicone_seal
+    Cockpit glazing 01-2 bonded perimeter 1-2: silicone_seal
+    Cockpit glazing 01-2 pane 0: silica_optic
+    Cockpit glazing 01-2 pane 1: silica_optic
+    Cockpit glazing 01-4 bonded perimeter 0-0: silicone_seal
+    Cockpit glazing 01-4 bonded perimeter 0-1: silicone_seal
+    Cockpit glazing 01-4 bonded perimeter 0-2: silicone_seal
+    Cockpit glazing 01-4 bonded perimeter 1-1: silicone_seal
+    Cockpit glazing 01-4 pane 0: silica_optic
+    Cockpit glazing 01-4 pane 1: silica_optic
+    Cockpit glazing 02-2 bonded perimeter 0-1: silicone_seal
+    Cockpit glazing 02-2 bonded perimeter 0-2: silicone_seal
+    Cockpit glazing 02-2 bonded perimeter 1-1: silicone_seal
+    Cockpit glazing 02-2 bonded perimeter 1-2: silicone_seal
+    Cockpit glazing 02-2 pane 0: silica_optic
+    Cockpit glazing 02-2 pane 1: silica_optic
+    Cockpit glazing 02-4 bonded perimeter 0-1: silicone_seal
+    Cockpit glazing 02-4 bonded perimeter 0-2: silicone_seal
+    Cockpit glazing 02-4 bonded perimeter 1-1: silicone_seal
+    Cockpit glazing 02-4 pane 0: silica_optic
+    Cockpit glazing 02-4 pane 1: silica_optic
+    Cockpit glazing 03-2 bonded perimeter 0-1: silicone_seal
+    Cockpit glazing 03-2 bonded perimeter 0-2: silicone_seal
+    Cockpit glazing 03-2 bonded perimeter 1-1: silicone_seal
+    Cockpit glazing 03-2 bonded perimeter 1-2: silicone_seal
+    Cockpit glazing 03-2 pane 0: silica_optic
+    Cockpit glazing 03-2 pane 1: silica_optic
+    Cockpit glazing 03-3 bonded perimeter 0-1: silicone_seal
+    Cockpit glazing 03-3 bonded perimeter 0-2: silicone_seal
+    Cockpit glazing 03-3 pane 0: silica_optic
+    Cockpit glazing 03-4 bonded perimeter 0-1: silicone_seal
+    Cockpit glazing 03-4 bonded perimeter 0-2: silicone_seal
+    Cockpit glazing 03-4 bonded perimeter 1-1: silicone_seal
+    Cockpit glazing 03-4 pane 0: silica_optic
+    Cockpit glazing 03-4 pane 1: silica_optic
+    Cockpit supported sill -1: al_cover
+    Cockpit supported sill 1: al_cover
+    Core pressure skin 01-0: al_skin
+    Core pressure skin 01-1: al_skin
+    Core pressure skin 01-5: al_skin
+    Core pressure skin 01-6: al_skin
+    Core pressure skin 01-7: al_skin
+    Core pressure skin 02-0: al_skin
+    Core pressure skin 02-1: al_skin
+    Core pressure skin 02-5: al_skin
+    Core pressure skin 02-6: al_skin
+    Core pressure skin 02-7: al_skin
+    Core pressure skin 03-0: al_skin
+    Core pressure skin 03-1: al_skin
+    Core pressure skin 03-5: al_skin
+    Core pressure skin 03-6: al_skin
+    Core pressure skin 03-7: al_skin
+    Core pressure skin 04-0: al_skin
+    Core pressure skin 04-1: al_skin
+    Core pressure skin 04-2: al_skin
+    Core pressure skin 04-3: al_skin
+    Core pressure skin 04-4: al_skin
+    Core pressure skin 04-5: al_skin
+    Core pressure skin 04-6: al_skin
+    Core pressure skin 04-7: al_skin
+    Core pressure skin 05-0: al_skin
+    Core pressure skin 05-1: al_skin
+    Core pressure skin 05-2: al_skin
+    Core pressure skin 05-3: al_skin
+    Core pressure skin 05-4: al_skin
+    Core pressure skin 05-5: al_skin
+    Core pressure skin 05-6: al_skin
+    Core pressure skin 05-7: al_skin
+    Core pressure skin 06-0: al_skin
+    Core pressure skin 06-1: al_skin
+    Core pressure skin 06-2: al_skin
+    Core pressure skin 06-3: al_skin
+    Core pressure skin 06-4: al_skin
+    Core pressure skin 06-5: al_skin
+    Core pressure skin 06-6: al_skin
+    Core pressure skin 06-7: al_skin
+    Core removable outer cover 01-1: al_cover
+    Core removable outer cover 01-1 captive fixing 0: steel_hardware
+    Core removable outer cover 01-1 captive fixing 1: steel_hardware
+    Core removable outer cover 01-1 captive fixing 2: steel_hardware
+    Core removable outer cover 01-1 captive fixing 3: steel_hardware
+    Core removable outer cover 01-5: al_cover
+    Core removable outer cover 01-5 captive fixing 0: steel_hardware
+    Core removable outer cover 01-5 captive fixing 1: steel_hardware
+    Core removable outer cover 01-5 captive fixing 2: steel_hardware
+    Core removable outer cover 01-5 captive fixing 3: steel_hardware
+    Core removable outer cover 02-1: al_cover
+    Core removable outer cover 02-1 captive fixing 0: steel_hardware
+    Core removable outer cover 02-1 captive fixing 1: steel_hardware
+    Core removable outer cover 02-1 captive fixing 2: steel_hardware
+    Core removable outer cover 02-1 captive fixing 3: steel_hardware
+    Core removable outer cover 02-5: al_cover
+    Core removable outer cover 02-5 captive fixing 0: steel_hardware
+    Core removable outer cover 02-5 captive fixing 1: steel_hardware
+    Core removable outer cover 02-5 captive fixing 2: steel_hardware
+    Core removable outer cover 02-5 captive fixing 3: steel_hardware
+    Core removable outer cover 03-1: al_cover
+    Core removable outer cover 03-1 captive fixing 0: steel_hardware
+    Core removable outer cover 03-1 captive fixing 1: steel_hardware
+    Core removable outer cover 03-1 captive fixing 2: steel_hardware
+    Core removable outer cover 03-1 captive fixing 3: steel_hardware
+    Core removable outer cover 03-5: al_cover
+    Core removable outer cover 03-5 captive fixing 0: steel_hardware
+    Core removable outer cover 03-5 captive fixing 1: steel_hardware
+    Core removable outer cover 03-5 captive fixing 2: steel_hardware
+    Core removable outer cover 03-5 captive fixing 3: steel_hardware
+    Core removable outer cover 04-1: al_cover
+    Core removable outer cover 04-1 captive fixing 0: steel_hardware
+    Core removable outer cover 04-1 captive fixing 1: steel_hardware
+    Core removable outer cover 04-2: al_cover
+    Core removable outer cover 04-2 captive fixing 0: steel_hardware
+    Core removable outer cover 04-2 captive fixing 1: steel_hardware
+    Core removable outer cover 04-2 captive fixing 2: steel_hardware
+    Core removable outer cover 04-2 captive fixing 3: steel_hardware
+    Core removable outer cover 04-3: al_cover
+    Core removable outer cover 04-3 captive fixing 0: steel_hardware
+    Core removable outer cover 04-3 captive fixing 1: steel_hardware
+    Core removable outer cover 04-3 captive fixing 2: steel_hardware
+    Core removable outer cover 04-3 captive fixing 3: steel_hardware
+    Core removable outer cover 04-4: al_cover
+    Core removable outer cover 04-4 captive fixing 0: steel_hardware
+    Core removable outer cover 04-4 captive fixing 1: steel_hardware
+    Core removable outer cover 04-4 captive fixing 2: steel_hardware
+    Core removable outer cover 04-4 captive fixing 3: steel_hardware
+    Core removable outer cover 04-5: al_cover
+    Core removable outer cover 04-5 captive fixing 0: steel_hardware
+    Core removable outer cover 04-5 captive fixing 1: steel_hardware
+    Core removable outer cover 05-1: al_cover
+    Core removable outer cover 05-1 captive fixing 3: steel_hardware
+    Core removable outer cover 05-2: al_cover
+    Core removable outer cover 05-2 captive fixing 0: steel_hardware
+    Core removable outer cover 05-2 captive fixing 1: steel_hardware
+    Core removable outer cover 05-2 captive fixing 2: steel_hardware
+    Core removable outer cover 05-2 captive fixing 3: steel_hardware
+    Core removable outer cover 05-3: al_cover
+    Core removable outer cover 05-3 captive fixing 0: steel_hardware
+    Core removable outer cover 05-3 captive fixing 1: steel_hardware
+    Core removable outer cover 05-3 captive fixing 2: steel_hardware
+    Core removable outer cover 05-3 captive fixing 3: steel_hardware
+    Core removable outer cover 05-4: al_cover
+    Core removable outer cover 05-4 captive fixing 0: steel_hardware
+    Core removable outer cover 05-4 captive fixing 1: steel_hardware
+    Core removable outer cover 05-4 captive fixing 2: steel_hardware
+    Core removable outer cover 05-4 captive fixing 3: steel_hardware
+    Core removable outer cover 05-5: al_cover
+    Core removable outer cover 05-5 captive fixing 2: steel_hardware
+    Core removable outer cover 06-1: al_cover
+    Core removable outer cover 06-1 captive fixing 0: steel_hardware
+    Core removable outer cover 06-1 captive fixing 2: steel_hardware
+    Core removable outer cover 06-1 captive fixing 3: steel_hardware
+    Core removable outer cover 06-2: al_cover
+    Core removable outer cover 06-2 captive fixing 0: steel_hardware
+    Core removable outer cover 06-2 captive fixing 1: steel_hardware
+    Core removable outer cover 06-2 captive fixing 2: steel_hardware
+    Core removable outer cover 06-2 captive fixing 3: steel_hardware
+    Core removable outer cover 06-3: al_cover
+    Core removable outer cover 06-3 captive fixing 0: steel_hardware
+    Core removable outer cover 06-3 captive fixing 1: steel_hardware
+    Core removable outer cover 06-3 captive fixing 2: steel_hardware
+    Core removable outer cover 06-3 captive fixing 3: steel_hardware
+    Core removable outer cover 06-4: al_cover
+    Core removable outer cover 06-4 captive fixing 0: steel_hardware
+    Core removable outer cover 06-4 captive fixing 1: steel_hardware
+    Core removable outer cover 06-4 captive fixing 2: steel_hardware
+    Core removable outer cover 06-4 captive fixing 3: steel_hardware
+    Core removable outer cover 06-5: al_cover
+    Core removable outer cover 06-5 captive fixing 1: steel_hardware
+    Core removable outer cover 06-5 captive fixing 2: steel_hardware
+    Core removable outer cover 06-5 captive fixing 3: steel_hardware
+- code: EXPL-04
+  assembly: cockpit-front-visor
+  object_count: 20
+  material_role_counts:
+    al_cover: 2
+    al_frame: 10
+    silica_optic: 2
+    silicone_seal: 6
+  hidden_dry_allowance_kg: 2.0
+  hidden_allowance_basis: Unrepresented glazing retention and joint sundries; no redundant pane silently added.
+  objects:
+    Visor | chamfer frame (-1, 0): al_frame
+    Visor | chamfer frame (-1, 1): al_frame
+    Visor | chamfer frame (-1, 2): al_frame
+    Visor | chamfer frame (1, 0): al_frame
+    Visor | chamfer frame (1, 1): al_frame
+    Visor | chamfer frame (1, 2): al_frame
+    Visor | chamfered roof brow: al_frame
+    Visor | faceted surround -1: al_frame
+    Visor | faceted surround 1: al_frame
+    Visor | glazing side seal (-1, 0): silicone_seal
+    Visor | glazing side seal (-1, 1): silicone_seal
+    Visor | glazing side seal (-1, 2): silicone_seal
+    Visor | glazing side seal (1, 0): silicone_seal
+    Visor | glazing side seal (1, 1): silicone_seal
+    Visor | glazing side seal (1, 2): silicone_seal
+    Visor | lower sill: al_cover
+    Visor | slender centre mullion: al_frame
+    Visor | upper seat: al_cover
+    Visor | windshield -1: silica_optic
+    Visor | windshield 1: silica_optic
+- code: EXPL-05
+  assembly: cockpit-nose
+  object_count: 1
+  material_role_counts:
+    al_skin: 1
+  hidden_dry_allowance_kg: 0.5
+  hidden_allowance_basis: Unrepresented welded-joint/seal sundries; no impact or reentry shielding.
+  objects:
+    Wedge nose | continuous pressure skin: al_skin
+- code: EXPL-06
+  assembly: compact-landing-gear-cover
+  object_count: 21
+  material_role_counts:
+    al_cover: 21
+  hidden_dry_allowance_kg: 1.5
+  hidden_allowance_basis: Cover drive links/catches and local harness not explicitly represented; not a landing
+    leg.
+  objects:
+    Nose gear compact cover end wall: al_cover
+    Nose gear compact cover front wall: al_cover
+    Nose gear compact cover left wall: al_cover
+    Nose gear compact cover right wall: al_cover
+    Nose gear compact cover roof: al_cover
+    Nose gear compact door -1: al_cover
+    Nose gear compact door 1: al_cover
+    Port aft gear compact cover end wall: al_cover
+    Port aft gear compact cover front wall: al_cover
+    Port aft gear compact cover left wall: al_cover
+    Port aft gear compact cover right wall: al_cover
+    Port aft gear compact cover roof: al_cover
+    Port aft gear compact door -1: al_cover
+    Port aft gear compact door 1: al_cover
+    Starboard aft gear compact cover end wall: al_cover
+    Starboard aft gear compact cover front wall: al_cover
+    Starboard aft gear compact cover left wall: al_cover
+    Starboard aft gear compact cover right wall: al_cover
+    Starboard aft gear compact cover roof: al_cover
+    Starboard aft gear compact door -1: al_cover
+    Starboard aft gear compact door 1: al_cover
+- code: EXPL-07
+  assembly: crew-hatch-and-folding-ladder
+  object_count: 82
+  material_role_counts:
+    al_cover: 9
+    al_deck: 9
+    al_frame: 36
+    epdm_wear: 20
+    ptfe_slide: 4
+    steel_hardware: 4
+  hidden_dry_allowance_kg: 10.0
+  hidden_allowance_basis: Unmodeled slide/fold drive, locks, bearing internals and local harness. New budget target,
+    no product power/load rating.
+  objects:
+    Crew access belly | round opening: al_cover
+    Crew access floor | round opening: al_deck
+    Crew hatch belly carrier ear -1: al_frame
+    Crew hatch belly carrier ear 1: al_frame
+    Crew hatch belly carrier seat -1: al_frame
+    Crew hatch belly carrier seat 1: al_frame
+    Crew hatch belly slide shoe -1: ptfe_slide
+    Crew hatch belly slide shoe 1: ptfe_slide
+    Crew hatch circular coaming: al_frame
+    Crew hatch floor carrier ear -1: al_frame
+    Crew hatch floor carrier ear 1: al_frame
+    Crew hatch floor carrier seat -1: al_frame
+    Crew hatch floor carrier seat 1: al_frame
+    Crew hatch floor slide shoe -1: ptfe_slide
+    Crew hatch floor slide shoe 1: ptfe_slide
+    Crew hatch front lower slot closure: al_cover
+    Crew hatch front upper slot closure: al_cover
+    Crew hatch handhold top -1: al_frame
+    Crew hatch handhold top 1: al_frame
+    Crew hatch handhold upright (-1, 1.1099999999999999): al_frame
+    Crew hatch handhold upright (-1, 1.23): al_frame
+    Crew hatch handhold upright (1, 1.1099999999999999): al_frame
+    Crew hatch handhold upright (1, 1.23): al_frame
+    Crew hatch latch recess -1: al_cover
+    Crew hatch latch recess 1: al_cover
+    Crew hatch lower rim: al_frame
+    Crew hatch pocket guide -1: al_cover
+    Crew hatch pocket guide 1: al_cover
+    Crew hatch quarter turn -1: steel_hardware
+    Crew hatch quarter turn 1: steel_hardware
+    Crew hatch round belly leaf: al_deck
+    Crew hatch round floor leaf: al_deck
+    Crew hatch safety rim: al_frame
+    Crew hatch track floor bracket (-1, 0.10999999999999999): al_frame
+    Crew hatch track floor bracket (-1, 1.01): al_frame
+    Crew hatch track floor bracket (-1, 1.9): al_frame
+    Crew hatch track floor bracket (1, 0.10999999999999999): al_frame
+    Crew hatch track floor bracket (1, 1.01): al_frame
+    Crew hatch track floor bracket (1, 1.9): al_frame
+    Crew hatch upper rim: al_frame
+    Crew ladder fold cheek (-1, -0.23500000000000001): al_frame
+    Crew ladder fold cheek (-1, -0.28500000000000003): al_frame
+    Crew ladder fold cheek (1, 0.23500000000000001): al_frame
+    Crew ladder fold cheek (1, 0.28500000000000003): al_frame
+    Crew ladder fold pin -1: steel_hardware
+    Crew ladder fold pin 1: steel_hardware
+    Crew ladder fold stop -1: al_cover
+    Crew ladder fold stop 1: al_cover
+    Crew ladder foot cap -1: epdm_wear
+    Crew ladder foot cap 1: epdm_wear
+    Crew ladder lower grip (0, -0.012): epdm_wear
+    Crew ladder lower grip (0, 0): epdm_wear
+    Crew ladder lower grip (0, 0.012): epdm_wear
+    Crew ladder lower grip (1, -0.012): epdm_wear
+    Crew ladder lower grip (1, 0): epdm_wear
+    Crew ladder lower grip (1, 0.012): epdm_wear
+    Crew ladder lower grip (2, -0.012): epdm_wear
+    Crew ladder lower grip (2, 0): epdm_wear
+    Crew ladder lower grip (2, 0.012): epdm_wear
+    Crew ladder lower rail -1: al_frame
+    Crew ladder lower rail 1: al_frame
+    Crew ladder lower tread 0: al_deck
+    Crew ladder lower tread 1: al_deck
+    Crew ladder lower tread 2: al_deck
+    Crew ladder top bracket -1: al_frame
+    Crew ladder top bracket 1: al_frame
+    Crew ladder top pivot -1: al_frame
+    Crew ladder top pivot 1: al_frame
+    Crew ladder upper grip (0, -0.012): epdm_wear
+    Crew ladder upper grip (0, 0): epdm_wear
+    Crew ladder upper grip (0, 0.012): epdm_wear
+    Crew ladder upper grip (1, -0.012): epdm_wear
+    Crew ladder upper grip (1, 0): epdm_wear
+    Crew ladder upper grip (1, 0.012): epdm_wear
+    Crew ladder upper grip (2, -0.012): epdm_wear
+    Crew ladder upper grip (2, 0): epdm_wear
+    Crew ladder upper grip (2, 0.012): epdm_wear
+    Crew ladder upper rail -1: al_frame
+    Crew ladder upper rail 1: al_frame
+    Crew ladder upper tread 0: al_deck
+    Crew ladder upper tread 1: al_deck
+    Crew ladder upper tread 2: al_deck
+- code: EXPL-08
+  assembly: edited-landing-gear-assembly
+  object_count: 24
+  material_role_counts:
+    al_frame: 12
+    epdm_wear: 3
+    ti_gear: 9
+  hidden_dry_allowance_kg: 45.0
+  hidden_allowance_basis: 15kg per leg reserved for unrepresented drive/geartrain/locks, bearing/seal/fluid and
+    local harness internals; NOT source190kg gear mass or38kg source actuator allocation.
+  objects:
+    Nose gear | LandingLeg180_fixed: ti_gear
+    Nose gear | LandingLeg180_leg: ti_gear
+    Nose gear | LandingLeg180_slider: ti_gear
+    Nose gear | ankle rib -1: al_frame
+    Nose gear | ankle rib 1: al_frame
+    Nose gear | clipped trapezoid pad: al_frame
+    Nose gear | dark sole: epdm_wear
+    Nose gear | raised perimeter: al_frame
+    Port aft gear | LandingLeg180_fixed: ti_gear
+    Port aft gear | LandingLeg180_leg: ti_gear
+    Port aft gear | LandingLeg180_slider: ti_gear
+    Port aft gear | ankle rib -1: al_frame
+    Port aft gear | ankle rib 1: al_frame
+    Port aft gear | clipped trapezoid pad: al_frame
+    Port aft gear | dark sole: epdm_wear
+    Port aft gear | raised perimeter: al_frame
+    Starboard aft gear | LandingLeg180_fixed: ti_gear
+    Starboard aft gear | LandingLeg180_leg: ti_gear
+    Starboard aft gear | LandingLeg180_slider: ti_gear
+    Starboard aft gear | ankle rib -1: al_frame
+    Starboard aft gear | ankle rib 1: al_frame
+    Starboard aft gear | clipped trapezoid pad: al_frame
+    Starboard aft gear | dark sole: epdm_wear
+    Starboard aft gear | raised perimeter: al_frame
+- code: EXPL-09
+  assembly: forward-shoulders
+  object_count: 176
+  material_role_counts:
+    al_cover: 80
+    al_deck: 10
+    silica_optic: 2
+    steel_hardware: 84
+  hidden_dry_allowance_kg: 2.0
+  hidden_allowance_basis: Unmodeled assembly clips and joint sundries; no engines/tanks/avionics contents.
+  objects:
+    Lamp guard (-1, -0.05): al_cover
+    Lamp guard (-1, 0.05): al_cover
+    Lamp guard (1, -0.05): al_cover
+    Lamp guard (1, 0.05): al_cover
+    Shoulder -1 aft interface blind cover: al_cover
+    Shoulder -1 aft interface blind cover captive fixing 0: steel_hardware
+    Shoulder -1 aft interface blind cover captive fixing 3: steel_hardware
+    Shoulder -1 aft interface blind cover captive fixing 4: steel_hardware
+    Shoulder -1 aft interface blind cover captive fixing 5: steel_hardware
+    Shoulder -1 aft interface blind cover captive fixing 6: steel_hardware
+    Shoulder -1 aft interface blind cover captive fixing 7: steel_hardware
+    Shoulder -1 casing 0-0: al_cover
+    Shoulder -1 casing 0-1: al_cover
+    Shoulder -1 casing 0-2: al_cover
+    Shoulder -1 casing 0-3: al_cover
+    Shoulder -1 casing 0-4: al_cover
+    Shoulder -1 casing 0-5: al_cover
+    Shoulder -1 casing 0-6: al_cover
+    Shoulder -1 casing 0-7: al_cover
+    Shoulder -1 casing 1-0: al_cover
+    Shoulder -1 casing 1-1: al_cover
+    Shoulder -1 casing 1-2: al_cover
+    Shoulder -1 casing 1-3: al_cover
+    Shoulder -1 casing 1-4: al_cover
+    Shoulder -1 casing 1-5: al_cover
+    Shoulder -1 casing 1-6: al_cover
+    Shoulder -1 casing 1-7: al_cover
+    Shoulder -1 casing 2-0: al_cover
+    Shoulder -1 casing 2-1: al_cover
+    Shoulder -1 casing 2-2: al_cover
+    Shoulder -1 casing 2-3: al_cover
+    Shoulder -1 casing 2-4: al_cover
+    Shoulder -1 casing 2-5: al_cover
+    Shoulder -1 casing 2-6: al_cover
+    Shoulder -1 casing 2-7: al_cover
+    Shoulder -1 end closure -1: al_cover
+    Shoulder -1 end closure 0: al_cover
+    Shoulder -1 service panel 0-3: al_cover
+    Shoulder -1 service panel 0-3 captive fixing 0: steel_hardware
+    Shoulder -1 service panel 0-3 captive fixing 1: steel_hardware
+    Shoulder -1 service panel 0-3 captive fixing 2: steel_hardware
+    Shoulder -1 service panel 0-3 captive fixing 3: steel_hardware
+    Shoulder -1 service panel 0-4: al_cover
+    Shoulder -1 service panel 0-4 captive fixing 0: steel_hardware
+    Shoulder -1 service panel 0-4 captive fixing 1: steel_hardware
+    Shoulder -1 service panel 0-4 captive fixing 2: steel_hardware
+    Shoulder -1 service panel 0-4 captive fixing 3: steel_hardware
+    Shoulder -1 service panel 0-5: al_cover
+    Shoulder -1 service panel 0-5 captive fixing 0: steel_hardware
+    Shoulder -1 service panel 0-5 captive fixing 1: steel_hardware
+    Shoulder -1 service panel 0-5 captive fixing 2: steel_hardware
+    Shoulder -1 service panel 0-5 captive fixing 3: steel_hardware
+    Shoulder -1 service panel 1-3: al_cover
+    Shoulder -1 service panel 1-3 captive fixing 0: steel_hardware
+    Shoulder -1 service panel 1-3 captive fixing 1: steel_hardware
+    Shoulder -1 service panel 1-3 captive fixing 2: steel_hardware
+    Shoulder -1 service panel 1-3 captive fixing 3: steel_hardware
+    Shoulder -1 service panel 1-4: al_cover
+    Shoulder -1 service panel 1-4 captive fixing 0: steel_hardware
+    Shoulder -1 service panel 1-4 captive fixing 1: steel_hardware
+    Shoulder -1 service panel 1-4 captive fixing 2: steel_hardware
+    Shoulder -1 service panel 1-4 captive fixing 3: steel_hardware
+    Shoulder -1 service panel 1-5: al_cover
+    Shoulder -1 service panel 1-5 captive fixing 0: steel_hardware
+    Shoulder -1 service panel 1-5 captive fixing 1: steel_hardware
+    Shoulder -1 service panel 1-5 captive fixing 2: steel_hardware
+    Shoulder -1 service panel 1-5 captive fixing 3: steel_hardware
+    Shoulder -1 service panel 2-3: al_cover
+    Shoulder -1 service panel 2-3 captive fixing 0: steel_hardware
+    Shoulder -1 service panel 2-3 captive fixing 1: steel_hardware
+    Shoulder -1 service panel 2-3 captive fixing 2: steel_hardware
+    Shoulder -1 service panel 2-3 captive fixing 3: steel_hardware
+    Shoulder -1 service panel 2-4: al_cover
+    Shoulder -1 service panel 2-4 captive fixing 0: steel_hardware
+    Shoulder -1 service panel 2-4 captive fixing 1: steel_hardware
+    Shoulder -1 service panel 2-4 captive fixing 2: steel_hardware
+    Shoulder -1 service panel 2-4 captive fixing 3: steel_hardware
+    Shoulder -1 service panel 2-5: al_cover
+    Shoulder -1 service panel 2-5 captive fixing 0: steel_hardware
+    Shoulder -1 service panel 2-5 captive fixing 1: steel_hardware
+    Shoulder -1 service panel 2-5 captive fixing 2: steel_hardware
+    Shoulder -1 service panel 2-5 captive fixing 3: steel_hardware
+    Shoulder 1 aft interface blind cover: al_cover
+    Shoulder 1 aft interface blind cover captive fixing 0: steel_hardware
+    Shoulder 1 aft interface blind cover captive fixing 1: steel_hardware
+    Shoulder 1 aft interface blind cover captive fixing 2: steel_hardware
+    Shoulder 1 aft interface blind cover captive fixing 3: steel_hardware
+    Shoulder 1 aft interface blind cover captive fixing 4: steel_hardware
+    Shoulder 1 aft interface blind cover captive fixing 7: steel_hardware
+    Shoulder 1 casing 0-0: al_cover
+    Shoulder 1 casing 0-1: al_cover
+    Shoulder 1 casing 0-2: al_cover
+    Shoulder 1 casing 0-3: al_cover
+    Shoulder 1 casing 0-4: al_cover
+    Shoulder 1 casing 0-5: al_cover
+    Shoulder 1 casing 0-6: al_cover
+    Shoulder 1 casing 0-7: al_cover
+    Shoulder 1 casing 1-0: al_cover
+    Shoulder 1 casing 1-1: al_cover
+    Shoulder 1 casing 1-2: al_cover
+    Shoulder 1 casing 1-3: al_cover
+    Shoulder 1 casing 1-4: al_cover
+    Shoulder 1 casing 1-5: al_cover
+    Shoulder 1 casing 1-6: al_cover
+    Shoulder 1 casing 1-7: al_cover
+    Shoulder 1 casing 2-0: al_cover
+    Shoulder 1 casing 2-1: al_cover
+    Shoulder 1 casing 2-2: al_cover
+    Shoulder 1 casing 2-3: al_cover
+    Shoulder 1 casing 2-4: al_cover
+    Shoulder 1 casing 2-5: al_cover
+    Shoulder 1 casing 2-6: al_cover
+    Shoulder 1 casing 2-7: al_cover
+    Shoulder 1 end closure -1: al_cover
+    Shoulder 1 end closure 0: al_cover
+    Shoulder 1 service panel 0-1: al_cover
+    Shoulder 1 service panel 0-1 captive fixing 0: steel_hardware
+    Shoulder 1 service panel 0-1 captive fixing 1: steel_hardware
+    Shoulder 1 service panel 0-1 captive fixing 2: steel_hardware
+    Shoulder 1 service panel 0-1 captive fixing 3: steel_hardware
+    Shoulder 1 service panel 0-2: al_cover
+    Shoulder 1 service panel 0-2 captive fixing 0: steel_hardware
+    Shoulder 1 service panel 0-2 captive fixing 1: steel_hardware
+    Shoulder 1 service panel 0-2 captive fixing 2: steel_hardware
+    Shoulder 1 service panel 0-2 captive fixing 3: steel_hardware
+    Shoulder 1 service panel 0-3: al_cover
+    Shoulder 1 service panel 0-3 captive fixing 0: steel_hardware
+    Shoulder 1 service panel 0-3 captive fixing 1: steel_hardware
+    Shoulder 1 service panel 0-3 captive fixing 2: steel_hardware
+    Shoulder 1 service panel 0-3 captive fixing 3: steel_hardware
+    Shoulder 1 service panel 1-1: al_cover
+    Shoulder 1 service panel 1-1 captive fixing 0: steel_hardware
+    Shoulder 1 service panel 1-1 captive fixing 1: steel_hardware
+    Shoulder 1 service panel 1-1 captive fixing 2: steel_hardware
+    Shoulder 1 service panel 1-1 captive fixing 3: steel_hardware
+    Shoulder 1 service panel 1-2: al_cover
+    Shoulder 1 service panel 1-2 captive fixing 0: steel_hardware
+    Shoulder 1 service panel 1-2 captive fixing 1: steel_hardware
+    Shoulder 1 service panel 1-2 captive fixing 2: steel_hardware
+    Shoulder 1 service panel 1-2 captive fixing 3: steel_hardware
+    Shoulder 1 service panel 1-3: al_cover
+    Shoulder 1 service panel 1-3 captive fixing 0: steel_hardware
+    Shoulder 1 service panel 1-3 captive fixing 1: steel_hardware
+    Shoulder 1 service panel 1-3 captive fixing 2: steel_hardware
+    Shoulder 1 service panel 1-3 captive fixing 3: steel_hardware
+    Shoulder 1 service panel 2-1: al_cover
+    Shoulder 1 service panel 2-1 captive fixing 0: steel_hardware
+    Shoulder 1 service panel 2-1 captive fixing 1: steel_hardware
+    Shoulder 1 service panel 2-1 captive fixing 2: steel_hardware
+    Shoulder 1 service panel 2-1 captive fixing 3: steel_hardware
+    Shoulder 1 service panel 2-2: al_cover
+    Shoulder 1 service panel 2-2 captive fixing 0: steel_hardware
+    Shoulder 1 service panel 2-2 captive fixing 1: steel_hardware
+    Shoulder 1 service panel 2-2 captive fixing 2: steel_hardware
+    Shoulder 1 service panel 2-2 captive fixing 3: steel_hardware
+    Shoulder 1 service panel 2-3: al_cover
+    Shoulder 1 service panel 2-3 captive fixing 0: steel_hardware
+    Shoulder 1 service panel 2-3 captive fixing 1: steel_hardware
+    Shoulder 1 service panel 2-3 captive fixing 2: steel_hardware
+    Shoulder 1 service panel 2-3 captive fixing 3: steel_hardware
+    Shoulder floor | sealed inner return -1 1: al_deck
+    Shoulder floor | sealed inner return -1 2: al_deck
+    Shoulder floor | sealed inner return 1 1: al_deck
+    Shoulder floor | sealed inner return 1 2: al_deck
+    Shoulder forward lamp housing -1: al_cover
+    Shoulder forward lamp housing 1: al_cover
+    Shoulder forward task lens -1: silica_optic
+    Shoulder forward task lens 1: silica_optic
+    Shoulder front | lower corner closure -1: al_cover
+    Shoulder front | lower corner closure 1: al_cover
+    Shoulder interior | level raised deck -1: al_deck
+    Shoulder interior | level raised deck 1: al_deck
+    Shoulder rear threshold | wall seam closure -1: al_deck
+    Shoulder rear threshold | wall seam closure 1: al_deck
+    Shoulder underside | floor-to-core seam -1: al_deck
+    Shoulder underside | floor-to-core seam 1: al_deck
+- code: EXPL-10
+  assembly: interior-floor-and-trim
+  object_count: 13
+  material_role_counts:
+    al_cover: 2
+    al_deck: 11
+  hidden_dry_allowance_kg: 1.0
+  hidden_allowance_basis: Unrepresented floor clips/isolators; no furniture, seat or lining module.
+  objects:
+    Cabin trim | continuous height -1: al_cover
+    Cabin trim | continuous height 1: al_cover
+    Cockpit floor | continuous forward deck: al_deck
+    Raised floor | perimeter return 0: al_deck
+    Raised floor | perimeter return 1: al_deck
+    Raised floor | perimeter return 2: al_deck
+    Raised floor | perimeter return 3: al_deck
+    Raised floor | perimeter return 5: al_deck
+    Raised floor | perimeter return 6: al_deck
+    Raised floor | perimeter return 7: al_deck
+    Raised floor | perimeter return 8: al_deck
+    Raised floor | perimeter return 9: al_deck
+    Starboard aft threshold | forward floor closure: al_deck
+- code: EXPL-11
+  assembly: interior-lighting
+  object_count: 68
+  material_role_counts:
+    al_cover: 34
+    silica_optic: 34
+  hidden_dry_allowance_kg: 8.5
+  hidden_allowance_basis: 34 named light diffusers paired with fixtures:0.25kg per fixture for unmodeled LED/driver/harness
+    internals; lenses/bezels already measured.
+  objects:
+    Interior compartment roof strip bezel -1: al_cover
+    Interior compartment roof strip bezel 1: al_cover
+    Interior compartment roof strip diffuser -1: silica_optic
+    Interior compartment roof strip diffuser 1: silica_optic
+    Interior forward toekick strip bezel -1: al_cover
+    Interior forward toekick strip bezel 1: al_cover
+    Interior forward toekick strip diffuser -1: silica_optic
+    Interior forward toekick strip diffuser 1: silica_optic
+    Interior rear lower bezel -1: al_cover
+    Interior rear lower bezel 1: al_cover
+    Interior rear lower diffuser -1: silica_optic
+    Interior rear lower diffuser 1: silica_optic
+    Interior rear upper bezel -1: al_cover
+    Interior rear upper bezel 1: al_cover
+    Interior rear upper diffuser -1: silica_optic
+    Interior rear upper diffuser 1: silica_optic
+    Interior shoulder roof strip bezel -1: al_cover
+    Interior shoulder roof strip bezel 1: al_cover
+    Interior shoulder roof strip diffuser -1: silica_optic
+    Interior shoulder roof strip diffuser 1: silica_optic
+    Interior toekick strip bezel -1 0: al_cover
+    Interior toekick strip bezel -1 1: al_cover
+    Interior toekick strip bezel -1 2: al_cover
+    Interior toekick strip bezel -1 3: al_cover
+    Interior toekick strip bezel -1 4: al_cover
+    Interior toekick strip bezel -1 5: al_cover
+    Interior toekick strip bezel 1 0: al_cover
+    Interior toekick strip bezel 1 1: al_cover
+    Interior toekick strip bezel 1 2: al_cover
+    Interior toekick strip bezel 1 3: al_cover
+    Interior toekick strip bezel 1 4: al_cover
+    Interior toekick strip bezel 1 5: al_cover
+    Interior toekick strip diffuser -1 0: silica_optic
+    Interior toekick strip diffuser -1 1: silica_optic
+    Interior toekick strip diffuser -1 2: silica_optic
+    Interior toekick strip diffuser -1 3: silica_optic
+    Interior toekick strip diffuser -1 4: silica_optic
+    Interior toekick strip diffuser -1 5: silica_optic
+    Interior toekick strip diffuser 1 0: silica_optic
+    Interior toekick strip diffuser 1 1: silica_optic
+    Interior toekick strip diffuser 1 2: silica_optic
+    Interior toekick strip diffuser 1 3: silica_optic
+    Interior toekick strip diffuser 1 4: silica_optic
+    Interior toekick strip diffuser 1 5: silica_optic
+    Interior upper side strip bezel -1 0: al_cover
+    Interior upper side strip bezel -1 1: al_cover
+    Interior upper side strip bezel -1 2: al_cover
+    Interior upper side strip bezel -1 3: al_cover
+    Interior upper side strip bezel -1 4: al_cover
+    Interior upper side strip bezel -1 5: al_cover
+    Interior upper side strip bezel 1 0: al_cover
+    Interior upper side strip bezel 1 1: al_cover
+    Interior upper side strip bezel 1 2: al_cover
+    Interior upper side strip bezel 1 3: al_cover
+    Interior upper side strip bezel 1 4: al_cover
+    Interior upper side strip bezel 1 5: al_cover
+    Interior upper side strip diffuser -1 0: silica_optic
+    Interior upper side strip diffuser -1 1: silica_optic
+    Interior upper side strip diffuser -1 2: silica_optic
+    Interior upper side strip diffuser -1 3: silica_optic
+    Interior upper side strip diffuser -1 4: silica_optic
+    Interior upper side strip diffuser -1 5: silica_optic
+    Interior upper side strip diffuser 1 0: silica_optic
+    Interior upper side strip diffuser 1 1: silica_optic
+    Interior upper side strip diffuser 1 2: silica_optic
+    Interior upper side strip diffuser 1 3: silica_optic
+    Interior upper side strip diffuser 1 4: silica_optic
+    Interior upper side strip diffuser 1 5: silica_optic
+- code: EXPL-12
+  assembly: internal-side-compartment-access
+  object_count: 16
+  material_role_counts:
+    al_cover: 16
+  hidden_dry_allowance_kg: 0.5
+  hidden_allowance_basis: Unrepresented local joint/retention sundries; no service contents.
+  objects:
+    Aft compartment flush corner return (-1, 0): al_cover
+    Aft compartment flush corner return (-1, 1): al_cover
+    Aft compartment flush corner return (-1, 2): al_cover
+    Aft compartment flush corner return (-1, 3): al_cover
+    Aft compartment flush corner return (-1, 4): al_cover
+    Aft compartment flush corner return (1, 0): al_cover
+    Aft compartment flush corner return (1, 1): al_cover
+    Aft compartment flush corner return (1, 2): al_cover
+    Aft compartment flush corner return (1, 3): al_cover
+    Aft compartment flush corner return (1, 4): al_cover
+    Aft compartment | underfloor seam closure -1: al_cover
+    Aft compartment | underfloor seam closure 1: al_cover
+    Forward compartment jamb | closed flat end -1: al_cover
+    Forward compartment jamb | closed flat end 1: al_cover
+    Opening jamb | port flat end cap: al_cover
+    Opening jamb | starboard flat end cap: al_cover
+- code: EXPL-13
+  assembly: nose-headlights
+  object_count: 12
+  material_role_counts:
+    al_cover: 10
+    silica_optic: 2
+  hidden_dry_allowance_kg: 1.0
+  hidden_allowance_basis: 0.5kg per2headlights for unmodeled emitter/driver/harness internals; lenses/bezels already
+    measured.
+  objects:
+    Headlight -1 | edge bezel -0.037: al_cover
+    Headlight -1 | edge bezel 0.037: al_cover
+    Headlight -1 | recessed lens: silica_optic
+    Headlight -1 | seated backplate: al_cover
+    Headlight -1 | side bezel -0.142: al_cover
+    Headlight -1 | side bezel 0.142: al_cover
+    Headlight 1 | edge bezel -0.037: al_cover
+    Headlight 1 | edge bezel 0.037: al_cover
+    Headlight 1 | recessed lens: silica_optic
+    Headlight 1 | seated backplate: al_cover
+    Headlight 1 | side bezel -0.142: al_cover
+    Headlight 1 | side bezel 0.142: al_cover
+- code: EXPL-14
+  assembly: port-aft-threshold
+  object_count: 1
+  material_role_counts:
+    al_deck: 1
+  hidden_dry_allowance_kg: 0.1
+  hidden_allowance_basis: Unrepresented threshold joint sundries.
+  objects:
+    Port aft threshold | forward floor closure: al_deck
+- code: EXPL-15
+  assembly: rear-boarding-ramp
+  object_count: 49
+  material_role_counts:
+    al_cover: 4
+    al_deck: 2
+    al_frame: 16
+    al_label: 2
+    epdm_wear: 15
+    steel_hardware: 10
+  hidden_dry_allowance_kg: 14.0
+  hidden_allowance_basis: 10kg two-leaf drives/brakes internals plus4kg locks/bearings/local harness/seal sundries;
+    visible housings/pins already measured.
+  objects:
+    Extension compact plate housing -1: al_cover
+    Extension compact plate housing 1: al_cover
+    Extension compact underside seat -1: al_cover
+    Extension compact underside seat 1: al_cover
+    Extension fixed geared hinge -1: al_frame
+    Extension fixed geared hinge 1: al_frame
+    Extension plate recessed fixing (-1, 1.445): steel_hardware
+    Extension plate recessed fixing (-1, 1.628): steel_hardware
+    Extension plate recessed fixing (1, 1.445): steel_hardware
+    Extension plate recessed fixing (1, 1.628): steel_hardware
+    Folding hinge compact cheek -1: al_frame
+    Folding hinge compact cheek 1: al_frame
+    Folding hinge moving ear -1: al_frame
+    Folding hinge moving ear 1: al_frame
+    Folding hinge output shaft -1: steel_hardware
+    Folding hinge output shaft 1: steel_hardware
+    Folding hinge rim tie -1: al_frame
+    Folding hinge rim tie 1: al_frame
+    Folding ramp anti-slip strip 0: epdm_wear
+    Folding ramp anti-slip strip 1: epdm_wear
+    Folding ramp anti-slip strip 2: epdm_wear
+    Folding ramp anti-slip strip 3: epdm_wear
+    Folding ramp anti-slip strip 4: epdm_wear
+    Folding ramp anti-slip strip 5: epdm_wear
+    Folding ramp anti-slip strip 6: epdm_wear
+    Folding ramp boxed side rim -1: al_frame
+    Folding ramp boxed side rim 1: al_frame
+    Folding ramp toe rim: al_frame
+    Folding ramp underside rib 0.23: al_frame
+    Folding ramp underside rib 0.66: al_frame
+    Folding ramp underside rib 1.1: al_frame
+    Folding rim orange inset -1: al_label
+    Folding rim orange inset 1: al_label
+    Rear closure fixed journal -1: steel_hardware
+    Rear closure fixed journal 1: steel_hardware
+    Rear ramp anti-slip strip 0: epdm_wear
+    Rear ramp anti-slip strip 1: epdm_wear
+    Rear ramp anti-slip strip 2: epdm_wear
+    Rear ramp anti-slip strip 3: epdm_wear
+    Rear ramp anti-slip strip 4: epdm_wear
+    Rear ramp anti-slip strip 5: epdm_wear
+    Rear ramp anti-slip strip 6: epdm_wear
+    Rear ramp anti-slip strip 7: epdm_wear
+    Rear ramp edge reinforcement -1: al_frame
+    Rear ramp edge reinforcement 1: al_frame
+    Rear ramp folding tread: al_deck
+    Rear ramp main leaf: al_deck
+    Rear ramp pivot pin -1: steel_hardware
+    Rear ramp pivot pin 1: steel_hardware
+- code: EXPL-16
+  assembly: rear-opening-fixed-frame
+  object_count: 7
+  material_role_counts:
+    al_frame: 7
+  hidden_dry_allowance_kg: 1.5
+  hidden_allowance_basis: Unrepresented frame/closure joint, retention and sealing sundries; not pressure qualification.
+  objects:
+    Rear opening frame | section 0: al_frame
+    Rear opening frame | section 1: al_frame
+    Rear opening frame | section 2: al_frame
+    Rear opening frame | section 3: al_frame
+    Rear opening frame | section 4: al_frame
+    Rear opening frame | section 5: al_frame
+    Rear opening frame | section 6: al_frame
+- code: EXPL-17
+  assembly: service-hardware
+  object_count: 6
+  material_role_counts:
+    al_cover: 1
+    silicone_seal: 1
+    steel_hardware: 4
+  hidden_dry_allowance_kg: 0.5
+  hidden_allowance_basis: Unrepresented dorsal cover retention/joint sundries; no future service equipment.
+  objects:
+    Dorsal gasket: silicone_seal
+    Dorsal maintenance cover: al_cover
+    Dorsal maintenance cover captive fixing 0: steel_hardware
+    Dorsal maintenance cover captive fixing 1: steel_hardware
+    Dorsal maintenance cover captive fixing 2: steel_hardware
+    Dorsal maintenance cover captive fixing 3: steel_hardware

@@ -1159,3 +1159,12 @@ owner_roof_tank_study:
         exist.
       fuel_only_screen: 500kg gives44s for one50kN CHS1pair or22s for fourCHS1atfull thrust, before reserves/cell/unusable;
         no mission selected.
+current_material_design:
+  schedule: docs/ships/explorer-material-stock-schedule.yaml
+  source_sha256: 8fc3a7e3ab384395592c35dde78b59a440830bbdae1f4a7ed59e55c07af8927e
+  objects: 952
+  assemblies: 17
+  status: Physical material/feedstock choices made as explicit invented/review prototype assumptions. Geometry mass
+    calculation proceeds from reconciled solids; whole mass not yet computed.
+  hidden_dry_allowance_kg: 96.1
+  historical_source: Earlier b29b source ledger and studies above remain historical; no QC acceptance transfer.
