@@ -1,0 +1,146 @@
+status: Chosen prototype construction directions; geometry execution and measured adoption still required
+basis:
+  tier: invented
+  review: true
+  authority: Owner full-auto Explorer completion; decisions are local hull-owned fabrication, not product ratings
+    or flight qualification
+requests:
+- 20261024T000835-blender-ac94
+- 20261024T000835-blender-dba6
+- 20261024T000915-blender-5947
+- 20261024T000915-blender-6286
+- 20261024T001233-blender-fd75
+bindings:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/returns-078-handoff.json: eb54265985a40c55cb7902512e5bf8727c9ceff3d9984cba8814acd63b337d76
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/returns-078-adjacent-check.json: 8a3d66070b4673d3d117a3b00d40b9434000d6f79d7ab70e17dca23ba046f515
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/returns-078-repair.json: 408a9d60961aa90b895597aab3f455027ff8188c168f6a244af6af30c65da99f
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/returns-078-views.json: 002cbe04c3f9559b7fa60687e04ed432b142ca2a790943015edf24fb52bf9580
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/rear-journal-pocket-report-v2.json: f2d39b07172c7df3ceed2e1c0cfb26edf5cb07202563c1b4898a5f5dbeb0d17c
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/rear-journal-pocket-base-report-v2.json
+  : 1364e9a298635204a8884d2c1bf7119f9437fe22ee01c1cac99ae2d530337492
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/equipment-support-v4-gear-ground.json: 5ece5b7cd1ee92566497238a53314cbd3484e5c5c359f4490210c3f45e65c6b0
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/engine-pressure-collar-host-thickness.json
+  : 01fa108155dad26d2dc572d9f0ed5852c95547603b28c349f548583d88086a09
+  /home/alexm/.agents/reviews/ships/explorer-functional-20261023/equipment-v4-local-closures.json: 8f6266e0c6406535fa614151f0d0dbfcb9ba4b41cb1c7970ab947825c88bd2c1
+return_interfaces:
+  evidence: Seven named positive intersections in bound adjacent-check, including both return0/8 ends and return9
+    contacts. Return7/04-0 conflict 0.00031309893359806994m3 predates new thickness; 3.386768742kg is gross rebuilt
+    quantity only.
+  choice: 'Keep pressure skins 03-0/03-6/04-0/04-6 intact. Return7 is a nonstructural closeout: explicitly supersede
+    its immutable old reference face and rebuild its affected span on the cabin side of the actual skin inner facets,
+    with 2mm normal clearance to the skin and full 2mm6061 sheet thickness. Preserve the floor junction and visible
+    upper edge where feasible using a finite folded transition. Do not Boolean-delete two thirds of the sheet and
+    call disconnected remnants a repair.'
+  endpieces: For return0/8, keep existing reference faces outside the listed local conflict bounds; shorten/cope
+    the ends to leave 2mm normal skin clearance. At return9 use a finite butt seam with 1mm assembly gap and a separate
+    backed 2mm6061 joining strip on the dry side if support is otherwise lost. Measure the actual strip/attachment;
+    no pressure-skin hole or unsupported floating edge.
+  stock: stock.al6061-sh-2; density2700kg/m3. Clearances are chosen layout gaps, not manufacturing standards.
+  handoff:
+  - New exact retirement/replace rows for all3 originals and any added transition/strip; preserve originals in historical
+    study.
+  - Show original/derived in context and sections at every one of the seven named conflicts; report disjoint material
+    solids and actual deck/support contacts.
+  - Check crew/gear/service/cassette space after cabinward move; preserve any signed cavity shells intentionally.
+    No mass credit until replacement and same-material union replay.
+  visual_scope: 'Registry inspected matched return7 original/derived images: only fragments show through skin, supporting
+    local redesign rather than a claim that the old face is a usable exposed closeout.'
+rear_door_seal:
+  choice: Build a continuous fixed 6061 carrier with a finite silicone face gasket, following the true rear opening
+    and U-detouring above both fixed journal pockets. Seal against a matching leaf land; do not cap the journal
+    mouth across the rotating pin.
+  carrier_thickness_m: 0.006
+  carrier_land_width_m: 0.02
+  gasket_contact_width_m: 0.012
+  gasket_free_thickness_m: 0.002
+  chosen_closed_compression_share: 0.2
+  chosen_closed_gap_m: 0.0016
+  nominal_geometry: 'At nominal leaf landX4.938, carrier faceX4.9364 and backX4.9304 give1.6mm compressed gap. These
+    replace the earlier4.930..4.936 proposal: its2mm gap gives zero compression. Derive final surfaces from actual
+    leaf/frame facets, not rounded coordinate assertions. Preserve 4mm carrier margin each side of the centred12mm
+    gasket.'
+  pocket_route: Route inside gasket edge beyond the full fixed pocket envelope absY0.975..1.163 and topZ1.840; first
+    layout offset2mm from that envelope, then add the finite12mm gasket and20mm backed carrier outward. Preserve
+    the measured central passage as far as possible and report any loss. Round/miter gasket corners as actual joined
+    material, no overlapping straight bars or pressure leak at the U returns.
+  attachments: Back carrier to named fixed rear-frame members with real finite joints; choose explicit solid stop
+    pads outside gasket to set1.6mm closed gap. Stops/hinges/latches carry closing load; gasket is not a structural
+    stop. Draw leaf contact land and closure/latch attachments, accessible fasteners and replacement path.
+  checks: Replay all83 journal/leaf states against carrier/gasket/stops, show the full continuous seal perimeter
+    and open/closed sections. Distinguish intended closed compression from hard-part collision. Report new mass
+    and retired parts once.
+  limits: 20% is an explicit prototype geometry choice, not a supplier recommendation. Silicone hardness, compression
+    force/set, temperature, radiation/vacuum compatibility, pressure/leak qualification and latch load remain unresolved.
+floor_boss_closure:
+  host: Crew access floor | service openings, EXPL-07 hull-owned6061 current service-cut deck; topZ1.850, underside1.838
+    in the named flat regions. This is not a removable pressure-pan lid, equipment module or cosmetic gear cover.
+  authorizes: Four local102mm floor holes at sourceX1.2/2.2,Y+/-1.3 for actual solid100mm bosses; compose onto existing
+    service/cassette edits. Stop and redraw locally if an actual hole crosses a service aperture, seam, cassette
+    or removable panel.
+  collar: One3mm6061 underside annulus per boss, OD180mm, nominalZ1.835..1.838. Machine inner contour to actual
+    boss with0.25mm radial assembly gap (nominalID100.5mm), distinct from102mm floor hole. Ring spans the floor-hole
+    radial gap; add actual finite sealing weld at boss/ring and supported ring/floor perimeter. Do not call the1mm
+    floor-hole gap a seal.
+  loadpath: Solid boss and real frame connection carry engine/support load. Collar closes the local deck gap and
+    provides a bounded attached interface; floor/collar is not assigned engine thrust capacity or a pressure rating.
+    No proud geometry above walking top.
+  accounting: Retire current service-cut floor once and count its new cut volume,4rings and actual weld material.
+    Never restore/add the intact831.178kg parent. stock.al6061-sh-3 for rings, material6061 density2700. Preserve
+    walking/gear/9nut/9fork/3panel tool/removal routes.
+engine_skin_reconstruction:
+  scope:
+  - Core pressure skin 05-0
+  - Core pressure skin 05-6
+  - Core pressure skin 06-0
+  - Core pressure skin 06-6
+  reason: Current source bfc3cfa audit demonstrates crossed inner/outer faces and negative raw06-0 volume; positive
+    aggregate volume of other hosts is not a thickness waiver.
+  choice: Reconstruct these four whole bounded host panels as new3mm6061 formed/faceted sheet, preserving each actual
+    outward triangle and its crease/outer perimeter as exterior design authority. Offset each actual outward facet
+    inward by3mm normal distance, solve crease miters and close finite perimeter edges. Preserve noncoplanar triangle
+    creases; do not flatten a quad or average its normals. This is an explicit new stock/thickness design choice
+    superseding as-drawn retention for these four invalid hosts only.
+  stock: stock.al6061-sh-3; material.aluminium-alloy-6061 density2700kg/m3. No T6 weld strength, pressure capacity
+    or generic skin thickness inferred.
+  sequence:
+  - Freeze exact raw host meshes and named outward triangle IDs from bound audit. Verify which faces are outward
+    against the assembled hull before constructing each solid.
+  - Build uncut positive panel, retain existing bounded interface/aperture ownership, then compose only the already
+    approved collar holes and actual finite collar/weld seats. Adjacent existing collars/skin seams must be checked,
+    not erased.
+  - Map old host to new host once. Report uncut and cut volumes/masses, signed thickness throughout each facet including
+    corners, positive material regions and intentional cavity shells.
+  - Check skin-to-neighbour seam continuity, cabin/route/gear/service/support interfaces and matched exterior views.
+    Changed cabin-side thickness is a real geometry edit, so old clearance evidence is stale there.
+  limits: Do not repair by winding flip, absolute volume, convex hull, hidden remesh, blind local deletion or accepting
+    a mesh-volume waiver. Geometry adoption does not establish pressure/load qualification.
+plume_layout_reservation:
+  product_scope: Same catalogue25kN CHS1, vacuum-only short airless-moon study. No change to nozzle, rating, fuel
+    or gimbal product contract.
+  choice: For first layout screening reserve a downstream expanding cone/frustum from the measured actual exit disc:45degree
+    half-angle,100mm radial additional layout margin, through the first5m downstream. Sweep that region over the
+    full recorded0.07rad gimbal range about the actual pivot and every intended gear/ship pose. This is deliberately
+    a chosen geometric review region, not a bound on a vacuum plume.
+  formula: At axial distance s in[0,5]m, radius=measured exit radius+0.100m+s*tan45deg. Do not treat a ray origin1mm
+    outside the bell as the exit marker. No main/lift hardware, gear, hatch/ladder, exit/crew reservation, services
+    or tank may occupy the chosen region; report actual intersections and redesign them locally.
+  current_ground:
+    reported_bell_to_soleplane_m: 0.4869333505630493
+    exit_diameter_record_m: 0.579
+    nominal_vertical_footprint_radius_m: 0.8764333505630493
+    scope: 'Arithmetic illustration only: assumes bell bound equals exit plane, flat sole-level ground, zero gimbal.
+      Actual disc/pivot/terrain must replace these assumptions.'
+  ground_policy: 'Do not require clear cone through the landing surface: it necessarily impinges. Show actual terrain
+    footprint and nearby legs/hull/exit reservations, including full gimbal union; keep plume impingement, ejecta,
+    regolith erosion/cratering, reflected flow and heating as explicit unknowns.5m truncation does not mean effects
+    stop there. No numerical safe stand-off or safe dwell is asserted by the486.9mm height or this screen.'
+  operating_gate: Keep this geometric prototype and software-hop test distinct from a qualified moon landing. Fuel/thrust/heat/software
+    limits do not close plume/surface hazards. Duration/site/thermal/erosion acceptance needs a separately justified
+    source/model/test, not cone-clear or axis-clear alone.
+  primary_context:
+    url: https://ntrs.nasa.gov/citations/20240003511
+    supports: NASA hybridCFD/erosion work treats terrain erosion/ejecta/cratering as coupled plume/surface behaviour.
+      It does not supply our45degree cone,100mm margin,5m extent or a safe bell height.
+execution_handoff: Blender owns separate reversible construction and exact geometry evidence; Ships reruns support/contact/service/crew/plume
+  layouts using these choices. Registry can adopt measured quantities once exact replace maps and evidence exist.
+  No active hull record, whole mass or functional acceptance is created by this decision pack.
