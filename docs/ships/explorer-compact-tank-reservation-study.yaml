@@ -1,0 +1,90 @@
+status: Provisional reservation parameters for iterative bay study only; not physical product geometry, accepted
+  capacity, selected fit or compliance.
+source_tank:
+  key: equipment.tank.hydrolox.0p5t
+  path: standards/SFO/metadata/equipment/tank-hydrolox-0p5t.yaml
+  sha256: 3c75097f645dfe4fb9bc5014b6ca8aa1f5b13ae5115ec0fe7e0eda3e45abc64d
+inputs:
+  fluid_equivalent_density_kg_m3: 320
+  source_inner_radius_m: 0.735
+  wall_m: 0.002
+  insulation_and_closeout_m: 0.1
+  service_boss_length_addition_m: 0.122
+  saddle_height_addition_m: 0.066
+  fixed_internal_volume_reserve_m3: 0.10072355345983497
+basis:
+  existing_family: '0.5t catalogue basis: innerR.735,2mmwall,100mminsulation/closeout. Boss/saddle envelope additions
+    from existing recorded dimensions. Family design itself is derived/review, not certified.'
+  trial_derivation: 'Keep the FULL0.5t internal-volume surplus over500/320 fluid bookkeeping, instead of assuming
+    it shrinks. For100/200kg: V_inner=C/320+surplus; R=cuberoot(3V/4pi); add unchanged2mmwall+100mminsulation. This
+    only defines trial reservation envelopes, not a manufacturable bulkhead/two-circuit product.'
+  trial_clearances: 100mm radial assembly and250mm service end are explicit temporary geometric test parameters
+    chosen for this study, not sourced maintenance, cryogenic isolation or removal compliance. All replacement/removal/pipe
+    bends/separation need actual design later.
+  clearance_axes: Reserve100mm on each Y/Z face beyond the stated product box;250mm on EACH X service end. These
+    are separate nonexported test regions. Both bays remain unallocated pending actual exclusions.
+trials:
+- study_id: hydrolox_100kg_reservation
+  capacity_kg_not_selected: 100
+  fluid_equivalent_volume_m3: 0.3125
+  total_inner_volume_m3_trial: 0.41322355345983497
+  inner_radius_m_trial: 0.46206047430657315
+  insulated_body_diameter_m_trial: 1.1281209486131463
+  product_box_m_trial:
+    length: 1.2501209486131462
+    width: 1.1281209486131463
+    height: 1.1941209486131463
+  separate_clearance_m_trial:
+    radial_assembly: 0.1
+    service_end: 0.25
+  source_centres_to_test:
+  - - 3.8
+    - -2.45
+    - 2.8
+  - - 3.8
+    - 2.45
+    - 2.8
+  orientation: Product long/service axis along source X; both mirrored bays tested independently. No crew area allocated
+    by this declaration.
+  combined_study_box_m_not_a_product:
+    length: 1.7501209486131462
+    width: 1.3281209486131462
+    height: 1.3941209486131463
+- study_id: hydrolox_200kg_reservation
+  capacity_kg_not_selected: 200
+  fluid_equivalent_volume_m3: 0.625
+  total_inner_volume_m3_trial: 0.725723553459835
+  inner_radius_m_trial: 0.5574777472019229
+  insulated_body_diameter_m_trial: 1.3189554944038457
+  product_box_m_trial:
+    length: 1.4409554944038456
+    width: 1.3189554944038457
+    height: 1.3849554944038458
+  separate_clearance_m_trial:
+    radial_assembly: 0.1
+    service_end: 0.25
+  source_centres_to_test:
+  - - 3.8
+    - -2.45
+    - 2.8
+  - - 3.8
+    - 2.45
+    - 2.8
+  orientation: Product long/service axis along source X; both mirrored bays tested independently. No crew area allocated
+    by this declaration.
+  combined_study_box_m_not_a_product:
+    length: 1.9409554944038456
+    width: 1.5189554944038457
+    height: 1.5849554944038458
+acceptance_limits:
+- Use nonexported primitive reservations only; do not resize/relabel existing product or model a production tank
+  from this arithmetic.
+- Check hull containment and intersections in both end poses, all existing equipment/crew/sweep reservations and
+  compartment access; failed witness refines or rejects trial.
+- A zero-hit primitive does not establish a usable bay or production tank fit. Report boundary, access and crew/motion
+  conflicts separately.
+- Actual LOX/LH2 split, ullage, common bulkhead, thermal separation, pressure/stock/mass, compact cradle and two-circuit
+  service layout remain to be designed.
+- Neither100 nor200kg is selected as the mission fuel requirement; full mass/mission/routing still open.
+- Do not cut, inflate hull, use crew access space, hide inherited geometry, or publish fit by this study. Escalate
+  conflict through existing shape/module allocation workflow.
