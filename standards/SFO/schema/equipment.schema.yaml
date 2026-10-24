@@ -323,7 +323,6 @@ properties:
           moment: { type: number, exclusiveMinimum: 0, x-unit: "N m", description: "N m, the most it bends its mount by at work: a boom held out, loaded, at 1 g" }
       - description: "Throws heat into space from a hot surface. Not in the game yet."
         type: object
-        x-in-game: "not made"
         additionalProperties: false
         required: [kind]
         properties:
@@ -404,7 +403,6 @@ properties:
           pressure: { type: number, x-unit: "Pa", description: "Pa it holds" }
       - description: "Stores electric energy chemically: slower than a capacitor, far more of it. Not in the game yet."
         type: object
-        x-in-game: "not made"
         additionalProperties: false
         required: [kind]
         properties:
@@ -589,7 +587,6 @@ properties:
           endurance: { type: number, x-unit: "s", description: "s of air and power a suit carries" }
       - description: "A landing sensor: it measures the distance to the ground below. Not in the game yet."
         type: object
-        x-in-game: "not made"
         additionalProperties: false
         required: [kind, range, accuracy]
         properties:
@@ -598,7 +595,6 @@ properties:
           accuracy: { type: number, x-unit: "m", description: "m, how closely" }
       - description: "A camera the pilot sees by where there is no window: under the ship for the pads, aft for docking. Not in the game yet."
         type: object
-        x-in-game: "not made"
         additionalProperties: false
         required: [kind, field_of_view]
         properties:
