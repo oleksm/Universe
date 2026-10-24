@@ -192,3 +192,53 @@ derived_study_review:
   next: Separate frame-core and pane-seat/seal-carrier redesign with sections, min webs and finite contact lands.
     No blind deeper frame cuts or pressure-skin deduction. Explicitly report incompatible intent/geometry.
   whole_mass_accepted: false
+protected_core_study_review:
+  source_sha256: 8fc3a7e3ab384395592c35dde78b59a440830bbdae1f4a7ed59e55c07af8927e
+  bindings:
+    /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/boundary-core-study.json: ee929e1891189d6b915950c3e7cde050fdd8b016257ddee0ea90c047e3939ae1
+    /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/glazing-core-sections.json: acb7818fb2acc5bce367742083b23d5373b324d95be418fde40011b590d84492
+    /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/boundary-core-study-meshes.json: d27d91346d38991a4674fd95c87ecfd0e75e25df7138fe4c29acb29a918d09bc
+    /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/glazing-core-sections.svg: bd131fb07fcf1ab45918c753b12952d7f8d0b445056a8dd1647c9c1b83c02fb4
+  status: Draft local partition candidate; connectivity/end joints pending, no live edit or whole mass acceptance
+  panes_reported_preserved: 13
+  finite_carriers: 25
+  protected_cores:
+  - name: Canopy aft frame -1
+    protected_core_volume_m3: 0.004505048941892485
+    core_missing_from_final_frame_m3: 4.905636512477081e-12
+    scope: 90percent longitudinal span; end-joint retention and strength unresolved
+  - name: Canopy aft frame 1
+    protected_core_volume_m3: 0.004453787309095637
+    core_missing_from_final_frame_m3: 1.1081797334427915e-11
+    scope: 90percent longitudinal span; end-joint retention and strength unresolved
+  - name: Cockpit supported sill 1
+    protected_core_volume_m3: 0.002173745325427267
+    core_missing_from_final_frame_m3: 4.4210079673146246e-11
+    scope: 90percent longitudinal span; end-joint retention and strength unresolved
+  - name: Cockpit supported sill -1
+    protected_core_volume_m3: 0.0025952041496734145
+    core_missing_from_final_frame_m3: 1.9939577423527153e-12
+    scope: 90percent longitudinal span; end-joint retention and strength unresolved
+  residual_volume_observations:
+    pane_seal_overlap_m3: -9.976792298430262e-11
+    pane_namedframe_overlap_m3: 2.848013927829872e-11
+    seal_namedframe_overlap_m3: 2.4188080922334998e-11
+  numeric_scope: Near-zero signed boolean residuals include small negative roundoff; use absolute residual/tolerance,
+    not negative physical matter. No precise min-web strength follows from core containment or max-inscribed section
+    diameter.
+  independent_mesh_check:
+    meshes: 48
+    volume_max_error_m3: 8.97975260902989e-09
+    nonmanifold_edge_objects: []
+    multi_component_frames:
+      Cockpit supported sill -1: 14
+      Canopy aft frame -1: 23
+      Cockpit supported sill 1: 28
+      Canopy aft frame 1: 20
+      Visor | faceted surround -1: 8
+      Visor | faceted surround 1: 14
+      Visor | lower sill: 2
+      Visor | upper seat: 10
+  next: Identify each protected-core component, actual end contacts and every retained/discarded island. Split seal
+    carriers need deliberate joins; report pane before/after hashes. No silent component removal or fusion. Dorsal
+    pressure skin untouched and conflict remains.
