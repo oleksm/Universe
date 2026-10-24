@@ -1,0 +1,33 @@
+status: Material choice and load disposition for the one-radiator wide-guide V3 prototype; first-order, not a
+  qualification
+source_task: 20261024T163657-blender-b4e5
+packet: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-fit-current-study/radiator-retention-one-v3/handoff.json
+packet_sha256: e901bf17ed4056766c1a58a64d0c9f9e12245189ad141971661b66833433f909
+geometry: Four keyed 90x10 mm pads, rows 100 mm apart, 865 mm2 overlap at +-3.5 mm (800 mm2 credited), 37.5 um
+  running gaps, hard stops, positive tab locks - meets docs/ships/explorer-radiator-one-v2-load-review.yaml
+material:
+  pads: PTFE with 40% bronze filler
+  density_kg_m3: 3900
+  why: Better creep and wear than glass-filled and conducts heat; good in vacuum. Against hard-anodised 6061 races.
+  design_values:                  # invented/review, of the order of makers' sheets, to be sourced
+    compressive_at_1pct_deformation_MPa: 8
+    static_friction: 0.15
+  mass: Recompute the pads at 3900 kg/m3 (the 2.651962 kg total used a 2200 proxy)
+loads:                            # limit 20 m/s2, 1.25 yield, 2.0 ultimate, as b541dac69
+  moment_only_MPa: 2.5            # 200 N m / 0.1 m / 800 mm2
+  moment_plus_shear_MPa: 2.75     # half the 400 N shear on the loaded row
+  ultimate_MPa: 5.5               # under 8 MPa at 1% deformation: margin 1.45
+  verdict: Pass on the credited area
+thermal_reaction:
+  dead_load_N: 282                # parked at 1.281 m/s2: two rows from the 12.8 N m dead moment plus the dead shear
+  friction_N: 42                  # 0.15 x 282
+  verdict: Pass, under the 500 N limit; a landing may stick the guide, which need not slide then
+replication: Released for the study to copy to the other seven radiators once the pad mass is recounted; each copy
+  re-screens its own placement (505 states, 16 cones, tools)
+still_open:
+- Product feet material and strength (product author)
+- Welds and receiver to the G frame; frame-to-gear path
+- Panel thermal distortion beyond local guide travel; creep under thermal cycling
+scope:
+  active_record_created: false
+  product_changed: false
