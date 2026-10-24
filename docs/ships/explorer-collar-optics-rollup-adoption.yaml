@@ -1,0 +1,160 @@
+status: bounded prototype geometry/quantity adoption; no installed wholemass/pressure/load release
+requests:
+- 20261023T233921-blender-e091
+- 20261023T234008-blender-e7cc
+bindings:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/roof-collar-final-report-v1.json: 0f109235ea42cf729bb352dd98d2ab1faadb9b893509a7add97a2d86fb378e3d
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/roof-collar-final-audit-v1.json: 573c32728e96b0e19bf6321372709108bff77e58cd3bc1b718b204de31ccd92d
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/roof-collar-final-meshes-v1.json: 2a2626431fb353a1c9aa03ff671564ca9c1d1e190c9d8414d308d8477d5016bf
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/roof-collar-final-source-screen-v1.json
+  : b1cd6917dd6d7a6b4021a762913368bc0a413fffb5d9aa05cf5c39d56c98e60f
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/cumulative-optics-v2.json: 85f09592bd62ce63ed0c5c7f725c9a2091dae1ebf83e04baef21840d6ac6a336
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/cumulative-optics-v2-meshes.json: f6efa798624c187aa8e3c4a21fc866bb9e62ffde6c9696e21426f888dab7f295
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/glazing-v7-numerical-witness.json: d517d83b345fabe53be8d07e46fbc51b8ae09458c51c2d0815683ac9b33b070c
+roof_collars:
+  decision: Adopt six host-conforming collar pieces, ten explicit weld solids and four exact cloned host replacements
+    into the separate combined roof-frame candidate. This is the named controlled roof-penetration design; it does
+    not authorize unrelated skin cuts.
+  parts: 6
+  weld_solids: 10
+  cloned_host_replacements:
+  - Core pressure skin 05-3
+  - Core pressure skin 06-3
+  - Core removable outer cover 05-3
+  - Core removable outer cover 06-3
+  retired_old_frame_collar_names:
+  - roof_boss_1_collar
+  - roof_boss_2_collar
+  - roof_boss_3_collar
+  - roof_boss_4_collar
+  collar_mass_kg: 0.7546862928314962
+  weld_mass_kg: 0.04829786815723954
+  stock_blank_mass_kg: 2.7198185089400577
+  machining_removed_mass_kg: 1.9651322161085614
+  stock_policy: Use actual machined final solids from stock.al6061-pl-8, minimum3mmremaining normal wall. Blank
+    mass and machining scrap are procurement, not installed mass. Weld metal is separate additional6061prototype
+    material with2700kg/m3; no qualified filler/process claim.
+  host_cut_map:
+  - boss: roof_boss_1
+    host: Core pressure skin 05-3
+    diameter_m: 0.102
+    removed_m3: 4.9000319552683534e-05
+  - boss: roof_boss_1
+    host: Core removable outer cover 05-3
+    diameter_m: 0.11
+    removed_m3: 3.799125370259532e-05
+  - boss: roof_boss_2
+    host: Core pressure skin 05-3
+    diameter_m: 0.102
+    removed_m3: 4.9000319552686455e-05
+  - boss: roof_boss_2
+    host: Core removable outer cover 05-3
+    diameter_m: 0.11
+    removed_m3: 3.799125370259211e-05
+  - boss: roof_boss_3
+    host: Core pressure skin 06-3
+    diameter_m: 0.102
+    removed_m3: 5.264373488894397e-05
+  - boss: roof_boss_3
+    host: Core removable outer cover 06-3
+    diameter_m: 0.11
+    removed_m3: 4.054883942507793e-05
+  - boss: roof_boss_4
+    host: Core pressure skin 06-3
+    diameter_m: 0.102
+    removed_m3: 5.264373488894447e-05
+  - boss: roof_boss_4
+    host: Core removable outer cover 06-3
+    diameter_m: 0.11
+    removed_m3: 4.054883942508091e-05
+  host_cut_object_sum_kg: 0.9729943968742327
+  verification: 20frozen meshes have positive signed volumes and two incident triangles per indexed edge; volume
+    and mass arithmetic,6finite host contacts and exact input/report hashes checked. Registry did not rerun host
+    contact/Boolean/torch sampling.
+  remaining: Cap closure, full current frame/shoe/gear assembly, all motion, actual torch approach, pressure and
+    load checks remain outside this input. 05/06host overlap1.792517485e-5m3 is inherited and retained for same-material
+    union, not a new joint waiver. Nearzero signed shells in connectivity report are not physical fragments to delete.
+  mass_adoption: Replace four original host solids once; replace four old frame collar blanks only if they were
+    present in the assembled frame ledger. Add six collars and ten welds once, then compute the combined aluminium
+    union. Current bare950candidate has no roofframe, so do not subtract old frame collars from its mass.
+optics_rollup:
+  objects: 950
+  independent_frozen_mesh_signed_volume_comparisons: 950
+  raw_signed_vs_reported_manifold_volume_differences_above_1e_7_m3:
+  - name: Core pressure skin 04-5
+    raw_signed_mesh_volume_m3: 0.0028533083518099463
+    reported_manifold_volume_m3: 0.0028546047328650605
+    difference_m3: -1.2963810551141347e-06
+  - name: Shoulder 1 casing 2-4
+    raw_signed_mesh_volume_m3: 0.0016968862156478011
+    reported_manifold_volume_m3: 0.0016773660409716907
+    difference_m3: 1.9520174676110466e-05
+  - name: Shoulder -1 casing 2-2
+    raw_signed_mesh_volume_m3: 0.0017398933288067856
+    reported_manifold_volume_m3: 0.001699590785519654
+    difference_m3: 4.030254328713152e-05
+  - name: Aft housing 1 casing 1-4
+    raw_signed_mesh_volume_m3: 0.003232911085631428
+    reported_manifold_volume_m3: 0.0032327734102691077
+    difference_m3: 1.3767536232020192e-07
+  - name: Aft housing 1 casing 0-4
+    raw_signed_mesh_volume_m3: 0.0007964482195922801
+    reported_manifold_volume_m3: 0.000793770549524532
+    difference_m3: 2.6776700677481153e-06
+  - name: Raised floor | perimeter return 0
+    raw_signed_mesh_volume_m3: 1.4484514560437312e-05
+    reported_manifold_volume_m3: 1.559081296901091e-05
+    difference_m3: -1.1062984085735972e-06
+  - name: Raised floor | perimeter return 7
+    raw_signed_mesh_volume_m3: 1.2823505479666578e-05
+    reported_manifold_volume_m3: 1.3209950583749471e-05
+    difference_m3: -3.8644510408289355e-07
+  - name: Raised floor | perimeter return 8
+    raw_signed_mesh_volume_m3: 1.5252429557803492e-05
+    reported_manifold_volume_m3: 1.61451754276436e-05
+    difference_m3: -8.927458698401061e-07
+  max_abs_volume_difference_m3: 4.030254328713152e-05
+  same_material_subtotal_kg: 6759.9968643481125
+  net_change_from_glazing_only_kg: -24.424529390075804
+  prior_gross_optics_part_delta_kg: -25.51428655195228
+  hidden_dry_reserve_kg: 96.1
+  accepted_whole_mass_kg: null
+  remaining_material_families:
+  - a: material.aluminium-alloy-6061
+    b: material.high-strength-steel-4340
+    volume_m3: 0.0006159777841718985
+  - a: material.aluminium-alloy-6061
+    b: material.fused-silica
+    volume_m3: 3.706403237209605e-12
+  - a: material.aluminium-alloy-6061
+    b: material.epdm-rubber
+    volume_m3: 1.237008172389622e-05
+  - a: material.aluminium-alloy-6061
+    b: material.titanium-alloy-ti-6al-4v
+    volume_m3: 3.773684449900209e-05
+  - a: material.aluminium-alloy-6061
+    b: material.ptfe
+    volume_m3: 9.35996493952543e-05
+  - a: material.aluminium-alloy-6061
+    b: material.silicone-rubber
+    volume_m3: 6.032021761551537e-09
+  - a: material.fused-silica
+    b: material.silicone-rubber
+    volume_m3: 1.2722444106336443e-09
+  decision: Bind exact950-object opticsV2+glazingV7 rollup as a reported bare prototype baseline pending explanation
+    of the listed raw-mesh versus manifold volume-domain differences, replacing the earlier974 subtotal. Union-based
+    delta differs from gross part delta by design; do not reconcile by forcing either figure. Mechanical localjoint
+    repairs and roofframe/pans/equipment still remain.
+  verification: All950frozen object signed volumes computed and all950record density arithmetic checked; raw mesh
+    versus reported manifold differences are listed and not asserted equal; material-union arithmetic and source-binding
+    hashes verified. Boolean material unions not independently recomputed by Registry.
+glazing_residual_binding_update:
+  witness: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/glazing-v7-numerical-witness.json
+  candidate_hash_verified: 37b7b58bf74b9ebae3c081e034b0f2aaf69d1feb1dced523780f5c8ce1b92890
+  internal_named_pair_rows: 12
+  decision: Bind the received per-pair float32/float64/local-normal witness to the exactV7 adoption. Its local depths
+    and Registry full-vertex slab bounds use different geometric domains, both retained; no global tolerance or
+    manufacturing fit is inferred.
+next: Combine these bounded geometry sets with actual service/mechanical replacements and frame members using exact
+  retirement ownership. Count every real weld/fastener/support and offset only the specifically superseded hidden
+  reserves. Then freeze current canonical export and wholemass record.
