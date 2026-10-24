@@ -54,6 +54,26 @@ remote_controller:
   wiring: Ship harness (shell 25, 3x6 mm2) ends at the controller box. Controller to motor - 3 x run.wire-6mm2 phase
     leads (about 12 A rms each at 400 W) and 4 x run.wire-0p5mm2 for sensors, in one sleeve, through a shell 25
     (power) and a shell 11 (sensors) on each end.
+  motor_out_pins:                # source_task 20261024T164039-blender-6229; supersedes the wiring line above for the motor lead
+    connector: shell 25, box half female (source), motor lead/cooler half male (load)
+    A: phase U
+    B: phase V
+    C: phase W
+    D: protective earth - motor case bond, 6 mm2 like the phases, its pin 1.0 mm proud (first make, last break)
+    wires: 4 x run.wire-6mm2
+  sensor_pins:
+    connector: shell 11, box half female, cooler half male; not CAN
+    '1': hall supply +5 V
+    '2': sensor return 0 V (also the thermistor's return)
+    '3': hall A
+    '4': hall B
+    '5': hall C
+    '6': motor winding thermistor
+    '7': screen drain (bonded at the box end only)
+    wires: 7 x run.wire-0p5mm2 (was 4), hall lines and supply twisted with the return
+  no_cross_mating: On the box the ship-in shell 25 is male (the box is the ship's load) and the motor-out shell 25 is
+    female (the box is the motor's source), so the two shell 25 plugs cannot be swapped
+  invented/review: true
   cooler_side: The air cooler keeps only its motor terminals and a small terminal cover; its retained panel takes
     the two receptacles from the controller, not the ship harness.
   invented/review: true
