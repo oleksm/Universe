@@ -1,0 +1,36 @@
+status: Chosen prototype controller enclosure, mount and heat path for the air cooler S0; not product release or rating
+source_task: 20261024T140016-blender-261b
+finding: The air cooler has a motor case, fan, exchanger and rear shroud cap but no controller enclosure. The board
+  (docs/ships/explorer-aircooler-internal-termination-choice.yaml, 100x80x30 mm, about 20 W) needs a new case of its
+  own; the shroud is not relabelled as one.
+enclosure:
+  material: material.aluminium-alloy-6061 (T6), anodised
+  wall_m: 0.002
+  construction: Folded 6061 tray with TIG-welded corners, the connector end plate (shell 25 power, two shell 11 CAN)
+    on the face nearest the harness route
+  size: Board reservation (worker's trial X 0.175..0.205, Y 0.026..0.106, Z 0.040..0.140) plus the 60 mm wire zone at
+    the connector end, 3 mm clearance all round, plus walls. Author measures and reports the outer envelope.
+heat_path:
+  why: Airless use - no convection; the only sink is conduction
+  sink: The exchanger's 6061 header frame, which the coolant loop holds at 273..363 K
+  heat_wall: The enclosure wall facing the header, bolted flat to a machined 6061 pad on the header frame through a
+    0.5 mm thermal gap pad (about 3 W/m K, invented/review)
+  check: 20 W across 100x80 mm of pad is about 0.021 K/W, 0.4 K rise; the board's power devices sit on this wall on
+    insulating pads
+  not_the_lid: The heat wall is never the lid
+mount:
+  fasteners: Four M4 A2 stainless through the heat wall into threaded inserts in the header pad, at the corners of the
+    100x80 face; the same bolts carry the enclosure (under 1 kg) and press the gap pad
+  load_check: Under 1 kg at 20 m/s2 is under 20 N - nominal for four M4
+lid:
+  face: Opposite the heat wall
+  construction: As docs/ships/explorer-coolant-controller-case-construction.yaml - 2 mm 6061 lid on a 1.5 mm backing
+    flange, 1 mm conductive silicone (2000 kg/m3), captive M3 at no more than 60 mm along the gasket centreline,
+    compression stops
+remaining:
+- Measured packing of board, wire zone and enclosure against the motor case, fan, exchanger and shroud
+- Header pad and insert placement on the drawn exchanger
+- Thermal, EMC and vibration qualification
+scope:
+  active_record_created: false
+  product_original_changed: false
