@@ -1,0 +1,67 @@
+status: Root load, material and thermal disposition for equipment.thermal.radiator.s0 paired root brackets on the
+  Explorer wingframe study; prototype sizing, not a strength, thermal or fit acceptance
+source_task: 20261024T133448-ships-bcb9
+packet: /home/alexm/.agents/reviews/ships/explorer-final-ground-20261024/radiator-paired-root-retention-v1.json
+packet_sha256: 57a3f2e000ff5c8f1e5f74907f0fa52efd57925e9366f2c5b67e41b33e4dc036
+frame: Radiator source product frame of the packet (root at Y0, panel +Y, thickness along Z)
+load_basis:
+  limit_acceleration_m_s2: 20
+  direction: Any, applied alone in the worst direction
+  source: Explorer gear plan (docs/ships/explorer-functional-record-plan.yaml) - 3.0 m/s design sink into a 0.3 m
+    stroke at 0.8 efficiency is about 18.8 m/s2, plus Port Sirnendis gravity 1.28. Main and RCS thrust (under 3 m/s2)
+    are inside it. invented/review until the hull has its structure report (SFO 15).
+  factors: Joint must not gap at limit; no yield at 1.25 x limit; no rupture at 2.0 x limit (untested prototype).
+  invented/review: true
+radiator_mass:
+  kg: 40                      # record
+  COM_y_m: 0.5                # panel mid-span; conservative, headers and fittings sit at the root
+worst_case:
+  out_of_plane_Z:
+    root_moment_per_bracket_Nm: 200      # 40 x 20 x 0.5 / 2
+    shear_per_bracket_N: 400
+    lever_m: 0.038                       # far bolt Z 0.013 to compression edge of the foot land Z 0.025
+    bolt_tension_limit_N: 5263
+  in_plane: Y axial 200 N per bolt; X shear 800 N total held by clamp friction; moment about Z gives +-206 N per
+    bolt over the 1.94 m bracket span - all small
+choices:
+  bolts:
+    size: M5
+    class: 10.9 alloy steel, corrosion-protected finish
+    why: 8.8 (proof 8.5 kN, UTS 11.4 kN) leaves 8% at ultimate. 10.9 gives proof 11.8 kN, UTS 14.8 kN.
+    preload_N: 8250            # 0.7 proof; above the 5263 N limit, so the joint does not gap
+    yield_check: 1.25 x limit external well under 11.8 kN proof with preload
+    ultimate_check: 2.0 x limit = 10.5 kN, under 14.8 kN
+    locking: Positive locking (lock wire or tab washer) as the packet asks; no friction-only reliance
+  plate:
+    material: 6061-T6
+    thickness_m: 0.010         # was 0.005
+    why: Bolt pull bent over about 15 mm to the receiver edge on a 40 mm effective width stresses 5 mm plate to about
+      470 MPa at limit; 10 mm gives about 120 MPa (1.25x 148 MPa under 276 MPa yield; 2.0x 237 MPa under 310 MPa UTS).
+      The receiver must back the plate within 15 mm of each bolt line, outside the nut and the D12 tool reservation.
+    size_m: [0.080, 0.010, 0.070]
+    mass_kg_each: 0.1512
+    all_16_kg: 2.4192
+  bolt_length: Stack 40 root + 10 plate + 2 washers + 4 nut = 56 mm; use M5x60 (4 mm protrusion). Check thread
+    runout on the drawn parts.
+  washer_bearing: About 180 MPa under a 10 mm OD washer at the yield case; inside 6061 bearing limits. The product's
+    feet strength is the product author's to show.
+thermal:
+  span_m: 1.94
+  design_root_to_frame_difference_K: 100      # invented/review; radiator 273..363 K loop vs a sunlit/shadowed frame
+  free_growth_mm: 4.6                          # 6061 at 23.6e-6/K
+  rigid_both_ends: Rejected - about 163 MPa thermal stress in the root and bolt slip
+  disposition: Brackets stay identical and clamped. The X- receiver is fixed. The X+ receiver carries the bracket on
+    a flexure or guided slide compliant in X only, at least +-3 mm, at most 500 N of X force over that travel, and
+    stiff in Y and Z for the loads above. That compliance belongs to the new wingframe receiver.
+  same_material: 6061 bracket on the radiator's aluminium feet; no CTE mismatch across the clamp
+  conduction: Root-to-frame heat leak not judged; the thermal model owns it. No isolating washers required now.
+ownership: Radiators are payloads of the new common wingframe and anchor nothing; RCS loads go to the wingframe roots
+  as the packet says.
+remaining:
+- Drawn receivers with the 15 mm backing rule, X+ compliance and tool reservations
+- Product feet face areas, washer lands and feet strength from the product author
+- Thermal model with root conduction and occlusion
+- Combined RCS/radiator load cases on the wingframe and its hull roots
+scope:
+  active_record_created: false
+  product_changed: false

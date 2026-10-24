@@ -1,0 +1,35 @@
+status: Chosen prototype material and construction for the coolant-loop S0 controller case and its new service lid;
+  not product release or rating
+source_task: 20261024T133551-blender-be72
+packet: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-fit-current-study/coolant-electrical-v2/handoff.json
+packet_sha256: 1c6452732e502ea8f0a4680fa1d403cd9fb21b2a4ff7260b6ae11ca535927fdb
+item: equipment.thermal.coolant-loop.s0, part CLP0-03 Controls (good.electronics, 3 kg nominal)
+finding: The record names no case stock; build_coolant_loop_s0.py draws CLP0_03_ControlCase as a 160x40x140 mm box
+  with 1.5 mm walls (outer 0.160, cut 0.157) under a generic case material. No access lid exists, so end-cap removal
+  needs wires and clips off. A lid is right.
+case:
+  material: material.aluminium-alloy-6061 (T6), anodised
+  wall_m: 0.0015                  # as drawn; not thinned or thickened
+  construction: Folded 6061 sheet tray (base and four walls) with TIG-welded corners; the -X end keeps the
+    connector end plate already built in V1/V2. invented/review.
+  stock: stock.al6061-sh-2 as the nearest catalogue sheet target until a 1.5 mm sheet exists; finished mass from
+    geometry, not the nominal gauge
+lid:
+  face: One of the two large 160x140 faces - whichever has tool access in the installed skid - never the -X
+    connector end. Opening it must expose the board and the three clips with wires connected.
+  plate: 6061-T6, 2 mm
+  joint: Lid seats on a 1.5 mm 6061 internal backing flange riveted or welded inside the case rim, giving a 6 mm land
+  gasket: Silicone 1 mm, conductive filled for EMC continuity across the lid; dust/splash only, not a pressure seal
+  fasteners: 8 captive M3 A2 stainless screws at no more than 60 mm pitch into steel self-clinching nuts in the
+    backing flange (rated for sheet of 1.5 mm and up)
+  stops: Compression stops so the gasket closes to 0.75 mm and no further
+  invented/review: true
+board_heat: The 15 W driver loss stays on a case wall that is not the lid (docs/ships/explorer-coolant-internal-termination-choice.yaml)
+mass: Inside the 3 kg CLP0-03 nominal; lid, flange and hardware are counted from geometry when drawn
+remaining:
+- Drawn lid on the chosen face with its tool sweep in the installed skid
+- Board mount, depinning tools, crimp and EMC qualification
+- Case attachment to the skid tray and the original stock assignment
+scope:
+  active_record_created: false
+  product_original_changed: false
