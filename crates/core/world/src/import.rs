@@ -244,10 +244,19 @@ fn ramp(shape: &crate::shape::Shape, authored: Option<(DVec3, DVec3)>, tris: Vec
 /// Imported: a hull among the others for good (the same file, the same hull).
 pub fn commission(bytes: &[u8], visual: &str) -> Result<Hull, String> {
     let spec = hull_from_gltf(bytes, visual)?;
-    if let Some(h) = content().handle::<ClassSpec>(&spec.key) {
-        return Ok(h);
+    let h = match content().handle::<ClassSpec>(&spec.key) {
+        Some(h) => h,
+        None => content().hulls.add(spec)?,
+    };
+    // (Its path key stays its identity (saves, designs); a record naming this exact path and these exact bytes
+    // (its model_sha256) finds it by the record's own key too.)
+    let sha = crate::mechanisms::sha256(bytes);
+    if let Some(r) = crate::registry::registry().hulls.iter().find(|r| r.model.as_deref() == Some(visual) && r.model_sha256.as_deref().is_some_and(|s| s.eq_ignore_ascii_case(&sha))) {
+        if !content().hulls.alias(&r.identity.key, h) {
+            log::warn!("{}: its key is another hull's; found by its path key only", r.identity.key);
+        }
     }
-    content().hulls.add(spec)
+    Ok(h)
 }
 
 fn read(bytes: &[u8], owned: &[String]) -> Result<Read, String> {

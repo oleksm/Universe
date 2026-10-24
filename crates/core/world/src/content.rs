@@ -167,6 +167,17 @@ impl<T: Entry> Registry<T> {
         self.index.get(key).map(|&i| Handle::new(i as usize)).or_else(|| self.extra_index.read().unwrap_or_else(|e| e.into_inner()).get(key).map(|&i| Handle::new(i as usize)))
     }
 
+    /// Another key for an entry already here (an imported hull's registry key beside its path key): found by
+    /// either from now on. False where `alias` is already some entry's key (that one is kept).
+    pub fn alias(&self, alias: &str, h: Handle<T>) -> bool {
+        if self.find(alias).is_some() {
+            return self.find(alias) == Some(h);
+        }
+        let mut index = self.extra_index.write().unwrap_or_else(|e| e.into_inner());
+        index.entry(alias.to_string()).or_insert(h.index() as u32);
+        true
+    }
+
     /// Add an entry as the game runs (it stays for good). One with the
     /// same key already there is kept, and its handle given.
     pub fn add(&self, entry: T) -> Result<Handle<T>, String> {
@@ -682,5 +693,20 @@ impl Entry for ClassSpec {
 
     fn registry(c: &Content) -> &Registry<Self> {
         &c.hulls
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// A second key finds the same entry; another entry's key can't be taken.
+    #[test]
+    fn registry_alias_finds_the_same_entry() {
+        let m = &content().materials;
+        let mut it = m.iter();
+        let ((a, ka), (_, kb)) = (it.next().map(|(h, e)| (h, e.key().to_string())).unwrap(), it.next().map(|(h, e)| (h, e.key().to_string())).unwrap());
+        assert!(m.alias("material.test-alias", a) && m.find("material.test-alias") == Some(a) && m.find(&ka) == Some(a));
+        assert!(!m.alias(&kb, a), "another entry's key stays its own");
     }
 }
