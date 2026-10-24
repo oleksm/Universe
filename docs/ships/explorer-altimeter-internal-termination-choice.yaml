@@ -1,0 +1,45 @@
+status: Chosen prototype internal termination for equipment.sensors.altimeter.s1 service study; not product release,
+  rating or selected fit
+source_task: 20261024T125510-blender-3878
+packet: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-fit-current-study/altimeter-service-study/v3/handoff.json
+packet_sha256: efa2f3c808f32d49b884822868d2f92acdafb268b4ddfb8d1152f6c6250d509f
+rule: As docs/ships/explorer-camera-power-termination-choice.yaml - harness jackets stay on the plug side; inside,
+  receptacle contacts take hook-up wire. Figures below are for the altimeter's own 40 W draw, not copied.
+choice:
+  internal_power:
+    item: run.wire-0p5mm2
+    count: 3            # contacts 1 plus, 2 minus, 3 earth; spares 4..7 unwired, sealed by the insert
+    OD_m: 0.0016
+    bend_radius_m: 0.016
+    draw_A: 1.43        # 40 W at 28 V, record port dc-in
+    single_wire_vacuum_A: 5
+    check: 1.43 A is 29% of a single wire's 5 A. A bundle of three at 0.7 of it (3.5 A) keeps 2.4x margin.
+      Over a 0.2 m tail, both ways, 0.0344 ohm/m gives 0.014 ohm, 20 mV drop, 0.03 W heat in the wire.
+    not_chosen: run.wire-1mm2 (8 A) is not needed at this draw; take it only if the drawn tail exceeds 1 m.
+  internal_CAN:
+    item: run.wire-0p5mm2
+    per_port: 4         # H, L, return, screen drain; spares unwired
+    pairing: H/L twisted as a pair; data-1 to data-2 pass-through as the record's internal joined bus, with one stub
+      to the electronics
+  contacts: Reduced-barrel shell 17 crimp contacts for 0.5 mm2 in the same insert cavities; visible connector
+    unchanged. invented/review.
+  straight_tail_m: 0.01
+  electronics_allocation:
+    what: The record's ALT1-03 Electronics part is the board reservation; power conditioning and CAN interface are
+      inside it, not a second box
+    box_m: [0.175, 0.117, 0.0877]
+    mass_kg: 2              # existing ALT1-03 share of the 8 kg nominal; no new mass row
+    place: Behind the -x connector face, beside ALT1-01 laser head and optics (0.238 x 0.159 x 0.119), inside the
+      housing. Author measures. If both record boxes cannot fit the drawn housing, report it - registry revises the
+      parts split, never the wire or bend.
+    confidence: invented/review; no circuit, EMC or thermal design
+  wire_support: One lacing/clip point per bundle to the housing
+remaining:
+- Drawn internal routing, clips and board mount with clearance
+- Reconcile the 8 kg nominal (optics 4, housing 2, electronics 2) with the drawn 2.2025 kg partial exterior
+- Crimp, EMC, thermal and vibration qualification
+- Harness slack and destination routing in the installed replay
+scope:
+  active_record_created: false
+  product_original_changed: false
+  installed_ground_changed: false
