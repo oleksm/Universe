@@ -27,6 +27,8 @@ visual_review:
   finding: Three split saddles with liners grip the cables behind the shell 17 and shell 11
     terminals; dc bend visibly larger than the two CAN bends; tails end free at study ends.
 remaining:
+- Which side of the LS panel its gripped 7.4/4.4 mm cables are. Harness side is right; inside the product the
+  contacts take internal wire (see docs/ships/explorer-camera-power-termination-choice.yaml)
 - Remote cable routes, 60 mm free-tail termination and supports (not drawn)
 - Grip force and pullout; liner closure is imposed geometry, not simulated deformation
 - Insert breakout, crimps, EMC and current qualification
