@@ -92,3 +92,55 @@ deliverables:
     sealing and load/support design; no change to gear rating/mount inference.
   registry: Track design choices and exact evidence; create parts/hull values only when physical quantities and
     full bare assembly accounting support them.
+initial_pan_study:
+  path: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/gearwell-boundary-study.json
+  sha256: 6d395de51a3843a7efc62a968c073592e3bedb8a9d2b954bf3d7507dfe6afc31
+  status: Separate overlapping primitives, nonexportable study only
+  sampled_frames: 61
+  scope: Separate new lid primitives, not relabelled original floor. Original floor remains in study for comparison;
+    overlapping trial lids not exportable. No live cuts. Sampled gear bounds, not continuous sweep. Named skin ray
+    hits are candidate seam evidence only.
+  gearwells:
+  - gear: Nose gear
+    sampled_poses: 61
+    lid_trial_kg: 11.989568182090112
+    sidewalls_trial_kg: 6.446902395530765
+    named_skin_hosts:
+    - Core pressure skin 02-7
+    - Core pressure skin 03-7
+    missing_skin_ray_hits: 0
+    sidewall_collision_pairs: 0
+    minimum_skin_ray_depth_m: 0.19696471095085144
+    maximum_skin_ray_depth_m: 0.24599996209144592
+  - gear: Port aft gear
+    sampled_poses: 61
+    lid_trial_kg: 11.989566629733744
+    sidewalls_trial_kg: 6.586187959042511
+    named_skin_hosts:
+    - Core pressure skin 05-7
+    - Core pressure skin 06-7
+    missing_skin_ray_hits: 0
+    sidewall_collision_pairs: 0
+    minimum_skin_ray_depth_m: 0.22168773412704468
+    maximum_skin_ray_depth_m: 0.24599996209144592
+  - gear: Starboard aft gear
+    sampled_poses: 61
+    lid_trial_kg: 11.989566629733744
+    sidewalls_trial_kg: 6.586187959042512
+    named_skin_hosts:
+    - Core pressure skin 05-7
+    - Core pressure skin 06-7
+    missing_skin_ray_hits: 0
+    sidewall_collision_pairs: 0
+    minimum_skin_ray_depth_m: 0.22168773412704468
+    maximum_skin_ray_depth_m: 0.24599994719028473
+  unbuilt:
+  - sidewall full-face seam compatibility and corner joins
+  - static riser collars/closed bases
+  - floor patch replacement
+  - lid removal and fastener access sequence
+  - seals and pressure qualification
+  service_sequence_task: '20261023T204700-registry-09e4: compare exterior below-operated bolt/captive-nut service
+    with detachable cassette; no assumed lid removal through welded collar/frame.'
+  next: Explicit floor patch replacement, corner closure, full matching skin seams and stationary riser closure
+    in separate study. Ray hits/sidewall zero intersections do not establish closed pressure envelope.
