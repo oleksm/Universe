@@ -1,0 +1,243 @@
+status: Chosen COM allocation bounds for Explorer flight study; not a measured or accepted wet COM
+source_task: 20261024T122826-registry-2619 (blocked 20261024T123843-ships-1daa)
+frame: Explorer hull source e7077eb0 frame, same as Ships bare COM (1.117850, -0.001393, 2.537026)
+geometry:
+  file: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/hull-meshes-f64.json
+  sha256: f1eef82e84b7073841fabb317b77dec87e574d0eedbf9b7df04037cebb2627d3
+  assembly_map: mass-cross-material-audit.json in the same folder (1040 objects, assembly per object)
+  pose: Installed ground pose of that file; moving assemblies (gear, gear cover, hatch/ladder, ramp) are boxed in
+    that pose only
+hidden_reserves:
+  source: docs/ships/explorer-explicit-hardware-reserve-map.yaml retained_kg (total 91.6)
+  rule: Each assembly reserve lies anywhere inside the axis-aligned box of its own current meshes. No point COM
+    is claimed.
+  visor_note: cockpit-front-visor has no objects of its own since glazing V7; its 0.5 kg is boxed by cockpit-core
+    plus the Visor pane/bead objects
+  rows:
+  - assembly: access-panels-and-frame-returns
+    kg: 1.0
+    min_m:
+    - -1.1766
+    - -3.2671
+    - 2.4603
+    max_m:
+    - 4.7079
+    - 3.2671
+    - 4.0743
+  - assembly: aft-equipment-housings
+    kg: 2.0
+    min_m:
+    - 1.5
+    - -3.2517
+    - 2.08
+    max_m:
+    - 5.92
+    - 3.2517
+    - 3.9833
+  - assembly: cockpit-core
+    kg: 2.0
+    min_m:
+    - -4.12
+    - -1.9339
+    - 1.59
+    max_m:
+    - 4.93
+    - 1.9339
+    - 4.0728
+  - assembly: cockpit-front-visor
+    kg: 0.5
+    min_m:
+    - -4.12
+    - -1.9339
+    - 1.59
+    max_m:
+    - 4.93
+    - 1.9339
+    - 4.0728
+  - assembly: cockpit-nose
+    kg: 0.5
+    min_m:
+    - -5.0879
+    - -1.05
+    - 1.88
+    max_m:
+    - -4.12
+    - 1.05
+    - 2.78
+  - assembly: compact-landing-gear-cover
+    kg: 1.5
+    min_m:
+    - -3.064
+    - -1.364
+    - 1.18
+    max_m:
+    - 3.714
+    - 1.364
+    - 1.834
+  - assembly: crew-hatch-and-folding-ladder
+    kg: 10.0
+    min_m:
+    - -3.1
+    - -1.8716
+    - 1.59
+    max_m:
+    - 4.93
+    - 1.8716
+    - 2.568
+  - assembly: edited-landing-gear-assembly
+    kg: 45.0
+    min_m:
+    - -3.05
+    - -1.35
+    - 0.22
+    max_m:
+    - 3.7
+    - 1.35
+    - 1.82
+  - assembly: forward-shoulders
+    kg: 2.0
+    min_m:
+    - -2.498
+    - -3.0826
+    - 1.846
+    max_m:
+    - 3.5
+    - 3.0826
+    - 4.18
+  - assembly: interior-floor-and-trim
+    kg: 1.0
+    min_m:
+    - -3.9649
+    - -2.0052
+    - 1.737
+    max_m:
+    - 4.93
+    - 2.0965
+    - 2.124
+  - assembly: interior-lighting
+    kg: 8.5
+    min_m:
+    - -2.3339
+    - -2.4825
+    - 1.875
+    max_m:
+    - 4.6948
+    - 2.4825
+    - 3.9991
+  - assembly: internal-side-compartment-access
+    kg: 0.5
+    min_m:
+    - -3.094
+    - -2.0444
+    - 1.76
+    max_m:
+    - 5.45
+    - 2.0444
+    - 3.4244
+  - assembly: nose-headlights
+    kg: 1.0
+    min_m:
+    - -5.1119
+    - -0.58
+    - 2.1645
+    max_m:
+    - -5.0859
+    - 0.58
+    - 2.2275
+  - assembly: port-aft-threshold
+    kg: 0.1
+    min_m:
+    - 2.36
+    - -2.0965
+    - 2.08
+    max_m:
+    - 3.03
+    - -1.914
+    - 2.124
+  - assembly: rear-boarding-ramp
+    kg: 14.0
+    min_m:
+    - 4.705
+    - -1.48
+    - 1.665
+    max_m:
+    - 5.035
+    - 1.48
+    - 3.702
+  - assembly: rear-opening-fixed-frame
+    kg: 1.5
+    min_m:
+    - 4.772
+    - -1.592
+    - 1.6389
+    max_m:
+    - 4.932
+    - 1.592
+    - 3.782
+  - assembly: service-hardware
+    kg: 0.5
+    min_m:
+    - 0.9311
+    - -0.4635
+    - 4.0314
+    max_m:
+    - 2.6694
+    - 0.4635
+    - 4.0767
+  reserve_COM_box_m:
+    min:
+    - -1.5895
+    - -1.6492
+    - 0.999
+    max:
+    - 4.1177
+    - 1.6458
+    - 2.6431
+  bare_plus_reserve_6829.395kg_COM_box_m:
+    min:
+    - 1.0815
+    - -0.0235
+    - 2.5164
+    max:
+    - 1.1581
+    - 0.0207
+    - 2.5384
+  meaning: Reserves move the hull COM x by at most about +-0.04 m. Per-axis bounds are independent extremes (conservative).
+crew:
+  count: 1
+  person_kg:
+  - 50
+  - 110
+  eva_suit_system_kg:
+  - 90
+  - 130
+  basis:
+    tier: invented
+    review: true
+    note: 'Airless moon: the person must leave the craft in a full EVA suit with its own life support, carried aboard.
+      Order of Apollo-era suit plus backpack (about 90 kg) to newer surface suits (about 130 kg); from memory, to
+      be sourced.'
+  region:
+    min_m:
+    - -3.9649
+    - -2.0052
+    - 1.737
+    max_m:
+    - 4.93
+    - 2.0965
+    - 3.324
+    rule: Person and stowed suit COMs anywhere over the interior floor box, from floor top to 1.2 m above it, until
+      a pilot station and suit stowage are drawn
+  tightening: A drawn restrained pilot station and a fixed suit stowage replace the region with their own boxes
+products_and_fills:
+  product_hidden_mass: Record mass minus drawn mass of each fitted product lies inside that product's own envelope
+    at its trial pose (Ships holds the poses).
+  N2_fill: equipment.tank.nitrogen.100kg contents inside that tank's inner volume at its pose, 0..100 kg
+  HLOX_fill: Keep the existing conditional bounds of the hydrolox 0.5 t tank
+  not_located: 'Supports, services and foundation not yet designed: unknown mass and place. They must be composed
+    before any lift/support placement is frozen.'
+use: Compose the whole-craft COM as an interval box from bare COM plus these bounded rows and check it against the
+  hover COM x band; a single assumed COM is not acceptance.
+scope:
+  active_record_created: false
+  hull_record_changed: false
