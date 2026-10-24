@@ -1,0 +1,644 @@
+status: Accepted physical quantity and exact record binding for bare ground stage; installed runtime checks still
+  pending
+hull: hull.explorer-study
+binding:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/handoff.json: d9caaecac69006192a407968451d988b7648a8ebb24ff3f78578e98843b99b12
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/mass-cross-material-audit.json
+  : d947d1d7c9122699333806eadfa0841dcfc83a5ce8ea8b2a6a5e8672b90b6cd9
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/hull-meshes-f64.json
+  : f1eef82e84b7073841fabb317b77dec87e574d0eedbf9b7df04037cebb2627d3
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/material-roles.json: 8fb23bd3f85e39ee11de5e71cc25664774583f49e8a42d8fb97dec09fe78bfd2
+record_model_sha256: 5ba56b39d25098985064ff5839f5fe37cfd8c7178b4fcff68453cb6fb9184d24
+physical:
+  length: 11.031919964872138
+  width: 6.534206536726907
+  height: 3.9599998965859413
+  mass: 6829.395259018859
+  volume: 164.79543387159498
+quantity:
+  material_union_subtotal_kg: 6737.795259018859
+  hidden_dry_reserve_kg: 91.6
+  accepted_ground_stage_bare_mass_kg: 6829.395259018859
+  materials:
+  - material: material.aluminium-alloy-6061
+    volume_m3: 2.1329619165656353
+    mass_kg: 5758.997174727216
+  - material: material.high-strength-steel-4340
+    volume_m3: 0.007934594126659431
+    mass_kg: 62.28656389427653
+  - material: material.fused-silica
+    volume_m3: 0.20785895331704712
+    mass_kg: 457.9132741574548
+  - material: material.epdm-rubber
+    volume_m3: 0.0066155972905987915
+    mass_kg: 7.60793688418861
+  - material: material.titanium-alloy-ti-6al-4v
+    volume_m3: 0.10046118566787303
+    mass_kg: 449.0614999353924
+  - material: material.ptfe
+    volume_m3: 0.0001299194927934733
+    mass_kg: 0.2858228841456413
+  - material: material.silicone-rubber
+    volume_m3: 0.0015283595685444385
+    mass_kg: 1.6429865361852714
+  mixed_residual_pair_count: 41
+  combined_conservative_residual_accounting_bound_kg: 0.0010074425214895058
+  named_mixed_residuals:
+  - a: Rear ramp main leaf
+    b: Rear ramp anti-slip strip 0
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 1.8519880018561805e-08
+    bounds:
+    - 4.937999868962047
+    - -0.8100000023841858
+    - 1.9524999856948853
+    - 4.938000202178955
+    - 0.8100000023841858
+    - 1.9875000715255737
+  - a: Rear ramp main leaf
+    b: Rear ramp anti-slip strip 1
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 1.934362612279736e-08
+    bounds:
+    - 4.93799985389533
+    - -0.8100000023841858
+    - 2.132500171661377
+    - 4.938000202178955
+    - 0.8100000023841858
+    - 2.1675000190734863
+  - a: Rear ramp main leaf
+    b: Rear ramp anti-slip strip 2
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 2.019790469714249e-08
+    bounds:
+    - 4.937999838828624
+    - -0.8100000023841858
+    - 2.3125
+    - 4.938000202178955
+    - 0.8100000023841858
+    - 2.3474998474121094
+  - a: Rear ramp main leaf
+    b: Rear ramp anti-slip strip 3
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 2.1050320911099124e-08
+    bounds:
+    - 4.9379998237618965
+    - -0.8100000023841858
+    - 2.492500066757202
+    - 4.938000202178955
+    - 0.8100000023841858
+    - 2.5274999141693115
+  - a: Rear ramp main leaf
+    b: Rear ramp anti-slip strip 4
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 2.1898047184150145e-08
+    bounds:
+    - 4.93799980869517
+    - -0.8100000023841858
+    - 2.6725001335144043
+    - 4.938000202178955
+    - 0.8100000023841858
+    - 2.7074999809265137
+  - a: Rear ramp main leaf
+    b: Rear ramp anti-slip strip 5
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 2.2741059565637035e-08
+    bounds:
+    - 4.937999793665151
+    - -0.8100000023841858
+    - 2.8524999618530273
+    - 4.938000202178955
+    - 0.8100000023841858
+    - 2.8874998092651367
+  - a: Rear ramp main leaf
+    b: Rear ramp anti-slip strip 6
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 2.3581970019552312e-08
+    bounds:
+    - 4.937999778834218
+    - -0.8100000023841858
+    - 3.0325000286102295
+    - 4.938000202178955
+    - 0.8100000023841858
+    - 3.067499876022339
+  - a: Rear ramp main leaf
+    b: Rear ramp anti-slip strip 7
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 2.440396156605182e-08
+    bounds:
+    - 4.937999767635836
+    - -0.8100000023841858
+    - 3.2125000953674316
+    - 4.938000202178955
+    - 0.8100000023841858
+    - 3.247499942779541
+  - a: Rear ramp folding tread
+    b: Folding ramp anti-slip strip 0
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 2.6368998653572436e-09
+    bounds:
+    - 4.761999607086182
+    - -0.7900000214576721
+    - 3.1024999618530273
+    - 4.761999660730368
+    - 0.7900000214576721
+    - 3.1374998092651367
+  - a: Rear ramp folding tread
+    b: Folding ramp anti-slip strip 1
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 6.027198398413802e-09
+    bounds:
+    - 4.761999607086182
+    - -0.7900000214576721
+    - 2.922499895095825
+    - 4.761999722038022
+    - 0.7900000214576721
+    - 2.9574997425079346
+  - a: Rear ramp folding tread
+    b: Folding ramp anti-slip strip 2
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 9.41749243742766e-09
+    bounds:
+    - 4.761999607086182
+    - -0.7900000214576721
+    - 2.742500066757202
+    - 4.761999783345593
+    - 0.7900000214576721
+    - 2.7774999141693115
+  - a: Rear ramp folding tread
+    b: Folding ramp anti-slip strip 3
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 1.2807790975465417e-08
+    bounds:
+    - 4.761999607086182
+    - -0.7900000214576721
+    - 2.5625
+    - 4.761999844653246
+    - 0.7900000214576721
+    - 2.5974998474121094
+  - a: Rear ramp folding tread
+    b: Folding ramp anti-slip strip 4
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 1.6198089518983945e-08
+    bounds:
+    - 4.761999607086182
+    - -0.7900000214576721
+    - 2.382499933242798
+    - 4.7619999059608995
+    - 0.7900000214576721
+    - 2.4174997806549072
+  - a: Rear ramp folding tread
+    b: Folding ramp anti-slip strip 5
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 1.9588388062502523e-08
+    bounds:
+    - 4.761999607086182
+    - -0.7900000214576721
+    - 2.2024998664855957
+    - 4.761999967268553
+    - 0.7900000214576721
+    - 2.237499713897705
+  - a: Rear ramp folding tread
+    b: Folding ramp anti-slip strip 6
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 2.2978682092919512e-08
+    bounds:
+    - 4.761999607086182
+    - -0.7900000214576721
+    - 2.0225000381469727
+    - 4.762000028576125
+    - 0.7900000214576721
+    - 2.057499885559082
+  - a: Nose gear | LandingLeg180_slider
+    b: Nose gear | clipped trapezoid pad
+    material_a: material.titanium-alloy-ti-6al-4v
+    material_b: material.aluminium-alloy-6061
+    volume_m3: 2.277086655704707e-12
+    bounds:
+    - -2.8728408816834636
+    - -0.022832850997142436
+    - 0.2610785961151123
+    - -2.827158927581673
+    - 0.02284106299011193
+    - 0.2640000581741333
+  - a: Port aft gear | LandingLeg180_slider
+    b: Port aft gear | clipped trapezoid pad
+    material_a: material.titanium-alloy-ti-6al-4v
+    material_b: material.aluminium-alloy-6061
+    volume_m3: 2.5002713073198256e-12
+    bounds:
+    - 3.4771590229491047
+    - -1.1726448877388727
+    - 0.2610785961151123
+    - 3.5228409770508953
+    - -1.1271588798979573
+    - 0.2640000581741333
+  - a: Starboard aft gear | LandingLeg180_slider
+    b: Starboard aft gear | clipped trapezoid pad
+    material_a: material.titanium-alloy-ti-6al-4v
+    material_b: material.aluminium-alloy-6061
+    volume_m3: 2.500271311131464e-12
+    bounds:
+    - 3.4771590229491047
+    - 1.1273550645774115
+    - 0.2610785961151123
+    - 3.5228409770508953
+    - 1.172841072418327
+    - 0.2640000581741333
+  - a: Crew ladder upper tread 0
+    b: Crew ladder upper grip (0, -0.012)
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 1.0073361842801407e-11
+    bounds:
+    - 0.03599992903442449
+    - -0.2250000387430191
+    - 1.6944999694824219
+    - 0.035999998450279236
+    - 0.22499994933605194
+    - 1.6994999647140503
+  - a: Crew ladder upper tread 0
+    b: Crew ladder upper grip (0, 0)
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 2.51726232013724e-12
+    bounds:
+    - 0.035999933504763965
+    - -0.047522745115478535
+    - 1.6825000047683716
+    - 0.03599997494256518
+    - 0.22499994933605194
+    - 1.6875
+  - a: Crew ladder upper tread 1
+    b: Crew ladder upper grip (1, -0.012)
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 1.3684733689758504e-12
+    bounds:
+    - 0.2959999740123749
+    - -0.22499999403953552
+    - 1.6944999694824219
+    - 0.29600000381469727
+    - 0.0
+    - 1.6994999647140503
+  - a: Crew ladder upper tread 1
+    b: Crew ladder upper grip (1, 0)
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 1.3684733956829275e-12
+    bounds:
+    - 0.2959999740123749
+    - -0.22499999403953552
+    - 1.6825000047683716
+    - 0.29600000381469727
+    - 0.0
+    - 1.6875
+  - a: Crew ladder upper tread 1
+    b: Crew ladder upper grip (1, 0.012)
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 1.3684733684233713e-12
+    bounds:
+    - 0.2959999740123749
+    - -0.22499999403953552
+    - 1.6704999208450317
+    - 0.29600000381469727
+    - 0.0
+    - 1.6754999160766602
+  - a: Crew ladder upper tread 2
+    b: Crew ladder upper grip (2, -0.012)
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 2.73694674021609e-12
+    bounds:
+    - 0.5559999346733093
+    - -0.22499996423721313
+    - 1.6944999694824219
+    - 0.5559999942779541
+    - 2.9802322387695312e-08
+    - 1.6994999647140503
+  - a: Crew ladder upper tread 2
+    b: Crew ladder upper grip (2, 0)
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 2.736946793630244e-12
+    bounds:
+    - 0.5559999346733093
+    - -0.22499996423721313
+    - 1.6825000047683716
+    - 0.5559999942779541
+    - 2.9802322387695312e-08
+    - 1.6875
+  - a: Crew ladder upper tread 2
+    b: Crew ladder upper grip (2, 0.012)
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 2.736946739111132e-12
+    bounds:
+    - 0.5559999346733093
+    - -0.22499996423721313
+    - 1.6704999208450317
+    - 0.5559999942779541
+    - 2.9802322387695312e-08
+    - 1.6754999160766602
+  - a: Crew ladder lower tread 0
+    b: Crew ladder lower grip (0, -0.012)
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 2.04414527077178e-11
+    bounds:
+    - 0.4739999484974842
+    - -0.22499997913837433
+    - 1.6154999732971191
+    - 0.47400002896940263
+    - 0.216030983623075
+    - 1.6204999685287476
+  - a: Crew ladder lower tread 0
+    b: Crew ladder lower grip (0, 0)
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 6.387049210485315e-12
+    bounds:
+    - 0.4739999721782054
+    - -0.22499997913837433
+    - 1.6274999380111694
+    - 0.4740000200287237
+    - 0.037247529810816936
+    - 1.6324999332427979
+  - a: Crew ladder lower tread 1
+    b: Crew ladder lower grip (1, -0.012)
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 1.3684733481491685e-12
+    bounds:
+    - 0.22399994730949402
+    - -1.4901161193847656e-08
+    - 1.6154999732971191
+    - 0.2239999771118164
+    - 0.22499997913837433
+    - 1.6204999685287476
+  - a: Crew ladder lower tread 1
+    b: Crew ladder lower grip (1, 0)
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 1.3684733461970222e-12
+    bounds:
+    - 0.22399994730949402
+    - -1.4901161193847656e-08
+    - 1.6274999380111694
+    - 0.2239999771118164
+    - 0.22499997913837433
+    - 1.6324999332427979
+  - a: Crew ladder lower tread 1
+    b: Crew ladder lower grip (1, 0.012)
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 1.3684733461970222e-12
+    bounds:
+    - 0.22399994730949402
+    - -1.4901161193847656e-08
+    - 1.6394999027252197
+    - 0.2239999771118164
+    - 0.22499997913837433
+    - 1.6444998979568481
+  - a: Crew ladder lower tread 2
+    b: Crew ladder lower grip (2, -0.012)
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 2.7369467073097435e-12
+    bounds:
+    - -0.02600008249282837
+    - -5.960464477539063e-08
+    - 1.6154998540878296
+    - -0.026000022888183594
+    - 0.22499993443489075
+    - 1.620499849319458
+  - a: Crew ladder lower tread 2
+    b: Crew ladder lower grip (2, 0)
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 2.736946706404808e-12
+    bounds:
+    - -0.02600008249282837
+    - -5.960464477539063e-08
+    - 1.6274999380111694
+    - -0.026000022888183594
+    - 0.22499993443489075
+    - 1.6324999332427979
+  - a: Crew ladder lower tread 2
+    b: Crew ladder lower grip (2, 0.012)
+    material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    volume_m3: 2.736946706404808e-12
+    bounds:
+    - -0.02600008249282837
+    - -5.960464477539063e-08
+    - 1.6394999027252197
+    - -0.026000022888183594
+    - 0.22499993443489075
+    - 1.6444998979568481
+  - a: G02 finite seal Joint pane 02 | Cockpit glazing 01-4 pane 0
+    b: Joint pane 02 | Cockpit glazing 01-4 pane 0
+    material_a: material.silicone-rubber
+    material_b: material.fused-silica
+    volume_m3: 3.692611320882288e-11
+    bounds:
+    - -4.090432706502581
+    - -1.0274161100387573
+    - 2.665409803390503
+    - -4.083290069829777
+    - -0.8492241501808167
+    - 2.7545058727264404
+  - a: G05 finite seal Joint pane 05 | Cockpit glazing 02-2 pane 1
+    b: Joint pane 05 | Cockpit glazing 02-2 pane 1
+    material_a: material.silicone-rubber
+    material_b: material.fused-silica
+    volume_m3: 1.0421778442828419e-11
+    bounds:
+    - -3.24767255594392
+    - 1.2035200250199256
+    - 3.018981695929926
+    - -2.8563764095306396
+    - 1.4235419034957886
+    - 3.4318299363786884
+  - a: G08 finite seal Joint pane 08 | Cockpit glazing 03-2 pane 0
+    b: Joint pane 08 | Cockpit glazing 03-2 pane 0
+    material_a: material.silicone-rubber
+    material_b: material.fused-silica
+    volume_m3: 4.26707415129282e-12
+    bounds:
+    - -2.825029378500438
+    - 1.1136147990222116
+    - 3.468002616807305
+    - -2.8172043445198924
+    - 1.2254038657358846
+    - 3.6225345114966796
+  - a: G11 finite seal Joint pane 11 | Cockpit glazing 03-4 pane 0
+    b: Joint pane 11 | Cockpit glazing 03-4 pane 0
+    material_a: material.silicone-rubber
+    material_b: material.fused-silica
+    volume_m3: 1.801715742745472e-11
+    bounds:
+    - -2.8255722598910835
+    - -1.4298890819045262
+    - 3.1842718138269914
+    - -2.81770784491229
+    - -1.2392706980410566
+    - 3.4477737596865072
+  - a: G12 finite seal Joint pane 12 | Cockpit glazing 03-4 pane 1
+    b: Joint pane 12 | Cockpit glazing 03-4 pane 1
+    material_a: material.silicone-rubber
+    material_b: material.fused-silica
+    volume_m3: 1.237385875187125e-10
+    bounds:
+    - -2.749167201590666
+    - -1.2449297744896473
+    - 3.6374449734285754
+    - -1.7669366542105116
+    - -1.1212923529674796
+    - 3.8229011947635274
+  - a: G13 finite seal Joint pane 13 | Visor | windshield -1
+    b: Joint pane 13 | Visor | windshield -1
+    material_a: material.silicone-rubber
+    material_b: material.fused-silica
+    volume_m3: 4.554003146273029e-11
+    bounds:
+    - -3.4819723269649447
+    - -0.8599086999893188
+    - 3.185558163227805
+    - -2.8518056890820045
+    - -0.036000002175569534
+    - 3.6172471031847366
+  - a: G14 finite seal Joint pane 14 | Visor | windshield 1
+    b: Joint pane 14 | Visor | windshield 1
+    material_a: material.silicone-rubber
+    material_b: material.fused-silica
+    volume_m3: 1.233558940234038e-12
+    bounds:
+    - -3.4915877805719604
+    - 0.036000002175569534
+    - 3.17897119777806
+    - -2.8518056890820045
+    - 0.31594490043687024
+    - 3.6172472020739708
+  disposition: 15ramp slab depths separately bounded<0.5um in frozen witnesses;26remaining named small pad/grip/glazing
+    mating residuals kept explicit, not globally waived. Retain both material masses and bound accounting uncertainty;
+    physical fit/pressure not inferred.
+  raw_constructor_domain_fastener_bound_kg: 0.0007760706520762561
+  combined_numeric_accounting_bound_kg: 0.0017835131735657618
+  raw_domain_disposition: Twelve named M4raw signed volumes exceed producer Mesh64object volumes by total bounded
+    amount reported here; retained as explicit numerical/material-domain uncertainty, no source repair, constructor
+    normalization or arbitrary global correction. One nonstructural return3 has one indexed4incident edge but raw
+    signed volume matches producer within3.3e-17m3; retained as topology qualification issue. Groundstage stock-schedule
+    quantity accepted with these limitations.
+verification:
+  handoff_file_hashes: 12
+  export_hashes: 2
+  raw_positive_material_meshes: 1040
+  raw_indexed_edge_incidence_exceptions:
+  - name: Raised floor | perimeter return 3
+    raw_signed_volume_m3: 1.1787468472357343e-05
+    reported_volume_m3: 1.1787468472324912e-05
+    edge_incidence_counts:
+      2: 19
+      4: 1
+  - name: G00 M4 edge0 f0.25
+    raw_signed_volume_m3: 4.185741258076044e-07
+    reported_volume_m3: 4.147567667845988e-07
+    raw_minus_reported_kg: 2.996626833059411e-05
+  - name: G00 M4 edge0 f0.75
+    raw_signed_volume_m3: 4.18574124009035e-07
+    reported_volume_m3: 4.147567667845987e-07
+    raw_minus_reported_kg: 2.9966254211824904e-05
+  - name: G01 M4 edge0 f0.25
+    raw_signed_volume_m3: 4.1857412399798967e-07
+    reported_volume_m3: 4.0624581122744436e-07
+    raw_minus_reported_kg: 9.67772552487807e-05
+  - name: G01 M4 edge0 f0.75
+    raw_signed_volume_m3: 4.185741267025501e-07
+    reported_volume_m3: 4.0624581122744007e-07
+    raw_minus_reported_kg: 9.67772764796137e-05
+  - name: G04 M4 edge0 f0.25
+    raw_signed_volume_m3: 4.1857412958539396e-07
+    reported_volume_m3: 4.0211028407839053e-07
+    raw_minus_reported_kg: 0.00012924118722997693
+  - name: G04 M4 edge0 f0.75
+    raw_signed_volume_m3: 4.185741223773062e-07
+    reported_volume_m3: 4.021102840783787e-07
+    raw_minus_reported_kg: 0.00012924113064658116
+  - name: G10 M4 edge2 f0.25
+    raw_signed_volume_m3: 4.18574127674185e-07
+    reported_volume_m3: 4.1188527131241525e-07
+    raw_minus_reported_kg: 5.250752243989234e-05
+  - name: G10 M4 edge2 f0.75
+    raw_signed_volume_m3: 4.185741218101533e-07
+    reported_volume_m3: 4.1046145894641673e-07
+    raw_minus_reported_kg: 6.36844034803319e-05
+  - name: G11 M4 edge0 f0.25
+    raw_signed_volume_m3: 4.185741131908296e-07
+    reported_volume_m3: 4.137403586106141e-07
+    raw_minus_reported_kg: 3.794497345469158e-05
+  - name: G11 M4 edge0 f0.75
+    raw_signed_volume_m3: 4.1857412349423324e-07
+    reported_volume_m3: 4.1373574596421616e-07
+    raw_minus_reported_kg: 3.798126361063403e-05
+  - name: G12 M4 edge0 f0.25
+    raw_signed_volume_m3: 4.185741280536083e-07
+    reported_volume_m3: 4.1160227226227474e-07
+    raw_minus_reported_kg: 5.4729067961968475e-05
+  - name: G12 M4 edge0 f0.75
+    raw_signed_volume_m3: 4.1857413131200736e-07
+    reported_volume_m3: 4.163761632889034e-07
+    raw_minus_reported_kg: 1.725404898136626e-05
+  material_roles_density_arithmetic: pass
+  material_union_arithmetic: pass, Blender-produced Boolean unions; not independently recomputed
+  model_nodes: 1076
+  parent_local_world_matrix_replay_max: 5.915025944602803e-07
+  raw_export_position_vertices: 549345
+  convex_envelope_m3: 164.79543387159498
+  centered_tetrahedral_envelope_m3: 164.79543387159484
+  full_hull_schema_and_mechanism_refs: pass
+scope: Hull-owned gear included, intact walking floor and current owner wall/header edits; no trial equipment,tank,engine,roof/support
+  frames. Literal empty slots/fit/thrusters. Upperseal retainsfree-stockmaterial quantity; endland/pressurelimits
+  remain open.
+limitations:
+- 'Ground stage only: no command station, propulsion, RCS, tank, power or life-support allocation; not commissioned
+  for flight.'
+- Geometry/load/pressure qualification remains open. Edited gear is hull-owned and has no inherited catalogue landing
+  rating.
+- Upper seal has an explicit184.285mm2endland deficit; side/lower perimeter pressure closure remains unqualified.
+- Discrete mechanism states are not continuous-motion or actuator/holding-load certification. Ground contact and
+  boarding must pass exact installed-model runtime checks.
+- Convex physical.volume is a closed/rest clearance-envelope approximation; it is not material/cabin/hold/pressure
+  volume or a collision mesh.
+- Exact numerical mating residuals remain named in docs/ships/explorer-ground-stage-registration-audit.yaml; no
+  global collision tolerance.
+- Whole mass includes91.6kg surviving invented dry actuator/electronics allowances pending explicit matched part
+  replacement; COM and inertia not qualified.
+next: Ships installs exact5ba56b39canonicalGLB and engine imports registered record preserving empty slots, then
+  exactcontact/exit/groundstage diagnostics. No oldexport acceptance transfer.
+validation:
+  registry_check: All10data/generator checks pass:0schema misfits, build, module/catalogue,16plant layouts, kit/supply/stock
+    chains, ports andmounts. Existing241kind/1009catalogue migration gaps are reported, not strict failures.
+  mechanism_regressions: 14tests pass (test_hull_mechanisms.py).
+  registry_page: Correct key hull:explorer-study passes rendered-detail/JS check and screenshot inspected. Initial
+    dotted fragment hull.explorer-study was an invocation error and returned empty; corrected check rerun passes.
+  engine_reader_local: FAIL E0046:missing radiator,battery,altimeter,camera trait handlers in fso worktree code;
+    Engine current main owns those handlers and must compile/check this record there. No Rust code changed by registry.
+  diff_check: pass
+  installed_runtime: Pending exact canonical model and active record on Engine main; no transferred oldexport acceptance.
