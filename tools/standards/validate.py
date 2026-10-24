@@ -125,6 +125,13 @@ def planet_rule_references(seen):
                     errors.append((path, "class_map: empty codes require unresolved status"))
                 if len(c["codes"]) != len(set(c["codes"])):
                     errors.append((path, "class_map: duplicate field code"))
+                if set(c.get("possible", [])) & set(c["codes"]):
+                    errors.append((path, "class_map: a code is both a member and possible"))
+                if c.get("and") and (c.get("unresolved") or not c["codes"]):
+                    errors.append((path, "class_map: and-conditions need a resolved class with codes"))
+                for cond in c.get("and", []):
+                    if not cond["codes"] or set(cond.get("possible", [])) & set(cond["codes"]):
+                        errors.append((path, "class_map: and-condition needs codes, disjoint from possible"))
             if len(classes) != len(set(classes)):
                 errors.append((path, "class_map: duplicate class key"))
         if not key.startswith("planet-pattern."):

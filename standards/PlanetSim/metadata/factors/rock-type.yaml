@@ -35,6 +35,12 @@ basis:
   note: Only broad directly supported groups resolved. Fine/coarse sediment cannot be split at raw9; raw11 is mixed
     redbeds/basalt. ultramafic-other is not one physical lithology. Possible/empty unresolved codes never prove
     a gate or absence.
+- of:
+  - class_map
+  tier: derived
+  source: planet-forge 31308fd landscape.rs fn clastic_grain
+  note: 'clastic-fine and clastic-coarse now split raw9 by planet-field.clastic-grain as a labelled proxy (each class
+    reading: proxy); grain 0 on raw9 is unknown, raw11 stays possible for coarse.'
 status: draft
 kind: categorical
 unit: '1'
@@ -129,12 +135,30 @@ class_map:
 - key: clastic-fine
   codes:
   - 9
-  unresolved: true
+  and:
+  - field: planet-field.clastic-grain
+    codes:
+    - 1
+    possible:
+    - 0
+  reading:
+    status: proxy
+    note: Distal-fine proxy from planet-field.clastic-grain (low basins far from relief), not a sediment model.
 - key: clastic-coarse
   codes:
   - 9
+  possible:
   - 11
-  unresolved: true
+  and:
+  - field: planet-field.clastic-grain
+    codes:
+    - 2
+    possible:
+    - 0
+  reading:
+    status: proxy
+    note: Proximal-coarse proxy from planet-field.clastic-grain (near relief over 1.5 km). Code 11 (mixed redbeds and
+      basalt) stays possible, never confirmed.
 - key: ultramafic-other
   codes:
   - 10

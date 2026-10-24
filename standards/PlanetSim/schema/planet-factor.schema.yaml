@@ -96,6 +96,58 @@ properties:
           type: boolean
           description: Codes are possible/ambiguous membership only (empty means unavailable everywhere). A match
             is unknown, never a confirmed class or absence.
+        possible:
+          type: array
+          uniqueItems: true
+          description: Codes of the factor's own field whose membership is possible but unknown (never a confirmed
+            class or absence), beside a resolved class's codes.
+          items:
+            type: integer
+            minimum: 0
+            x-unit: '1'
+        and:
+          type: array
+          description: Further conditions on other class fields, all required for membership. A missing or non-integer
+            value, or a possible code, is unknown; any other code is not a member.
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - field
+            - codes
+            properties:
+              field:
+                type: string
+                x-ref:
+                - planet-field
+              codes:
+                type: array
+                uniqueItems: true
+                items:
+                  type: integer
+                  minimum: 0
+                  x-unit: '1'
+              possible:
+                type: array
+                uniqueItems: true
+                items:
+                  type: integer
+                  minimum: 0
+                  x-unit: '1'
+        reading:
+          type: object
+          additionalProperties: false
+          required:
+          - status
+          - note
+          description: This class's own reading where it differs from the factor's (a proxy split of one code).
+          properties:
+            status:
+              enum:
+              - verified
+              - proxy
+            note:
+              type: string
   reading:
     type: object
     additionalProperties: false
