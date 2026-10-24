@@ -67,3 +67,43 @@ acceptance_work:
 owner: Blender separate reversible product study; Ships layout/control review; Registry record only after exact
   measured handoff.
 ground_unchanged: true
+hidden_internal_study_allowance:
+  decision: Allow an explicitly accounted packaging/mass proxy for this coarse separate study, not a complete functioning
+    valve/regulator design.
+  tier: invented
+  review: true
+  parts:
+  - what: 4normally closed branch valves/actuation
+    count: 4
+    mass_each_kg: 1.0
+    packing_each_m:
+    - 0.06
+    - 0.07
+    - 0.09
+  - what: Inlet regulator/filter/isolation group
+    count: 1
+    mass_each_kg: 2.0
+    packing_each_m:
+    - 0.08
+    - 0.08
+    - 0.1
+  - what: Controller/drivers/harness inside product
+    count: 1
+    mass_each_kg: 2.0
+    packing_each_m:
+    - 0.1
+    - 0.08
+    - 0.04
+  total_kg: 8.0
+  mass_rule: Draft accounted mass = actual visible nozzle/manifold/base/casing/retention masses +8kg hidden study
+    allowance + other separately measured hardware. Original15kg is not a cap; do not subtract hidden allowance
+    because a decorative closed-valve proxy exists. If actual designed hardware replaces an allowance, retire that
+    named reserve once.
+  packing_rule: Use separate labelled exclusion envelopes inside the product, with real access/retention intent.
+    Envelopes are not steel solids for mass integration and must not intersect the declared gas paths/support structure.
+  feed_rule: Manifold and branches must be actual connected hollow geometry to all4valve/nozzle stations and a retained
+    inlet, even while valve mechanism details are proxies. No solid blind collar presented as a flow path. Inlet
+    state/pressure regulator dynamics, pressure loss, valveCv, duty and upstream feed contract remain unknown.
+  claim_limit: Can report complete accounted DRAFT mass for the declared coarse scope, not accepted physical mass,
+    operational500N/700m/s performance or commissioning. Performance figures remain comparison targets until gas/feed/nozzle
+    review. No active product added on this allowance alone.
