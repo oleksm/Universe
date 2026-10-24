@@ -39,6 +39,24 @@ heat_path_revision:
   connector_panel: The case end face grows to carry the whole connector panel; the panel is not trimmed.
   if_no_room: Report the free space on and around the side face; registry then revises the board shape (e.g. two
     boards stacked), never a floating or strap-only thermal attachment.
+remote_controller:
+  source_task: 20261024T163519-blender-ebb3
+  packet: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-fit-current-study/air-cooler-electrical-v2/header-side-enclosure-survey.json
+  finding: On the header side the gap is 15 mm against the 40.5 mm the case needs; the board could be at most 4.5 mm
+    deep with walls unchanged. No room - the no-room clause applies.
+  choice: The controller leaves the air cooler. It becomes a separate box on one of the coolant loop's cold plates
+    (CLP0-02 lines and cold plates kit), which is the conduction sink the airless site needs.
+  box: Same construction as above (2 mm 6061-T6 welded tray, lid opposite the heat wall, coolant-lid gasket rules);
+    board 100x80x30 mm with the 60 mm wire zone; the heat wall bolted to the cold plate through the 0.5 mm gap pad
+    with four M4.
+  place: Within 1.0 m of harness from the cooler's motor, on a cold plate the loop already serves; Ships picks the plate
+    and pose, Blender draws it.
+  wiring: Ship harness (shell 25, 3x6 mm2) ends at the controller box. Controller to motor - 3 x run.wire-6mm2 phase
+    leads (about 12 A rms each at 400 W) and 4 x run.wire-0p5mm2 for sensors, in one sleeve, through a shell 25
+    (power) and a shell 11 (sensors) on each end.
+  cooler_side: The air cooler keeps only its motor terminals and a small terminal cover; its retained panel takes
+    the two receptacles from the controller, not the ship harness.
+  invented/review: true
 remaining:
 - Measured packing of board, wire zone and enclosure against the motor case, fan, exchanger and shroud
 - Header pad and insert placement on the drawn exchanger

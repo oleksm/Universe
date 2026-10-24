@@ -43,6 +43,14 @@ aperture_check:
     efficiency - far above detection. Airless, so no path loss.
   basis: invented/review; pulse energy, efficiencies and albedo are chosen orders of magnitude, no sun-background
     or filter design
+trimmed_result:
+  source_task: 20261024T163551-blender-c381
+  packet: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-fit-current-study/altimeter-service-study/v5-layout/layout-check.json
+  optics_L: 2.372136
+  electronics_L: 1.407084
+  verdict: Accepted for the study - electronics above the 1.0 L need, both connected, no remaining solid hits, 1 mm
+    provisional hardware clearance and 2 mm from the housing wall. Mass split stays 3.5 / 1.2 kg (electronics about
+    850 kg/m3 in its trimmed box). Not product acceptance.
 if_still_no_fit: Report the trimmed sizes. Registry then revises the box split again; housing, aperture and wires stay.
 scope:
   active_record_created: false

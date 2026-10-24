@@ -35,6 +35,21 @@ shell_revision:
       side.
     outer_envelope: Unchanged (40 coupling, 75 mated length)
   confidence: invented/review; the boring is a change to the family template's shell 25 only
+mating_key:
+  source_task: 20261024T163545-blender-b121
+  finding: The R12-13 rib ran only inside the male insert (native Z0..22.5), not across the mating face, so it did not
+    polarise the female.
+  male_receptacle: The 3 mm wide, 1.0 mm high master rib runs the whole bore from the insert face to the barrel's front
+    edge, 1 mm x 45 deg lead chamfer at the front. Pin tips stand at least 4 mm behind the barrel front edge.
+  female_plug:
+    insert_OD_m: 0.0256      # 0.2 mm radial running clearance in the 26 mm bore
+    keyway: 3.4 mm wide, 1.3 mm deep, along the insert's whole engaged length, open at its front face
+    engagement: The rib enters the keyway at least 3 mm before any pin tip reaches a socket entry
+    sockets: 5.0 mm bore spring sockets on the same 16 mm circle and angles (mirrored to face the pins), entry holes
+      5.3 mm with a 0.5 mm x 45 deg lead-in
+    retention: Rear-release stainless clips and a rigid rear insert plate held by a circlip, as the male; the harness
+      backshell and cable grip sit behind it on the harness side
+  invented/review: true
 keying:
   master_key: One 4 mm wide key at 0 deg on the receptacle shell wall, keyway in the plug
   bayonet: The family's three bayonet pins, as the shell 17 template, scaled
