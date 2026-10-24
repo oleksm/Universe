@@ -1,0 +1,40 @@
+status: Revised prototype internal layout for equipment.sensors.altimeter.s1; supersedes the electronics_allocation
+  of docs/ships/explorer-altimeter-internal-termination-choice.yaml. Record unchanged until product release.
+source_task: 20261024T131438-blender-3057
+packet: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-fit-current-study/altimeter-service-study/v4-packing/handoff.json
+packet_sha256: 1179afbdc497fde0674a0c8817e4cab461c1a680bea1d634bdb1a1f99af750bd
+finding: The record's ALT1-01/02/03 boxes are mass-share scalings, not a layout. Optics 238x159x119 plus electronics
+  175x117x87.7 mm need 6.30e-3 m3; the drawn 3 mm-wall cavity is 264x164x124 mm (5.37e-3 m3). Blender's fail is
+  correct; the boxes change, the housing does not.
+frame: Altimeter native frame of the packet - cavity x[-0.132,0.132], y[-0.082,0.082], z[0.011,0.135]; optic axis
+  +Z, service face -Y. The earlier choice's "-x connector face" is wrong; read -Y.
+layout_m:            # boxes are maxima inside the cavity; trim clear of drawn hardware and report the trimmed sizes
+  service_strip:
+    min: [-0.132, -0.082, 0.011]
+    max: [0.132, -0.047, 0.135]
+    holds: Connector inserts, 10 mm straight tails, R16 bends of the 0.5 mm2 wires, lacing clips. No components.
+  optics:            # laser, receiver telescope, detector; looks out along +Z
+    min: [-0.130, -0.045, 0.013]
+    max: [0.030, 0.080, 0.133]
+    size: [0.160, 0.125, 0.120]
+    need: Clear receive aperture at least 0.100 m diameter along +Z, under the optic rim
+  electronics:       # ranging, power conditioning, CAN interface as a card stack
+    min: [0.036, -0.045, 0.013]
+    max: [0.130, 0.080, 0.133]
+    size: [0.094, 0.125, 0.120]
+    need: At least 1.0e-3 m3 after trimming; one face on a housing wall for its heat
+  gap_optics_to_electronics_m: 0.006
+mass_split_kg:       # invented/review; proposed for the record at release
+  housing_and_service_drawn: 2.2025326079991805
+  optics: 3.5        # about 1460 kg/m3 in its box
+  electronics: 1.2   # about 850 kg/m3 in its box
+  total: 6.9025
+  note: Replaces 4/2/2 of the 8 kg nominal. The drawn exterior replaces the 2 kg housing share outright. The record
+    keeps 8 kg until the product is released with these parts.
+wiring: Unchanged from docs/ships/explorer-altimeter-internal-termination-choice.yaml (0.5 mm2, 3 power, 4 per CAN
+  port); wires run in the service strip to the electronics end.
+if_still_no_fit: Report the trimmed sizes. Registry then lowers the optics need (aperture) and says what range that
+  costs; housing and wires stay.
+scope:
+  active_record_created: false
+  product_original_changed: false
