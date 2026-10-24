@@ -96,3 +96,90 @@ alternatives_to_compare:
 - An explicitly redesigned propulsion/power/mission system compatible with another propellant; not a tank-only relabel.
 current_limits: Current whole hull mass, installed B equipment, hydrolox tank placement and thermal routing remain
   unresolved. No scaling, silent cuts or gear-rating transfer.
+ships_alternatives:
+  source: /home/alexm/.agents/reviews/ships/explorer-functional-20261023/tank-alternatives-v3.json
+  sha256: 92b53c0e5e4a1b1a1699e672ae78ccb55f1d97480f5b622ad6e9aea9a264388d
+  screen:
+    transform_candidates: 32
+    endpoint_observations: 64
+    zero_surface_hit_observations: 0
+    minimum_intersected_source_objects: 14
+    maximum_intersected_source_objects: 39
+    meaning: All32boundedtanktransformcandidates reject in2endpointstates. Not exhaustive arbitrary-orientation/hull-wide
+      nonexistence proof, and no support/containment/human/thermal pass inferred.
+    B_v2_other30: 30slotszerohits inBlender endpointscreen only; not selected/placed or fit-approved.
+  routes:
+  - key: compact_hydrolox_new_product
+    recommendation: Preferred product-gap route if internal current shape and CHS1/fuelcell are retained. Registry+Blender
+      define an actual new reusable dual-cryogenic product from a verified reservation envelope and selected mission/capacity,
+      with new geometry/materials/stock, insulation, common bulkhead, two service circuits, vent/relief, supports
+      and cradle.
+    capacity: Not selected;100/200kg examples in budget table show tradeoff. No guessed mass, diameter, rating or
+      virtualinventoryrecord.
+    status: No validated smaller free envelope yet; Blender asked shipscompact-tank-envelope task. Currenthalf-tonne
+      allocations removed from any actual-fit claim.
+    mount: Existingmount.tank-s1 is5.292m socket square/envelope5.88m, copied to ports of1.673m tank. Real compact
+      product needs genuine product datums/feet, new reviewed mount or designed adapter/cradle to hull stock structure.
+      Do not keep impossible generic feet or silently rewrite generator output.
+  - key: existing_hydrolox_external
+    recommendation: Keep exact existing500kgproduct only if an explicit exterior mounted installation and changed
+      equipment outline are accepted. Need support/cradle/pressure/thermal/services/full-content loads, obstruction/plume
+      and crew checks.
+    status: No such cleared mounted exterior candidate selected. Moving a tank into empty exterior space alone is
+      not a fit or support solution; do not autoaccept.
+  - key: methalox_system_change
+    real_product: equipment.tank.methalox.0p5t
+    capacity_kg_each: 500
+    tare_kg_each: 53.2
+    record_envelope_m:
+    - 1.271
+    - 1.185
+    - 1.231
+    not_drop_in: CHS1/S2 and fuelcell.s1 burnhydrolox. ExistingCHS3/S4 burnmethalox; replacingfluidalone invalidatesengines/plant.
+      Nativebattery nowfinite could replaceFC for limited duration, but propulsion/control/thermal/mission must
+      be redesigned.
+    thrust_screen: SmallestexistingmethaloxCHS3 is500kN,600kg,minimumthrottle.4=200kN perengine. Pair lift floor400kN
+      implies40.77t at1g forsteadyminimumhover. No unselected smallcraft hover/torque/pulse equivalence.
+    burn_screen: 1000kg methalox/pairedCHS3 at1MN,ve3290 yields3.29s fullpair or8.225s atminimum.4, before reserves.
+      Not a selectedmission or compatibleB.
+  - key: uncommissioned_current_stage
+    recommendation: Continue exact hull/parts wholemass and access-state input; register truthful empty fit once
+      whole mass is supported. No propellant capacity, stock-fit, invented nozzle or playable-flight claim.
+    status: Supportedconsumer path; currentwholemass remains absent. Camera/altimeter/nativefinitebatteries/thermalretention
+      nowlanded e963b9bf0, but they do not close tankfit or mission.
+  capacity_budget:
+  - total_hydrolox_kg: 100
+    selection: Illustrative capacity budget only, not a selected/proposed installed tank or mission requirement
+    full_pair_50kn_seconds: 8.8
+    full_all_four_CHS1_100kn_seconds: 4.4
+    fuelcell_at_4230W_only_hours_ideal: 46.952981350144476
+    limits: Shared fuel includes engine/FC/reserve/settling/boiloff/unusable consumption. These upper bounds do
+      not imply endurance, usable delta-v, landing or crew qualification.
+  - total_hydrolox_kg: 200
+    selection: Illustrative capacity budget only, not a selected/proposed installed tank or mission requirement
+    full_pair_50kn_seconds: 17.6
+    full_all_four_CHS1_100kn_seconds: 8.8
+    fuelcell_at_4230W_only_hours_ideal: 93.90596270028895
+    limits: Shared fuel includes engine/FC/reserve/settling/boiloff/unusable consumption. These upper bounds do
+      not imply endurance, usable delta-v, landing or crew qualification.
+  - total_hydrolox_kg: 500
+    selection: Illustrative capacity budget only, not a selected/proposed installed tank or mission requirement
+    full_pair_50kn_seconds: 44.0
+    full_all_four_CHS1_100kn_seconds: 22.0
+    fuelcell_at_4230W_only_hours_ideal: 234.7649067507224
+    limits: Shared fuel includes engine/FC/reserve/settling/boiloff/unusable consumption. These upper bounds do
+      not imply endurance, usable delta-v, landing or crew qualification.
+  - total_hydrolox_kg: 1000
+    selection: Illustrative capacity budget only, not a selected/proposed installed tank or mission requirement
+    full_pair_50kn_seconds: 88.0
+    full_all_four_CHS1_100kn_seconds: 44.0
+    fuelcell_at_4230W_only_hours_ideal: 469.5298135014448
+    limits: Shared fuel includes engine/FC/reserve/settling/boiloff/unusable consumption. These upper bounds do
+      not imply endurance, usable delta-v, landing or crew qualification.
+  stage_mass_accounting: Potential other30catalogueitems inV2 sum1507.8kg (1737.8-230), excluding both rejected
+    tanktares. This is a catalogue arithmetic subtotal, not installed/empty/dry/loaded craftmass. Tankcontents0installed
+    and no fuelcapacity may be recorded from this screen.
+  selected_route: null
+next_action: Pursue definition of a real compact hydrolox product for the retained internal CHS1/fuel-cell study,
+  conditional on an actually measured bay reservation and explicit capacity/duty. This is a study route, not selected
+  installed equipment. Blender request20261023T192243-registry-f6ec asks the missing envelope.
