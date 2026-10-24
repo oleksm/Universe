@@ -1,0 +1,46 @@
+status: Registry's initial hull-owned socket inventory for hull.explorer-study (hull-and-sockets delivery); kinds, sizes
+  and mount interfaces only - no equipment, holders, poses or ratings. A proposal the owner may revise.
+source_task: 20261024T175941-blender-96ad (with ships 20261024T180012-ships-6fe6)
+contract: /home/alexm/.agents/reviews/ships/explorer-socket-only-record-contract.json
+rule: standards/SpaceshipBuilding ship-rule.scope 1.1.1 - sockets on the bare hull, fit and thrusters stay empty
+basis:
+  why_this_set: One socket set for each base block the engine requires to commission a ship (docs/ships/explorer-flight-contract.md
+    in universe - power, propulsion along the nose, lift, attitude, tank, flight computer, transponder, sensors, comm, life
+    support), plus thermal. Counts follow the mission's physics (one person, short hops on an airless moon), not the
+    withdrawn 31-product layout. Players choose and place modules in the shipyard.
+  interface: Each socket offers the named SFO 19 mount; what fits that mount fits the socket. Size 1 throughout (the class
+    of every product the studies found).
+  tier: invented
+  review: true
+sockets:                        # name, kind, size, mount, count; zone is a requirement on Blender's receiver placement
+- {names: [main_port, main_starboard], kind: engine, size: 1, mount: mount.engine-s1,
+   zone: 'Aft, thrust axis along the nose (+X push), symmetric about the centreline'}
+- {names: [lift_port, lift_starboard], kind: engine, size: 1, mount: mount.engine-s1,
+   zone: 'Belly, thrust up, symmetric about the centreline, longitudinally within the ship''s loaded COM band so level hover
+     can hold across a propellant burn; Ships sets the station on the bare hull'}
+- {names: [rcs_fore_port, rcs_fore_starboard, rcs_aft_port, rcs_aft_starboard], kind: engine, size: 1, mount: mount.engine-s1,
+   zone: 'Four hull extremities, fore and aft on each side, as far from the COM as the hull allows; exterior, plumes clear of
+     the skin and gear for a block up to 0.4 m'}
+- {names: [tank_1, tank_2], kind: tank, size: 1, mount: mount.tank-s1,
+   zone: 'Near the COM band so propellant burn shifts it least (the burn-shift finding of c5207d9b8)'}
+- {names: [power_1, power_2], kind: power, size: 1, mount: mount.power-s1, zone: Interior, serviceable}
+- {names: [computer], kind: computer, size: 1, mount: mount.computer-s1, zone: Interior}
+- {names: [avionics], kind: avionics, size: 1, mount: mount.avionics-s1, zone: Interior}
+- {names: [transponder], kind: transponder, size: 1, mount: mount.transponder-s1, zone: Interior or exterior, antenna clear}
+- {names: [comm], kind: comm, size: 1, mount: mount.comm-s1, zone: Exterior or roof, clear sky view}
+- {names: [sensor_belly_1, sensor_belly_2], kind: sensors, size: 1, mount: mount.sensors-s1,
+   zone: 'Belly, looking down past the gear (camera and altimeter class)'}
+- {names: [life_support], kind: life_support, size: 1, mount: mount.life-support-s1, zone: Inside the pressure hull}
+- {names: [thermal_ext_1, thermal_ext_2, thermal_ext_3, thermal_ext_4], kind: thermal, size: 1, mount: mount.thermal-s1,
+   zone: 'Exterior, both faces to sky where possible: four radiators of 2.37 kW at night cover the about 7.7 kW load'}
+- {names: [thermal_int_1, thermal_int_2], kind: thermal, size: 1, mount: mount.thermal-s1, zone: Interior (coolant loop, air cooler)}
+total: 25
+not_offered:
+- command - the owner deferred the command seat and dashboard; no socket, no datum (future reservation only)
+- gear - the edited gear is hull-owned
+- cargo - no cargo in the mission
+per_socket_evidence: As the contract - stable id, hull-owned receiver geometry with measured bearing lands (rule.joint-bearing-evidence),
+  exact mount_<name> rigid frame in the accepted hull frame, structural path and clearances, bare mass delta and new GLB sha.
+  Receiver strength stays 'unknown' until qualified; no product foot rating reused.
+gap: equipment.engine.cg.outboard-s1 fits no mount, so no socket takes it; a player's attitude block is the engine.cg.s1
+  class on mount.engine-s1. Whether the outboard pod gets mount.engine-s1 is a separate product question.
