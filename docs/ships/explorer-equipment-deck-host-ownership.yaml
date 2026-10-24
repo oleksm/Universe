@@ -1,0 +1,78 @@
+status: explicit hull-owned prototype deck host choice; no floor/frame load or pressure rating
+request: 20261024T000559-ships-9987
+bindings:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/cumulative-mechanical-v2-f64.json: 7efef87139d0fc095eab309a1d3b3b01475a4e5c00a0c182567306bac04d9f5f
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/all-gearwell-service.json: a57e1478792120caf11d936b68026a36b3cc46635f7f8e88de57542c27620b5c
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/all-gearwell-service-v2-meshes.json: 39284ebcb0e74a0e758870a57ab81f273ebbadf7b9a52b8177c151afc4ac0c0b
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/roof-collar-final-integrated-allmeshes.json
+  : 33898fb892fe1b98ae5dd169913f1aef61af8544aaf869321bed261ba12f4730
+  docs/ships/explorer-material-stock-schedule.yaml: b033698880844bde6470418f4275d84b10fdc34988cb270aaae30877fd269d1e
+  docs/ships/explorer-measured-equipment-holder-inputs.yaml: 9c569f3868fc846b7e366189af755e94f1ed2dde708b70aabf6541f5843fe6f3
+registry_design_source: docs/ships/explorer-material-stock-schedule.yaml
+host_ownership:
+- name: Crew access floor | service openings
+  assembly_code: EXPL-07
+  assembly: crew-hatch-and-folding-ladder
+  material: material.aluminium-alloy-6061
+  density_kg_m3: 2700
+  kind: Hull-owned main walking-deck metal, explicit cut replacement of Crew access floor | round opening in the
+    service candidate; not stocked panel.deck equipment, lining or module.
+  source_quantity:
+    before_kg: 831.1779662225288
+    after_kg: 765.3543926714738
+    removed_kg: 65.82357355105496
+    status: Error.NoError
+  source_quantity_scope: Reported service-floor quantity after explicit well/panel cutouts, not independent wholemass.
+    Current bare-subset986ledger still carries intact831.177966kgparent; this replacement belongs to service157set
+    and must substitute that parent once.
+- name: Shoulder interior | level raised deck -1
+  assembly_code: EXPL-09
+  assembly: forward-shoulders
+  material: material.aluminium-alloy-6061
+  density_kg_m3: 2700
+  kind: Hull-owned raised side-deck metal; not reusable lining/module. Built by level-shoulder-interior-decks.py
+    as authored supported-volume design geometry, no certified structural span.
+  current_reported_geometry_mass_kg: 138.52898861343135
+  current_reported_volume_m3: 0.05130703281978939
+- name: Shoulder interior | level raised deck 1
+  assembly_code: EXPL-09
+  assembly: forward-shoulders
+  material: material.aluminium-alloy-6061
+  density_kg_m3: 2700
+  kind: Hull-owned raised side-deck metal; not reusable lining/module. Built by level-shoulder-interior-decks.py
+    as authored supported-volume design geometry, no certified structural span.
+  current_reported_geometry_mass_kg: 138.51108844338088
+  current_reported_volume_m3: 0.05130040312717811
+chosen_holder_host_route:
+  route: Use these real deck surfaces as the local supported seating/interface planes for ordinary equipment carriers.
+    Choose separate8mm6061load-spreader plates (stock.al6061-pl-8), backed by actual new ribs/pedestals/outriggers
+    tied to named current FRAME members. Equipment toe clamps/bolts follow measured holder inputs2acc27150. No load
+    capacity inferred from the floor mass or thickness.
+  loadpath: For main-floor boxes, locate real load-spreader and backing/rib contacts that reach an actual nearby
+    FRAME lowerrail/crossbar. For shoulder-deck boxes, design an explicit outrigger/cross-support back to actual
+    FRAME rails/portal crossbars; do not treat the raised wedge deck alone as a qualified cantilever. All support
+    members, joints, fasteners and local machining are additional owned parts with current measured quantity.
+  frame_targets: Candidate current names include FRAME lowerrail_-1_forward/aft and mirrored1members, portal lower
+    crossbars and actual transfer crossbar, subject to measured proximity/clearance in the current candidate. A
+    name is a target to locate, not a guaranteed mount face or rated anchor.
+  host_geometry: 'Use the actual remaining deck solid, including service apertures and pending hatch cassette/floor-bridge
+    edits. Keep walking top/crew/service paths. Never shrink deck volume to a nominal5mmplate target: material schedule
+    retains as-drawn actual solid.'
+  attachment: Prefer real backed metal seating with an explicit welded/bolted supported connection and visible removal/tool
+    route. Pressurepan/servicepanel lids, thin cosmetic gear roofs and loose liners are not substitutes for FRAME
+    support. No blanket body intersection or tangency counts as a joint.
+  cuts: No automatic new floor/skin holes or pressure seals authorized. If a loadpath needs a through-deck/skin
+    penetration, name and draw a bounded host replacement with its pressure/crew ownership before cutting. Support
+    below/alongside deck must fit without punching the cassette/pans, gear motion or a removable panel/tool route.
+  module_scope: New carriers/supports are hull-owned fabrication under owner authorization, not interior furniture
+    or a newly registered equipment product. Command remains deferred; using a real module later does not authorize
+    installing it now.
+accounting:
+- Servicefloor replaces intact parent once; never add intact831.178kg and service765.354kg together. Later netreceiver
+  cuts/cassette replacements compose on the current exacthost, not reintroduced original.
+- Raised decks stay measured source parts; holder plates/ribs/outriggers count as actual added stock and joints.
+  No automatic offset against hidden drive/electronics reserves.
+- Different source/candidate names must be preserved in the retirement map; do not use bare-subset name absence
+  to declare the actual service floor nonexistent.
+limits: These are chosen prototype metal deck hosts and supported loadpath intent. No floor pressureboundary designation,
+  rated structural span, anchor strength, load/spread verification or installed equipment/flight acceptance.
