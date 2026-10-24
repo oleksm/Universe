@@ -64,7 +64,7 @@ coverage:
     silicone_seal: 40
     steel_hardware: 294
     ti_gear: 9
-  hidden_dry_allowance_total_kg: 96.1
+  hidden_dry_allowance_total_kg: 91.6
 material_roles:
   al_skin:
     material: material.aluminium-alloy-6061
@@ -501,9 +501,8 @@ assemblies:
     silica_optic: 13
     silicone_seal: 25
     steel_hardware: 72
-  hidden_dry_allowance_kg: 5.0
-  hidden_allowance_basis: Unrepresented glazing retention/bond/preload sundries and hull-joint/weld sundries; no
-    extra pane or command station.
+  hidden_dry_allowance_kg: 2.0
+  hidden_allowance_basis: Unrepresented cockpit hull-joint/weld/retention sundries; glazingV7explicitretention credited3kg via explorer-explicit-hardware-reserve-map.yaml. No actuator/electronics credit.
   objects:
     Canopy aft frame -1: al_frame
     Canopy aft frame 1: al_frame
@@ -687,8 +686,8 @@ assemblies:
     al_frame: 10
     silica_optic: 2
     silicone_seal: 6
-  hidden_dry_allowance_kg: 2.0
-  hidden_allowance_basis: Unrepresented glazing retention and joint sundries; no redundant pane silently added.
+  hidden_dry_allowance_kg: 0.5
+  hidden_allowance_basis: Unrepresented surrounding visor joint/weld sundries; glazingV7explicitvisorretention credited1.5kg via explorer-explicit-hardware-reserve-map.yaml. No extra pane or pressure rating.
   objects:
     Visor | chamfer frame (-1, 0): al_frame
     Visor | chamfer frame (-1, 1): al_frame
@@ -1316,3 +1315,12 @@ assemblies:
     Dorsal maintenance cover captive fixing 1: steel_hardware
     Dorsal maintenance cover captive fixing 2: steel_hardware
     Dorsal maintenance cover captive fixing 3: steel_hardware
+
+reserve_reconciliation:
+  mapping: docs/ships/explorer-explicit-hardware-reserve-map.yaml
+  previous_total_kg: 96.1
+  retired_glazing_budget_kg: 4.5
+  current_total_kg: 91.6
+  tier: invented
+  review: true
+  scope: New explicit03/04budget subdivision after glazingV7adoption; no unknown actuator/electronics reserve removed.

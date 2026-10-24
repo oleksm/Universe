@@ -1,0 +1,165 @@
+status: chosen revised hidden prototype budget; no measured hardware mass or wholemass certificate
+request: 20261023T234904-blender-d966
+old_schedule_sha256: bda8762b7c57d724ff1e416da6817307d3a5ce5309874bdda74d30ae67af04e3
+old_total_kg: 96.1
+retired_budget_kg: 4.5
+current_total_kg: 91.6
+basis: Original03/04reserves were unsplit design allowances. The3.0/1.5kgfunctional subdivisions are NEW explicit
+  invented/review prototype budget choices, not recovered historical allocations or sums of replacement hardware
+  masses. Actual modeled masses remain measured independently.
+assemblies:
+- assembly_code: EXPL-01
+  assembly: access-panels-and-frame-returns
+  prior_kg: 1.0
+  superseded_kg: 0.0
+  retained_kg: 1.0
+  explicit_replacement_function: []
+  basis: No superseded hidden function demonstrated by the new part sets; retain exact original functional reserve.
+- assembly_code: EXPL-02
+  assembly: aft-equipment-housings
+  prior_kg: 2.0
+  superseded_kg: 0.0
+  retained_kg: 2.0
+  explicit_replacement_function: []
+  basis: No superseded hidden function demonstrated by the new part sets; retain exact original functional reserve.
+- assembly_code: EXPL-03
+  assembly: cockpit-core
+  prior_kg: 5.0
+  superseded_kg: 3.0
+  retained_kg: 2.0
+  explicit_replacement_function:
+  - glazingV7 fixed6061carrier/backbone cluster and cockpit-pane beads/fasteners
+  basis: New explicit glazingV7 cockpit-pane retention/carrier/endtab/M4hardware replaces a chosen3kgportion of
+    the previous5kgunsplit glazing-and-hulljoint budget. Keep2kgfor still unmodeled cockpit hull-joint/weld/retention
+    sundries.
+- assembly_code: EXPL-04
+  assembly: cockpit-front-visor
+  prior_kg: 2.0
+  superseded_kg: 1.5
+  retained_kg: 0.5
+  explicit_replacement_function:
+  - Joint pane13/14visor removable beads/seals and theirM4station hardware in shared cluster
+  basis: New explicit glazingV7 paired visor pane retention replaces a chosen1.5kgportion of the previous2kgunsplit
+    visor-glazing/joint budget. Keep0.5kgfor still unmodeled surrounding visor joint/weld sundries.
+- assembly_code: EXPL-05
+  assembly: cockpit-nose
+  prior_kg: 0.5
+  superseded_kg: 0.0
+  retained_kg: 0.5
+  explicit_replacement_function: []
+  basis: No superseded hidden function demonstrated by the new part sets; retain exact original functional reserve.
+- assembly_code: EXPL-06
+  assembly: compact-landing-gear-cover
+  prior_kg: 1.5
+  superseded_kg: 0.0
+  retained_kg: 1.5
+  explicit_replacement_function: []
+  basis: No superseded hidden function demonstrated by the new part sets; retain exact original functional reserve.
+- assembly_code: EXPL-07
+  assembly: crew-hatch-and-folding-ladder
+  prior_kg: 10.0
+  superseded_kg: 0.0
+  retained_kg: 10.0
+  explicit_replacement_function: []
+  basis: Keep10kg for actual unmodeled slide/fold drive/lock/bearing/harness functions. Guide rails/shoes/cassette
+    walls and their retention screws do not implement that drive. Revisit only with named functional internals.
+- assembly_code: EXPL-08
+  assembly: edited-landing-gear-assembly
+  prior_kg: 45.0
+  superseded_kg: 0.0
+  retained_kg: 45.0
+  explicit_replacement_function: []
+  basis: Keep45kg(15perleg) for unmodeled leg actuation/geartrain/locks/internal piston bearings/seals/fluid/harness.45new
+    external ankle cup/clamp parts and service-gearwell/frame hardware are measured external additions, not replacement
+    internal drive equipment.
+- assembly_code: EXPL-09
+  assembly: forward-shoulders
+  prior_kg: 2.0
+  superseded_kg: 0.0
+  retained_kg: 2.0
+  explicit_replacement_function: []
+  basis: No superseded hidden function demonstrated by the new part sets; retain exact original functional reserve.
+- assembly_code: EXPL-10
+  assembly: interior-floor-and-trim
+  prior_kg: 1.0
+  superseded_kg: 0.0
+  retained_kg: 1.0
+  explicit_replacement_function: []
+  basis: No superseded hidden function demonstrated by the new part sets; retain exact original functional reserve.
+- assembly_code: EXPL-11
+  assembly: interior-lighting
+  prior_kg: 8.5
+  superseded_kg: 0.0
+  retained_kg: 8.5
+  explicit_replacement_function: []
+  basis: Keep unmodeled emitter/driver/harness budget. Moving/reseating lenses/bezels or changing gaskets does not
+    install LEDs/electronics.
+- assembly_code: EXPL-12
+  assembly: internal-side-compartment-access
+  prior_kg: 0.5
+  superseded_kg: 0.0
+  retained_kg: 0.5
+  explicit_replacement_function: []
+  basis: No superseded hidden function demonstrated by the new part sets; retain exact original functional reserve.
+- assembly_code: EXPL-13
+  assembly: nose-headlights
+  prior_kg: 1.0
+  superseded_kg: 0.0
+  retained_kg: 1.0
+  explicit_replacement_function: []
+  basis: Keep unmodeled emitter/driver/harness budget. Moving/reseating lenses/bezels or changing gaskets does not
+    install LEDs/electronics.
+- assembly_code: EXPL-14
+  assembly: port-aft-threshold
+  prior_kg: 0.1
+  superseded_kg: 0.0
+  retained_kg: 0.1
+  explicit_replacement_function: []
+  basis: No superseded hidden function demonstrated by the new part sets; retain exact original functional reserve.
+- assembly_code: EXPL-15
+  assembly: rear-boarding-ramp
+  prior_kg: 14.0
+  superseded_kg: 0.0
+  retained_kg: 14.0
+  explicit_replacement_function: []
+  basis: No superseded hidden function demonstrated by the new part sets; retain exact original functional reserve.
+- assembly_code: EXPL-16
+  assembly: rear-opening-fixed-frame
+  prior_kg: 1.5
+  superseded_kg: 0.0
+  retained_kg: 1.5
+  explicit_replacement_function: []
+  basis: No superseded hidden function demonstrated by the new part sets; retain exact original functional reserve.
+- assembly_code: EXPL-17
+  assembly: service-hardware
+  prior_kg: 0.5
+  superseded_kg: 0.0
+  retained_kg: 0.5
+  explicit_replacement_function: []
+  basis: No superseded hidden function demonstrated by the new part sets; retain exact original functional reserve.
+new_sets_without_old_budget_credit:
+  service157: New gearwell fixedpressurepan/panel/nuttracks/forks/bolts; no offset against cover drive or leg internal
+    actuation. All actual positive parts/material counted in service set.
+  roofshoe388: New roof tank thermal-guided retention assembly; outside original17assembly stock schedule reserve
+    scope. No credit against any original hidden reserve.
+  roofjoint164: New roof primary-frame joint/gusset/splice hardware; outside original reserve scope. No old reserve
+    credit.
+  roofcollar16: New roof penetration/collar/weld assembly; outside original reserve scope. Oldcollar geometry replacement
+    accounted by its exact frame map, not hidden reserve.
+  ankle45: External new ankle cups/splitclamps/nutcages/throughfasteners replace9measuredAlparts, not internal legdrive
+    allowance. No reserve credit; actual gross-minus-oldgeometry quantities roll up separately.
+  headseat291: Existing heads were already drawn and excluded from hidden fixing budget. Cutting receiver seats
+    adds no missing shank/thread; no reserve credit.
+accounting:
+- Add only current retained91.6kg once to coherent geometry-derived bare quantities. Never add historical96.1plus
+  currentreserve or subtract4.5again after current91.6is used.
+- The4.5kgcredit is a retired allowance, not negative material stock or procurement scrap. Keep actual new hardware
+  parts at full measured material masses.
+- Replacement matches are functional scope, not min(oldreserve,actualnewmass) by convenience. Larger real hardware
+  does not erase unrelated unmodeled functions.
+- Use retained reserves as unlocated assembly mass bounds, not invented componentCOM or loadrating. Actual actuator/electronics
+  selection replaces only its matching reserve through a new explicit row.
+- Reconcile installed catalogue equipment separately using its recorded mass; do not add fresh payload-electronics
+  internals to catalogue boxes whose mass already includes them.
+adoption: GlazingV7 and opticsV2 already adopted as bounded geometry85c9e0610; current03/04reserve credit applies
+  when that exact replacement family is present in the cumulative candidate. Historical pre-glazing ledgers retain96.1kg.
