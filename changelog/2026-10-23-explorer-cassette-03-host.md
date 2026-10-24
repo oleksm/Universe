@@ -1,0 +1,1 @@
+Extended the full-length hatch cassette pressure-pan host map to actual rear skin03-7as well as04-7. A continuous host-conforming pan/corner closes the local replacement; only bounded patches retire after new geometry exists. Full storage length and circular seal land stay intact. No automatic wholehost/sweep cuts or pressure/motion acceptance.

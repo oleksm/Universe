@@ -1,0 +1,49 @@
+status: chosen local03-7cassette pressure-pan host extension; reversible construction only
+request: 20261023T235445-blender-52c3
+extends: docs/ships/explorer-hatch-cassette-host-map.yaml
+bindings:
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-finish-mechanical-channel-entry-v2-review.json
+  : 7ea9d74e5085399283ee1bef31032d4587567c8089ae0d701ea701d2df3e358c
+decision: Include Core pressure skin03-7 as a second explicit pressure-pan host for the rear of the full-length
+  cassette. Preserve the complete storage length and circular sealing land; do not shorten the pocket or trim the
+  moving leaf to avoid this host.
+host_join:
+  hosts:
+  - Core pressure skin 03-7
+  - Core pressure skin 04-7
+  new_boundary: One continuous closed3mm6061cassette lower pressure-pan and side/end enclosure, with separate actual
+    host-conforming seam segments on03-7and04-7. Derive their meeting crease from evaluated retained host triangles;
+    no invented common horizontal plane or a gap hidden between two unrelated trims. Use a finite formed corner
+    or explicit joined miter/filler at the host transition.
+  cut_scope: Trace the actual new cassette enclosure footprint on each host, limited to material occupied/replaced
+    by the new pocket wall/entry. Retain all host stock outside that footprint. Cut the two bounded patches only
+    after the replacement pan and closed surrounding seam loops exist in the same candidate; neither whole03-7 nor
+    whole04-7is retired.
+  seal_and_support: New pressure-pan joins retained skin continuously around the pocket and connects to the previously
+    chosen coaming throat above/below its seal annulus. Structural rail ties land on drawn fixed brackets/backed
+    floor/frame, not on unsupported3mmcase wall by intersection alone.
+  shared_case: Port/starboard guide sides belong to one full-leaf storage cassette; do not mirror two overlapping
+    closed boxes or duplicate central pressure-pan mass. Assemble the whole case after the one-side entry works.
+  shape: Follow original host exterior facets where the moving/channel envelope permits. If a local deeper blister
+    is necessary, draw it explicitly with finite transitions, count its stock and include matched exterior/underside
+    views; no wholesale belly inflation or hidden change to crew/gear envelope.
+pair_dispositions:
+  moving_stem_to_own_leaf: Explicit designed attachment with positive contact/union or counted mechanical tie; do
+    not report it as clearance or arbitrarily exclude fixed neighbors.
+  fixed_rail_tie_to_floor: Create named seated/bolted or welded support joints after the new local floor bridge
+    exists. Do not use surface intersection alone as a loadpath.
+  guide_case_to_03_04_hosts: Designed local bounded replacement and seam; compare final new parts against retained
+    host portions, not retired ghost patches.
+  floor_belly_retainers: Entry closed-state lip/floor/belly contacts remain to be resolved in their actual updated
+    local host geometry; no new rim/coaming cut authorized.
+evidence:
+- 03/04retained and retired patch triangles/loops, true host crease and complete new corner/end/side/pressurepan
+  seam geometry; positive material and retained void semantics.
+- All four revised10/8mmstroke states plus intermediate paths against retained03/04skin, floor/belly bridge, rims/coaming,
+  ladder and gear. No claimed clearance from section-only test.
+- Complete pressurecase mesh with no open guide slot to cabin/exterior when hatch is seated; no pressure rating
+  or airlock claim.
+- Actual drive/support/retainers/endcap/tool hardware, exact new source/export bindings and coherent64bit stock/material
+  quantities after old patch retirement.
+limits: A local pressure-boundary construction choice under owner finish authority, not a proof of pressureclosure,
+  serviceability, load, crew or functional game release.
