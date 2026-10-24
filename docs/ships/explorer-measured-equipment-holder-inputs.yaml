@@ -1,0 +1,931 @@
+status: measured attachment lookup and chosen hull-owned prototype holder routes; no product edits or rated attachment
+  acceptance
+request: 20261023T234011-ships-4774
+bindings:
+  /home/alexm/git/freefall-assets/models/tank-nitrogen-100kg/v1/model.glb: 896184095f22626e3963e49377d3902f8f4021fd5b6e6338fc0e87935554d4b2
+  /home/alexm/git/blender/inventory-tools/build_nitrogen_100kg.py: 5b1de5bef4f30d07021a860aea91d1c0fafbf9133bc5c7809d0f5073c6a5f684
+  /home/alexm/git/freefall-assets/models/power-fuelcell-s1/v1/model.glb: 7555b5653a545f3c95b773c96c77e228dd3f552d5a1ed555df45df6acbc6f7e6
+  /home/alexm/git/blender/inventory-tools/build_fuelcell_s1.py: 202e5c99cfdbc815f6e1112ef24f327db6fba81f2fe566c139cb761dbd68f760
+  /home/alexm/git/freefall-assets/models/power-battery-s0/v1/model.glb: a9afbcc69dfe4773779fab6a733f8e1ffd2e198e1b4def12ff57b9c084d6249f
+  /home/alexm/git/blender/inventory-tools/build_battery_s0.py: 42ee9bc4e287ac46cc6d2921602946c644379df79b2544fc99eaa67e46e27231
+  /home/alexm/git/freefall-assets/models/life-support-s0/v1/model.glb: e1a3ee9aaddfadfb14e91419544b3081253936696d5cbb05389e7bade5f77006
+  /home/alexm/git/blender/inventory-tools/build_life_support_s0.py: aba1d1e87a2a1017d139df0d1feb00a01ba6cb3338126852761798adfe1c69e7
+  /home/alexm/git/freefall-assets/models/thermal-coolant-loop-s0/v1/model.glb: d7131ee49c864efe2ae0e43424ff483ad1c16a588f008fb1cd4f67047176f3ac
+  /home/alexm/git/blender/inventory-tools/build_coolant_loop_s0.py: 7543b1158c2934443caf89603d4d86a7130553e23781aa19ea120b909948d001
+  /home/alexm/git/freefall-assets/models/thermal-air-cooler-s0/v1/model.glb: b49353309dfd93c0f1b5909b249e6ef4bccad42da22a631506e17611427ef9aa
+  /home/alexm/git/blender/inventory-tools/build_air_cooler_s0.py: d77e86647d47fec8a9b4c70c6170462b3a9cf49afb2ba0a349153aadfee19dde
+  /home/alexm/git/freefall-assets/models/thermal-radiator-s0/v1/model.glb: d3b037ef7541ec7e91be7413c5193903ce288d1000328e7c25c0748e7e13b127
+  /home/alexm/git/blender/inventory-tools/build_radiator_s0.py: d6338c1895cf81dd3a4d224ccec8b19bf0ba00f2beed50c620281abf78994ca1
+  /home/alexm/git/freefall-assets/models/avionics-nav-basic-s1/v1/model.glb: 5a410f145db366293dbde3952adf3ebc936787466a44c645311b53beb08854a4
+  /home/alexm/git/blender/inventory-tools/build_nav_basic.py: 9991b2cdbe618c56ff7aae49268f22e3417877b243df025879e2226756bd89c4
+  /home/alexm/git/freefall-assets/models/sensors-altimeter-s1/v1/model.glb: 100d699142a104abf54b9fae37c79fa81e1ee872fec7a5578a7749afda3cb920
+  /home/alexm/git/blender/inventory-tools/build_altimeter_s1.py: 52bb77b64c76ab25731ad8a627e2d597f37b8f0d43b8985609e8947b013e3767
+  /home/alexm/git/freefall-assets/models/engine-cg-s1/v1/model.glb: ff42c3554a9dbebb7e68b905855a48c67ba6185f9ba94a86351fe095e0347ca9
+  /home/alexm/git/blender/engine-cg-s1/candidate-v01/review/interface-qc.json: c8c75693c25698ac4f48589a787e757560dce43bb8a250bff36d057f7d7ea6a3
+  /home/alexm/git/freefall-assets/models/computer-fbw-s1/v2/model.glb: c31ed9faeec95563b9688a0b11bdd637d0a27d3daa37aedcb954522591508edc
+  /home/alexm/git/blender/inventory-tools/build_fbw.py: 019b73ed1cd98ff1a3514d4b0c17fd7a99a5dd01ac5fe27af9921af5ca3f9951
+  /home/alexm/git/freefall-assets/models/transponder-s1/v2/model.glb: 6df1f628f83e059919d43478bf0696860ee3bf1195e59740bb9fcdc5fb72af16
+  /home/alexm/git/blender/inventory-tools/build_transponder.py: 25165ce1cd1867c4c3bca7898b57ba0a1da8470027d831090eaf3efd3b939d1e
+  /home/alexm/git/freefall-assets/models/comm-basic-s1/v2/model.glb: c87a22f1cf3867cb6520b88a55c37e950e8a3d705dd33e28a2495fff95aa726c
+  /home/alexm/git/blender/inventory-tools/build_comm.py: 8d5ad9ab41f21affc3f81a47daaa1f777a488d7d1bdf6f97268957f7f505f7a2
+measurement_script: /home/alexm/.agents/reviews/registry/20261023-explorer-measured-holders.py
+measurement_script_sha256: 1058f370d3286896d5fe43ff955c54732cd4cfbeaf7410b6689690f76f8ef970
+products:
+- item: equipment.tank.nitrogen.100kg
+  model_sha256: 896184095f22626e3963e49377d3902f8f4021fd5b6e6338fc0e87935554d4b2
+  geometry_frame: Product source Zup via composed glTF world transforms then(x,-z,y); metres. Apply full instance
+    transform for hull placement.
+  source_lookup: /home/alexm/git/blender/inventory-tools/build_nitrogen_100kg.py
+  mount_bores:
+  - axis_point_product_Zup_m:
+    - -0.37
+    - -0.365
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.008
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.006000000052154064
+    observed_vertex_diameter_range_m:
+    - 0.007999957379065356
+    - 0.00800003528595541
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - -0.37
+    - 0.365
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.008
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.006000000052154064
+    observed_vertex_diameter_range_m:
+    - 0.007999957379065356
+    - 0.00800003528595541
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.27
+    - -0.365
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.008
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.006000000052154064
+    observed_vertex_diameter_range_m:
+    - 0.00799994894969302
+    - 0.0080000376701582
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.27
+    - 0.365
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.008
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.006000000052154064
+    observed_vertex_diameter_range_m:
+    - 0.00799994894969302
+    - 0.0080000376701582
+    status: actual installed bore-wall geometry found
+  geometry_min_max_m:
+  - - -0.574999988079071
+    - -0.4000000059604645
+    - 0.0
+  - - 0.5750000476837158
+    - 0.4000000059604645
+    - 0.8299999833106995
+  verified_all_requested_bores: true
+  chosen_hull_owned_holder: 8mm6061 cradle shelf with four supported saddle pads; nominalM6 through actual8mm bores,
+    load spread below6mm saddle bases. Retain vessel and straps; no clamp to composite pressure wall.
+  actual_contact_basis: Four saddle underside faces at product Z0; bore-wall thickness6mm.
+- item: equipment.power.fuelcell.s1
+  model_sha256: 7555b5653a545f3c95b773c96c77e228dd3f552d5a1ed555df45df6acbc6f7e6
+  geometry_frame: Product source Zup via composed glTF world transforms then(x,-z,y); metres. Apply full instance
+    transform for hull placement.
+  source_lookup: /home/alexm/git/blender/inventory-tools/build_fuelcell_s1.py
+  mount_bores:
+  - axis_point_product_Zup_m:
+    - -0.387
+    - -0.233
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.00800000037997961
+    observed_vertex_diameter_range_m:
+    - 0.009999968855154967
+    - 0.010000034272043365
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - -0.387
+    - 0.233
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.00800000037997961
+    observed_vertex_diameter_range_m:
+    - 0.009999968855154967
+    - 0.010000034272043365
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.387
+    - -0.233
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.00800000037997961
+    observed_vertex_diameter_range_m:
+    - 0.009999968855154967
+    - 0.010000034272043365
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.387
+    - 0.233
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.00800000037997961
+    observed_vertex_diameter_range_m:
+    - 0.009999968855154967
+    - 0.010000034272043365
+    status: actual installed bore-wall geometry found
+  geometry_min_max_m:
+  - - -0.4000000059604645
+    - -0.25
+    - 0.0
+  - - 0.4000000059604645
+    - 0.25
+    - 0.5
+  verified_all_requested_bores: true
+  chosen_hull_owned_holder: 8mm6061 supported conductive shelf; nominalM8 through four actual10mm holes, washers/captive
+    nuts with stack-derived length; keep full broad underside thermal land and rear services.
+  actual_contact_basis: Four8mm feet atZ0; broad conductive base. Thermal contact/heat transfer not qualified.
+- item: equipment.power.battery.s0
+  model_sha256: a9afbcc69dfe4773779fab6a733f8e1ffd2e198e1b4def12ff57b9c084d6249f
+  geometry_frame: Product source Zup via composed glTF world transforms then(x,-z,y); metres. Apply full instance
+    transform for hull placement.
+  source_lookup: /home/alexm/git/blender/inventory-tools/build_battery_s0.py
+  mount_bores:
+  - axis_point_product_Zup_m:
+    - -0.387
+    - -0.233
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.012000000104308128
+    observed_vertex_diameter_range_m:
+    - 0.009999968855154967
+    - 0.010000034272043365
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - -0.387
+    - 0.233
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.012000000104308128
+    observed_vertex_diameter_range_m:
+    - 0.009999968855154967
+    - 0.010000034272043365
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.387
+    - -0.233
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.012000000104308128
+    observed_vertex_diameter_range_m:
+    - 0.009999968855154967
+    - 0.010000034272043365
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.387
+    - 0.233
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.012000000104308128
+    observed_vertex_diameter_range_m:
+    - 0.009999968855154967
+    - 0.010000034272043365
+    status: actual installed bore-wall geometry found
+  geometry_min_max_m:
+  - - -0.4000000059604645
+    - -0.25
+    - 0.0
+  - - 0.4000000059604645
+    - 0.25
+    - 0.5
+  verified_all_requested_bores: true
+  chosen_hull_owned_holder: 8mm6061 supported conductive shelf and four nominalM8 hold-downs through actual10mm
+    holes. Spread load under12mm feet, broad base contact; leave lid/service access.
+  actual_contact_basis: Four12mm feet atZ0; source conductive base739x419mm.
+- item: equipment.life-support.s0
+  model_sha256: e1a3ee9aaddfadfb14e91419544b3081253936696d5cbb05389e7bade5f77006
+  geometry_frame: Product source Zup via composed glTF world transforms then(x,-z,y); metres. Apply full instance
+    transform for hull placement.
+  source_lookup: /home/alexm/git/blender/inventory-tools/build_life_support_s0.py
+  mount_bores:
+  - axis_point_product_Zup_m:
+    - -0.38
+    - -0.28
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.014999999664723873
+    observed_vertex_diameter_range_m:
+    - 0.009999980926513947
+    - 0.010000022588156732
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - -0.38
+    - 0.28
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.014999999664723873
+    observed_vertex_diameter_range_m:
+    - 0.009999980926513947
+    - 0.010000022588156732
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.38
+    - -0.28
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.014999999664723873
+    observed_vertex_diameter_range_m:
+    - 0.009999980926513947
+    - 0.010000022588156732
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.38
+    - 0.28
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.014999999664723873
+    observed_vertex_diameter_range_m:
+    - 0.009999980926513947
+    - 0.010000022588156732
+    status: actual installed bore-wall geometry found
+  geometry_min_max_m:
+  - - -0.4000000059604645
+    - -0.29999998211860657
+    - 0.0
+  - - 0.4000000059604645
+    - 0.29999998211860657
+    - 0.6000000238418579
+  verified_all_requested_bores: true
+  chosen_hull_owned_holder: 8mm6061 supported shelf; four nominalM8 through10mm feet, load pads and captive accessible
+    nuts. Preserve cabin air faces and rear coolant/power access.
+  actual_contact_basis: Four15mm feet with undersideZ0; do not infer pressure sealing from housing.
+- item: equipment.thermal.coolant-loop.s0
+  model_sha256: d7131ee49c864efe2ae0e43424ff483ad1c16a588f008fb1cd4f67047176f3ac
+  geometry_frame: Product source Zup via composed glTF world transforms then(x,-z,y); metres. Apply full instance
+    transform for hull placement.
+  source_lookup: /home/alexm/git/blender/inventory-tools/build_coolant_loop_s0.py
+  mount_bores:
+  - axis_point_product_Zup_m:
+    - -0.225
+    - -0.175
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 64
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.030000001192092896
+    observed_vertex_diameter_range_m:
+    - 0.005999970563109298
+    - 0.006000024080279461
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - -0.225
+    - 0.175
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 64
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.030000001192092896
+    observed_vertex_diameter_range_m:
+    - 0.005999970563109298
+    - 0.006000024080279461
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.225
+    - -0.175
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 64
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.030000001192092896
+    observed_vertex_diameter_range_m:
+    - 0.005999970563109298
+    - 0.006000024080279461
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.225
+    - 0.175
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 64
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.030000001192092896
+    observed_vertex_diameter_range_m:
+    - 0.005999970563109298
+    - 0.006000024080279461
+    status: actual installed bore-wall geometry found
+  geometry_min_max_m:
+  - - -0.25
+    - -0.20000000298023224
+    - 0.0
+  - - 0.25
+    - 0.20000000298023224
+    - 0.29999998211860657
+  verified_all_requested_bores: true
+  chosen_hull_owned_holder: 5mm6061 supported shelf; four nominalM5 through6mm foot/tray bores. Actual hole spans0..30mm,
+    so shaft length includes that stack plus holder/washer/nut; do not size as a3mm flange.
+  actual_contact_basis: Four foot undersides atZ0; distributed12kg loop stock is included in catalogue30kg but absent
+    from local18kg skid drawing, not free extra equipment.
+- item: equipment.thermal.air-cooler.s0
+  model_sha256: b49353309dfd93c0f1b5909b249e6ef4bccad42da22a631506e17611427ef9aa
+  geometry_frame: Product source Zup via composed glTF world transforms then(x,-z,y); metres. Apply full instance
+    transform for hull placement.
+  source_lookup: /home/alexm/git/blender/inventory-tools/build_air_cooler_s0.py
+  mount_bores:
+  - axis_point_product_Zup_m:
+    - -0.23
+    - -0.18
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.003000000026077032
+    observed_vertex_diameter_range_m:
+    - 0.005999967191361415
+    - 0.006000026464468096
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - -0.23
+    - 0.18
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.003000000026077032
+    observed_vertex_diameter_range_m:
+    - 0.005999967191361415
+    - 0.006000026464468096
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.23
+    - -0.18
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.003000000026077032
+    observed_vertex_diameter_range_m:
+    - 0.005999967191361415
+    - 0.006000026464468096
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.23
+    - 0.18
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.003000000026077032
+    observed_vertex_diameter_range_m:
+    - 0.005999967191361415
+    - 0.006000026464468096
+    status: actual installed bore-wall geometry found
+  geometry_min_max_m:
+  - - -0.25
+    - -0.20000000298023224
+    - 0.0
+  - - 0.25
+    - 0.20000000298023224
+    - 0.30000001192092896
+  verified_all_requested_bores: true
+  chosen_hull_owned_holder: 5mm6061 support shelf; four nominalM5 through6mm bores, broad washers/backing under3mm
+    feet; do not crush thin mounting tabs. Preserve fan/airfaces and rear services.
+  actual_contact_basis: Four3mm corner feet atZ0.
+- item: equipment.thermal.radiator.s0
+  model_sha256: d3b037ef7541ec7e91be7413c5193903ce288d1000328e7c25c0748e7e13b127
+  geometry_frame: Product source Zup via composed glTF world transforms then(x,-z,y); metres. Apply full instance
+    transform for hull placement.
+  source_lookup: /home/alexm/git/blender/inventory-tools/build_radiator_s0.py
+  mount_bores:
+  - axis_point_product_Zup_m:
+    - -0.985
+    - 0
+    - -0.013
+    axis_index: 1
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - -0.0
+    - 0.03999999910593033
+    observed_vertex_diameter_range_m:
+    - 0.005999930419629324
+    - 0.006000070571900954
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - -0.985
+    - 0
+    - 0.013
+    axis_index: 1
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - -0.0
+    - 0.03999999910593033
+    observed_vertex_diameter_range_m:
+    - 0.005999930419629324
+    - 0.006000070571900954
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.985
+    - 0
+    - -0.013
+    axis_index: 1
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - -0.0
+    - 0.03999999910593033
+    observed_vertex_diameter_range_m:
+    - 0.005999930419629324
+    - 0.006000070571900954
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.985
+    - 0
+    - 0.013
+    axis_index: 1
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - -0.0
+    - 0.03999999910593033
+    observed_vertex_diameter_range_m:
+    - 0.005999930419629324
+    - 0.006000070571900954
+    status: actual installed bore-wall geometry found
+  geometry_min_max_m:
+  - - -1.0
+    - -0.0
+    - -0.02500000037252903
+  - - 1.0
+    - 1.0
+    - 0.02500000037252903
+  verified_all_requested_bores: true
+  chosen_hull_owned_holder: 5mm6061 paired root brackets on actual root planeY0, four nominalM5 through6mm Y-axis
+    bores at X+/-985mm/Z+/-13mm. Fastener stack includes40mm product-root axial span. Keep both panel faces unobstructed;
+    support at root only.
+  actual_contact_basis: Root facing product-Y; fixed feet extendY0..40mm. No generic thermal-s1 foot square.
+- item: equipment.avionics.nav-basic.s1
+  model_sha256: 5a410f145db366293dbde3952adf3ebc936787466a44c645311b53beb08854a4
+  geometry_frame: Product source Zup via composed glTF world transforms then(x,-z,y); metres. Apply full instance
+    transform for hull placement.
+  source_lookup: /home/alexm/git/blender/inventory-tools/build_nav_basic.py
+  mount_bores:
+  - axis_point_product_Zup_m:
+    - -0.193
+    - -0.138
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.004000000189989805
+    observed_vertex_diameter_range_m:
+    - 0.0059999730919187205
+    - 0.00600001955032746
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - -0.193
+    - 0.138
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.004000000189989805
+    observed_vertex_diameter_range_m:
+    - 0.0059999730919187205
+    - 0.00600001955032746
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.193
+    - -0.138
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.004000000189989805
+    observed_vertex_diameter_range_m:
+    - 0.0059999730919187205
+    - 0.00600001955032746
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.193
+    - 0.138
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0
+    - 0.004000000189989805
+    observed_vertex_diameter_range_m:
+    - 0.0059999730919187205
+    - 0.00600001955032746
+    status: actual installed bore-wall geometry found
+  geometry_min_max_m:
+  - - -0.20000000298023224
+    - -0.14999999105930328
+    - 0.0
+  - - 0.20000000298023224
+    - 0.14999999105930328
+    - 0.25
+  verified_all_requested_bores: true
+  chosen_hull_owned_holder: 5mm6061 conductive electronics tray; four nominalM5 through actual6mm bores and4mm feet.
+    Preserve broad base thermal contact/rear capped ports.
+  actual_contact_basis: Z0plane, hole centresX+/-193mm/Y+/-138mm.
+- item: equipment.sensors.altimeter.s1
+  model_sha256: 100d699142a104abf54b9fae37c79fa81e1ee872fec7a5578a7749afda3cb920
+  geometry_frame: Product source Zup via composed glTF world transforms then(x,-z,y); metres. Apply full instance
+    transform for hull placement.
+  source_lookup: /home/alexm/git/blender/inventory-tools/build_altimeter_s1.py
+  mount_bores:
+  - axis_point_product_Zup_m:
+    - -0.143
+    - -0.093
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 4
+    observed_wall_axis_span_m:
+    - 0.0007764622569084167
+    - 0.015223544090986252
+    observed_vertex_diameter_range_m:
+    - 0.005999986561553544
+    - 0.006000007552599738
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - -0.143
+    - 0.093
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 4
+    observed_wall_axis_span_m:
+    - 0.0007764622569084167
+    - 0.015223544090986252
+    observed_vertex_diameter_range_m:
+    - 0.005999986561553544
+    - 0.006000007552599738
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.143
+    - -0.093
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 4
+    observed_wall_axis_span_m:
+    - 0.0007764622569084167
+    - 0.015223544090986252
+    observed_vertex_diameter_range_m:
+    - 0.005999986561553544
+    - 0.006000007552599738
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.143
+    - 0.093
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.006
+    verified_inward_cylinder_wall_triangles: 4
+    observed_wall_axis_span_m:
+    - 0.0007764622569084167
+    - 0.015223544090986252
+    observed_vertex_diameter_range_m:
+    - 0.005999986561553544
+    - 0.006000007552599738
+    status: actual installed bore-wall geometry found
+  geometry_min_max_m:
+  - - -0.15000000596046448
+    - -0.10000000149011612
+    - 0.0
+  - - 0.15000000596046448
+    - 0.10000000149011612
+    - 0.14999999850988388
+  verified_all_requested_bores: true
+  chosen_hull_owned_holder: 5mm6061 peripheral bracket, nominalM5 in the source6mm bore pattern only after full
+    bore throat/tool clearance replay; retain outward optical aperture. Partial raw-wall witness found at all4locations,
+    not a complete cylinder certificate.
+  actual_contact_basis: Four source foot centresX+/-143mm/Y+/-93mm; source diameter6mm, raw wall subset spans0.776..15.224mm.
+    No range/measurement acceptance.
+- item: equipment.engine.cg.s1
+  model_sha256: ff42c3554a9dbebb7e68b905855a48c67ba6185f9ba94a86351fe095e0347ca9
+  geometry_frame: Product source Zup via composed glTF world transforms then(x,-z,y); metres. Apply full instance
+    transform for hull placement.
+  source_lookup: /home/alexm/git/blender/engine-cg-s1/candidate-v01/review/interface-qc.json
+  mount_bores:
+  - axis_point_product_Zup_m:
+    - 0.16629831585203161
+    - 0.06888301782571615
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0002999999560415745
+    - 0.0027000000700354576
+    observed_vertex_diameter_range_m:
+    - 0.009999988617210827
+    - 0.010000018344964766
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.06888301782571617
+    - 0.16629831585203161
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0002999999560415745
+    - 0.0027000000700354576
+    observed_vertex_diameter_range_m:
+    - 0.009999988617210827
+    - 0.010000018344964777
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - -0.06888301782571615
+    - 0.16629831585203161
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0002999999560415745
+    - 0.0027000000700354576
+    observed_vertex_diameter_range_m:
+    - 0.009999988617210827
+    - 0.010000018344964766
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - -0.16629831585203161
+    - 0.06888301782571618
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0002999999560415745
+    - 0.0027000000700354576
+    observed_vertex_diameter_range_m:
+    - 0.009999988617210827
+    - 0.010000018344964789
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - -0.16629831585203161
+    - -0.06888301782571614
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0002999999560415745
+    - 0.0027000000700354576
+    observed_vertex_diameter_range_m:
+    - 0.009999988617210827
+    - 0.010000018344964756
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - -0.06888301782571611
+    - -0.16629831585203161
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0002999999560415745
+    - 0.0027000000700354576
+    observed_vertex_diameter_range_m:
+    - 0.009999988617210827
+    - 0.010000018344964735
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.0688830178257162
+    - -0.1662983158520316
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0002999999560415745
+    - 0.0027000000700354576
+    observed_vertex_diameter_range_m:
+    - 0.009999988617210883
+    - 0.010000018344964747
+    status: actual installed bore-wall geometry found
+  - axis_point_product_Zup_m:
+    - 0.16629831585203161
+    - -0.06888301782571611
+    - 0
+    axis_index: 2
+    candidate_diameter_m: 0.01
+    verified_inward_cylinder_wall_triangles: 32
+    observed_wall_axis_span_m:
+    - 0.0002999999560415745
+    - 0.0027000000700354576
+    observed_vertex_diameter_range_m:
+    - 0.009999988617210827
+    - 0.010000018344964735
+    status: actual installed bore-wall geometry found
+  geometry_min_max_m:
+  - - -0.20000000298023224
+    - -0.20000000298023224
+    - 0.0
+  - - 0.20000000298023224
+    - 0.20000000298023224
+    - 0.3999999954830855
+  verified_all_requested_bores: true
+  chosen_hull_owned_holder: 8mm6061 locally supported backing ring/plate, eight nominalM8 through actual10mm bores
+    on180mm radius at22.5+45i degrees. Broad annular bearing washers; keep the base gas/electrical sockets open,
+    no throughplate blocking. No generic engine-s1 duty transfer.
+  actual_contact_basis: Actual8bore walls spanZ0.3..2.7mm within3mm base; source16-sided holes. Four125N nozzles
+    per500N block, not engine25kN duty.
+- item: equipment.computer.fbw.s1
+  model_sha256: c31ed9faeec95563b9688a0b11bdd637d0a27d3daa37aedcb954522591508edc
+  geometry_frame: Product source Zup via composed glTF world transforms then(x,-z,y); metres. Apply full instance
+    transform for hull placement.
+  source_lookup: /home/alexm/git/blender/inventory-tools/build_fbw.py
+  mount_bores: []
+  geometry_min_max_m:
+  - - -0.2669999897480011
+    - -0.20000000298023224
+    - 0.0
+  - - 0.2669999897480011
+    - 0.20000000298023224
+    - 0.2508000135421753
+  verified_all_requested_bores: false
+  chosen_hull_owned_holder: 5mm6061 conductive tray and four separate toe clamps retaining the existing solid integral
+    lugs. Draw actual positive top lug lands clear of decorative7mm bolt heads; hull-owned clamp screws sit outside
+    the unchanged package. Do not drill/reinterpret product bolt heads as holes.
+  actual_contact_basis: Measured base undersideZ0,500x400mm,0.200000003m2. Lug lower landsZ0.3mm, outerXY+/-266.4mm/+/-171.4mm.
+    Source4mm lugs have nominal topZ4.3mm; choose finite clamp lands away from head centres(+/-260,+/-160)mm; locate/replay
+    clamp tips rather than count full bounding rectangle as contact.
+- item: equipment.transponder.s1
+  model_sha256: 6df1f628f83e059919d43478bf0696860ee3bf1195e59740bb9fcdc5fb72af16
+  geometry_frame: Product source Zup via composed glTF world transforms then(x,-z,y); metres. Apply full instance
+    transform for hull placement.
+  source_lookup: /home/alexm/git/blender/inventory-tools/build_transponder.py
+  mount_bores: []
+  geometry_min_max_m:
+  - - -0.10899999737739563
+    - -0.07500000298023224
+    - 0.0
+  - - 0.10899999737739563
+    - 0.07500000298023224
+    - 0.17000000178813934
+  verified_all_requested_bores: false
+  chosen_hull_owned_holder: 5mm6061 tray plus four small toe clamps over outer-Y lug strips, clear of the existing5mm
+    decorative bolt heads. Clamp screws are hull-owned outside product. No invented through-holes. Positive retained
+    lug overlap must be drawn and measured; if too narrow, bridge to longer side-rail capture without touching radome
+    or cutting product.
+  actual_contact_basis: Measured undersideZ0 spans200x150mm,triangulated area0.0299433645m2; source solid lugs atX+/-100mm,Y+/-59mm
+    with18x16mm area/topZ4.3mm. Bolt head centres(+/-104.5,+/-59)mm. Candidate outer-Y land lies63..66mm fromcentre,
+    away from59mm bolt line; contact subset needs exact local face check.
+- item: equipment.comm.basic.s1
+  model_sha256: c87a22f1cf3867cb6520b88a55c37e950e8a3d705dd33e28a2495fff95aa726c
+  geometry_frame: Product source Zup via composed glTF world transforms then(x,-z,y); metres. Apply full instance
+    transform for hull placement.
+  source_lookup: /home/alexm/git/blender/inventory-tools/build_comm.py
+  mount_bores: []
+  geometry_min_max_m:
+  - - -1.5
+    - -1.5
+    - 0.0
+  - - 1.5
+    - 1.5
+    - 1.4907455444335938
+  verified_all_requested_bores: false
+  chosen_hull_owned_holder: 8mm6061 supported pedestal seat under actual600x600mm fixed baseplate. Four hull-owned
+    toe clamps contact top corner lands near(X,Y)=(+/-275,+/-275)mm atZ40mm; nominal20x20mm toe pads are draftgeometry.
+    Anchor clamp bolts in the hull support outside product perimeter. No holes or product edits; check all dish/azimuth/elevation/rest
+    and access envelopes.
+  actual_contact_basis: Measured fixed base bottomZ0,600x600mm,0.360000029m2; source plate thickness40mm. Centre
+    bearing radius200mm, so corner lands avoid it geometrically; no operator/sweep/load rating.
+method: Decode installed GLB triangle/accessor bytes; compose all node world transforms; convert to product-sourceZup(x,-z,y).
+  Candidate bore centres/radii from authored build/accepted interface evidence, then locate inward-facing cylinder-wall
+  triangles at those centres in the exact installed model (2micrometre radial matching window). Vertex circle dimensions
+  do not prove complete throat, tool, tolerance or loaded contact. No search of generic registry port coordinates
+  used.
+source_clamp_plane_measurements:
+  fbw:
+    z_m: 0
+    triangle_area_m2: 0.20000000298023224
+    bounds_xy_m:
+    - - -0.25
+      - -0.20000000298023224
+    - - 0.25
+      - 0.20000000298023224
+  transponder:
+    z_m: 0
+    triangle_area_m2: 0.02994336449950373
+    bounds_xy_m:
+    - - -0.10000000149011612
+      - -0.07500000298023224
+    - - 0.10000000149011612
+      - 0.07500000298023224
+  comm_fixed_base:
+    z_m: 0
+    triangle_area_m2: 0.36000002861023006
+    bounds_xy_m:
+    - - -0.30000001192092896
+      - -0.30000001192092896
+    - - 0.30000001192092896
+      - 0.30000001192092896
+stock_and_hardware:
+  supports: Chosen prototype6061 from stock.al6061-pl-5 or stock.al6061-pl-8 as stated; actual ribs/braces/anchors
+    sized and counted by Ships, not an assumed loadrating.
+  fasteners: Nominal shank sizes are draft geometric choices smaller than observed bores; no grade/proof/preload/insert
+    capacity inferred. Use an existing matching stock fastener only after checking its exact dimensions; otherwise
+    custom stock.st4340-fg geometry with explicit positive bolts/washers/nuts is a hull-owned prototype, not a new
+    catalogue product.
+  capture: Every clamp needs a supported underside, finite retaining lip/topland, actual hull-side bolt/nut/anchor
+    and accessible removal/tool route; no friction-only loose tray or fixed-skin intersection as attachment.
+  thermal: Metal support choice alone does not establish heat flow, electrical bonding or galvanic isolation. Preserve
+    service/air/optical faces and explicit rear harness/coolant space.
+limits: Measured local bore-wall and planar-face geometry, plus prototype support decisions. Wholeproduct contact-area
+  continuity, fitting assembly, hole clear diameter at every section, fastener tools/loads, hull loadpath and all
+  mechanism/plume/thermal cases remain for actual holder construction/replay. CHS1 is separately owned by Ships
+  primary flange audit; camera is outside this requested holder list. No silent generator/port/schema changes.
