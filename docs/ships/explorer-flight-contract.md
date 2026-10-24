@@ -45,3 +45,24 @@ Not simulated:
 Registry record (whole mass, fit, thrusters) → `hull_import_review` clean → the ships' test drive on an airless,
 low-g body (no drag, no aero, no ambient pressure effects: the simulated set is honest there) → a short flight and
 landing recorded with the flight recorder. No traffic sim, no mission claim.
+
+## For the first-flight envelope (ships `20261023T231645-ships-d95e`; main cc0e8f20c)
+
+The owner chose one person, no cargo, short trips on an airless moon. What the game does, exactly:
+
+- **Life support:** a base block and its power draw only. No air, water, CO2 or endurance is simulated; air and
+  water tanks are carried mass. The trip's duration is not limited by it in game.
+- **Heat:** not simulated for the ship. One exception: a battery pack heats from its own losses (1 − efficiency)
+  and cuts off at its record's operating limit. Nothing cools it yet (it never sheds heat; radiators are mass only),
+  so a long run at high draw ends at the cut-off, not at the pack running empty.
+- **Throttle floor:** not enforced. Every nozzle's thrust runs 0 to full; the record's floor or on/off is in
+  `limits`. Short 20% pulses are honest only as far as the engine could really hold 20%.
+- **Plant part-load:** fuel burned is exactly the energy taken over (fuel energy × the plant's efficiency): constant
+  efficiency at any load, no idle burn, no minimum load, no start-up. Its spare recharges the batteries (rate-capped)
+  and burns fuel for it.
+- **Batteries:** drained for what the plant can't give, recharged from its spare, dark when plant plus packs can't
+  carry the steady draw (e963b9bf0).
+- **Recorder:** the flight recorder keeps each ship's last 15 s at 0.25 s steps, and files an incident (with the
+  trace) only when a ship is wrecked. A whole session's inputs are recorded with `UNIVERSE_RECORD=<file>` and
+  replayed with `core/sim/examples/replay.rs` (seed-only). There's no landing report: a safe touchdown files nothing.
+  Ask if a test needs a trace dump on landing; it's a small engine addition.
