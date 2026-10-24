@@ -4,6 +4,7 @@ source_sha256: 8fc3a7e3ab384395592c35dde78b59a440830bbdae1f4a7ed59e55c07af8927e
 bindings:
   /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-solid-unions.json: 5306a950b2ffd55f5f5d7b045996532dadc8791e5b23a416ada66f4b2b35992e
   docs/ships/explorer-material-stock-schedule.yaml: bda8762b7c57d724ff1e416da6817307d3a5ce5309874bdda74d30ae67af04e3
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/named-material-conflicts.json: 3194a8d09499f844fc7eafd1df08f99a3febf65ad89156f9b35b14757d656fb1
 current_measurement:
   objects: 952
   positive_candidate_solids: 939
@@ -154,3 +155,18 @@ application_rows_required:
 next_task: '20261023T202329-registry-325b: Blender produces named conflict roster before final partitions. Apply
   local policies in separate reviewed geometry study; new numerical seal/gap/bore choices must be explicit prototype
   design assumptions, not silently inferred compliance.'
+named_conflict_review:
+  pairs: 693
+  three_material_overlaps: 326
+  aggregate_union_tolerance_m3: 1.0e-07
+  scope: Named exact solid intersections among939positive manifold measurement inputs;13rejected inputs excluded.
+    Threshold1e-10m3. Triple rows cover three distinct materials, not all possible higher-order arrangements. Contact
+    intent is labelled inference. No source edits or final mass.
+  first_study:
+  - 'Dorsal gasket with Core removable outer cover 05-3 and Core pressure skin 05-3: reconstruct a bounded gasket
+    land; do not consume pressure wall.'
+  - 'Canopy glazing/frame/bonded-perimeter cluster: resolve connected assembly as one physical partition, including326
+    reported triples. Preserve intended panes; design actual frame rebates and finite seal land.'
+  study_task: 20261023T202605-registry-9628
+  remaining: Named intents are inference, not accepted joints; higher-order/same-material arrangements and13rejected
+    inputs remain to reconcile.
