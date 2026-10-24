@@ -16,7 +16,10 @@ factors:
 - factor: planet-factor.tect-setting
   weight: 1
   why: ocean-island shields (Hawaii, Canaries, Galapagos), some continental shields
-  want: high
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - hotspot
 - factor: planet-factor.volc-vent
   weight: 3
   why: repeated fissure eruptions build linear ridges of cones and elongate the edifice
@@ -33,6 +36,9 @@ factors:
   weight: 1
   why: long-lived over 100s kyr; Mauna Loa eruptions mostly rift-fed last 700 yr
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 - factor: planet-factor.relief-inherited
   weight: 3
   why: neighbouring volcanoes buttress flanks, orient rifts (ideal ~120 deg between two)
@@ -67,7 +73,17 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: volcanic
+kinds:
+- volcanic-rift-zone

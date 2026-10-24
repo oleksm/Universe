@@ -7,15 +7,18 @@ family: structural
 factors:
 - factor: planet-factor.rock-layers
   weight: 3
-  why: Horizontal resistant caprock (sandstone, basalt flow) over weak shale/siltstone
+  why: 'Horizontal resistant caprock (sandstone, basalt flow) over weak shale/siltstone Duplicate library context:
+    Resistant caprock (sandstone, conglomerate) over weak shale/siltstone (De Chelly over Organ Rock)'
   want: high
 - factor: planet-factor.tect-fold
   weight: 1
-  why: Near-horizontal strata
+  why: 'Near-horizontal strata Duplicate library context: Near-horizontal strata (dip < ~5 deg); steeper dips give
+    cuestas'
   want: high
 - factor: planet-factor.tect-uplift
   weight: 3
-  why: Uplift drives incision dissecting plateau
+  why: 'Uplift drives incision dissecting plateau Duplicate library context: Plateau uplift drives river incision
+    and dissection'
   want: high
 - factor: planet-factor.volc-vent
   weight: 1
@@ -23,28 +26,41 @@ factors:
   want: high
 - factor: planet-factor.rock-fracture
   weight: 1
-  why: Caprock joints control block fall and remnant outline
+  why: 'Caprock joints control block fall and remnant outline Duplicate library context: Joints in caprock localise
+    retreat and set butte/spire outlines'
   want: high
 - factor: planet-factor.groundwater
   weight: 1
-  why: Basal sapping undermines caprock
+  why: 'Basal sapping undermines caprock Duplicate library context: Basal sapping at caprock/shale contact undermines
+    cliffs'
   want: high
 - factor: planet-factor.clim-arid
   weight: 3
-  why: Arid/semi-arid preserves free faces
+  why: 'Arid/semi-arid preserves free faces Duplicate library context: Arid to semi-arid: sparse vegetation keeps
+    free faces sharp'
   want: high
 - factor: planet-factor.base-level
   weight: 1
-  why: Valley-floor level sets relief (to ~300 m)
+  why: 'Valley-floor level sets relief (to ~300 m) Duplicate library context: River incision sets valley-floor height
+    and remnant relief (up to ~300 m)'
   want: high
 - factor: planet-factor.time
   weight: 1
-  why: 0.1-10 Myr; mesa to butte to pinnacle
+  why: '0.1-10 Myr; mesa to butte to pinnacle Duplicate library context: 1-30 Myr of scarp retreat: plateau, mesa,
+    butte, spire'
+  want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
+- factor: planet-factor.clim-storm
+  weight: 1
+  why: Flash floods remove talus from weak slopes
   want: high
 vocabulary_id: 115
 sources:
 - https://en.wikipedia.org/wiki/Mesa
 - https://en.wikipedia.org/wiki/Monument_Valley
+- https://www.nps.gov/subjects/geology/arid-landforms.htm
 library_status: written
 source: structural.flat.mesa_butte
 levels:
@@ -71,8 +87,8 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
 - of:
   - factors.want
   tier: derived
@@ -80,5 +96,20 @@ basis:
   source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
   note: 'planet-factor.rock-layers: Alternating strong/weak beds or caprock require layering contrast; flat/weak
     does not request absence of layering.'
+- of:
+  - legacy_sources
+  - legacy_vocabulary_ids
+  - factors
+  tier: derived
+  source: planet-forge docs/research/reconcile-sim-registry-2026-10-24.md
+  note: Duplicate control vector merged once; canonical weights/wants retained on shared factors, alternate explanatory
+    text retained. Frozen vocabulary IDs resolve as aliases; no ID is reassigned.
 status: draft
 look: trellis
+legacy_sources:
+- arid.plateau.mesa_butte
+legacy_vocabulary_ids:
+- 12
+kinds:
+- mesa
+- butte

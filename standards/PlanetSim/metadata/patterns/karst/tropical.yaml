@@ -20,11 +20,18 @@ factors:
 - factor: planet-factor.bio-veg
   weight: 1
   why: Rainforest soils high in CO2; organic acids
-  want: high
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - forest
 - factor: planet-factor.rock-soluble
   weight: 1
   why: Thick, massive, pure limestone
-  want: high
+  want: in
+  classes:
+  - rock-unit.limestone
+  source: https://www.usgs.gov/publications/subsidence-hazards-due-evaporite-dissolution-united-states
+  required: true
 - factor: planet-factor.rock-fracture
   weight: 1
   why: Joint spacing sets cone/tower spacing
@@ -49,6 +56,9 @@ factors:
   weight: 1
   why: Myr; long continuous tropical exposure
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 162
 sources:
 - https://showcaves.com/english/explain/Karst/TowerKarst.html
@@ -80,14 +90,30 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
 - of:
   - factors.want
   tier: derived
   review: true
   source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
-  note: 'planet-factor.clim-temp: The record asks for warmth; existing clim-temp strength rises toward cold
-    (283.15 to 263.15 K).'
+  note: 'planet-factor.clim-temp: The record asks for warmth; existing clim-temp strength rises toward cold (283.15
+    to 263.15 K).'
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
+- of:
+  - factors.classes
+  - factors.required
+  tier: derived
+  source: https://www.usgs.gov/publications/subsidence-hazards-due-evaporite-dissolution-united-states
+  note: Soluble lithology is necessary for the named solutional-karst forms; limestone purity, thickness, groundwater
+    and dissolution history still require separate evidence. Elsewhere it remains a modifier. Unknown evaporites
+    cannot become absence.
 status: draft
 look: karst

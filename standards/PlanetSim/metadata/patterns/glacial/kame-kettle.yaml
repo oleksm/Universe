@@ -32,11 +32,16 @@ factors:
 - factor: planet-factor.bio-veg
   weight: 1
   why: kettles infill to bogs
-  want: high
+  want: in
+  unresolved: true
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
 - factor: planet-factor.time
   weight: 1
   why: melt-out 0.1-several kyr
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 65
 sources:
 - https://en.wikipedia.org/wiki/Kettle_(landform)
@@ -67,7 +72,17 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: glacial
+kinds:
+- kame-and-kettle-terrain

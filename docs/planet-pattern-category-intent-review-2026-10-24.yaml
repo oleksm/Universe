@@ -1,0 +1,1553 @@
+source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+entries:
+- pattern: planet-pattern.aeolian.dune.carbonate-eolianite
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: m4
+  classes:
+  - active-orogen
+  - magmatic-arc
+  - rift-extensional
+  - transform
+  justification: '"tectonic stability": preservation favoured away from active settings; eolianites need no setting'
+  suggest: null
+- pattern: planet-pattern.aeolian.dune.coastal-foredune
+  factor: planet-factor.bio-veg
+  role: gate
+  reading: proxy
+  classes:
+  - barren
+  justification: '"burial-tolerant grasses trap sand": a foredune is the plant-trapped dune; no plants, no foredune'
+  suggest: null
+- pattern: planet-pattern.aeolian.erosion.deflation-hollow
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: m4
+  classes:
+  - clastic-fine
+  - unconsolidated
+  - evaporite
+  justification: '"weak sediment or salt-weathered rock" favours deflation; hollows also cut other rock'
+  suggest: null
+- pattern: planet-pattern.aeolian.landscape.erg
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - barren
+  - sparse
+  justification: '"sparse vegetation; plant cover fixes dunes": cover fixes an erg, it does not prevent it (process
+    doc 2.6 gates erg on sand, aridity, wind)'
+  suggest: null
+- pattern: planet-pattern.aeolian.landscape.erg
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: m4
+  classes:
+  - foreland-basin
+  - intermontane-basin
+  - rift-extensional
+  - platform
+  justification: '"subsiding basins preserve thick sand stacks": preservation, not formation'
+  suggest: null
+- pattern: planet-pattern.aeolian.dune.linear
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - sparse
+  - grassland-steppe
+  - shrubland
+  - savanna
+  justification: '"vegetation stabilises flanks, keeps them straight and long-lived": partial cover favours'
+  suggest: null
+- pattern: planet-pattern.aeolian.loess.plateau
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - grassland-steppe
+  justification: '"steppe grass traps dust": the trap favoured (process doc 2.6: settles in steppe zones)'
+  suggest: null
+- pattern: planet-pattern.aeolian.dune.transverse
+  factor: planet-factor.bio-veg
+  role: gate
+  reading: proxy
+  classes:
+  - barren
+  - sparse
+  justification: '"vegetation turns them into parabolic dunes": under cover the form becomes another kind; old want
+    high is inverted'
+  suggest: null
+- pattern: planet-pattern.aeolian.erosion.yardang
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: proxy
+  classes:
+  - unconsolidated
+  - clastic-fine
+  - clastic-coarse
+  - volcanic-felsic
+  justification: '"soft lake beds, siltstone, sandstone, ignimbrite; harder rock for mega-yardangs": favoured, not
+    required'
+  suggest: null
+- pattern: planet-pattern.arid.landscape.desert-basin
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: m4
+  classes:
+  - rift-extensional
+  - intermontane-basin
+  - foreland-basin
+  justification: '"Extensional provinces or intermontane/foreland basins": typical hosts; intracratonic desert basins
+    exist too'
+  suggest: null
+- pattern: planet-pattern.arid.landscape.desert-margin
+  factor: planet-factor.bio-veg
+  role: gate
+  reading: proxy
+  classes:
+  - sparse
+  - grassland-steppe
+  - shrubland
+  - savanna
+  justification: '"Grass/shrub cover (steppe) stabilises ...; cover threshold controls erosion": the margin is the
+    partly covered belt; bare is desert, forest is not margin'
+  suggest: null
+- pattern: planet-pattern.arid.residual.inselberg
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: proxy
+  classes:
+  - crystalline
+  - clastic-coarse
+  justification: '"Massive resistant granite, gneiss, gabbro, arkose": favoured hosts (arkose = clastic-coarse)'
+  suggest: null
+- pattern: planet-pattern.arid.residual.inselberg
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - craton-shield
+  justification: '"Stable cratons/shields; long tectonic quiet": favoured, inselbergs also occur elsewhere; old
+    want low is a direction word for a class'
+  suggest: null
+- pattern: planet-pattern.arid.plateau.layered-tableland
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - platform
+  justification: '"Stable block beside orogens or rifts": a layered tableland sits on flat cover = platform'
+  suggest: null
+- pattern: planet-pattern.arid.slope.pediment
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - barren
+  - sparse
+  - grassland-steppe
+  - shrubland
+  justification: '"Little vegetation lets sheetwash and channels migrate": favours dry covers'
+  suggest: null
+- pattern: planet-pattern.arid.slope.pediment
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: now
+  classes:
+  - crystalline
+  justification: '"Granite and grus-forming crystalline rock most common, though lithology not essential": explicitly
+    not a gate'
+  suggest: null
+- pattern: planet-pattern.arid.basin.playa
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: m4
+  classes:
+  - rift-extensional
+  - foreland-basin
+  - intermontane-basin
+  justification: '"grabens, foreland/intermontane basins, deflation hollows": deflation hollows are not tectonic,
+    so the setting only favours'
+  suggest: null
+- pattern: planet-pattern.arid.landscape.shield-plain
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - craton-shield
+  justification: '"Stable craton or shield, crystalline basement": a shield plain is the shield'
+  suggest: null
+- pattern: planet-pattern.arid.landscape.shield-plain
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: now
+  classes:
+  - crystalline
+  justification: '"Granite, gneiss: deep weathering; resistant compartments stay as inselbergs": shapes; the setting
+    gate carries the prerequisite'
+  suggest: null
+- pattern: planet-pattern.arid.channel.wadi
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"Strong rock gives box canyons; weak rock gives wide shallow wadis": shape selector, wadis in
+    both'
+  suggest: numeric erodibility
+- pattern: planet-pattern.arid.channel.wadi
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - barren
+  - sparse
+  justification: '"Sparse cover gives flashy runoff": favoured'
+  suggest: null
+- pattern: planet-pattern.coastal.reef.atoll
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - hotspot
+  justification: '"intraplate hotspot volcano on oceanic plate moving away": the atoll stands on a hotspot track
+    (extinct part: needs hotspot history)'
+  suggest: null
+- pattern: planet-pattern.coastal.reef.atoll
+  factor: planet-factor.bio-veg
+  role: gate
+  reading: m4
+  classes:
+  - reef
+  justification: '"coral/algal reef growth on rim": an atoll is a reef'
+  suggest: null
+- pattern: planet-pattern.coastal.barrier.barrier-island
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - passive-margin
+  justification: '"mostly passive trailing margins and deltaic coasts": mostly = favoured'
+  suggest: null
+- pattern: planet-pattern.coastal.barrier.barrier-island
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - barren
+  justification: '"dune grasses trap sand, build dunes": shapes height and overwash'
+  suggest: null
+- pattern: planet-pattern.coastal.reef.barrier
+  factor: planet-factor.bio-veg
+  role: gate
+  reading: m4
+  classes:
+  - reef
+  justification: '"reef growth must match relative sea-level rise": a barrier reef is reef growth'
+  suggest: null
+- pattern: planet-pattern.coastal.reef.barrier
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - passive-margin
+  - hotspot
+  justification: '"wide passive-margin shelf or subsiding volcanic island": typical hosts'
+  suggest: null
+- pattern: planet-pattern.coastal.barrier.beach-ridge-plain
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - barren
+  justification: '"vegetation and aeolian cap stabilise and preserve ridges": preservation'
+  suggest: null
+- pattern: planet-pattern.coastal.drowned.estuary
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: m4
+  classes:
+  - salt-marsh
+  - mangrove
+  justification: '"salt marsh or mangrove stabilises margins": shapes margins'
+  suggest: null
+- pattern: planet-pattern.coastal.reef.fringing
+  factor: planet-factor.bio-veg
+  role: gate
+  reading: m4
+  classes:
+  - reef
+  justification: '"coral and coralline algae framework growth": the reef itself'
+  suggest: null
+- pattern: planet-pattern.coastal.tidal.mangrove
+  factor: planet-factor.bio-veg
+  role: gate
+  reading: m4
+  classes:
+  - mangrove
+  justification: '"mangrove trees trap mud, roots build elevation": the landform is the mangrove'
+  suggest: null
+- pattern: planet-pattern.coastal.emergent.marine-terrace
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: m4
+  classes:
+  - active-orogen
+  - magmatic-arc
+  - transform
+  - rift-extensional
+  justification: '"convergent margins, fault-bounded coasts, formerly glaciated shields": uplifting coasts favoured;
+    the real control is uplift rate (numeric, M4 C3); rebound shields are not a setting class'
+  suggest: uplift rate
+- pattern: planet-pattern.coastal.emergent.marine-terrace
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"rock resistance sets platform width and preservation": a strength scalar, no class'
+  suggest: numeric erodibility
+- pattern: planet-pattern.coastal.emergent.marine-terrace
+  factor: planet-factor.bio-veg
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"tropical reefs build reef-tract terraces instead of cut platforms": selects the terrace type'
+  suggest: sub-kind selector
+- pattern: planet-pattern.coastal.carbonate.platform
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - passive-margin
+  - rift-extensional
+  justification: '"rifted passive margin with fault-block highs": typical host; platforms also on seamounts'
+  suggest: null
+- pattern: planet-pattern.coastal.carbonate.platform
+  factor: planet-factor.bio-veg
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"carbonate factory type ... sets geometry": geometry selector; factory presence is not a cover
+    class'
+  suggest: sub-kind selector
+- pattern: planet-pattern.coastal.drowned.ria
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: now
+  classes:
+  - crystalline
+  justification: '"hard crystalline or folded rock preserves steep valley walls": preservation; "folded" is structure,
+    not class'
+  suggest: null
+- pattern: planet-pattern.coastal.rocky.rocky-coast
+  factor: planet-factor.rock-type
+  role: gate
+  reading: proxy
+  classes:
+  - unconsolidated
+  justification: '"lithified rock; strength sets cliff steepness": a rocky coast needs lithified rock'
+  suggest: null
+- pattern: planet-pattern.coastal.rocky.rocky-coast
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: m4
+  classes:
+  - active-orogen
+  - magmatic-arc
+  - transform
+  justification: '"common on active (collision) margins": common = favoured'
+  suggest: null
+- pattern: planet-pattern.coastal.tidal.salt-marsh
+  factor: planet-factor.bio-veg
+  role: gate
+  reading: m4
+  classes:
+  - salt-marsh
+  justification: '"halophytes colonise upper intertidal": the marsh is the halophyte cover'
+  suggest: null
+- pattern: planet-pattern.coastal.beach.sandy-shoreface
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"sediment mineralogy sets grain density, colour and sorting": look, no class favoured'
+  suggest: look selector
+- pattern: planet-pattern.coastal.rocky.sea-cliff
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"strong rock gives vertical cliffs; weak rock/till sloping landslide cliffs": cliffs in both'
+  suggest: numeric erodibility
+- pattern: planet-pattern.coastal.rocky.shore-platform
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: proxy
+  classes:
+  - clastic-fine
+  - clastic-coarse
+  - carbonate
+  justification: '"moderately strong sedimentary rock best": favoured'
+  suggest: null
+- pattern: planet-pattern.coastal.rocky.shore-platform
+  factor: planet-factor.bio-veg
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"bioerosion in tropics; algae protect in cool seas": both directions by climate, not a cover class'
+  suggest: null
+- pattern: planet-pattern.coastal.rocky.stack-arch
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: proxy
+  classes:
+  - carbonate
+  - clastic-coarse
+  - volcanic-mafic
+  justification: '"medium-hard rock (limestone, chalk, sandstone, basalt); claystone too weak, granite too strong":
+    favoured band'
+  suggest: null
+- pattern: planet-pattern.coastal.tidal.tidal-flat
+  factor: planet-factor.bio-veg
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"biofilms, worms, seagrass stabilise or bioturbate": both directions, no cover class'
+  suggest: null
+- pattern: planet-pattern.coastal.depositional.tombolo
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: now
+  classes:
+  - crystalline
+  - volcanic-mafic
+  - ultramafic-other
+  justification: '"island of resistant rock that survives as anchor": favoured'
+  suggest: null
+- pattern: planet-pattern.fluvial.fan.alluvial-fan
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: proxy
+  classes:
+  - clastic-fine
+  justification: '"mudstone basins give larger steeper fans": favours size'
+  suggest: null
+- pattern: planet-pattern.fluvial.channel.anastomosing
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: m4
+  classes:
+  - forest
+  - wetland
+  justification: '"dense bank vegetation/peat makes channels stable": favoured (dryland anastomosing exists)'
+  suggest: null
+- pattern: planet-pattern.fluvial.erosion.badlands
+  factor: planet-factor.rock-type
+  role: gate
+  reading: proxy
+  classes:
+  - clastic-fine
+  justification: '"weak poorly consolidated mudstone, shale, bentonite/smectite clays" (process doc 2.9: weak fine
+    rock); gate reads code 9 for clastic-fine and coarse alike until split'
+  suggest: null
+- pattern: planet-pattern.fluvial.erosion.badlands
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - barren
+  - sparse
+  - grassland-steppe
+  - shrubland
+  justification: '"sparse cover; overgrazing makes anthropogenic badlands": favoured; process doc: arid to humid'
+  suggest: null
+- pattern: planet-pattern.fluvial.fan.bajada
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - rift-extensional
+  - intermontane-basin
+  justification: '"extensional horst-graben (Basin and Range)": type setting; bajadas front any arid range'
+  suggest: null
+- pattern: planet-pattern.fluvial.channel.bedrock-long-profile
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"erodibility sets ksn and knickzones at contacts": scalar'
+  suggest: numeric erodibility
+- pattern: planet-pattern.fluvial.channel.braided
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - barren
+  - sparse
+  - tundra
+  justification: '"sparse bank vegetation; vegetation turns bars into islands": favoured'
+  suggest: null
+- pattern: planet-pattern.fluvial.valley.canyon
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: proxy
+  classes:
+  - clastic-coarse
+  - crystalline
+  justification: '"resistant sandstone/granite walls": favoured'
+  suggest: null
+- pattern: planet-pattern.fluvial.network.dendritic
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"homogeneous resistance ... required": homogeneity is a spatial property, any class can have it'
+  suggest: lithologic homogeneity measure
+- pattern: planet-pattern.fluvial.network.drainage-basin
+  factor: planet-factor.bio-veg
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"cover raises erosion threshold, sparser network": density selector; basins form everywhere'
+  suggest: drainage density
+- pattern: planet-pattern.fluvial.network.drainage-basin
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"weak, erodible substrate gives dense network": density selector'
+  suggest: numeric erodibility
+- pattern: planet-pattern.fluvial.network.drainage-basin
+  factor: planet-factor.tect-setting
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"orogen vs craton sets basin size and relief": size selector'
+  suggest: null
+- pattern: planet-pattern.fluvial.valley.floodplain
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - barren
+  justification: '"vegetation stabilizes banks, traps fines": shapes'
+  suggest: null
+- pattern: planet-pattern.fluvial.erosion.gully-rill
+  factor: planet-factor.bio-veg
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"cleared cover ... triggers gullying": a cover change (disturbance), not a class'
+  suggest: cover change history
+- pattern: planet-pattern.fluvial.valley.incised
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"rock type/fractures modify incised meander shape": no direction'
+  suggest: null
+- pattern: planet-pattern.fluvial.channel.knickpoint-waterfall
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"homogeneous rock gives diffuse knickzones": homogeneity, not class'
+  suggest: lithologic homogeneity measure
+- pattern: planet-pattern.fluvial.channel.meandering
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - barren
+  justification: '"bank vegetation adds cohesion, narrow deep sinuous channel": shapes'
+  suggest: null
+- pattern: planet-pattern.fluvial.channel.oxbow-lake
+  factor: planet-factor.bio-veg
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"vegetation and peat infill the lake": later evolution, not a prerequisite'
+  suggest: null
+- pattern: planet-pattern.fluvial.network.parallel
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"uniform lithology along slope": homogeneity, not class'
+  suggest: lithologic homogeneity measure
+- pattern: planet-pattern.fluvial.landscape.peneplain-etchplain
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - craton-shield
+  - platform
+  justification: '"cratonic shield, long tectonic stability" (process doc 2.1: long stability 10^7-10^8 yr)'
+  suggest: null
+- pattern: planet-pattern.fluvial.landscape.peneplain-etchplain
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: now
+  classes:
+  - crystalline
+  justification: '"crystalline basement; weathering front ... inselbergs": shapes'
+  suggest: null
+- pattern: planet-pattern.fluvial.channel.point-bar
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - barren
+  justification: '"vegetation colonizes swales, fixes scrolls": preservation'
+  suggest: null
+- pattern: planet-pattern.fluvial.network.rectangular
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: proxy
+  classes:
+  - crystalline
+  - clastic-coarse
+  - carbonate
+  justification: '"uniformly resistant crystalline or massive sedimentary rock": favoured (joint control)'
+  suggest: null
+- pattern: planet-pattern.fluvial.delta.river-dominated
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - passive-margin
+  justification: '"passive margin, broad shelf": favoured'
+  suggest: null
+- pattern: planet-pattern.fluvial.delta.river-dominated
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: m4
+  classes:
+  - wetland
+  - salt-marsh
+  justification: '"marsh vegetation stabilizes levees": shapes'
+  suggest: null
+- pattern: planet-pattern.fluvial.valley.slot-canyon
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: proxy
+  classes:
+  - clastic-coarse
+  - carbonate
+  justification: '"massive uniform sandstone or limestone; rarely granite/basalt": rarely = not a gate'
+  suggest: null
+- pattern: planet-pattern.fluvial.valley.terrace
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"bedrock floor gives strath; thick alluvium gives fill": selects terrace type'
+  suggest: sub-kind selector
+- pattern: planet-pattern.fluvial.delta.tide-dominated
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: m4
+  classes:
+  - mangrove
+  - salt-marsh
+  justification: '"mangroves/marsh stabilize tidal flats": shapes'
+  suggest: null
+- pattern: planet-pattern.fluvial.network.trellis
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - active-orogen
+  - old-orogen
+  justification: '"fold-thrust belts, eroded orogens": type setting; dipping beds elsewhere also give trellis'
+  suggest: null
+- pattern: planet-pattern.fluvial.network.trellis
+  factor: planet-factor.rock-type
+  role: gate
+  reading: proxy
+  classes:
+  - clastic-coarse
+  - clastic-fine
+  - carbonate
+  justification: '"erodibility contrast sandstone vs shale/limestone sets valley-ridge relief": needs layered sedimentary
+    rock (and a contrast, not readable per sample)'
+  suggest: null
+- pattern: planet-pattern.fluvial.valley.v-shaped
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"rock strength caps side slopes": scalar'
+  suggest: numeric erodibility
+- pattern: planet-pattern.fluvial.delta.wave-dominated
+  factor: planet-factor.tect-setting
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"passive or active margin open coast": names both, no class favoured'
+  suggest: null
+- pattern: planet-pattern.glacial.landscape.alpine
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - active-orogen
+  - old-orogen
+  - magmatic-arc
+  - rift-extensional
+  justification: '"orogens and uplifted rift shoulders": favoured; relief and ice are the controls'
+  suggest: null
+- pattern: planet-pattern.glacial.landscape.alpine
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: now
+  classes:
+  - crystalline
+  justification: '"jointed crystalline rock gives sharpest aretes/horns": shapes; old want low inverted'
+  suggest: null
+- pattern: planet-pattern.glacial.erosion.arete
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: now
+  classes:
+  - crystalline
+  - volcanic-mafic
+  - ultramafic-other
+  justification: '"hard rock holds steep 48-68 deg flanks": favoured'
+  suggest: null
+- pattern: planet-pattern.glacial.erosion.cirque
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: now
+  classes:
+  - crystalline
+  - volcanic-mafic
+  - volcanic-felsic
+  justification: '"jointed crystalline/volcanic best": favoured'
+  suggest: null
+- pattern: planet-pattern.glacial.erosion.col
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"weaker rock bands erode into saddles": a relative band, not a sample class'
+  suggest: lithologic contrast
+- pattern: planet-pattern.glacial.bedform.drumlin-field
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: proxy
+  classes:
+  - clastic-fine
+  - clastic-coarse
+  - carbonate
+  - unconsolidated
+  justification: '"soft sedimentary bedrock supplies till": favoured'
+  suggest: null
+- pattern: planet-pattern.glacial.deposit.esker
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: now
+  classes:
+  - crystalline
+  justification: '"hard crystalline bed with thin cover favours eskers": favours'
+  suggest: null
+- pattern: planet-pattern.glacial.erosion.fjord
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: now
+  classes:
+  - crystalline
+  justification: '"resistant crystalline rock keeps steep walls": shapes'
+  suggest: null
+- pattern: planet-pattern.glacial.valley.hanging-valley
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"resistant tributary rock enhances step; also forms by differential erosion": relative contrast'
+  suggest: lithologic contrast
+- pattern: planet-pattern.glacial.erosion.horn
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: now
+  classes:
+  - crystalline
+  justification: '"massive jointed crystalline rock keeps pyramidal faces": shapes'
+  suggest: null
+- pattern: planet-pattern.glacial.landscape.ice-sheet-bed
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - craton-shield
+  - platform
+  justification: '"cratonic shields and stable platforms with low relief": favoured; old want low inverted'
+  suggest: null
+- pattern: planet-pattern.glacial.landscape.ice-sheet-bed
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"hard crystalline shield gives scoured rock; soft sedimentary lowland gives till bed": selector'
+  suggest: sub-kind selector
+- pattern: planet-pattern.glacial.deposit.kame-kettle
+  factor: planet-factor.bio-veg
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"kettles infill to bogs": later evolution'
+  suggest: null
+- pattern: planet-pattern.glacial.erosion.knock-and-lochan
+  factor: planet-factor.rock-type
+  role: gate
+  reading: now
+  classes:
+  - crystalline
+  justification: '"gneiss/granite shield rock" (process doc 2.4: thin ice over crystalline shield)'
+  suggest: null
+- pattern: planet-pattern.glacial.erosion.knock-and-lochan
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - craton-shield
+  justification: '"cratonic shield": the rock gate carries the prerequisite'
+  suggest: null
+- pattern: planet-pattern.glacial.erosion.knock-and-lochan
+  factor: planet-factor.bio-veg
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"peat fills hollows postglacially": later evolution'
+  suggest: null
+- pattern: planet-pattern.glacial.deposit.outwash-plain
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - barren
+  - sparse
+  - tundra
+  justification: '"sparse vegetation keeps channels mobile": favoured'
+  suggest: null
+- pattern: planet-pattern.glacial.valley.overdeepening
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"lithologic contrasts set basin/bar alternation": contrast'
+  suggest: lithologic contrast
+- pattern: planet-pattern.glacial.landscape.periglacial-plain
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: m4
+  classes:
+  - tundra
+  - wetland
+  justification: '"vegetation/peat insulates; removal triggers thermokarst": insulating cover favoured'
+  suggest: null
+- pattern: planet-pattern.glacial.isostatic.rebound-coast
+  factor: planet-factor.tect-setting
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"former ice-sheet centre vs peripheral bulge": ice-load geometry, not a tectonic class'
+  suggest: ice-lgm geometry
+- pattern: planet-pattern.glacial.erosion.roche-moutonnee
+  factor: planet-factor.rock-type
+  role: gate
+  reading: proxy
+  classes:
+  - unconsolidated
+  justification: '"hard bedrock knob": a bedrock form'
+  suggest: null
+- pattern: planet-pattern.glacial.deposit.till-plain
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: proxy
+  classes:
+  - clastic-fine
+  - clastic-coarse
+  - carbonate
+  justification: '"soft sedimentary bedrock gives thick clay-rich till": favoured'
+  suggest: null
+- pattern: planet-pattern.glacial.valley.trough
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: now
+  classes:
+  - crystalline
+  justification: '"crystalline rock holds steep walls; weak rock gives wider gentler troughs": shapes; old want
+    low inverted'
+  suggest: null
+- pattern: planet-pattern.glacial.erosion.whaleback
+  factor: planet-factor.rock-type
+  role: gate
+  reading: proxy
+  classes:
+  - unconsolidated
+  justification: '"massive hard rock": a bedrock form'
+  suggest: null
+- pattern: planet-pattern.hillslope.hollow.colluvial
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - forest
+  - shrubland
+  justification: '"Root strength holds fill": woody roots favoured'
+  suggest: null
+- pattern: planet-pattern.hillslope.hollow.colluvial
+  factor: planet-factor.rock-type
+  role: gate
+  reading: proxy
+  classes:
+  - unconsolidated
+  justification: '"Bedrock below must be stronger than fill": needs bedrock'
+  suggest: null
+- pattern: planet-pattern.hillslope.talus.cone
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"Hard jointed rock gives coarse talus; weak rock gives fine scree": selector'
+  suggest: sub-kind selector
+- pattern: planet-pattern.hillslope.fan.debris-flow
+  factor: planet-factor.bio-veg
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"Wildfire removing cover sharply raises debris-flow frequency": disturbance'
+  suggest: cover change history
+- pattern: planet-pattern.hillslope.flatiron
+  factor: planet-factor.rock-type
+  role: gate
+  reading: proxy
+  classes:
+  - clastic-coarse
+  - carbonate
+  justification: '"Cap bed must resist weathering; underlying shale erodes faster": a resistant sedimentary cap
+    (shale below not readable per sample)'
+  suggest: null
+- pattern: planet-pattern.hillslope.scarp.free-face
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: now
+  classes:
+  - crystalline
+  - volcanic-mafic
+  - ultramafic-other
+  justification: '"Strong massive rock holds faces": favoured'
+  suggest: null
+- pattern: planet-pattern.hillslope.ridge.interfluve
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"Resistant rock holds narrow crests; weak rock gives broad low interfluves": shape selector'
+  suggest: numeric erodibility
+- pattern: planet-pattern.hillslope.ridge.interfluve
+  factor: planet-factor.bio-veg
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"Bioturbation sets diffusivity, rounding crests": scalar'
+  suggest: soil diffusivity
+- pattern: planet-pattern.hillslope.landslide.rotational
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: proxy
+  classes:
+  - clastic-fine
+  - unconsolidated
+  justification: '"clay, mudstone, thick soil, weak rock over clay": thick soil can sit on any rock, so not a gate'
+  suggest: null
+- pattern: planet-pattern.hillslope.profile.soil-mantled
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"Rock must weather to soil faster than erosion strips it": a rate balance'
+  suggest: soil production vs erosion
+- pattern: planet-pattern.hillslope.profile.soil-mantled
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - barren
+  - sparse
+  justification: '"Bioturbation ... is main transport; cover limits wash": favoured'
+  suggest: null
+- pattern: planet-pattern.hillslope.landslide.translational
+  factor: planet-factor.bio-veg
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"Root loss (fire, logging) raises shallow-slip frequency": disturbance'
+  suggest: cover change history
+- pattern: planet-pattern.karst.landscape.cockpit
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - forest
+  justification: '"Dense rainforest and soil supply CO2" (process doc 2.7: humid tropics); forest class lacks a
+    tropical split, add temperature'
+  suggest: null
+- pattern: planet-pattern.karst.depression.doline
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - barren
+  justification: '"Soil CO2 from vegetation raises aggressiveness": favoured'
+  suggest: null
+- pattern: planet-pattern.karst.landscape.plateau
+  factor: planet-factor.rock-type
+  role: gate
+  reading: now
+  classes:
+  - carbonate
+  justification: '"Massive, low-porosity carbonate platform rock": karst needs soluble rock; old want low inverted'
+  suggest: null
+- pattern: planet-pattern.karst.landscape.plateau
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - platform
+  - active-orogen
+  - old-orogen
+  justification: '"Fold-thrust belts over carbonate platforms or stable carbonate platforms": hosts'
+  suggest: null
+- pattern: planet-pattern.karst.landscape.plateau
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - barren
+  justification: '"Soil and vegetation supply CO2 ...; soil loss leaves bare karren": favoured'
+  suggest: null
+- pattern: planet-pattern.karst.landscape.tropical
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - forest
+  justification: '"Rainforest soils high in CO2": favoured (tropical split via temperature)'
+  suggest: null
+- pattern: planet-pattern.lacustrine.lake.dammed-lake
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"Clay-rich low-porosity dam lasts longer": the dam material, not the sample rock'
+  suggest: null
+- pattern: planet-pattern.lacustrine.basin.oxbow
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - barren
+  justification: '"Bank vegetation cohesion sustains sinuosity": shapes'
+  suggest: null
+- pattern: planet-pattern.lacustrine.basin.tectonic
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: m4
+  classes:
+  - rift-extensional
+  - transform
+  - foreland-basin
+  justification: '"Continental rift, graben, pull-apart or foreland basin": a tectonic lake needs a tectonic basin'
+  suggest: null
+- pattern: planet-pattern.lacustrine.shoreline.terrace
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - rift-extensional
+  - intermontane-basin
+  justification: '"Closed basins (basin and range)": type setting; shorelines form at any lake'
+  suggest: null
+- pattern: planet-pattern.periglacial.slope.blockfield
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: now
+  classes:
+  - crystalline
+  - volcanic-mafic
+  justification: '"Resistant jointed rock (granite, quartzite, basalt)": favoured'
+  suggest: null
+- pattern: planet-pattern.periglacial.ground.ice-wedge-polygons
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: proxy
+  classes:
+  - forest
+  justification: '"Snow and vegetation cover insulate, limit cracking": cover disfavoured'
+  suggest: null
+- pattern: planet-pattern.periglacial.slope.nivation-hollow
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: proxy
+  classes:
+  - unconsolidated
+  - clastic-fine
+  justification: '"Best on weak or well-jointed rock or regolith": weak part only; jointing is not a class'
+  suggest: null
+- pattern: planet-pattern.periglacial.mound.palsa
+  factor: planet-factor.bio-veg
+  role: gate
+  reading: m4
+  classes:
+  - wetland
+  justification: '"Peat cover insulates; mire vegetation needed"'
+  suggest: null
+- pattern: planet-pattern.periglacial.ground.patterned-sorted
+  factor: planet-factor.bio-veg
+  role: gate
+  reading: proxy
+  classes:
+  - barren
+  - sparse
+  - tundra
+  justification: '"Sparse vegetation needed; cover stops sorting"'
+  suggest: null
+- pattern: planet-pattern.periglacial.slope.solifluction-lobe
+  factor: planet-factor.bio-veg
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"Turf-banked vs stone-banked lobes": selector'
+  suggest: sub-kind selector
+- pattern: planet-pattern.periglacial.lake.thermokarst
+  factor: planet-factor.bio-veg
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"Surface disturbance (fire, vegetation loss) starts thaw": disturbance'
+  suggest: cover change history
+- pattern: planet-pattern.structural.homocline.cuesta
+  factor: planet-factor.rock-type
+  role: gate
+  reading: proxy
+  classes:
+  - carbonate
+  - clastic-coarse
+  - clastic-fine
+  justification: '"Limestone, dolostone, sandstone caps; clay/shale below": a cuesta is layered sedimentary rock'
+  suggest: null
+- pattern: planet-pattern.structural.homocline.cuesta
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: m4
+  classes:
+  - platform
+  - foreland-basin
+  justification: '"Platform/basin margins, domes and basins": hosts'
+  suggest: null
+- pattern: planet-pattern.structural.homocline.hogback
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - active-orogen
+  - old-orogen
+  justification: '"Mountain-front monoclines, steep fold limbs, Laramide-style uplifts": steep dips need deformation'
+  suggest: null
+- pattern: planet-pattern.structural.homocline.homoclinal-ridge
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - active-orogen
+  - old-orogen
+  - platform
+  justification: '"Fold-thrust belts, dome flanks": dome flanks occur on platforms, so hosts only'
+  suggest: null
+- pattern: planet-pattern.tectonic.fold.anticlinal-ridge
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"carapace hardness decides whaleback vs early breaching": selector'
+  suggest: sub-kind selector
+- pattern: planet-pattern.tectonic.margin.convergent
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - magmatic-arc
+  - active-orogen
+  justification: '"ocean-ocean (island arc), ocean-continent (Andean), continent-continent": a convergent boundary'
+  suggest: null
+- pattern: planet-pattern.tectonic.province.craton-platform
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - platform
+  justification: '"stable craton; basement under flat sedimentary cover": the platform itself; old want low inverted'
+  suggest: null
+- pattern: planet-pattern.tectonic.fold.dome-basin
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: m4
+  classes:
+  - platform
+  - craton-shield
+  - foreland-basin
+  justification: '"cratonic platform or foreland; intracratonic basins": hosts'
+  suggest: null
+- pattern: planet-pattern.tectonic.fold.dome-basin
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"core hardness decides peak or central hollow": selector'
+  suggest: sub-kind selector
+- pattern: planet-pattern.tectonic.province.extensional-province
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: m4
+  classes:
+  - rift-extensional
+  - back-arc
+  justification: '"thickened/hot continental lithosphere, back-arc or post-orogenic collapse": an extensional province
+    is extension'
+  suggest: null
+- pattern: planet-pattern.tectonic.fault.fault-scarp
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: proxy
+  classes:
+  - unconsolidated
+  justification: '"alluvial scarps diffuse; bedrock scarps persist": preservation'
+  suggest: null
+- pattern: planet-pattern.tectonic.fault.fault-scarp
+  factor: planet-factor.bio-veg
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"vegetation cover slows wash, alters diffusivity": scalar'
+  suggest: soil diffusivity
+- pattern: planet-pattern.tectonic.province.fold-thrust-belt
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - active-orogen
+  justification: '"foreland of collisional or subduction orogen; needs ongoing horizontal shortening"'
+  suggest: null
+- pattern: planet-pattern.tectonic.province.fold-thrust-belt
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"competent carbonates/sandstones form ridges; weak salt allows low taper, wide belt": selector'
+  suggest: sub-kind selector
+- pattern: planet-pattern.tectonic.margin.great-escarpment
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - passive-margin
+  justification: '"rifted passive margin with high interior plateau"'
+  suggest: null
+- pattern: planet-pattern.tectonic.margin.great-escarpment
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: now
+  classes:
+  - volcanic-mafic
+  - crystalline
+  justification: '"flood-basalt cap or hard shield gives sharp scarp": shapes'
+  suggest: null
+- pattern: planet-pattern.tectonic.extension.horst-graben
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - rift-extensional
+  justification: '"extension of thickened/thermally weakened continental lithosphere"'
+  suggest: null
+- pattern: planet-pattern.tectonic.basin.intermontane
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: m4
+  classes:
+  - intermontane-basin
+  - foreland-basin
+  justification: '"a structural trough between ranges: forearc, foreland, or between thrust sheets" (intermontane-basin
+    includes forearc and piggyback troughs)'
+  suggest: null
+- pattern: planet-pattern.tectonic.strike-slip.offset-stream
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"weak alluvium favours capture and reset": capture resets offsets; direction for the pattern unclear'
+  suggest: null
+- pattern: planet-pattern.tectonic.province.orogen
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - active-orogen
+  - magmatic-arc
+  justification: '"subduction (Andean) or continental collision (Himalayan)"'
+  suggest: null
+- pattern: planet-pattern.tectonic.margin.passive
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - passive-margin
+  justification: '"post-rift trailing edge, no plate boundary"; old want low inverted'
+  suggest: null
+- pattern: planet-pattern.tectonic.margin.passive
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: m4
+  classes:
+  - reef
+  justification: '"reefs/carbonate factories build rimmed shelves in warm water": shapes the shelf'
+  suggest: null
+- pattern: planet-pattern.tectonic.uplift.plateau
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - craton-shield
+  - platform
+  - hotspot
+  - active-orogen
+  justification: '"craton epeirogeny, mantle upwelling, or orogenic crustal thickening": several hosts, not one
+    prerequisite'
+  suggest: null
+- pattern: planet-pattern.tectonic.fault.range-front
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: now
+  classes:
+  - crystalline
+  - volcanic-mafic
+  - ultramafic-other
+  justification: '"resistant footwall keeps straight front, facets": shapes'
+  suggest: null
+- pattern: planet-pattern.tectonic.extension.rift-valley
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - rift-extensional
+  justification: '"continental rift, often above mantle plume/dome"'
+  suggest: null
+- pattern: planet-pattern.tectonic.craton.shield
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - craton-shield
+  justification: '"stable Archean-Proterozoic craton with thick root; no active tectonics"; old want low inverted'
+  suggest: null
+- pattern: planet-pattern.tectonic.craton.shield
+  factor: planet-factor.rock-type
+  role: gate
+  reading: now
+  classes:
+  - crystalline
+  justification: '"crystalline gneiss/granite": a shield is exposed crystalline basement'
+  suggest: null
+- pattern: planet-pattern.tectonic.strike-slip.shutter-ridge
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"bedrock erodibility controls ridge persistence": scalar'
+  suggest: numeric erodibility
+- pattern: planet-pattern.tectonic.fold.synclinal-valley
+  factor: planet-factor.rock-type
+  role: modifier
+  reading: proxy
+  classes:
+  - clastic-fine
+  justification: '"weak trough strata keep valley; hard trough caprock gives inverted ridge": weak strata favoured'
+  suggest: null
+- pattern: planet-pattern.tectonic.province.transform-boundary
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: m4
+  classes:
+  - transform
+  justification: '"conservative boundary; oceanic ridge-ridge transform or continental (San Andreas)"'
+  suggest: null
+- pattern: planet-pattern.tectonic.strike-slip.transform-valley
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: m4
+  classes:
+  - transform
+  justification: '"transform plate boundary or major transcurrent fault" (intraplate transcurrent faults not in
+    the class)'
+  suggest: null
+- pattern: planet-pattern.tectonic.fault.triangular-facet
+  factor: planet-factor.rock-type
+  role: gate
+  reading: m4
+  classes:
+  - unconsolidated
+  - clastic-fine
+  - evaporite
+  justification: '"resistant bedrock footwall needed; weak rock degrades facets quickly"'
+  suggest: null
+- pattern: planet-pattern.volcanic.depression.caldera
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - magmatic-arc
+  - rift-extensional
+  - hotspot
+  justification: '"arcs and continental extension for large silicic; hotspot shields for basaltic": a caldera needs
+    a magmatic setting'
+  suggest: null
+- pattern: planet-pattern.volcanic.intrusion.dike-ridge
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"dike harder than host": relative contrast, the dike is not the sample class'
+  suggest: lithologic contrast
+- pattern: planet-pattern.volcanic.intrusion.dike-ridge
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - rift-extensional
+  - hotspot
+  - magmatic-arc
+  justification: '"rifts/LIPs give parallel swarms; volcanic centres give radial swarms": hosts and swarm type'
+  suggest: null
+- pattern: planet-pattern.volcanic.province.flood-basalt
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - hotspot
+  justification: '"mantle plume head under continent" (with crust-kind continent)'
+  suggest: null
+- pattern: planet-pattern.volcanic.province.hotspot
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - hotspot
+  justification: '"mantle plume under oceanic or continental plate"'
+  suggest: null
+- pattern: planet-pattern.volcanic.province.hotspot
+  factor: planet-factor.bio-veg
+  role: modifier
+  reading: m4
+  classes:
+  - reef
+  justification: '"tropical reef growth on subsiding islands makes atolls": shapes (atoll sub-form)'
+  suggest: null
+- pattern: planet-pattern.volcanic.province.ignimbrite-plateau
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: m4
+  classes:
+  - magmatic-arc
+  - back-arc
+  justification: '"continental arcs over thick crust and plateaus (Altiplano-Puna, Taupo)": hosts named; not gated
+    (silicic hotspots unnamed)'
+  suggest: null
+- pattern: planet-pattern.volcanic.deposit.lahar-fan
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"hydrothermally altered clay-rich edifice gives cohesive, long-runout lahars": alteration, not
+    a class'
+  suggest: sub-kind selector
+- pattern: planet-pattern.volcanic.flow.lava-flow-field
+  factor: planet-factor.bio-veg
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"vegetation colonisation rate marks flow age": look of age'
+  suggest: null
+- pattern: planet-pattern.volcanic.depression.maar
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"country-rock lithics form ring; soft host widens crater": size scalar'
+  suggest: numeric erodibility
+- pattern: planet-pattern.volcanic.field.monogenetic-field
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - craton-shield
+  justification: '"extension, rift flanks, arc back-areas, intraplate; rare on cratons"'
+  suggest: null
+- pattern: planet-pattern.volcanic.edifice.resurgent-dome
+  factor: planet-factor.tect-setting
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"large silicic calderas": a volcanic prerequisite (the caldera), not a setting class'
+  suggest: require the caldera pattern
+- pattern: planet-pattern.volcanic.rift-zone
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - hotspot
+  justification: '"ocean-island shields ..., some continental shields": favoured'
+  suggest: null
+- pattern: planet-pattern.volcanic.edifice.shield-volcano
+  factor: planet-factor.tect-setting
+  role: modifier
+  reading: proxy
+  classes:
+  - hotspot
+  - rift-extensional
+  justification: '"oceanic hotspot (giant shields), rift or monogenetic field (small lava shields)": monogenetic
+    settings unnamed, so not gated'
+  suggest: null
+- pattern: planet-pattern.volcanic.edifice.stratovolcano
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: proxy
+  classes:
+  - magmatic-arc
+  - rift-extensional
+  justification: '"subduction arc above slab ~100-120 km deep; some continental rifts"'
+  suggest: null
+- pattern: planet-pattern.volcanic.edifice.stratovolcano
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"interbedded lavas, breccias, tephra": the edifice''s own rock (an output, not a prerequisite)'
+  suggest: null
+- pattern: planet-pattern.volcanic.province.volcanic-arc
+  factor: planet-factor.tect-setting
+  role: gate
+  reading: now
+  classes:
+  - magmatic-arc
+  justification: '"subduction: oceanic under oceanic gives island arc, under continent gives continental arc"'
+  suggest: null
+- pattern: planet-pattern.volcanic.intrusion.volcanic-neck
+  factor: planet-factor.rock-type
+  role: unknown
+  reading: null
+  classes: []
+  justification: '"resistant conduit fill vs soft host/tephra": relative contrast'
+  suggest: lithologic contrast

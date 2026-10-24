@@ -91,3 +91,6 @@ renames:
   - { was: planet-level.pattern, is: planet-level.100-km, date: "2026-10-21", why: "Owner: PlanetSim detail bands named by their upper view bound" }
   - { was: planet-level.square, is: planet-level.10-km, date: "2026-10-21", why: "Owner: PlanetSim detail bands named by their upper view bound" }
   - { was: planet-level.detail, is: planet-level.1-km, date: "2026-10-21", why: "Owner: PlanetSim detail bands named by their upper view bound" }
+  - { was: planet-pattern.arid.slope.alluvial-fan, is: planet-pattern.fluvial.fan.alluvial-fan, date: "2026-10-24", why: "M3: one canonical landform rule; frozen source and vocabulary IDs retained as aliases" }
+  - { was: planet-pattern.fluvial.piedmont.pediment, is: planet-pattern.arid.slope.pediment, date: "2026-10-24", why: "M3: one canonical landform rule; frozen source and vocabulary IDs retained as aliases" }
+  - { was: planet-pattern.arid.plateau.mesa-butte, is: planet-pattern.structural.flat.mesa-butte, date: "2026-10-24", why: "M3: one canonical landform rule; frozen source and vocabulary IDs retained as aliases" }

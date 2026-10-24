@@ -1,0 +1,65 @@
+{
+  "sources": [
+    {
+      "id": "seamount-relief",
+      "url": "https://portal.iho.int/iho-ohi/S32/engView.php?page=231",
+      "title": "IHO S-32 Hydrographic Dictionary, seamount (4609)",
+      "accessed": "2026-10-24",
+      "fact": "Geological naming convention: isolated elevation rising at least1000m above seafloor, limited summit extent. This does not identify volcanic origin from height alone.",
+      "value": 1000,
+      "unit": "m"
+    },
+    {
+      "id": "ice-body-area",
+      "url": "https://nsidc.org/sites/default/files/g10037-v001-userguide_1.pdf",
+      "title": "NSIDC Largest Glaciers and Glacier Complexes in the World v1, user guide p2",
+      "accessed": "2026-10-24",
+      "fact": "Ice sheet area>=50000km2; ice cap smaller, also requires dome/radial flow morphology. Area alone is not an ice-body detector.",
+      "value": 50000000000.0,
+      "unit": "m2"
+    },
+    {
+      "id": "permafrost-duration",
+      "url": "https://www.ipcc.ch/srocc/chapter/glossary/",
+      "title": "IPCC SROCC glossary: permafrost",
+      "accessed": "2026-10-24",
+      "fact": "Ground at or below0degC for at leasttwo consecutive years; annual mean AIR temperature cannot establish this condition.",
+      "duration_julian_years": 2,
+      "temperature_K": 273.15
+    },
+    {
+      "id": "aridity-convention",
+      "url": "https://www.ipcc.ch/report/ar6/wg2/figures/chapter-ccp3/figure-ccp3-001/",
+      "title": "IPCC AR6 WGII Figure CCP3.1",
+      "accessed": "2026-10-24",
+      "fact": "AI=P/PET: dry subhumid0.5..0.65, semiarid0.2..0.5, arid0.05..0.2, hyperarid<0.05. Sim aridity is PET/P: reciprocals required. Climate-zone classes are not universal landform gates.",
+      "AI_boundaries": [
+        0.65,
+        0.5,
+        0.2,
+        0.05
+      ],
+      "PET_over_P_boundaries": [
+        1.5384615384615383,
+        2,
+        5,
+        20
+      ]
+    },
+    {
+      "id": "relaxation-concept",
+      "url": "https://www.blackwellpublishing.com/pdf/landscape_sensitivity.pdf",
+      "title": "Brunsden & Thornes1979 Landscape Sensitivity and Change p480",
+      "accessed": "2026-10-24",
+      "fact": "Transient-form ratio compares relaxation and event recurrence time. Relaxation depends on processes; no universal per-landform numeric decay constant is supplied.",
+      "use": "concept only; no numerical tau inferred"
+    },
+    {
+      "id": "karst-soluble-rocks",
+      "url": "https://www.usgs.gov/publications/subsidence-hazards-due-evaporite-dissolution-united-states",
+      "title": "Johnson2005 Subsidence hazards due to evaporite dissolution in the United States, DOI10.1007/s00254-005-1283-5",
+      "accessed": "2026-10-24",
+      "fact": "Limestone/dolomite and soluble evaporites can host solutional karst. Dissolution also needs suitable water, escape and flow energy; a lithology gate alone does not establish a landform."
+    }
+  ]
+}

@@ -7,27 +7,41 @@ family: arid
 factors:
 - factor: planet-factor.clim-arid
   weight: 3
-  why: 'Arid/semi-arid best: sparse vegetation, weak soils and unstable banks promote planation'
+  why: 'Arid/semi-arid best: sparse vegetation, weak soils and unstable banks promote planation Duplicate library
+    context: arid, sparse vegetation, low bank cohesion'
   want: high
 - factor: planet-factor.bio-veg
   weight: 1
   why: Little vegetation lets sheetwash and channels migrate laterally
-  want: low
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - barren
+  - sparse
+  - grassland-steppe
+  - shrubland
 - factor: planet-factor.clim-storm
   weight: 1
-  why: Sheetfloods and flash floods do lateral planation
+  why: 'Sheetfloods and flash floods do lateral planation Duplicate library context: episodic floods and sheetwash
+    plane the surface'
   want: high
 - factor: planet-factor.rock-type
   weight: 1
-  why: Granite and grus-forming crystalline rock most common, though lithology not essential
-  want: high
+  why: 'Granite and grus-forming crystalline rock most common, though lithology not essential Duplicate library
+    context: granitic, grus-forming rock most common'
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - crystalline
 - factor: planet-factor.tect-uplift
   weight: 3
-  why: Stable or slowly uplifting mountain front; fast uplift makes fans instead
+  why: 'Stable or slowly uplifting mountain front; fast uplift makes fans instead Duplicate library context: tectonically
+    quiescent front; fault activity favours fans instead'
   want: low
 - factor: planet-factor.base-level
   weight: 3
-  why: Stable or slowly falling; more common in hydrologically open basins
+  why: 'Stable or slowly falling; more common in hydrologically open basins Duplicate library context: stable basin
+    base level; slope 0.5-7 deg'
   want: low
 - factor: planet-factor.sed-supply
   weight: 1
@@ -35,7 +49,8 @@ factors:
   want: high
 - factor: planet-factor.regolith
   weight: 1
-  why: Weathering front lowering beneath thin mantle; high-infiltration ground
+  why: 'Weathering front lowering beneath thin mantle; high-infiltration ground Duplicate library context: thin
+    transient alluvial veneer 0-5 m'
   want: high
 - factor: planet-factor.slope-relief
   weight: 1
@@ -43,7 +58,14 @@ factors:
   want: high
 - factor: planet-factor.time
   weight: 1
-  why: 100 kyr-10 Myr of scarp retreat
+  why: '100 kyr-10 Myr of scarp retreat Duplicate library context: 100 kyr-10 Myr'
+  want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
+- factor: planet-factor.rock-perm
+  weight: 1
+  why: high infiltration of grus favours planation
   want: high
 vocabulary_id: 15
 sources:
@@ -75,14 +97,36 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
 - of:
   - factors.want
   tier: derived
   review: true
   source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
-  note: 'planet-factor.clim-arid: The why text favors arid conditions; sparse vegetation, low rain/relief or
-    weak soil are effects or other quantities.'
+  note: 'planet-factor.clim-arid: The why text favors arid conditions; sparse vegetation, low rain/relief or weak
+    soil are effects or other quantities.'
+- of:
+  - legacy_sources
+  - legacy_vocabulary_ids
+  - factors
+  tier: derived
+  source: planet-forge docs/research/reconcile-sim-registry-2026-10-24.md
+  note: Duplicate control vector merged once; canonical weights/wants retained on shared factors, alternate explanatory
+    text retained. Frozen vocabulary IDs resolve as aliases; no ID is reassigned.
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: fan
+legacy_sources:
+- fluvial.piedmont.pediment
+legacy_vocabulary_ids:
+- 56
+kinds:
+- pediment

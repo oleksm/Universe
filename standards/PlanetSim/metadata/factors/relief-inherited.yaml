@@ -4,14 +4,6 @@ identity:
   name: RELIEF_INHERITED
   about: pre-existing relief and drainage the form develops from
 source: RELIEF_INHERITED
-reads:
-  fields:
-  - planet-field.incision
-  - planet-field.peak-discharge
-  landmarks:
-  - planet-landmark.water-gap
-  - planet-landmark.river-capture
-  - planet-landmark.dry-valley
 signal:
   features:
   - planet-feature.water-gap
@@ -19,6 +11,7 @@ signal:
   - planet-feature.dry-valley
   - planet-feature.wind-gap
   radius_m: 25000
+  falloff: step
 levels:
 - planet-level.1000-km
 - planet-level.100-km
@@ -29,7 +22,6 @@ basis:
   tier: derived
   note: planet-trees-pgs2 docs/landforms/deciding_factors_vocab.md.
 - of:
-  - reads
   - signal
   tier: invented
   review: true
@@ -43,3 +35,23 @@ basis:
     confirmed non-worn/non-replaced feature pins and sampled line points only, excludes trigger.proxy. No matching
     kinds => unknown, not known absence; away from points =>0 only within this screening model. Not an origin/composition/history
     measurement; avoid independent corroboration claims when feature and pattern share source rules.
+- of:
+  - reads
+  - kind
+  - unit
+  - reading
+  tier: derived
+  source: planet-forge 89d78fc docs/field-inventory-2026-10-24.md; current registry field definitions
+  note: Literal producer/registry audit; unavailable means no valid current binding. This does not source a scientific
+    causal law, calibrate retained ramps, or prove a proxy.
+kind: numeric
+unit: '1'
+reads:
+  fields:
+  - planet-field.incision
+  - planet-field.peak-discharge
+reading:
+  status: proxy
+  source: planet-forge 89d78fc docs/field-inventory-2026-10-24.md; current registry field definitions
+  note: Proximity to mapped water-gap/capture/dry-valley/wind-gap is a proxy; incision is decaying coupled wear
+    memory, not valley depth. Spatial geometry must be supplied by consumer.

@@ -1,0 +1,47 @@
+status: registry rule contract and coverage verified; scientific placement/calibration not complete
+base_commit: 308238a07
+unit_tests:
+  command: python3 -m unittest discover -s tools/standards
+  result: 89 passed
+  pattern_semantics: 14
+checks:
+- 'ok   validate: 0 thing(s) that do not fit their schema, 0 record(s) with no schema'
+- 'ok   build:   standards/index.html, standards/game-keys.yaml, standards/changes.yaml, standards/PlanetSim/generated/planet_lod_words.py'
+- 'ok   module: up to date'
+- 'ok   planet catalogue: planet catalogue: 241 kinds; 1009 gap(s); migration report (use --strict to fail on gaps)'
+- 'ok   fit: layout.shaft-furnace-airless: 50 bays, 175 runs, 9 layout ports: 0 fault(s)'
+- 'ok   makers: 378 of 378 kit stock made; 0 fault(s)'
+- 'ok   supply records: 83 supply-chain records; 0 fault(s)'
+- 'ok   stock chains: 1521/1521 stock chains; 17/17 package chains; 11 kit/supply works; 0 fault(s)'
+- 'ok   ports: equipment ports: 185 records written here; 0 fault(s)'
+- 'ok   mounts: 56 cradles, 4 deck mounts, 4 deck panels, 8 strut clamps; 0 stale; 0 fault(s)'
+- '  page x:planet-patterns:marine.catalogue.seamount: ok (4 links)'
+- '  page x:planet-patterns:karst.landscape.plateau: ok (18 links)'
+- '  page x:planet-factors:rock-type: ok (25 links)'
+- all checks pass
+invariants:
+  canonical_patterns: 261
+  mapped_feature_kinds: 241
+  factor_reviews: 62
+  directed_category_entries: 196
+  required_gates: 53
+  trigger_owned_patterns: 79
+  frozen_vocabulary_ids_resolved: 185
+  existing_process_params_unchanged: 75
+  silent_process_fallbacks_recorded: 2
+  time_entries_unresolved: 180
+  reading_verified: 1
+  reading_proxy: 15
+  reading_unavailable: 46
+limits:
+- Catalogue quality report still1009preexisting size/example/provenance gaps; no strict-complete claim.
+- Source inventory102physical literals is not102verified scientific gates; all448literal rows classified in threshold
+  review.
+- Unavailable category/history drivers and per-form decay calibration remain M3/M4 work.
+- Main Rust reader compatibility/integration must be checked on current engine main; local fso engine code predates
+  four equipment handlers.
+files:
+  standards/PlanetSim/schema/planet-factor.schema.yaml: 176aaee5f80bb25aab89c1fbb46f43010d009a8d765e74a627830184d21fed4e
+  standards/PlanetSim/schema/planet-pattern.schema.yaml: 7faf721d3a6b3b08cf56244057e568a6c04bade8979b82a32ab65b2529ae0f27
+  tools/standards/planet_lod.py: bd678f1642536935438abd0e451d1152601b83133256bedd6da0c4fcdec71315
+  tools/standards/validate.py: 3dabfc09ecad3591afca902c981b99043396abced76ef7accff72e2d09b30320

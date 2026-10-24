@@ -13,6 +13,7 @@ factors:
     features:
     - planet-feature.caldera-crater-lake
     radius_m: 50000
+    falloff: step
 - factor: planet-factor.other-chamber-depth-roof
   weight: 3
   why: chamber depth and roof aspect ratio pick piston, piecemeal, trapdoor or downsag
@@ -20,7 +21,13 @@ factors:
 - factor: planet-factor.tect-setting
   weight: 1
   why: arcs and continental extension for large silicic; hotspot shields for basaltic
-  want: high
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - magmatic-arc
+  - rift-extensional
+  - hotspot
+  required: true
 - factor: planet-factor.tect-fault
   weight: 1
   why: regional stress and faults make calderas elliptical and steer ring faults
@@ -41,6 +48,9 @@ factors:
   weight: 1
   why: wall retreat and infill (ignimbrite, lake sediment) with age
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 - factor: planet-factor.other-magma-supply
   weight: 3
   why: rapid withdrawal of large chamber volume (km3-1000s km3) sets collapse diameter and depth
@@ -86,5 +96,15 @@ basis:
     gas. Never share one union of silicic and basaltic category evidence. Proxy outputs excluded by consumer7645f03;
     missing listed kinds remain unknown. Other patterns with ambiguous or unsupported composition retain unresolved
     evidence; no why-text inference or weight/threshold retuning.'
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: volcanic
+kinds:
+- caldera-crater-lake

@@ -8,11 +8,18 @@ factors:
 - factor: planet-factor.rock-type
   weight: 3
   why: 'dike harder than host: weathers into wall; softer dike gives trench instead'
-  want: high
+  want: in
+  unresolved: true
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
 - factor: planet-factor.tect-setting
   weight: 1
   why: rifts/LIPs give parallel swarms; volcanic centres give radial swarms
-  want: high
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - rift-extensional
+  - hotspot
+  - magmatic-arc
 - factor: planet-factor.other-stress-field
   weight: 3
   why: regional least stress sets dike orientation; central load gives radial pattern
@@ -21,6 +28,9 @@ factors:
   weight: 3
   why: Myr of erosion to strip host rock
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 - factor: planet-factor.tect-uplift
   weight: 1
   why: exhumation depth sets how much dike is exposed
@@ -62,7 +72,17 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: volcanic
+kinds:
+- dike-ridge

@@ -8,7 +8,11 @@ factors:
 - factor: planet-factor.tect-setting
   weight: 3
   why: conservative boundary; oceanic ridge-ridge transform or continental (San Andreas)
-  want: high
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - transform
+  required: true
 - factor: planet-factor.tect-fault
   weight: 3
   why: slip rate, fault straightness; bends and stepovers
@@ -33,6 +37,9 @@ factors:
   weight: 1
   why: cumulative offset 100s km over Myr
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 175
 sources:
 - https://en.wikipedia.org/wiki/Transform_fault
@@ -63,7 +70,17 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: dendritic
+kinds:
+- plate-boundary-transform

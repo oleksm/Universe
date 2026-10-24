@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/planet-field.schema.yaml
-# Migrated from the Python sim by planet-forge tools/migration/to_registry_extra.py (planets, 17 Oct 2026); hand-kept from here.
 identity:
   key: planet-field.recent-river-change-time
   name: River change time (recent epoch)
@@ -8,13 +7,13 @@ unit: s
 said_as:
   unit: Gyr
   factor: 3.15576e+16
-  note: 'negative: before present'
+  note: seconds since formation; subtract from the run present to get time since river state change
 per: sample
 producer:
-  where: tools/recent.py
-  file: ctx
-  key: r_river_t_change
-time_base: before-present
+  where: crates/forge-core/src/models/surface/recent.rs:99,201,214
+  file: fields/recent-river-change-time.npy
+  key: planet-field.recent-river-change-time
+time_base: planet-age
 missing: 'NaN: never changed'
 status: draft
 basis:
@@ -23,5 +22,13 @@ basis:
   - producer
   - unit
   tier: derived
-  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
-    from the code.'
+  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json),
+    read from the code.'
+- of:
+  - time_base
+  - said_as
+  - producer
+  tier: derived
+  source: planet-forge89d78fc docs/field-inventory-2026-10-24.md
+  note: Actual producer uses the formation clock, not negative before-present time. NaN never changed; no crust-age
+    substitution.

@@ -1,0 +1,731 @@
+source: planet-forge 89d78fc docs/field-inventory-2026-10-24.md; current registry field definitions
+factors:
+- factor: planet-factor.aspect
+  status: unavailable
+  note: No saved aspect field; must derive from a declared resolved surface and frame.
+  previous_reads:
+    fields:
+    - planet-field.facing
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.base-level
+  status: unavailable
+  note: Absolute height/lowstand-shore do not supply signed base-level change or its age; unavailable.
+  previous_reads:
+    fields:
+    - planet-field.height
+    - planet-field.lowstand-shore
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.bio-veg
+  status: unavailable
+  note: No saved vegetation class/cover field in this checkpoint. biome or cover must not be inferred from mean
+    temperature alone.
+  previous_reads:
+    layers:
+    - planet-layer.cover
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.clim-arid
+  status: proxy
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads:
+    fields:
+    - planet-field.aridity
+    layers:
+    - planet-layer.climate
+  previous_signal: &id001
+    field: planet-field.aridity
+    from: 1.0
+    to: 5.0
+  reads:
+    fields:
+    - planet-field.aridity
+  signal: *id001
+- factor: planet-factor.clim-history
+  status: proxy
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads:
+    fields:
+    - planet-field.ice-cycles
+    - planet-field.pluvial-lake
+  previous_signal: &id002
+    field: planet-field.ice-cycles
+    from: 0.0
+    to: 20.0
+  reads:
+    fields:
+    - planet-field.ice-cycles
+  signal: *id002
+- factor: planet-factor.clim-precip
+  status: proxy
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads:
+    fields:
+    - planet-field.rain
+  previous_signal: &id003
+    field: planet-field.rain
+    from: 7.922e-09
+    to: 6.3376e-08
+  reads:
+    fields:
+    - planet-field.rain
+  signal: *id003
+- factor: planet-factor.clim-season
+  status: unavailable
+  note: Annual mean temperature/rain cannot identify seasonal amplitude or timing. Seasonal observations exist only
+    in separate Earth fixtures; no universal saved sim signal.
+  previous_reads:
+    fields:
+    - planet-field.temperature
+    - planet-field.rain
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.clim-storm
+  status: unavailable
+  note: Mean rain and decaying peak discharge are not storm intensity/frequency; no storm signal.
+  previous_reads:
+    fields:
+    - planet-field.rain
+    - planet-field.peak-discharge
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.clim-temp
+  status: proxy
+  note: Annual mean air temperature, not freeze-thaw frequency or ground thermal history. Retained inverted ramp
+    is coldness (high=cold), not heat; provisional calibration.
+  previous_reads:
+    fields:
+    - planet-field.temperature
+    layers:
+    - planet-layer.climate
+  previous_signal: &id004
+    field: planet-field.temperature
+    from: 283.15
+    to: 263.15
+  reads:
+    fields:
+    - planet-field.temperature
+  signal: *id004
+- factor: planet-factor.clim-wind
+  status: unavailable
+  note: Saved wind/wind-north are unit-vector direction toward, not speed, transport capacity or a wind rose. No
+    scalar-strength signal is available.
+  previous_reads:
+    fields:
+    - planet-field.wind
+    - planet-field.wear-wind
+    - planet-field.dust
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.events
+  status: unavailable
+  note: A nearby event landmark alone is not a scalar event magnitude, recurrence or age; explicit event evidence
+    remains to be supplied.
+  previous_reads:
+    landmarks:
+    - planet-landmark.river-capture
+    - planet-landmark.arc-volcano
+    - planet-landmark.hotspot-volcano
+    - planet-landmark.flood-basalt-province
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.groundwater
+  status: unavailable
+  note: runoff is annual surface water depth rate and water-lost is transmission loss discharge; neither is water
+    table, head or groundwater recharge.
+  previous_reads:
+    fields:
+    - planet-field.runoff
+    - planet-field.water-lost
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.ice-extent
+  status: proxy
+  note: ice/ice-lgm are current/LGM thickness; cycles counts crossings of 50 m. Positive thickness supports past
+    ice presence but not flow, basal temperature or exact outline.
+  previous_reads:
+    fields:
+    - planet-field.ice
+    - planet-field.ice-lgm
+    - planet-field.ice-cycles
+  previous_signal: &id005
+    field: planet-field.ice-lgm
+    from: 0.0
+    to: 500.0
+  reads:
+    fields:
+    - planet-field.ice
+    - planet-field.ice-lgm
+    - planet-field.ice-cycles
+  signal: *id005
+- factor: planet-factor.ice-flow
+  status: unavailable
+  note: No saved velocity or direction. ice-lgm is thickness and is not a flow signal; removed false alias and ramp.
+  previous_reads:
+    fields:
+    - planet-field.ice
+    - planet-field.ice-lgm
+  previous_signal:
+    field: planet-field.ice-lgm
+    from: 50.0
+    to: 1000.0
+  reads: {}
+  signal: null
+- factor: planet-factor.ice-thermal
+  status: unavailable
+  note: Air temperature and ice thickness do not establish basal temperature/water pressure; unavailable.
+  previous_reads:
+    fields:
+    - planet-field.ice
+    - planet-field.temperature
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.lake-level
+  status: proxy
+  note: lake-mark is decaying lake-bed memory, not lake level or a rising/falling trend. Retained only as flagged
+    historical-lake proxy.
+  previous_reads:
+    fields:
+    - planet-field.lake
+    - planet-field.pluvial-lake
+    - planet-field.lake-mark
+    - planet-field.lake-surface
+  previous_signal: &id006
+    field: planet-field.lake-mark
+    from: 0.0
+    to: 1.0
+  reads:
+    fields:
+    - planet-field.lake
+    - planet-field.pluvial-lake
+    - planet-field.lake-mark
+    - planet-field.lake-level
+  signal: *id006
+- factor: planet-factor.other-atmosphere-density
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-basal-water-pressure
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-carbonate-factory
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-chamber-depth-roof
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-cooling-rate
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-effusion-rate
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-extension-amount
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-gravitational-collapse
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-gravity-atmosphere
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-isostatic-rebound
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-magma-recharge
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-magma-supply
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-mantle-viscosity
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-ocean-chemistry
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-piping
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-plate-kinematics
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-salt-tectonics
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-salt-weathering
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-shrink-swell
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-slab-age
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-solute-chemistry
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-stream-capture
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-stress-field
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-tidal-prism
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-water-magma-ratio
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.other-welding
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads: {}
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.permafrost
+  status: proxy
+  note: Annual air temperature is a climate proxy, not the required ground temperature for two consecutive years;
+    no confirmed permafrost signal.
+  previous_reads:
+    fields:
+    - planet-field.temperature
+  previous_signal: &id007
+    field: planet-field.temperature
+    from: 273.15
+    to: 267.15
+  reads:
+    fields:
+    - planet-field.temperature
+  signal: *id007
+- factor: planet-factor.regolith
+  status: unavailable
+  note: No saved regolith thickness. Per-step sediment deposition is not a cumulative regolith layer.
+  previous_reads:
+    fields:
+    - planet-field.laid
+    - planet-field.dust
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.relief-inherited
+  status: proxy
+  note: Proximity to mapped water-gap/capture/dry-valley/wind-gap is a proxy; incision is decaying coupled wear
+    memory, not valley depth. Spatial geometry must be supplied by consumer.
+  previous_reads:
+    fields:
+    - planet-field.incision
+    - planet-field.peak-discharge
+    landmarks:
+    - planet-landmark.water-gap
+    - planet-landmark.river-capture
+    - planet-landmark.dry-valley
+  previous_signal: &id008
+    features:
+    - planet-feature.water-gap
+    - planet-feature.river-capture
+    - planet-feature.dry-valley
+    - planet-feature.wind-gap
+    radius_m: 25000
+  reads:
+    fields:
+    - planet-field.incision
+    - planet-field.peak-discharge
+  signal: *id008
+- factor: planet-factor.rock-fracture
+  status: proxy
+  note: fault is plate-boundary proximity {0,.5,1}, not joint/fracture density. Retained only as flagged proxy,
+    never verified fracture reading.
+  previous_reads:
+    fields:
+    - planet-field.fault
+  previous_signal: &id009
+    field: planet-field.fault
+    from: 0.0
+    to: 1.0
+  reads:
+    fields:
+    - planet-field.fault
+  signal: *id009
+- factor: planet-factor.rock-layers
+  status: unavailable
+  note: A surface lithology code is not bed orientation, alternation or thickness. No bedding signal.
+  previous_reads:
+    layers:
+    - planet-layer.zones
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.rock-perm
+  status: unavailable
+  note: Lithology is categorical and does not supply measured permeability; unavailable.
+  previous_reads:
+    fields:
+    - planet-field.rock
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.rock-soluble
+  status: proxy
+  note: Zones class 9 corresponds to raw rock index 8 limestone/dolomite. Composition proxy only; soluble evaporites
+    and actual carbonate fraction are not resolved.
+  previous_reads:
+    fields:
+    - planet-field.rock
+    layers:
+    - planet-layer.zones
+  previous_signal:
+    layer: planet-layer.zones
+    classes:
+    - 9
+  reads:
+    fields:
+    - planet-field.rock
+  signal:
+    layer: planet-layer.zones
+    classes:
+    - 9
+- factor: planet-factor.rock-type
+  status: verified
+  note: Raw planet-field.rock codes are rock-unit.sim.index (0-based), never ground vocabulary IDs (+1). Directed
+    class intent required; category does not imply hardness or erodibility.
+  previous_reads:
+    fields:
+    - planet-field.rock
+    layers:
+    - planet-layer.zones
+  previous_signal: null
+  reads:
+    fields:
+    - planet-field.rock
+  signal:
+    field: planet-field.rock
+- factor: planet-factor.sea-level
+  status: proxy
+  note: lowstand-shore is ever-shore at glaciality>0.8, not a sea-level magnitude or rate. Retained as a flagged
+    lowstand-history proxy.
+  previous_reads:
+    fields:
+    - planet-field.lowstand-shore
+    - planet-field.height
+    layers:
+    - planet-layer.coast
+  previous_signal: &id010
+    field: planet-field.lowstand-shore
+    from: 0.0
+    to: 1.0
+  reads:
+    fields:
+    - planet-field.lowstand-shore
+    - planet-field.height
+  signal: *id010
+- factor: planet-factor.sed-supply
+  status: unavailable
+  note: laid/dust/wear-* are depth per last coupled step (2.4 Myr here), not sediment flux or grain supply. No conversion
+    without actual dt, area, transport and composition.
+  previous_reads:
+    fields:
+    - planet-field.laid
+    - planet-field.wear-river
+    - planet-field.wear-hill
+    - planet-field.wear-wind
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.slope-relief
+  status: unavailable
+  note: Local relief/slope are computed transiently by consumers but not saved in e126. Named fields may be supplied
+    explicitly with provenance; checkpoint alone cannot score this factor.
+  previous_reads:
+    fields:
+    - planet-field.local-relief
+    - planet-field.slope
+    - planet-field.height
+    layers:
+    - planet-layer.relief
+  previous_signal:
+    field: planet-field.local-relief
+    from: 100.0
+    to: 1500.0
+  reads: {}
+  signal: null
+- factor: planet-factor.tect-fault
+  status: proxy
+  note: fault is boundary proximity {0,.5,1}, not fault type, displacement or activity. Retained only as flagged
+    proxy.
+  previous_reads:
+    fields:
+    - planet-field.fault
+    lines:
+    - planet-line.plate-edge
+  previous_signal: &id011
+    field: planet-field.fault
+    from: 0.0
+    to: 1.0
+  reads:
+    fields:
+    - planet-field.fault
+  signal: *id011
+- factor: planet-factor.tect-fold
+  status: proxy
+  note: fold is model fold-belt strength 0..1 derived from thickening and suture age; not measured bedding deformation.
+  previous_reads:
+    fields:
+    - planet-field.fold
+    - planet-field.grain
+  previous_signal: &id012
+    field: planet-field.fold
+    from: 0.0
+    to: 1.0
+  reads:
+    fields:
+    - planet-field.fold
+  signal: *id012
+- factor: planet-factor.tect-setting
+  status: unavailable
+  note: crust-kind distinguishes only ocean/continent; it cannot identify craton/passive margin/orogen/rift/hotspot.
+    Event lines are separate evidence, not a comparable numeric category.
+  previous_reads:
+    layers:
+    - planet-layer.crust-kind
+    - planet-layer.zones
+    lines:
+    - planet-line.plate-edge
+    - planet-line.suture
+    - planet-line.arc-front
+    - planet-line.rift-margin
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.tect-uplift
+  status: unavailable
+  note: fold/fault/crust thickness are not uplift rate. height minus recent-height measures erosion, not uplift.
+    A rate field is unavailable.
+  previous_reads:
+    fields:
+    - planet-field.fold
+    - planet-field.fault
+    - planet-field.crust-thickness
+    lines:
+    - planet-line.suture
+    - planet-line.arc-front
+    - planet-line.rift-margin
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.time
+  status: unavailable
+  note: Formation/last-active age belongs to each form. Crust age is not landform age. arc/hotspot timestamps are
+    fixed-sample events, not moving-rock ages.
+  previous_reads:
+    fields:
+    - planet-field.crust-age
+  previous_signal: null
+  reads: {}
+  signal: null
+- factor: planet-factor.volc-magma
+  status: unavailable
+  note: No magma composition/viscosity signal. Volcano category/proximity does not prove magma chemistry; existing
+    unread landmark mapping removed.
+  previous_reads:
+    layers:
+    - planet-layer.zones
+    landmarks: &id013
+    - planet-landmark.arc-volcano
+    - planet-landmark.hotspot-volcano
+    - planet-landmark.flood-basalt-province
+  previous_signal:
+    landmarks: *id013
+  reads: {}
+  signal: null
+- factor: planet-factor.volc-vent
+  status: proxy
+  note: Feature proximity is explicitly a model proxy for mapped edifice locations, not confirmed present vent activity.
+  previous_reads:
+    fields:
+    - planet-field.arc-last-active
+    - planet-field.hotspot-last-active
+    landmarks:
+    - planet-landmark.arc-volcano
+    - planet-landmark.hotspot-volcano
+    - planet-landmark.flood-basalt-province
+  previous_signal: &id014
+    features:
+    - planet-feature.stratovolcano-shasta-rainier
+    - planet-feature.caldera-crater-lake
+    - planet-feature.shield-volcano
+    - planet-feature.lava-flow-field
+    radius_m: 50000
+  reads:
+    fields:
+    - planet-field.arc-last-active
+    - planet-field.hotspot-last-active
+  signal: *id014
+- factor: planet-factor.water-discharge
+  status: proxy
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads:
+    fields:
+    - planet-field.discharge
+    - planet-field.peak-discharge
+  previous_signal: &id015
+    field: planet-field.discharge
+    from: 10.0
+    to: 5000.0
+  reads:
+    fields:
+    - planet-field.discharge
+    - planet-field.peak-discharge
+  signal: *id015
+- factor: planet-factor.waves-tides
+  status: unavailable
+  note: No compatible saved field or calibrated signal in the audited checkpoint; retain scientific factor definition
+    without inventing a model reading.
+  previous_reads:
+    layers:
+    - planet-layer.coast
+    lines:
+    - planet-line.coast
+  previous_signal: null
+  reads: {}
+  signal: null

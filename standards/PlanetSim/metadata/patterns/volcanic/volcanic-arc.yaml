@@ -8,7 +8,11 @@ factors:
 - factor: planet-factor.tect-setting
   weight: 3
   why: 'subduction: oceanic under oceanic gives island arc, under continent gives continental arc'
-  want: high
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - magmatic-arc
+  required: true
 - factor: planet-factor.volc-magma
   weight: 3
   why: 'slab water flux melting: calc-alkaline andesite-dacite, explosive stratovolcanoes'
@@ -25,6 +29,9 @@ factors:
   weight: 1
   why: arc age decides edifice density and caldera/ignimbrite development
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 - factor: planet-factor.other-plate-kinematics
   weight: 3
   why: slab reaching ~100-120 km depth under arc; dip, convergence rate and obliquity set arc-trench gap, flux
@@ -59,7 +66,18 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: volcanic
+kinds:
+- arc-front
+- volcanic-arc-chain

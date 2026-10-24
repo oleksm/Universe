@@ -21,20 +21,20 @@ class PatternPreferences(unittest.TestCase):
         return errors or pattern_preferences(rec)
 
     def test_band_requires_valid_complete_bounds(self):
-        band = dict(want='band', **{'from': .3, 'to': .7, 'soft': .5})
+        band = dict(want='band', **{'min': .3, 'max': .7, 'soft': .5})
         self.assertFalse(self.faults(record(band)))
-        for field in ('from', 'to', 'soft'):
+        for field in ('min', 'max', 'soft'):
             bad = band.copy(); del bad[field]
             self.assertTrue(self.faults(record(bad)), field)
-        for changes in ({'from': .7}, {'from': .8}, {'from': -.1}, {'to': 1.1},
+        for changes in ({'min': .7}, {'min': .8},
                         {'soft': 0}, {'soft': -1}, {'soft': 1.1}, {'soft': True},
-                        {'from': float('nan')}, {'to': float('inf')}):
+                        {'min': float('nan')}, {'max': float('inf')}):
             self.assertTrue(self.faults(record(dict(band, **changes))), changes)
 
     def test_high_low_cannot_hide_band_fields(self):
         for want in ('high', 'low'):
             self.assertFalse(self.faults(record({'want': want})))
-            for field in ('from', 'to', 'soft'):
+            for field in ('min', 'max', 'soft'):
                 self.assertTrue(self.faults(record({'want': want, field: .5})))
         self.assertTrue(self.faults(record({})))
         self.assertTrue(self.faults(record({'want': 'guess-from-why'})))
@@ -44,7 +44,7 @@ class PatternPreferences(unittest.TestCase):
         self.assertTrue(self.faults(rec))
 
     def test_soft_band_edges_are_continuous(self):
-        band = {'want': 'band', 'from': .3, 'to': .7, 'soft': .5}
+        band = {'want': 'band', 'min': .3, 'max': .7, 'soft': .5}
         for value, expected in [(0, 0), (.1, 0), (.2, .5), (.3, 1), (.5, 1),
                                 (.7, 1), (.8, .5), (.9, 0), (1, 0)]:
             self.assertAlmostEqual(lod.preference(band, value), expected)
@@ -94,12 +94,91 @@ class PatternPreferences(unittest.TestCase):
             p['factors'][0]['signal'] = {'field': 'planet-field.other', 'from': 0, 'to': 10}
         self.assertEqual(lod.match(r, {'factors': {'TEST': 1}, 'fields': {'other': 0}})[0]['key'], 'low')
 
+    def test_required_unknown_zero_and_weight_exclusion(self):
+        r = self.registry()
+        r['planet-factor']['planet-factor.gate'] = {'source': 'GATE', 'signal': {'field': 'planet-field.gate', 'from': 0, 'to': 1}}
+        p = r['planet-pattern']['high']
+        p['factors'].append({'factor': 'planet-factor.gate', 'weight': 100, 'want': 'high', 'required': True})
+        for value in (None, float('nan'), float('inf'), True):
+            row = next(x for x in lod.match(r, {'fields': {'test': 9, 'gate': value}}) if x['key'] == 'high')
+            self.assertEqual((row['state'], row['score']), ('unknown', 0))
+        self.assertNotIn('high', [x['key'] for x in lod.match(r, {'fields': {'test': 9, 'gate': 0}})])
+        row = next(x for x in lod.match(r, {'fields': {'test': 9, 'gate': .1}}) if x['key'] == 'high')
+        self.assertEqual(row['score'], .9)
+
+    def test_si_conditions_and_band(self):
+        r = self.registry()
+        r['planet-pattern']['high']['when'] = [{'field': 'planet-field.temp', 'min': 273.15, 'max': 283.15}]
+        for t in (273.15, 283.15):
+            self.assertEqual(next(x for x in lod.match(r, {'fields': {'test': 9, 'temp': t}}) if x['key'] == 'high')['score'], .9)
+        self.assertNotIn('high', [x['key'] for x in lod.match(r, {'fields': {'temp': 273}})])
+        self.assertEqual(next(x for x in lod.match(r, {}) if x['key'] == 'high')['state'], 'unknown')
+        e = {'factor': 'planet-factor.test', 'weight': 1, 'want': 'band', 'min': 3, 'max': 7, 'soft': .5}
+        self.assertAlmostEqual(lod.entry_score(r, e, {'fields': {'test': 2}}), .5)
+        self.assertAlmostEqual(lod.entry_score(r, e, {'fields': {'test': 5}}), 1)
+
+    def test_directed_classes_are_not_ordered_codes(self):
+        r = self.registry()
+        r['planet-factor']['planet-factor.test'].update(kind='categorical',
+            signal={'field': 'planet-field.rock'}, class_map=[{'key': 'limestone', 'codes': [8]}, {'key': 'clastic', 'codes': [9]}])
+        e = {'factor': 'planet-factor.test', 'weight': 1, 'want': 'in', 'classes': ['limestone']}
+        self.assertEqual(lod.entry_score(r, e, {'fields': {'rock': 8}}), 1)
+        self.assertEqual(lod.entry_score(r, e, {'fields': {'rock': 9}}), 0)
+        e['want'] = 'not-in'
+        self.assertEqual(lod.entry_score(r, e, {'fields': {'rock': 9}}), 1)
+        for value in (None, -1, 8.5, 999, float('nan'), True):
+            self.assertIsNone(lod.entry_score(r, e, {'fields': {'rock': value}}))
+        e['unresolved'] = True
+        self.assertIsNone(lod.entry_score(r, e, {'fields': {'rock': 8}}))
+
+    def test_ambiguous_classes_cannot_pass_or_become_known_absence(self):
+        r = self.registry()
+        r['planet-factor']['planet-factor.test'].update(kind='categorical', signal={'field': 'planet-field.rock'},
+            class_map=[{'key': 'limestone', 'codes': [8]}, {'key': 'clastic-unit', 'codes': [9]},
+                       {'key': 'fine', 'codes': [9], 'unresolved': True},
+                       {'key': 'evaporite', 'codes': [], 'unresolved': True}])
+        e = {'factor': 'planet-factor.test', 'weight': 1, 'want': 'in', 'classes': ['fine']}
+        for want in ('in', 'not-in'):
+            e['want'] = want
+            self.assertIsNone(lod.entry_score(r, e, {'fields': {'rock': 9}}))
+            e['classes'] = ['evaporite']
+            self.assertIsNone(lod.entry_score(r, e, {'fields': {'rock': 8}}))
+            e['classes'] = ['fine']
+        e.update(want='in', classes=['limestone', 'fine'])
+        self.assertEqual(lod.entry_score(r, e, {'fields': {'rock': 8}}), 1)
+        self.assertIsNone(lod.entry_score(r, e, {'fields': {'rock': 9}}))
+
+    def test_gate_only_or_trigger_owned_patterns_cannot_place(self):
+        r = self.registry()
+        p = r['planet-pattern']['high']
+        p['factors'][0]['required'] = True
+        self.assertEqual(next(x for x in lod.match(r, {'fields': {'test': 9}}) if x['key'] == 'high')['score'], 0)
+        p['factors'][0].pop('required')
+        p['trigger_rule'] = 'planet-feature.test'
+        row = next(x for x in lod.match(r, {'fields': {'test': 9}}) if x['key'] == 'high')
+        self.assertEqual((row['state'], row['score']), ('unknown', 0))
+        p.pop('trigger_rule')
+        r['planet-factor']['planet-factor.test']['reading'] = {'status': 'unavailable'}
+        self.assertEqual([x['score'] for x in lod.match(r, {'factors': {'TEST': 1}, 'fields': {'test': 9}})], [0, 0])
+
+    def test_time_uses_form_age_never_crust_age(self):
+        r = self.registry()
+        r['planet-factor']['planet-factor.time'] = {'source': 'TIME'}
+        e = {'factor': 'planet-factor.time', 'weight': 1, 'want': 'high', 'tau_relax_s': 100}
+        self.assertIsNone(lod.entry_score(r, e, {'fields': {'crust-age': 0}}))
+        self.assertEqual(lod.entry_score(r, e, {'form_age_s': 0}), 1)
+        self.assertAlmostEqual(lod.entry_score(r, e, {'form_age_s': 100}), .36787944117)
+        self.assertIsNone(lod.entry_score(r, e, {'form_age_s': -1}))
+        self.assertTrue(self.faults(record({'want': 'in'})))
+        self.assertTrue(self.faults(record({'want': 'high', 'tau_relax_s': 100})))
+        self.assertTrue(self.faults(record({'want': 'high', 'required': True})))
+
     def test_generated_matcher_executes_same_band_and_missing_semantics(self):
         # Generate in memory, rather than depending on a previously built module.
         generated = {}
         exec(compile(planet_lod_module.render(), '<generated planet module>', 'exec'), generated)
         r = self.registry()
-        r['planet-pattern']['band'] = record({'want': 'band', 'from': .3, 'to': .7, 'soft': .5})
+        r['planet-pattern']['band'] = record({'want': 'band', 'min': .3, 'max': .7, 'soft': .5})
         for sig in ({}, {'fields': {'test': 2}}, {'fields': {'test': 5}}):
             self.assertEqual(generated['match'](r, sig), lod.match(r, sig))
 

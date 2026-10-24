@@ -20,7 +20,10 @@ factors:
 - factor: planet-factor.rock-type
   weight: 1
   why: alluvial scarps diffuse (kappa ~1 m2/kyr); bedrock scarps persist, form facets
-  want: high
+  want: not-in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - unconsolidated
 - factor: planet-factor.regolith
   weight: 1
   why: loose cohesionless cover degrades to angle of repose then rounds
@@ -36,11 +39,16 @@ factors:
 - factor: planet-factor.bio-veg
   weight: 1
   why: vegetation cover slows wash, alters diffusivity
-  want: high
+  want: in
+  unresolved: true
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
 - factor: planet-factor.time
   weight: 3
   why: 'time since rupture sets profile: free face, debris slope, then erf rounding'
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 121
 sources:
 - https://WWW.ISPRS.org/proceedings/2011/ISRSE-34/211104015Final00629.pdf
@@ -70,7 +78,17 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: basin-range
+kinds:
+- normal-fault-scarp

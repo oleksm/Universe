@@ -4,11 +4,6 @@ identity:
   name: CLIM_TEMP
   about: temperature, frost, freeze-thaw cycles
 source: CLIM_TEMP
-reads:
-  fields:
-  - planet-field.temperature
-  layers:
-  - planet-layer.climate
 signal:
   field: planet-field.temperature
   from: 283.15
@@ -22,9 +17,28 @@ basis:
   tier: derived
   note: planet-trees-pgs2 docs/landforms/deciding_factors_vocab.md.
 - of:
-  - reads
   - signal
   tier: invented
   review: true
-  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17): for planets to correct.'
+  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17):
+    for planets to correct.'
+- of:
+  - reads
+  - kind
+  - unit
+  - reading
+  tier: derived
+  source: planet-forge 89d78fc docs/field-inventory-2026-10-24.md; current registry field definitions
+  note: Literal producer/registry audit; unavailable means no valid current binding. This does not source a scientific
+    causal law, calibrate retained ramps, or prove a proxy.
 status: draft
+kind: numeric
+unit: K
+reads:
+  fields:
+  - planet-field.temperature
+reading:
+  status: proxy
+  source: planet-forge 89d78fc docs/field-inventory-2026-10-24.md; current registry field definitions
+  note: Annual mean air temperature, not freeze-thaw frequency or ground thermal history. Retained inverted ramp
+    is coldness (high=cold), not heat; provisional calibration.

@@ -4,15 +4,8 @@ identity:
   name: ROCK_SOLUBLE
   about: solubility (limestone, gypsum, salt)
 source: ROCK_SOLUBLE
-reads:
-  fields:
-  - planet-field.rock
-  layers:
-  - planet-layer.zones
 signal:
-  layer: planet-layer.zones
-  classes:
-  - 9
+  field: planet-field.rock
 levels:
 - planet-level.1000-km
 - planet-level.100-km
@@ -22,9 +15,101 @@ basis:
   tier: derived
   note: planet-trees-pgs2 docs/landforms/deciding_factors_vocab.md.
 - of:
-  - reads
   - signal
   tier: invented
   review: true
-  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17): for planets to correct.'
+  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17):
+    for planets to correct.'
+- of:
+  - reads
+  - kind
+  - unit
+  - reading
+  tier: derived
+  source: planet-forge 89d78fc docs/field-inventory-2026-10-24.md; current registry field definitions
+  note: Literal producer/registry audit; unavailable means no valid current binding. This does not source a scientific
+    causal law, calibrate retained ramps, or prove a proxy.
+- of:
+  - class_map
+  - kind
+  - signal
+  tier: derived
+  source: https://www.usgs.gov/publications/subsidence-hazards-due-evaporite-dissolution-united-states; ground-vocabulary.rock;
+    planet-forge89d78fc field inventory
+  note: Direct categorical carbonate mapping replaces the unexportable numeric zone-class strength. Evaporite evidence
+    remains unresolved; no guessed soluble fraction.
 status: draft
+kind: categorical
+unit: '1'
+reads:
+  fields:
+  - planet-field.rock
+reading:
+  status: proxy
+  source: planet-forge 89d78fc docs/field-inventory-2026-10-24.md; current registry field definitions
+  note: Raw rock8 maps explicitly to limestone/dolomite, not clastic raw9. Soluble evaporites have no current field
+    and remain unknown. Lithology membership is not a measured solubility, purity or thickness.
+class_map:
+- key: rock-unit.ocean-floor-basalt
+  codes:
+  - 0
+- key: rock-unit.andesite
+  codes:
+  - 1
+- key: rock-unit.granodiorite
+  codes:
+  - 2
+- key: rock-unit.gneiss-basement
+  codes:
+  - 3
+- key: rock-unit.greenstone
+  codes:
+  - 4
+- key: rock-unit.schist
+  codes:
+  - 5
+- key: rock-unit.granite
+  codes:
+  - 6
+- key: rock-unit.flood-basalt
+  codes:
+  - 7
+- key: rock-unit.limestone
+  codes:
+  - 8
+- key: rock-unit.sandstone-shale
+  codes:
+  - 9
+- key: rock-unit.ophiolite
+  codes:
+  - 10
+- key: rock-unit.rift-basalt
+  codes:
+  - 11
+- key: rock-unit.iron-formation
+  codes:
+  - 12
+- key: rock-unit.primary-crust
+  codes:
+  - 13
+- key: rock-unit.intercrater-plains
+  codes:
+  - 14
+- key: rock-unit.high-titanium-basalt
+  codes:
+  - 15
+- key: rock-unit.impact-melt
+  codes:
+  - 16
+- key: rock-unit.impact-breccia
+  codes:
+  - 17
+- key: rock-unit.anorthosite
+  codes:
+  - 18
+- key: rock-unit.kreep-basalt
+  codes:
+  - 19
+- key: evaporite
+  codes: []
+  unresolved: true

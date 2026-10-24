@@ -8,7 +8,13 @@ factors:
 - factor: planet-factor.tect-setting
   weight: 3
   why: craton epeirogeny, mantle upwelling, or orogenic crustal thickening (Tibet ~4.5-5 km)
-  want: high
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - craton-shield
+  - platform
+  - hotspot
+  - active-orogen
 - factor: planet-factor.tect-uplift
   weight: 3
   why: broad uplift amount and rate with little internal deformation
@@ -37,6 +43,9 @@ factors:
   weight: 1
   why: 1-70 Myr; dissection grows with time since uplift
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 130
 sources:
 - https://en.wikipedia.org/wiki/Plateau
@@ -67,16 +76,27 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
 - of:
   - factors.want
   tier: derived
   review: true
   source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
-  note: 'planet-factor.tect-uplift: Broad uplift drives the plateau; little refers to internal deformation.
-    planet-factor.rock-layers: Alternating strong/weak beds or caprock require layering contrast; flat/weak
-    does not request absence of layering. planet-factor.clim-arid: The why text favors arid conditions; sparse
-    vegetation, low rain/relief or weak soil are effects or other quantities.'
+  note: 'planet-factor.tect-uplift: Broad uplift drives the plateau; little refers to internal deformation. planet-factor.rock-layers:
+    Alternating strong/weak beds or caprock require layering contrast; flat/weak does not request absence of layering.
+    planet-factor.clim-arid: The why text favors arid conditions; sparse vegetation, low rain/relief or weak soil
+    are effects or other quantities.'
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: tableland
+kinds:
+- plateau
+- plateau-edge

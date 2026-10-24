@@ -8,7 +8,11 @@ factors:
 - factor: planet-factor.tect-setting
   weight: 3
   why: continental rift, often above mantle plume/dome; lithosphere strength sets width 40-75 km
-  want: high
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - rift-extensional
+  required: true
 - factor: planet-factor.tect-fault
   weight: 3
   why: ~100 km border-fault segments, throw 2-5 km, polarity flips at accommodation zones
@@ -41,6 +45,9 @@ factors:
   weight: 1
   why: 1-30 Myr; maturity grades to sea-floor spreading
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 120
 sources:
 - https://en.wikipedia.org/wiki/Basin_and_Range_Province
@@ -71,7 +78,20 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: basin-range
+kinds:
+- continental-rift-zone
+- rift-margin
+- rift-shoulder
+- rift-floor-axis

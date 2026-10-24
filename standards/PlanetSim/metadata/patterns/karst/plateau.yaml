@@ -8,11 +8,19 @@ factors:
 - factor: planet-factor.rock-soluble
   weight: 3
   why: Thick pure limestone/dolomite (>~90% CaCO3) needed; impure or thin carbonate gives fluviokarst instead
-  want: high
+  want: in
+  classes:
+  - rock-unit.limestone
+  source: https://www.usgs.gov/publications/subsidence-hazards-due-evaporite-dissolution-united-states
+  required: true
 - factor: planet-factor.rock-type
   weight: 1
   why: Massive, low-porosity carbonate platform rock (Mesozoic platform hundreds to thousands of m thick)
-  want: low
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - carbonate
+  required: true
 - factor: planet-factor.rock-fracture
   weight: 1
   why: Joint and fault density sets doline spacing and conduit routes; faults guide poljes and gorges
@@ -24,7 +32,12 @@ factors:
 - factor: planet-factor.tect-setting
   weight: 1
   why: Fold-thrust belts over carbonate platforms (Dinarides) or stable carbonate platforms
-  want: low
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - platform
+  - active-orogen
+  - old-orogen
 - factor: planet-factor.tect-fault
   weight: 1
   why: Faults step the plateau and bound poljes; active thrusting keeps uplift going
@@ -40,7 +53,10 @@ factors:
 - factor: planet-factor.bio-veg
   weight: 1
   why: Soil and vegetation supply CO2 that drives dissolution; soil loss leaves bare karren
-  want: high
+  want: not-in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - barren
 - factor: planet-factor.groundwater
   weight: 1
   why: Deep water table and karst springs at margins; almost no surface streams
@@ -61,6 +77,9 @@ factors:
   weight: 1
   why: 100 kyr to 10 Myr for full holokarst
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 97
 sources:
 - https://en.wikipedia.org/wiki/Dinaric_Alps
@@ -93,7 +112,25 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
+- of:
+  - factors.classes
+  - factors.required
+  tier: derived
+  source: https://www.usgs.gov/publications/subsidence-hazards-due-evaporite-dissolution-united-states
+  note: Soluble lithology is necessary for the named solutional-karst forms; limestone purity, thickness, groundwater
+    and dissolution history still require separate evidence. Elsewhere it remains a modifier. Unknown evaporites
+    cannot become absence.
 status: draft
 look: karst
+kinds:
+- karst-plateau

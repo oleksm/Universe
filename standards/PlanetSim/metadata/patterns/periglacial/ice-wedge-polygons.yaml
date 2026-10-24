@@ -32,11 +32,17 @@ factors:
 - factor: planet-factor.bio-veg
   weight: 1
   why: Snow and vegetation cover insulate, limit cracking
-  want: high
+  want: not-in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - forest
 - factor: planet-factor.time
   weight: 1
   why: Hundreds to thousands of years; wedges 1-10 m deep
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 105
 sources:
 - https://en.wikipedia.org/wiki/Ice_wedge
@@ -67,14 +73,29 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
 - of:
   - factors.want
   tier: derived
   review: true
   source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
-  note: 'planet-factor.clim-arid: The why text says aridity causes replacement, sand wedges, or lake drying;
-    lower aridity supports the named wet feature.'
+  note: 'planet-factor.clim-arid: The why text says aridity causes replacement, sand wedges, or lake drying; lower
+    aridity supports the named wet feature.'
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
+- of:
+  - kinds
+  tier: derived
+  source: planet-forge a1f0a57 docs/research/remaining-22-kinds-map-2026-10-24.json
+  note: Explicit current catalogue alias to the existing canonical control vector.
 status: draft
 look: periglacial
+kinds:
+- ice-wedge-polygons

@@ -13,6 +13,7 @@ factors:
     features:
     - planet-feature.lava-flow-field
     radius_m: 50000
+    falloff: step
 - factor: planet-factor.other-effusion-rate
   weight: 3
   why: low effusion gives inflated tube-fed pahoehoe; high gives channelised aa
@@ -20,7 +21,7 @@ factors:
 - factor: planet-factor.slope-relief
   weight: 3
   why: <~2 deg favours inflation and pahoehoe; steep slopes turn flows to aa
-  want: high
+  want: low
 - factor: planet-factor.volc-vent
   weight: 1
   why: point vent vs fissure decides sheet vs lobate plan; eruption duration sets area
@@ -37,10 +38,15 @@ factors:
   weight: 1
   why: weathering and soil cover with age; fresh flows barren
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 - factor: planet-factor.bio-veg
   weight: 1
   why: vegetation colonisation rate marks flow age, tree moulds in forest
-  want: high
+  want: in
+  unresolved: true
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
 vocabulary_id: 138
 sources:
 - https://en.wikipedia.org/wiki/Lava
@@ -82,5 +88,21 @@ basis:
     gas. Never share one union of silicic and basaltic category evidence. Proxy outputs excluded by consumer7645f03;
     missing listed kinds remain unknown. Other patterns with ambiguous or unsupported composition retain unresolved
     evidence; no why-text inference or weight/threshold retuning.'
+- of:
+  - factors.want
+  tier: derived
+  source: planet-forge docs/research/reconcile-kinds-2026-10-24.md
+  note: 'M3 semantic correction: slope-relief wants low; direction checked against its literal signal and the supplied
+    geomorphic explanation.'
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: volcanic
+kinds:
+- lava-flow-field

@@ -33,6 +33,9 @@ factors:
   weight: 1
   why: years to kyr
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 1
 sources:
 - https://en.wikipedia.org/wiki/Barchan
@@ -64,14 +67,21 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
 - of:
   - factors.want
   tier: derived
   review: true
   source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
-  note: 'planet-factor.clim-arid: The why text favors arid conditions; sparse vegetation, low rain/relief or
-    weak soil are effects or other quantities.'
+  note: 'planet-factor.clim-arid: The why text favors arid conditions; sparse vegetation, low rain/relief or weak
+    soil are effects or other quantities.'
+- of:
+  - kinds
+  tier: derived
+  source: planet-forge a1f0a57 docs/research/remaining-22-kinds-map-2026-10-24.json
+  note: Explicit current catalogue alias to the existing canonical control vector.
 status: draft
 look: dunes
+kinds:
+- barchan-dunes

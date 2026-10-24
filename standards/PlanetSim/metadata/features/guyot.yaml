@@ -15,11 +15,11 @@ trigger_params:
   value: 1000.0
   unit: m
   meaning: Catalogue screen for a resolved isolated marine volcanic high; smaller knolls remain distinct.
-  open: true
+  open: false
   used: false
-  source: docs/planet-feature-trigger-rules-2026-10-22.md
-  note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
-    this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
+  source: https://portal.iho.int/iho-ohi/S32/engView.php?page=231
+  note: Verified naming/definition convention; not sufficient alone for recognition. Requires full trigger evidence
+    and declared area/relief/ground-temperature convention. SI duration uses a Julian year of31557600s.
 - name: SUMMIT_RELIEF_MAX_M
   value: 100.0
   unit: m
@@ -69,3 +69,9 @@ basis:
   note: Owner-authorized detector proposal. Qualitative source definitions and provisional screening constants are
     distinguished in the source; not a built generator or calibrated occurrence rate. Missing support and subcell
     geometry remain unresolved.
+- of:
+  - trigger_params.SEAMOUNT_RELIEF_MIN_M
+  tier: sourced
+  source: https://portal.iho.int/iho-ohi/S32/engView.php?page=231
+  note: Verified definition only; does not source unrelated screening parameters, air-temperature proxies, origin
+    or morphology.

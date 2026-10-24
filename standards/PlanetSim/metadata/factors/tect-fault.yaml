@@ -4,11 +4,6 @@ identity:
   name: TECT_FAULT
   about: active faults, fault geometry and slip
 source: TECT_FAULT
-reads:
-  fields:
-  - planet-field.fault
-  lines:
-  - planet-line.plate-edge
 signal:
   field: planet-field.fault
   from: 0.0
@@ -22,9 +17,28 @@ basis:
   tier: derived
   note: planet-trees-pgs2 docs/landforms/deciding_factors_vocab.md.
 - of:
-  - reads
   - signal
   tier: invented
   review: true
-  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17): for planets to correct.'
+  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17):
+    for planets to correct.'
+- of:
+  - reads
+  - kind
+  - unit
+  - reading
+  tier: derived
+  source: planet-forge 89d78fc docs/field-inventory-2026-10-24.md; current registry field definitions
+  note: Literal producer/registry audit; unavailable means no valid current binding. This does not source a scientific
+    causal law, calibrate retained ramps, or prove a proxy.
 status: draft
+kind: numeric
+unit: '1'
+reads:
+  fields:
+  - planet-field.fault
+reading:
+  status: proxy
+  source: planet-forge 89d78fc docs/field-inventory-2026-10-24.md; current registry field definitions
+  note: fault is boundary proximity {0,.5,1}, not fault type, displacement or activity. Retained only as flagged
+    proxy.

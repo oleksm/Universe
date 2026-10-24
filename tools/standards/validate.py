@@ -48,6 +48,8 @@ def feature_factor_signals(rec):
     signals = [rec.get('signal')] if key.startswith('planet-factor.') else [f.get('signal') for f in rec.get('factors', [])] if key.startswith('planet-pattern.') else []
     errors = []
     for sig in signals:
+        if isinstance(sig, dict) and 'falloff' in sig and not sig.get('features'):
+            errors.append('falloff is only valid for feature proximity')
         if not isinstance(sig, dict) or not ('features' in sig or 'radius_m' in sig):
             continue
         if not ('features' in sig and 'radius_m' in sig):
@@ -61,21 +63,95 @@ def feature_factor_signals(rec):
 
 
 def pattern_preferences(rec):
-    """Conditional band fields and ordering, beyond the supported schema subset."""
+    """Rule contracts not expressed by the small JSON Schema implementation."""
     if not (rec.get("identity") or {}).get("key", "").startswith("planet-pattern."):
         return []
     errors = feature_factor_signals(rec)
+    conditions = list(rec.get("when", []))
+    if not rec.get("factors") and not rec.get("trigger_rule"):
+        errors.append("empty factor vector needs explicit trigger_rule ownership")
+    if len(rec.get("kinds", [])) != len(set(rec.get("kinds", []))):
+        errors.append("kinds: duplicate catalogue kind")
     for i, factor in enumerate(rec.get("factors", [])):
-        bounds = ("from", "to", "soft")
-        if factor.get("want") == "band":
+        bounds = ("min", "max", "soft")
+        want = factor.get("want")
+        if want == "band":
             for name in bounds:
                 if name not in factor:
                     errors.append(f"factors[{i}]: band requires {name}")
-            lo, hi = factor.get("from"), factor.get("to")
+            lo, hi = factor.get("min"), factor.get("max")
             if isinstance(lo, (int, float)) and isinstance(hi, (int, float)) and lo >= hi:
-                errors.append(f"factors[{i}]: band from must be less than to")
+                errors.append(f"factors[{i}]: band min must be less than max")
         elif any(name in factor for name in bounds):
-            errors.append(f"factors[{i}]: from/to/soft are only valid for band")
+            errors.append(f"factors[{i}]: min/max/soft are only valid for band")
+        if want in ("in", "not-in"):
+            if not factor.get("classes") and not factor.get("unresolved"):
+                errors.append(f"factors[{i}]: directed membership requires explicit classes or unresolved intent")
+        elif "classes" in factor:
+            errors.append(f"factors[{i}]: classes require in/not-in")
+        if factor.get("factor") == "planet-factor.time":
+            if want != "high":
+                errors.append(f"factors[{i}]: time is a decay score, not an ordered age preference")
+            if "tau_relax_s" not in factor and not factor.get("unresolved"):
+                errors.append(f"factors[{i}]: time needs an explicit decay constant or unresolved status")
+            if "tau_relax_s" in factor and not factor.get("source"):
+                errors.append(f"factors[{i}]: decay constant needs source/calibration provenance")
+        if "classes" in factor and len(factor["classes"]) != len(set(factor["classes"])):
+            errors.append(f"factors[{i}]: duplicate directed class")
+        if "tau_relax_s" in factor and factor.get("factor") != "planet-factor.time":
+            errors.append(f"factors[{i}]: tau_relax_s is only valid for time")
+        if factor.get("required") and (factor.get("unresolved") or not factor.get("source")):
+            errors.append(f"factors[{i}]: required gate needs resolved intent and an explicit source")
+        conditions.extend(factor.get("when", []))
+    for cond in conditions:
+        if not any(k in cond for k in ("min", "max")):
+            errors.append("when: requires at least one SI bound")
+        if "min" in cond and "max" in cond and cond["min"] > cond["max"]:
+            errors.append("when: min exceeds max")
+        if not cond.get("source"):
+            errors.append("when: hard gate needs an explicit source")
+    return errors
+
+
+def planet_rule_references(seen):
+    """Cross-record rule typing; aliases and catalogue links must stay unambiguous."""
+    records = {key: rec for key, _, rec, _ in seen}
+    errors, source_owners, id_owners = [], {}, {}
+    for key, path, rec, _ in seen:
+        if key.startswith("planet-factor."):
+            classes = [c["key"] for c in rec.get("class_map", [])]
+            for c in rec.get("class_map", []):
+                if not c["codes"] and not c.get("unresolved"):
+                    errors.append((path, "class_map: empty codes require unresolved status"))
+                if len(c["codes"]) != len(set(c["codes"])):
+                    errors.append((path, "class_map: duplicate field code"))
+            if len(classes) != len(set(classes)):
+                errors.append((path, "class_map: duplicate class key"))
+        if not key.startswith("planet-pattern."):
+            continue
+        for kind in rec.get("kinds", []):
+            if "planet-feature." + kind not in records:
+                errors.append((path, f"kinds: {kind} has no feature record"))
+        if rec.get("trigger_rule") and rec["trigger_rule"] not in {"planet-feature." + k for k in rec.get("kinds", [])}:
+            errors.append((path, "trigger_rule must name one of the mapped kinds"))
+        for source in ([rec["source"]] if rec.get("source") else []) + rec.get("legacy_sources", []):
+            if source in source_owners:
+                errors.append((path, f"source alias {source} also belongs to {source_owners[source]}"))
+            source_owners[source] = key
+        for vid in ([rec["vocabulary_id"]] if rec.get("vocabulary_id") else []) + rec.get("legacy_vocabulary_ids", []):
+            if vid in id_owners:
+                errors.append((path, f"vocabulary ID {vid} also belongs to {id_owners[vid]}"))
+            id_owners[vid] = key
+        for entry in rec.get("factors", []):
+            factor = records.get(entry.get("factor"), {})
+            if factor.get("kind") == "categorical" and entry.get("want") not in ("in", "not-in"):
+                errors.append((path, f"{entry['factor']}: categorical intent requires in/not-in"))
+            if entry.get("want") in ("in", "not-in"):
+                if factor.get("kind") != "categorical":
+                    errors.append((path, f"{entry['factor']}: membership requires a categorical factor"))
+                known = {c["key"] for c in factor.get("class_map", [])}
+                if any(c not in known for c in entry.get("classes", [])):
+                    errors.append((path, f"{entry['factor']}: classes absent from class_map"))
     return errors
 
 
@@ -511,6 +587,7 @@ def check_all():
             found.append((full, f"{at}: {key!r} is no record's key"))
         elif key.split(".")[0] not in kinds:
             found.append((full, f"{at}: {key} is not {' or '.join(('an ' if k[0] in 'aeiou' else 'a ') + k for k in kinds)}"))
+    found += planet_rule_references(SEEN)
     found += workflow_dependencies(SEEN)
     found += hull_fit_poses(SEEN)
     from hull_mechanisms import check_records as hull_mechanism_checks

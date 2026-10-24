@@ -8,7 +8,12 @@ factors:
 - factor: planet-factor.tect-setting
   weight: 3
   why: subduction arc above slab ~100-120 km deep; some continental rifts; sets spacing along arc
-  want: high
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - magmatic-arc
+  - rift-extensional
+  required: true
 - factor: planet-factor.volc-magma
   weight: 3
   why: 'andesite-dacite, viscous and gas-rich: short lavas plus tephra give steep concave cone, H/W 0.1-0.33'
@@ -17,6 +22,7 @@ factors:
     features:
     - planet-feature.stratovolcano-shasta-rainier
     radius_m: 50000
+    falloff: step
 - factor: planet-factor.volc-vent
   weight: 1
   why: long-lived central vent, polygenetic over 10-1000 kyr; vent migration gives twin or elongate edifice
@@ -28,7 +34,9 @@ factors:
 - factor: planet-factor.rock-type
   weight: 1
   why: interbedded lavas, breccias, tephra; hydrothermal alteration weakens edifice toward collapse
-  want: high
+  want: in
+  unresolved: true
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
 - factor: planet-factor.ice-extent
   weight: 1
   why: glaciated summits carve cirques and troughs into flanks, supply meltwater lahars
@@ -49,6 +57,9 @@ factors:
   weight: 1
   why: 'age since last cone-building decides dissection: fresh cone vs eroded radial ridges'
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 136
 sources:
 - https://en.wikipedia.org/wiki/Stratovolcano
@@ -91,5 +102,16 @@ basis:
     gas. Never share one union of silicic and basaltic category evidence. Proxy outputs excluded by consumer7645f03;
     missing listed kinds remain unknown. Other patterns with ambiguous or unsupported composition retain unresolved
     evidence; no why-text inference or weight/threshold retuning.'
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: volcanic
+kinds:
+- arc-volcano-centre
+- stratovolcano-shasta-rainier
