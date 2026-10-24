@@ -32,6 +32,10 @@ bindings:
     sha256: 069c1655670f5f4730ad4d2181d2983849fb10f7bd5acf93e5328002f53e8776
   tools/standards/mounting.py:
     sha256: e0de2e1b58a77a5bd24f1e622ee563fecd51e65674ed6a8c5bfbd4253ebe97d8
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/roof-cradle-interface-evidence.json:
+    sha256: cf26c7a76ce0381aeaea51270134055c5ba0e40c0383193a71efb93bea2e7c0c
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/cradle-lower-contact-probes.json:
+    sha256: 18cf88ba72b48e5420112527161d30421acb202fb3b8424253f121a59ca5688c
 frames:
   package: glTF +Y up. Primary mount identity at base centre; metre, unit scale. Saddle datums independently read
     from actual GLB.
@@ -129,16 +133,89 @@ geometry:
     - 0.004781368176105483
   bearing_site_scope: 'Measured bearing-site centres from Ships, not accepted contact plane/bolt-axis measurement.
     Package Blender -> source: (3.3+x,y,4.25+z).'
-  observed_bore_diameter_m: 0.01673
-  reported_tool_corridor_m: 0.01076
-  reported_washer_footprint_m: 0.0269
-  fastener_decision: No bolt/thread/grade selected. Resolve whether reported tool/washer measures are radii/diameters
-    and check actual shank/head/washer/nut/tool insertion, bearing thickness and removal before choosing a real
-    stocked fastener. A16.73mm bore is not M42 and does not alone certify M16.
+  observed_bore_diameter_m: 0.01673478861636919
+  reported_tool_corridor_m: 0.010758078396237335
+  reported_washer_footprint_m: 0.02689519599059334
+  fastener_decision: 'No bolt/thread/grade selected. The10.758mm corridor is DIAMETER and narrower than the16.735mm
+    bore: this is an empty-hole probe, not wrench/head/nut installation access. Historical washer rays sample radii10.459..13.448mm,
+    not a selected washer. Check actual chosen hardware insertion/removal and underside bearing before selection.'
+  upper_bearing_observations:
+    source_centres:
+    - - 3.5281065138681673
+      - 0.27890855073928833
+      - 4.254781368176105
+    - - 3.629710587610409
+      - 0.27890855073928833
+      - 4.254781368176105
+    - - 2.9702894123895907
+      - 0.27890855073928833
+      - 4.254781368176105
+    - - 3.0718934861318323
+      - 0.27890855073928833
+      - 4.254781368176105
+    - - 2.9702894123895907
+      - -0.27890855073928833
+      - 4.254781368176105
+    - - 3.0718934861318323
+      - -0.27890855073928833
+      - 4.254781368176105
+    - - 3.5281065138681673
+      - -0.27890855073928833
+      - 4.254781368176105
+    - - 3.629710587610409
+      - -0.27890855073928833
+      - 4.254781368176105
+    package_blender_centres:
+    - - 0.22810651386816758
+      - 0.27890855073928833
+      - 0.004781368176105483
+    - - 0.3297105876104091
+      - 0.27890855073928833
+      - 0.004781368176105483
+    - - -0.3297105876104091
+      - 0.27890855073928833
+      - 0.004781368176105483
+    - - -0.22810651386816758
+      - 0.27890855073928833
+      - 0.004781368176105483
+    - - -0.3297105876104091
+      - -0.27890855073928833
+      - 0.004781368176105483
+    - - -0.22810651386816758
+      - -0.27890855073928833
+      - 0.004781368176105483
+    - - 0.22810651386816758
+      - -0.27890855073928833
+      - 0.004781368176105483
+    - - 0.3297105876104091
+      - -0.27890855073928833
+      - 0.004781368176105483
+    top_face_axis_package_blender:
+    - 0
+    - 0
+    - 1
+    bore_axis_package_gltf:
+    - 0
+    - 1
+    - 0
+    bore_diameter_m: 0.01673478861636919
+    foot_thickness_m: 0.004781368176105483
+    washer_sample_radii_m:
+    - 0.010459242885230745
+    - 0.01344759799529667
+    mating_underside_z_source: 4.25
+    scope: eight historical upper washer-bearing ray sites; underside contact and chosen fastener seating require
+      new check
+  tool_corridor_observations:
+    radius_m: 0.005379039198118668
+    diameter_m: 0.010758078396237335
+    axial_sample_length_m: 0.13746433506303263
+    source: inventory-tools/check_hydrolox_0p5t.py lines19-25
+    correction: 10.76mm is DIAMETER, narrower than16.73mm bore; tests empty hole, not socket/wrench accessibility
 joint_contract:
-  upper: Each of four saddle contacts names actual bearing faces/normals and its two bore axes. Cradle faces must
-    mate without unreported gaps/penetrations. Identify tank-side vs cradle-side ownership; retain existing saddle
-    mass in115kg tank tare.
+  upper: Eight upper washer-bearing axes/faces are recorded as observations; underside mating plane sourceZ4.25
+    still needs contact/fastener seating review. Each saddle has two bored foot sites. Cradle upper faces must name
+    matching faces without gaps/penetrations; retain tank saddle mass in115kg tare.
   lower: Each foot names actual hull member mesh/part, contact frame/face, stock section and continuous path into
     hull structure. Proposed X3.0211/3.5789,Y+/-1.65,Z3.15 are seeds only; do not create fake sockets at them.
   parts: Cradle beams, braces, pads, downstands, fasteners, thermal isolators and service brackets need separate
@@ -152,6 +229,26 @@ joint_contract:
     replaces all foot-* entries; mounting.py:sockets regenerates generic sockets. A reviewed explicit physical-interface
     source must be consumed by generator before activating compact foot ports. New mount records currently require
     positive bears and per-point tension/compression/shear; do not fill these with zero/guesses to pass schema.
+  lower_measured_result:
+    source_sha256: 8fc3a7e3ab384395592c35dde78b59a440830bbdae1f4a7ed59e55c07af8927e
+    verdict: FAILED proposed lower feet; no structural attachment found
+    nearest_surface_gaps_m:
+    - 0.47122690081596375
+    - 0.47122815251350403
+    - 0.3969249427318573
+    - 0.39693066477775574
+    minimum_gap_m: 0.3969249427318573
+    maximum_gap_m: 0.47122815251350403
+    measured_nearest_objects:
+    - Core pressure skin 05-4
+    - Core pressure skin 05-2
+    - Core pressure skin 06-4
+    - Core pressure skin 06-2
+    scope: No hull edit. Nearest surfaces and vertical intersections; cannot establish member stock, internal section
+      or strength.
+    next_design: Replace lower-foot seed with an explicit new load-spreading frame design. Extending decorative
+      downstands to nearest pressure skin/cover does not establish a load path. Separate reversible study before
+      current hull edits; choose actual frame stock/joints and physical attachment endpoints.
 services:
 - node: port_H2_outlet
   circuit: H2
@@ -184,6 +281,21 @@ services:
     - 0.0
     - 1.0
   semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+  observed_geometry:
+    name: H2_Outlet
+    neck_outer_diameter_m: 0.10160407374224152
+    bore_diameter_m: 0.09861571863217558
+    cap_diameter_m: 0.11056913907243929
+    cap_axial_length_m: 0.008367394308184594
+    face_source:
+    - 3.2611513835691426
+    - -0.8886172755292039
+    - 5.133656606046494
+    outward_source:
+    - 0
+    - -1
+    - 0
+    basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
 - node: port_H2_filldrain
   circuit: H2
   function: filldrain
@@ -215,6 +327,21 @@ services:
     - 0.0
     - 1.0
   semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+  observed_geometry:
+    name: H2_FillDrain
+    neck_outer_diameter_m: 0.029883551100659267
+    bore_diameter_m: 0.026895195990593344
+    cap_diameter_m: 0.03466491927676475
+    cap_axial_length_m: 0.008367394308184594
+    face_source:
+    - 3.3508020368711207
+    - -0.8886172755292039
+    - 5.121703185606231
+    outward_source:
+    - 0
+    - -1
+    - 0
+    basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
 - node: port_H2_pressurant
   circuit: H2
   function: pressurant
@@ -246,6 +373,21 @@ services:
     - 0.0
     - 1.0
   semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+  observed_geometry:
+    name: H2_Pressurant
+    neck_outer_diameter_m: 0.02689519599059334
+    bore_diameter_m: 0.023906840880527414
+    cap_diameter_m: 0.03167656416669882
+    cap_axial_length_m: 0.008367394308184594
+    face_source:
+    - 3.3418369715409226
+    - -0.8886172755292039
+    - 5.187446998027681
+    outward_source:
+    - 0
+    - -1
+    - 0
+    basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
 - node: port_H2_vent
   circuit: H2
   function: vent
@@ -277,6 +419,21 @@ services:
     - 0.0
     - 1.0
   semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+  observed_geometry:
+    name: H2_Vent
+    neck_outer_diameter_m: 0.03884861643085705
+    bore_diameter_m: 0.03586026132079112
+    cap_diameter_m: 0.04362998460696253
+    cap_axial_length_m: 0.008367394308184594
+    face_source:
+    - 3.2880465795597362
+    - -0.8886172755292039
+    - 5.217330549128341
+    outward_source:
+    - 0
+    - -1
+    - 0
+    basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
 - node: port_H2_relief
   circuit: H2
   function: relief
@@ -308,6 +465,21 @@ services:
     - 0.0
     - 1.0
   semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+  observed_geometry:
+    name: H2_Relief
+    neck_outer_diameter_m: 0.02091848577046149
+    bore_diameter_m: 0.01793013066039556
+    cap_diameter_m: 0.025699853946566972
+    cap_axial_length_m: 0.008367394308184594
+    face_source:
+    - 3.2402328977986814
+    - -0.8886172755292039
+    - 5.205377128688077
+    outward_source:
+    - 0
+    - -1
+    - 0
+    basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
 - node: port_H2_gauge
   circuit: H2
   function: gauge
@@ -339,6 +511,21 @@ services:
     - 0.0
     - 1.0
   semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+  observed_geometry:
+    name: H2_Gauge
+    neck_outer_diameter_m: 0.014344104528316448
+    bore_diameter_m: 0.011355749418250521
+    cap_diameter_m: 0.01912547270442193
+    cap_axial_length_m: 0.008367394308184594
+    face_source:
+    - 3.3478136817610546
+    - -0.8886172755292039
+    - 5.082854569175374
+    outward_source:
+    - 0
+    - -1
+    - 0
+    basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
 - node: port_O2_outlet
   circuit: O2
   function: outlet
@@ -365,6 +552,21 @@ services:
     - 0.0
     - 1.0
   semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+  observed_geometry:
+    name: O2_Outlet
+    neck_outer_diameter_m: 0.0896506533019778
+    bore_diameter_m: 0.08666229819191187
+    cap_diameter_m: 0.09861571863217557
+    cap_axial_length_m: 0.008367394308184594
+    face_source:
+    - 3.2611513835691426
+    - 0.8886172755292039
+    - 5.133656606046494
+    outward_source:
+    - 0
+    - 1
+    - 0
+    basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
 - node: port_O2_filldrain
   circuit: O2
   function: filldrain
@@ -391,6 +593,21 @@ services:
     - 0.0
     - 1.0
   semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+  observed_geometry:
+    name: O2_FillDrain
+    neck_outer_diameter_m: 0.029883551100659267
+    bore_diameter_m: 0.026895195990593344
+    cap_diameter_m: 0.03466491927676475
+    cap_axial_length_m: 0.008367394308184594
+    face_source:
+    - 3.3508020368711207
+    - 0.8886172755292039
+    - 5.121703185606231
+    outward_source:
+    - 0
+    - 1
+    - 0
+    basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
 - node: port_O2_pressurant
   circuit: O2
   function: pressurant
@@ -417,6 +634,21 @@ services:
     - 0.0
     - 1.0
   semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+  observed_geometry:
+    name: O2_Pressurant
+    neck_outer_diameter_m: 0.02689519599059334
+    bore_diameter_m: 0.023906840880527414
+    cap_diameter_m: 0.03167656416669882
+    cap_axial_length_m: 0.008367394308184594
+    face_source:
+    - 3.3418369715409226
+    - 0.8886172755292039
+    - 5.187446998027681
+    outward_source:
+    - 0
+    - 1
+    - 0
+    basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
 - node: port_O2_vent
   circuit: O2
   function: vent
@@ -443,6 +675,21 @@ services:
     - 0.0
     - 1.0
   semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+  observed_geometry:
+    name: O2_Vent
+    neck_outer_diameter_m: 0.02091848577046149
+    bore_diameter_m: 0.01793013066039556
+    cap_diameter_m: 0.025699853946566972
+    cap_axial_length_m: 0.008367394308184594
+    face_source:
+    - 3.2880465795597362
+    - 0.8886172755292039
+    - 5.217330549128341
+    outward_source:
+    - 0
+    - 1
+    - 0
+    basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
 - node: port_O2_relief
   circuit: O2
   function: relief
@@ -469,6 +716,21 @@ services:
     - 0.0
     - 1.0
   semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+  observed_geometry:
+    name: O2_Relief
+    neck_outer_diameter_m: 0.02091848577046149
+    bore_diameter_m: 0.01793013066039556
+    cap_diameter_m: 0.025699853946566972
+    cap_axial_length_m: 0.008367394308184594
+    face_source:
+    - 3.2402328977986814
+    - 0.8886172755292039
+    - 5.205377128688077
+    outward_source:
+    - 0
+    - 1
+    - 0
+    basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
 - node: port_O2_gauge
   circuit: O2
   function: gauge
@@ -495,6 +757,21 @@ services:
     - 0.0
     - 1.0
   semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+  observed_geometry:
+    name: O2_Gauge
+    neck_outer_diameter_m: 0.014344104528316448
+    bore_diameter_m: 0.011355749418250521
+    cap_diameter_m: 0.01912547270442193
+    cap_axial_length_m: 0.008367394308184594
+    face_source:
+    - 3.3478136817610546
+    - 0.8886172755292039
+    - 5.082854569175374
+    outward_source:
+    - 0
+    - 1
+    - 0
+    basis: existing generator geometric dimensions; no standard connector/pressure/flow rating implied
 service_contract:
   circuits: H2 and O2 remain independent; each retains outlet, fill/drain, pressurant, vent, relief and gauge. No
     geometric marker is proof of compatible coupling or connected line.
@@ -536,6 +813,15 @@ mass_and_com:
     regions when precise centres lack support.
   loads_and_stability: Evaluate dry/full/partial tank plus cradle, services and other masses against actual gear
     contacts and whole spatial mass ledger. No precise loaded CG/inertia or tipping margin exists yet.
+  observed_containing_region:
+  - - 2.46326065
+    - -0.89740306
+    - 4.25
+  - - 4.13673925
+    - 0.89740306
+    - 5.98832607
+  region_scope: external package AABB only, very broad containing-region bound; not fluid compartment shape or fill
+    model
 assignments:
   blender: Current cradle geometry, contact faces/axes and lower frame endpoints; stock/cut sizes, actual solids/mass
     and service/removal envelopes. Registry task20261023T201558-registry-8a82.
@@ -543,3 +829,5 @@ assignments:
     select mission.
   registry: Promote only supported parts/interface/product definitions; migrate generator and record source together
     when actual physical mating data exists. Preserve unknown service/rating fields absent.
+  ships_frame_design: '20261023 roof-frame-design task: choose draft frame sections, load assumptions, mass, joint/thermal
+    strategy and endpoint requirements for reversible Blender study.'
