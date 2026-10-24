@@ -1,0 +1,123 @@
+status: chosen prototype stock/thickness realization for three rejected floor returns
+request: 20261023T220644-blender-63de
+source_sha256: 8fc3a7e3ab384395592c35dde78b59a440830bbdae1f4a7ed59e55c07af8927e
+basis:
+  tier: invented
+  review: true
+  note: New physical realization chosen from existing measured surfaces. Nonstructural edge closeouts, no pressure/load
+    rating or source signed-mesh mass transfer.
+material: material.aluminium-alloy-6061
+density_kg_m3: 2700
+stock: stock.al6061-sh-2
+stock_thickness_m: 0.002
+assembly: interior-floor-and-trim / EXPL-10
+scope: This explicit2mm closeout choice overrides only nominal stock/gauge suggestion for these three names in explorer-material-stock-schedule.yaml.
+  Material and density unchanged. Original952row assignment source remains pinned; new derived solids get their
+  own replacement map.
+bindings:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/measurement-triangles.json: fed49723683e24aabec51b0e52eb87a310cf1ba367e6f04eeb6f32896c84af95
+  standards/SFO/metadata/mill-stock/AL6061-SH-2.yaml: 71117e5c00ea7af0eec43a4eeb8273ae76bb45e69b827196793b184bf20abfef
+  docs/ships/explorer-material-stock-schedule.yaml: bda8762b7c57d724ff1e416da6817307d3a5ce5309874bdda74d30ae67af04e3
+objects:
+- source_name: Raised floor | perimeter return 2
+  chosen_role: nonstructural formed floor-edge closeout
+  reference_face_vertices_source_m:
+  - - 0.6499999761581421
+    - -1.803656816482544
+    - 1.7380000352859497
+  - - 3.5
+    - -1.8032166957855225
+    - 1.7380000352859497
+  - - 3.5
+    - -1.8638228178024292
+    - 1.8380000591278076
+  - - 0.6499999761581421
+    - -1.8642630577087402
+    - 1.8380000591278076
+  reference_face_triangles:
+  - - 0
+    - 2
+    - 1
+  - - 0
+    - 3
+    - 2
+  single_surface_area_m2: 0.33325646642794626
+  normal_thickness_m: 0.002
+  uncut_area_times_thickness_mass_kg: 1.7995849187109099
+  construction: Keep authored outward face; thickness offsets along unit face normal toward hull centreline. Trim/close
+    actual top/bottom/end contacts without encroaching walking/gear/ramp/hatch envelope. Make closed valid sheet
+    solid, not a doubled zero-thickness face.
+- source_name: Raised floor | perimeter return 6
+  chosen_role: nonstructural formed floor-edge closeout
+  reference_face_vertices_source_m:
+  - - 3.5
+    - 1.803290843963623
+    - 1.7380000352859497
+  - - 0.6499999761581421
+    - 1.8036723136901855
+    - 1.7380000352859497
+  - - 0.6499999761581421
+    - 1.8642783164978027
+    - 1.8380000591278076
+  - - 3.5
+    - 1.8638972043991089
+    - 1.8380000591278076
+  reference_face_triangles:
+  - - 3
+    - 1
+    - 0
+  - - 3
+    - 2
+    - 1
+  single_surface_area_m2: 0.3332564657023932
+  normal_thickness_m: 0.002
+  uncut_area_times_thickness_mass_kg: 1.7995849147929233
+  construction: Keep authored outward face; thickness offsets along unit face normal toward hull centreline. Trim/close
+    actual top/bottom/end contacts without encroaching walking/gear/ramp/hatch envelope. Make closed valid sheet
+    solid, not a doubled zero-thickness face.
+- source_name: Raised floor | perimeter return 5
+  chosen_role: same2mm nonstructural tapered formed return; retain whole intended feature
+  normal_thickness_m: 0.002
+  top_edge_source_m:
+  - - 3.5
+    - 1.8638972043991089
+    - 1.8380000591278076
+  - - 4.199999809265137
+    - 1.568940281867981
+    - 1.8380000591278076
+  - - 4.929999828338623
+    - 1.1970690488815308
+    - 1.7406667470932007
+  bottom_edge_source_m:
+  - - 3.5
+    - 1.803290843963623
+    - 1.7380000352859497
+  - - 4.199999809265137
+    - 1.5080221891403198
+    - 1.7380000352859497
+  - - 4.929999828338623
+    - 1.1970690488815308
+    - 1.7380000352859497
+  construction: Rebuild clean two-segment formed sheet from paired authored top/bottom edge paths. Keep outward
+    face and offset2mm inward normal to each segment; explicitly join bend/ends, trim to actual floor/ramp contact.
+    Preserve taper toward aft tip; report any change forced by finite2mm edge thickness.
+  retire_only_as_explicit_repair: Duplicate/degenerate3.498257875 sliver and internal self-intersecting faces retire
+    in source-to-new edit map; do not delete the entire return or promote its signed old volume. No forced equal-height
+    strip, convex hull or deep extrusion.
+  mass: Measure final closed sheet; old signed volume is not material quantity. Report any trim/overlap with adjacent
+    owned floor separately.
+quantity_rules:
+- Measure original surface once; do not double one-side face area from a duplicate surface/geometry summary.
+- Installed material mass=valid closed sheet volume*2700. Area*2mm values are uncut planning checks, not final trim/fold
+  mass.
+- Keep each return distinct in ownership; explicit contacts/overlaps with rebuilt floor must be reconciled without
+  deleting missing physical matter.
+- If inward2mm offset collides with an actual required envelope, return named clash for local profile/edge redesign;
+  do not thin sheet or shrink actor/gear.
+- Do not wait for pressure/load ratings to produce prototype geometric quantities; do not claim those ratings.
+candidate_bare_floor_ledger:
+  path: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/candidate-bare-mass-floor-rollup.json
+  candidate_geometry_kg: 6748.691906833443
+  reserve_kg: 96.1
+  scope: Intact floor replacement included once;12rejected objects and material conflicts remain, frame/pans/equipment
+    excluded. This return choice supplies three of the missing physical realizations, not whole mass.
