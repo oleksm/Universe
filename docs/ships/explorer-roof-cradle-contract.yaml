@@ -38,6 +38,8 @@ bindings:
     sha256: 18cf88ba72b48e5420112527161d30421acb202fb3b8424253f121a59ca5688c
   /home/alexm/.agents/reviews/ships/explorer-functional-20261023/tank-product-services-com-v1.json:
     sha256: 2a343299bf117d4a843c059e5467defb5f5b6f486e7f2236b44fdf2e83a60cca
+  /home/alexm/.agents/reviews/ships/explorer-functional-20261023/roof-primary-frame-v3.json:
+    sha256: 846208715356a2de248404153eef935c1389ff6a3c557f49d3d29803c939d37b
 frames:
   package: glTF +Y up. Primary mount identity at base centre; metre, unit scale. Saddle datums independently read
     from actual GLB.
@@ -1117,3 +1119,25 @@ assignments:
     when actual physical mating data exists. Preserve unknown service/rating fields absent.
   ships_frame_design: '20261023 roof-frame-design task: choose draft frame sections, load assumptions, mass, joint/thermal
     strategy and endpoint requirements for reversible Blender study.'
+primary_frame_study:
+  status: Separate reversible draft study, no current hull edit or installed frame
+  proposal: /home/alexm/.agents/reviews/ships/explorer-functional-20261023/roof-primary-frame-v3.json
+  members: 23
+  stock_sources: 5
+  uncoped_tubes_kg: 330.12170280809994
+  plate_blanks_kg: 20.85696
+  cut_stock_subtotal_kg: 350.97866280809995
+  complete_frame_mass_kg: null
+  topology: Two NEW closed portal frames at actual saddle X planes, connected by braced side panels. Upper transverse250x8
+    tubes sit INSIDE pressure cell atZ3.65, with four100x3 roof standoffs to real tank feet. Portal sideposts carry
+    to new lower crossbars/160x5 longitudinal rails below walking floor; rails extend toward actual nose/aft fixed-gear
+    assemblies through explicit transfer nodes. No existing roof frame assumed.
+  limits:
+  - Stock/length/mass arithmetic independently checked; not a fit, load, pressure or strength certificate.
+  - New internal portals/rails, sealed standoffs and actual stationary gear interfaces need joint/clearance/route
+    evidence.
+  - All added fasteners, joint copes, bosses, isolators, service hardware and thermal details remain outside this
+    cut-stock subtotal.
+  - Thermal guide mapping must name actual saddle coordinates; ordinal third/fourth roles can constrain the wrong
+    axis. Ships task20261023T202551-registry-33aa.
+  audit: /home/alexm/.agents/reviews/registry/20261023-roof-frame-stock-check.json
