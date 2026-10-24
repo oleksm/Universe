@@ -973,3 +973,13 @@ placement_screen:
   remaining23: No surface intersections does not establish containment, access/crew, services, plumes or thermal
     fit.
   installed: false
+compatible_tank_gap:
+  requirements: docs/ships/explorer-hydrolox-tank-gap.yaml
+  latest_evidence: /home/alexm/.agents/reviews/ships/explorer-functional-20261023/tank-alternatives-v3.json
+  source_sha256: 92b53c0e5e4a1b1a1699e672ae78ccb55f1d97480f5b622ad6e9aea9a264388d
+  v2_screen: 30slotszero surface intersections, not fit; both500kgHLOX tanks intersect.32bounded tank transforms
+    at2endpoints all intersect; not exhaustive orientation/whole-hull proof.
+  next_design_work: Actual compact cryogenic tank+real compact mount/cradle from measured free envelope and explicit
+    capacity. Methalox substitution or model scaling invalid.
+  installed_capacity_kg: 0
+  capacity_scope: No installed tank product or propellant capacity is established by these studies.
