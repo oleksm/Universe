@@ -9,7 +9,7 @@ A signature (what a place is, for the matcher):
      "landmarks": ["water-gap", "planet-landmark.delta"],         # nearby landmark types
      "factors": {"TECT_UPLIFT": 0.7}}                             # strengths given outright, 0 to 1
 """
-import glob, os
+import glob, os, math
 
 ORDER = ("planet-level", "planet-field", "planet-layer", "planet-line", "planet-landmark", "planet-event", "planet-handler",
          "planet-measure", "planet-factor", "planet-pattern", "planet-file", "planet-model", "lod-model", "planet-feature",
@@ -33,11 +33,18 @@ def _key(kind, name):
     return name if name.startswith(kind + ".") else f"{kind}.{name}"
 
 
+def _finite(value):
+    """Invalid/missing readings stay unknown, including bool, infinity and NaN."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    return float(value) if math.isfinite(value) else None
+
+
 def _value(sig, field):
     f = sig.get("fields") or {}
     for n in (field, field.split(".", 1)[-1]):
-        if n in f and f[n] is not None:
-            return float(f[n])
+        if n in f:
+            return _finite(f[n])
     return None
 
 
@@ -45,16 +52,21 @@ def _class(sig, layer):
     c = sig.get("classes") or {}
     for n in (layer, layer.split(".", 1)[-1]):
         if n in c:
-            return c[n]
+            value = _finite(c[n])
+            return int(value) if value is not None and value >= 0 and value.is_integer() else None
     return None
 
 
 def holds(cond, sig):
-    """One condition ({field, op, value}) over a signature; None when the field is not in it."""
+    """Inclusive SI min/max; legacy op/value remains for layer classification only."""
     v = _value(sig, cond["field"])
     if v is None:
         return None
-    return {"<": v < cond["value"], "<=": v <= cond["value"], ">": v > cond["value"], ">=": v >= cond["value"], "==": v == cond["value"]}[cond["op"]]
+    if "op" in cond:
+        return {"<": v < cond["value"], "<=": v <= cond["value"], ">": v > cond["value"], ">=": v >= cond["value"], "==": v == cond["value"]}[cond["op"]]
+    if not any(k in cond for k in ("min", "max")):
+        return None
+    return ("min" not in cond or v >= cond["min"]) and ("max" not in cond or v <= cond["max"])
 
 
 def classify(R, layer, sig):
@@ -76,9 +88,12 @@ def strength(R, factor, sig, missing=0.0, signal=None):
     """A deciding factor's strength (0 to 1) at a place: given outright, else by its signal (a field ramped, a class
     among some, a landmark nearby), else missing (0 by default)."""
     d = R["planet-factor"][factor]
+    if signal is None and d.get("reading", {}).get("status") == "unavailable":
+        return missing
     given = sig.get("factors") or {}
     if signal is None and d.get("source") in given:
-        return max(0.0, min(1.0, float(given[d["source"]])))
+        value = _finite(given[d["source"]])
+        return max(0.0, min(1.0, value)) if value is not None else missing
     s = signal if signal is not None else (d.get("signal") or {})
     # The offline signature has no spatial feature census: do not reuse a global or landmark score.
     # Spatial evidence is evaluated by planet-forge against exact checkpoint geometry/provenance.
@@ -108,28 +123,97 @@ def preference(factor, value):
     if want == "low":
         return 1.0 - value
     if want == "band":
-        lo, hi = factor["from"], factor["to"]
+        lo, hi = factor["min"], factor["max"]
         width = factor["soft"] * (hi - lo)
         return max(0.0, min(1.0, (value - lo + width) / width, (hi + width - value) / width))
     raise ValueError("unknown factor preference: " + str(want))
 
 
+def entry_score(R, entry, sig):
+    """None is unknown, distinct from a known zero. TIME uses actual per-form age."""
+    if entry.get("unresolved"):
+        return None
+    conditions = [holds(c, sig) for c in entry.get("when", [])]
+    if False in conditions:
+        return 0.0
+    if None in conditions:
+        return None
+    factor = R["planet-factor"][entry["factor"]]
+    if entry["factor"] == "planet-factor.time":
+        age = _finite(sig.get("form_age_s"))
+        tau = _finite(entry.get("tau_relax_s"))
+        return math.exp(-age / tau) if age is not None and age >= 0 and tau is not None and tau > 0 else None
+    if "signal" not in entry and factor.get("reading", {}).get("status") == "unavailable":
+        return None
+    signal = entry.get("signal", factor.get("signal", {}))
+    want = entry["want"]
+    if want in ("in", "not-in"):
+        if factor.get("kind") != "categorical":
+            return None
+        if signal.get("field"):
+            value = _value(sig, signal["field"])
+        elif signal.get("layer"):
+            value = _class(sig, signal["layer"])
+        else:
+            return None
+        mapping = {c["key"]: c for c in factor.get("class_map", [])}
+        selected = entry.get("classes", [])
+        known = {x for c in mapping.values() for x in c["codes"]}
+        if value is None or value not in known or not selected or any(k not in mapping for k in selected):
+            return None
+        inside = any(value in mapping[k]["codes"] for k in selected if not mapping[k].get("unresolved"))
+        ambiguous = any(c.get("unresolved") and (not c["codes"] or value in c["codes"]) for c in (mapping[k] for k in selected))
+        if not inside and ambiguous:
+            return None
+        return float(inside if want == "in" else not inside)
+
+    if factor.get("kind") == "categorical":
+        return None
+    if want == "band":
+        value = _value(sig, signal["field"]) if signal.get("field") else None
+    else:
+        value = strength(R, entry["factor"], sig, missing=None, signal=entry.get("signal"))
+    return preference(entry, value) if value is not None else None
+
+
 def match(R, sig, top=10, family=None):
-    """Landform patterns ranked for a signature: each one's factors' strengths weighted (its hard conditions first: one
-    that fails, it does not match). Returns [{key, family, score, fired: [(factor, weight, strength)], failed}]."""
+    """Rank only evidence-backed scores. Required unknowns are visible with score zero.
+
+    Recognition trigger rules and gate-only patterns never become placements from scores.
+    Optional missing terms retain their weight (score zero), without satisfying low wants.
+    """
     out = []
     for k, p in R["planet-pattern"].items():
         if family and p["family"] != family:
             continue
-        failed = [c for c in p.get("when") or [] if holds(c, sig) is False]
-        if failed:
+        conditions = [holds(c, sig) for c in p.get("when", [])]
+        if False in conditions:
             continue
-        tw = sum(f["weight"] for f in p["factors"]) or 1.0
-        fired = [(R["planet-factor"][f["factor"]]["source"], f["weight"],
-                  round(preference(f, strength(R, f["factor"], sig, missing=None, signal=f.get("signal"))), 3)) for f in p["factors"]]
-        score = sum(w * s for _, w, s in fired) / tw
-        out.append({"key": k, "name": p["identity"]["name"], "family": p["family"], "score": round(score, 4),
-                    "fired": sorted([x for x in fired if x[2] > 0], key=lambda x: -x[1] * x[2])})
+        state = "unknown" if None in conditions else "pass"
+        total = score = 0.0
+        fired = []
+        for entry in p["factors"]:
+            value = entry_score(R, entry, sig)
+            if entry.get("required"):
+                if value == 0:
+                    state = "fail"
+                    break
+                if value is None:
+                    state = "unknown"
+            else:
+                weight = entry["weight"]
+                total += weight
+                score += weight * (value if value is not None else 0)
+            if value is not None and value > 0:
+                fired.append((R["planet-factor"][entry["factor"]]["source"], entry["weight"], round(value, 3)))
+        if state == "fail":
+            continue
+        if p.get("trigger_rule"):
+            state = "unknown"
+        score = score / total if total and state == "pass" else 0.0
+        out.append({"key": k, "name": p["identity"]["name"], "family": p["family"],
+                    "state": state, "score": round(score, 4),
+                    "fired": sorted(fired, key=lambda x: -x[1] * x[2])})
     return sorted(out, key=lambda x: (-x["score"], x["key"]))[:top]
 
 

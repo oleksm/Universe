@@ -8,7 +8,11 @@ factors:
 - factor: planet-factor.tect-setting
   weight: 3
   why: foreland of collisional or subduction orogen; needs ongoing horizontal shortening
-  want: high
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - active-orogen
+  required: true
 - factor: planet-factor.rock-layers
   weight: 3
   why: thick layered cover over weak basal detachment (salt/shale); detachment strength sets taper, fold style
@@ -16,7 +20,9 @@ factors:
 - factor: planet-factor.rock-type
   weight: 1
   why: competent carbonates/sandstones form ridges; weak salt allows low taper, wide belt
-  want: low
+  want: in
+  unresolved: true
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
 - factor: planet-factor.tect-fold
   weight: 1
   why: detachment vs fault-propagation folding; wavelength 3.5-10 km scales with competent-layer thickness
@@ -45,6 +51,9 @@ factors:
   weight: 1
   why: 1-30 Myr; old belts become deeply eroded ridge-and-valley (Appalachians)
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 127
 sources:
 - https://wpg.forestry.oregonstate.edu/sites/default/files/seminars/2009_Whipple.pdf
@@ -76,8 +85,8 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
 - of:
   - factors.want
   tier: derived
@@ -85,5 +94,15 @@ basis:
   source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
   note: 'planet-factor.rock-layers: Alternating strong/weak beds or caprock require layering contrast; flat/weak
     does not request absence of layering.'
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: trellis
+kinds:
+- thrust-front

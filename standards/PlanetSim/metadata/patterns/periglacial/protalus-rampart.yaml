@@ -37,6 +37,9 @@ factors:
   weight: 1
   why: 0.1-12 kyr; height 1-10 m
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 112
 sources:
 - https://en.wikipedia.org/wiki/Protalus_rampart
@@ -66,14 +69,14 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
 - of:
   - factors.want
   tier: derived
   review: true
   source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
-  note: 'planet-factor.clim-temp: Perennial snowbed/nival setting favors cold strength; no glacier is not a
-    request for low cold strength.'
+  note: 'planet-factor.clim-temp: Perennial snowbed/nival setting favors cold strength; no glacier is not a request
+    for low cold strength.'
 status: draft
 look: periglacial

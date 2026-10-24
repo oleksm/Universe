@@ -1,0 +1,465 @@
+contract: planet-forge f3efbac/c4fe750 docs/registry-rules-contract-2026-10-24.md
+duplicates:
+- was: planet-pattern.arid.slope.alluvial-fan
+  is: planet-pattern.fluvial.fan.alluvial-fan
+  retired_source: arid.slope.alluvial_fan
+  retained_vocabulary_id: 14
+  retired_factors:
+  - factor: planet-factor.tect-fault
+    weight: 3
+    why: Active range-front normal faults create relief and accommodation at the apex
+    want: high
+  - factor: planet-factor.tect-uplift
+    weight: 1
+    why: Uplift renews catchment relief and supply; ratio to basin subsidence sets fan entrenchment
+    want: high
+  - factor: planet-factor.slope-relief
+    weight: 1
+    why: Abrupt slope drop where confined channel exits; fan slope 1.5-25 deg
+    want: high
+  - factor: planet-factor.sed-supply
+    weight: 3
+    why: Coarse, abundant supply; calibre and catchment size set slope and area
+    want: high
+  - factor: planet-factor.rock-type
+    weight: 1
+    why: Mudstone or clay-rich saprolite source favours debris-flow fans; coarse permeable regolith gives fluvial
+      fans
+    want: high
+  - factor: planet-factor.clim-storm
+    weight: 3
+    why: Intense rare storms trigger debris flows and sheetfloods
+    want: high
+  - factor: planet-factor.clim-arid
+    weight: 1
+    why: Arid/semi-arid with sparse vegetation; also humid areas with intense rain
+    want: high
+  - factor: planet-factor.clim-history
+    weight: 1
+    why: Pluvial-arid shifts cause aggradation/incision phases, fan segmentation
+    want: high
+  - factor: planet-factor.base-level
+    weight: 1
+    why: Basin floor or axial river trims toe; base-level fall entrenches fan
+    want: high
+  - factor: planet-factor.events
+    weight: 1
+    why: Debris flows and floods build lobes, avulsions
+    want: high
+  - factor: planet-factor.time
+    weight: 1
+    why: 1 kyr-1 Myr; desert varnish and pavements age the surfaces
+    want: high
+- was: planet-pattern.fluvial.piedmont.pediment
+  is: planet-pattern.arid.slope.pediment
+  retired_source: fluvial.piedmont.pediment
+  retained_vocabulary_id: 56
+  retired_factors:
+  - factor: planet-factor.tect-uplift
+    weight: 3
+    why: tectonically quiescent front; fault activity favours fans instead
+    want: high
+  - factor: planet-factor.rock-type
+    weight: 3
+    why: granitic, grus-forming rock most common
+    want: high
+  - factor: planet-factor.clim-arid
+    weight: 3
+    why: arid, sparse vegetation, low bank cohesion
+    want: high
+  - factor: planet-factor.clim-storm
+    weight: 1
+    why: episodic floods and sheetwash plane the surface
+    want: high
+  - factor: planet-factor.rock-perm
+    weight: 1
+    why: high infiltration of grus favours planation
+    want: high
+  - factor: planet-factor.base-level
+    weight: 1
+    why: stable basin base level; slope 0.5-7 deg
+    want: low
+  - factor: planet-factor.regolith
+    weight: 1
+    why: thin transient alluvial veneer 0-5 m
+    want: high
+  - factor: planet-factor.time
+    weight: 1
+    why: 100 kyr-10 Myr
+    want: high
+- was: planet-pattern.arid.plateau.mesa-butte
+  is: planet-pattern.structural.flat.mesa-butte
+  retired_source: arid.plateau.mesa_butte
+  retained_vocabulary_id: 12
+  retired_factors:
+  - factor: planet-factor.rock-layers
+    weight: 3
+    why: Resistant caprock (sandstone, conglomerate) over weak shale/siltstone (De Chelly over Organ Rock)
+    want: high
+  - factor: planet-factor.tect-fold
+    weight: 1
+    why: Near-horizontal strata (dip < ~5 deg); steeper dips give cuestas
+    want: high
+  - factor: planet-factor.tect-uplift
+    weight: 3
+    why: Plateau uplift drives river incision and dissection
+    want: high
+  - factor: planet-factor.rock-fracture
+    weight: 1
+    why: Joints in caprock localise retreat and set butte/spire outlines
+    want: high
+  - factor: planet-factor.clim-arid
+    weight: 3
+    why: 'Arid to semi-arid: sparse vegetation keeps free faces sharp'
+    want: high
+  - factor: planet-factor.groundwater
+    weight: 1
+    why: Basal sapping at caprock/shale contact undermines cliffs
+    want: high
+  - factor: planet-factor.clim-storm
+    weight: 1
+    why: Flash floods remove talus from weak slopes
+    want: high
+  - factor: planet-factor.base-level
+    weight: 1
+    why: River incision sets valley-floor height and remnant relief (up to ~300 m)
+    want: high
+  - factor: planet-factor.time
+    weight: 1
+    why: '1-30 Myr of scarp retreat: plateau, mesa, butte, spire'
+    want: high
+missing_kind_coverage:
+- kind: seamount
+  pattern: planet-pattern.marine.catalogue.seamount
+  trigger_rule: planet-feature.seamount
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: mountain-pass
+  pattern: planet-pattern.orographic.catalogue.mountain-pass
+  trigger_rule: planet-feature.mountain-pass
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: misfit-river
+  pattern: planet-pattern.fluvial.catalogue.misfit-river
+  trigger_rule: planet-feature.misfit-river
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: river-capture
+  pattern: planet-pattern.fluvial.catalogue.river-capture
+  trigger_rule: planet-feature.river-capture
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: dry-valley
+  pattern: planet-pattern.fluvial.catalogue.dry-valley
+  trigger_rule: planet-feature.dry-valley
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: water-carved-land
+  pattern: planet-pattern.fluvial.catalogue.water-carved-land
+  trigger_rule: planet-feature.water-carved-land
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: river-mouth
+  pattern: planet-pattern.fluvial.catalogue.river-mouth
+  trigger_rule: planet-feature.river-mouth
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: trunk-river
+  pattern: planet-pattern.fluvial.catalogue.trunk-river
+  trigger_rule: planet-feature.trunk-river
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: continental-rise
+  pattern: planet-pattern.marine.catalogue.continental-rise
+  trigger_rule: planet-feature.continental-rise
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: abyssal-hills
+  pattern: planet-pattern.marine.catalogue.abyssal-hills
+  trigger_rule: planet-feature.abyssal-hills
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: suture
+  pattern: planet-pattern.tectonic.catalogue.suture
+  trigger_rule: planet-feature.suture
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: continental-slope
+  pattern: planet-pattern.marine.catalogue.continental-slope
+  trigger_rule: planet-feature.continental-slope
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: fracture-zone
+  pattern: planet-pattern.marine.catalogue.fracture-zone
+  trigger_rule: planet-feature.fracture-zone
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: coastline-typed
+  pattern: planet-pattern.coastal.catalogue.coastline-typed
+  trigger_rule: planet-feature.coastline-typed
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: impact-crater-complex
+  pattern: planet-pattern.impact.catalogue.impact-crater-complex
+  trigger_rule: planet-feature.impact-crater-complex
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: abyssal-plain
+  pattern: planet-pattern.marine.catalogue.abyssal-plain
+  trigger_rule: planet-feature.abyssal-plain
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: submarine-canyon
+  pattern: planet-pattern.marine.catalogue.submarine-canyon
+  trigger_rule: planet-feature.submarine-canyon
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: back-arc-basin
+  pattern: planet-pattern.marine.catalogue.back-arc-basin
+  trigger_rule: planet-feature.back-arc-basin
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: forearc-basin
+  pattern: planet-pattern.tectonic.catalogue.forearc-basin
+  trigger_rule: planet-feature.forearc-basin
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: megaflood-scabland
+  pattern: planet-pattern.fluvial.catalogue.megaflood-scabland
+  trigger_rule: planet-feature.megaflood-scabland
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: peak
+  pattern: planet-pattern.orographic.catalogue.peak
+  trigger_rule: planet-feature.peak
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: oasis
+  pattern: planet-pattern.arid.catalogue.oasis
+  trigger_rule: planet-feature.oasis
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: shelf
+  pattern: planet-pattern.coastal.catalogue.shelf
+  trigger_rule: planet-feature.shelf
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: forest-edge
+  pattern: planet-pattern.biotic.catalogue.forest-edge
+  trigger_rule: planet-feature.forest-edge
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: bare-rock
+  pattern: planet-pattern.biotic.catalogue.bare-rock
+  trigger_rule: planet-feature.bare-rock
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: lagoon
+  pattern: planet-pattern.coastal.catalogue.lagoon
+  trigger_rule: planet-feature.lagoon
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: geothermal-field
+  pattern: planet-pattern.volcanic.catalogue.geothermal-field
+  trigger_rule: planet-feature.geothermal-field
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: coastal-plain
+  pattern: planet-pattern.coastal.catalogue.coastal-plain
+  trigger_rule: planet-feature.coastal-plain
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: savanna
+  pattern: planet-pattern.biotic.catalogue.savanna
+  trigger_rule: planet-feature.savanna
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: subsidiary-ridge
+  pattern: planet-pattern.tectonic.catalogue.subsidiary-ridge
+  trigger_rule: planet-feature.subsidiary-ridge
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: accretionary-prism
+  pattern: planet-pattern.tectonic.catalogue.accretionary-prism
+  trigger_rule: planet-feature.accretionary-prism
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: tropical-seasonal-forest
+  pattern: planet-pattern.biotic.catalogue.tropical-seasonal-forest
+  trigger_rule: planet-feature.tropical-seasonal-forest
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: ridge-axis-valley
+  pattern: planet-pattern.marine.catalogue.ridge-axis-valley
+  trigger_rule: planet-feature.ridge-axis-valley
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: temperate-broadleaf-forest
+  pattern: planet-pattern.biotic.catalogue.temperate-broadleaf-forest
+  trigger_rule: planet-feature.temperate-broadleaf-forest
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: alpine-zone
+  pattern: planet-pattern.biotic.catalogue.alpine-zone
+  trigger_rule: planet-feature.alpine-zone
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: oceanic-trench
+  pattern: planet-pattern.marine.catalogue.oceanic-trench
+  trigger_rule: planet-feature.oceanic-trench
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: range-crest-main-divide
+  pattern: planet-pattern.tectonic.catalogue.range-crest-main-divide
+  trigger_rule: planet-feature.range-crest-main-divide
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: alluvial-plain
+  pattern: planet-pattern.fluvial.catalogue.alluvial-plain
+  trigger_rule: planet-feature.alluvial-plain
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: lava-dome
+  pattern: planet-pattern.volcanic.catalogue.lava-dome
+  trigger_rule: planet-feature.lava-dome
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: shelf-edge
+  pattern: planet-pattern.coastal.catalogue.shelf-edge
+  trigger_rule: planet-feature.shelf-edge
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: river
+  pattern: planet-pattern.fluvial.catalogue.river
+  trigger_rule: planet-feature.river
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: steppe-grassland
+  pattern: planet-pattern.biotic.catalogue.steppe-grassland
+  trigger_rule: planet-feature.steppe-grassland
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: submarine-fan
+  pattern: planet-pattern.marine.catalogue.submarine-fan
+  trigger_rule: planet-feature.submarine-fan
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: island
+  pattern: planet-pattern.coastal.catalogue.island
+  trigger_rule: planet-feature.island
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: boreal-forest-taiga
+  pattern: planet-pattern.biotic.catalogue.boreal-forest-taiga
+  trigger_rule: planet-feature.boreal-forest-taiga
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: foreland-basin
+  pattern: planet-pattern.tectonic.catalogue.foreland-basin
+  trigger_rule: planet-feature.foreland-basin
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: hot-desert
+  pattern: planet-pattern.biotic.catalogue.hot-desert
+  trigger_rule: planet-feature.hot-desert
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: mediterranean-shrubland
+  pattern: planet-pattern.biotic.catalogue.mediterranean-shrubland
+  trigger_rule: planet-feature.mediterranean-shrubland
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: tundra
+  pattern: planet-pattern.biotic.catalogue.tundra
+  trigger_rule: planet-feature.tundra
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: tree-line
+  pattern: planet-pattern.biotic.catalogue.tree-line
+  trigger_rule: planet-feature.tree-line
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: sea
+  pattern: planet-pattern.marine.catalogue.sea
+  trigger_rule: planet-feature.sea
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: tropical-rainforest
+  pattern: planet-pattern.biotic.catalogue.tropical-rainforest
+  trigger_rule: planet-feature.tropical-rainforest
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: cold-desert
+  pattern: planet-pattern.biotic.catalogue.cold-desert
+  trigger_rule: planet-feature.cold-desert
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: microcontinent
+  pattern: planet-pattern.tectonic.catalogue.microcontinent
+  trigger_rule: planet-feature.microcontinent
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: permafrost-limit
+  pattern: planet-pattern.biotic.catalogue.permafrost-limit
+  trigger_rule: planet-feature.permafrost-limit
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: oceanic-plateau
+  pattern: planet-pattern.marine.catalogue.oceanic-plateau
+  trigger_rule: planet-feature.oceanic-plateau
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: sea-ice-edge
+  pattern: planet-pattern.biotic.catalogue.sea-ice-edge
+  trigger_rule: planet-feature.sea-ice-edge
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: sea-ice
+  pattern: planet-pattern.marine.catalogue.sea-ice
+  trigger_rule: planet-feature.sea-ice
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: temperate-rainforest
+  pattern: planet-pattern.biotic.catalogue.temperate-rainforest
+  trigger_rule: planet-feature.temperate-rainforest
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: snow-line
+  pattern: planet-pattern.biotic.catalogue.snow-line
+  trigger_rule: planet-feature.snow-line
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: wetland
+  pattern: planet-pattern.fluvial.catalogue.wetland
+  trigger_rule: planet-feature.wetland
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: ice-shelf
+  pattern: planet-pattern.glacial.catalogue.ice-shelf
+  trigger_rule: planet-feature.ice-shelf
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: perennial-snow-and-ice
+  pattern: planet-pattern.biotic.catalogue.perennial-snow-and-ice
+  trigger_rule: planet-feature.perennial-snow-and-ice
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: archipelago
+  pattern: planet-pattern.coastal.catalogue.archipelago
+  trigger_rule: planet-feature.archipelago
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: guyot
+  pattern: planet-pattern.marine.catalogue.guyot
+  trigger_rule: planet-feature.guyot
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: impact-crater-simple
+  pattern: planet-pattern.impact.catalogue.impact-crater-simple
+  trigger_rule: planet-feature.impact-crater-simple
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: ice-cap
+  pattern: planet-pattern.glacial.catalogue.ice-cap
+  trigger_rule: planet-feature.ice-cap
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+- kind: valley-glacier
+  pattern: planet-pattern.glacial.catalogue.valley-glacier
+  trigger_rule: planet-feature.valley-glacier
+  execution: unknown until trigger evidence is evaluated; no score-only placement
+time: 180 canonical TIME entries use decay-age semantics only; all await a supported per-form tau. Historical formation-duration
+  wording preserved; crust-age reading removed.
+scope:
+  patterns: 261
+  mapped_kinds: 241
+  factor_reviews: 62
+  directed_entries: 182
+  required: 53
+  reading:
+    verified: 1
+    proxy: 15
+    unavailable: 46
+  coverage_followup: All241 feature kinds now mapped; 68 requested missing rules plus11 additional trigger-owned
+    and11 corrected map omissions.
+  threshold_review: docs/planet-pattern-m3-threshold-review.yaml
+  snapshot: registry_e3 remains untouched; registry_e4 will be additive, explicitly not proof M3 placement/scientific
+    calibration is complete
+  trigger_owned: 79
+  proximity: Explicit step falloff preserves 1bc9fd4 distance<=radius semantics; linear allowed only when named
+    by the record. Missing exact feature geometry stays unknown.
+additional_22_kind_coverage:
+  note: 'The 22 catalogue kinds the 24 Oct export found without a pattern: an existing canonical pattern (add the
+    kind to its kinds:) or trigger-owned (new pattern, factors [], trigger_rule planet-feature.<kind>).'
+  to_pattern:
+    barchan-dunes: planet-pattern.aeolian.dune.barchan
+    colluvial-hollow: planet-pattern.hillslope.hollow.colluvial
+    nivation-hollow: planet-pattern.periglacial.slope.nivation-hollow
+    ice-wedge-polygons: planet-pattern.periglacial.ground.ice-wedge-polygons
+    pingo: planet-pattern.periglacial.mound.pingo
+    solifluction-lobes: planet-pattern.periglacial.slope.solifluction-lobe
+    sorted-patterned-ground: planet-pattern.periglacial.ground.patterned-sorted
+    rill-and-gully-system: planet-pattern.fluvial.erosion.gully-rill
+    orogen-belt: planet-pattern.tectonic.province.orogen
+    shield-craton: planet-pattern.tectonic.craton.shield
+    plate-boundary-convergent: planet-pattern.tectonic.margin.convergent
+  trigger_owned:
+    continent: 'trigger-owned: the sim writes it from its own state (tectonics, impacts, ice, ocean); not a terrain
+      look to score'
+    ocean: 'trigger-owned: the sim writes it from its own state (tectonics, impacts, ice, ocean); not a terrain
+      look to score'
+    ocean-basin: 'trigger-owned: the sim writes it from its own state (tectonics, impacts, ice, ocean); not a terrain
+      look to score'
+    marginal-sea: 'trigger-owned: the sim writes it from its own state (tectonics, impacts, ice, ocean); not a terrain
+      look to score'
+    mid-ocean-ridge: 'trigger-owned: the sim writes it from its own state (tectonics, impacts, ice, ocean); not
+      a terrain look to score'
+    island-arc: 'trigger-owned: the sim writes it from its own state (tectonics, impacts, ice, ocean); not a terrain
+      look to score'
+    plate-boundary-divergent: 'trigger-owned: the sim writes it from its own state (tectonics, impacts, ice, ocean);
+      not a terrain look to score'
+    multi-ring-impact-basin: 'trigger-owned: the sim writes it from its own state (tectonics, impacts, ice, ocean);
+      not a terrain look to score'
+    ice-sheet: 'trigger-owned: the sim writes it from its own state (tectonics, impacts, ice, ocean); not a terrain
+      look to score'
+    ice-sheet-extent: 'trigger-owned: the sim writes it from its own state (tectonics, impacts, ice, ocean); not
+      a terrain look to score'
+    spring: 'trigger-owned: needs groundwater (no field); the record feature decides'
+soluble_lithology:
+  categorical_entries: 14
+  new_necessary_karst_gates: 8
+  source: https://www.usgs.gov/publications/subsidence-hazards-due-evaporite-dissolution-united-states
+  limits: No purity/thickness/water evidence or evaporite field fabricated.

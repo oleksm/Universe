@@ -12,7 +12,11 @@ factors:
 - factor: planet-factor.bio-veg
   weight: 1
   why: coral and coralline algae framework growth 1-25 cm/yr
-  want: high
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - reef
+  required: true
 - factor: planet-factor.sed-supply
   weight: 3
   why: clear water; river mud and freshwater block reefs (gaps at river mouths)
@@ -41,6 +45,9 @@ factors:
   weight: 1
   why: 1-10 kyr for Holocene reef flats
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 26
 sources:
 - https://www.coastalwiki.org/wiki/Coral_reefs
@@ -72,14 +79,24 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
 - of:
   - factors.want
   tier: derived
   review: true
   source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
-  note: 'planet-factor.clim-temp: The record asks for warmth; existing clim-temp strength rises toward cold
-    (283.15 to 263.15 K).'
+  note: 'planet-factor.clim-temp: The record asks for warmth; existing clim-temp strength rises toward cold (283.15
+    to 263.15 K).'
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: coastal
+kinds:
+- fringing-reef

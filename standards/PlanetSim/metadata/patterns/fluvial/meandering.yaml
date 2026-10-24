@@ -8,7 +8,7 @@ factors:
 - factor: planet-factor.slope-relief
   weight: 3
   why: slope below braiding threshold (S < 0.06 Q^-0.44)
-  want: high
+  want: low
 - factor: planet-factor.water-discharge
   weight: 1
   why: bankfull discharge sets width; wavelength 10-14 widths
@@ -20,7 +20,10 @@ factors:
 - factor: planet-factor.bio-veg
   weight: 3
   why: bank vegetation adds cohesion, narrow deep sinuous channel
-  want: high
+  want: not-in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - barren
 - factor: planet-factor.regolith
   weight: 1
   why: cohesive muddy bank alluvium resists widening
@@ -37,6 +40,9 @@ factors:
   weight: 1
   why: 0.1 kyr-1 Myr; sinuosity self-organizes near 3
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 38
 sources:
 - https://en.wikipedia.org/wiki/Incised_meander
@@ -68,7 +74,23 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors.want
+  tier: derived
+  source: planet-forge docs/research/reconcile-kinds-2026-10-24.md
+  note: 'M3 semantic correction: slope-relief wants low; direction checked against its literal signal and the supplied
+    geomorphic explanation.'
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: dendritic
+kinds:
+- meander-belt

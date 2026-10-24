@@ -40,7 +40,9 @@ factors:
 - factor: planet-factor.bio-veg
   weight: 1
   why: Root loss (fire, logging) raises shallow-slip frequency
-  want: high
+  want: in
+  unresolved: true
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
 vocabulary_id: 89
 sources:
 - https://pubs.usgs.gov/fs/2004/3072/fs-2004-3072.html
@@ -70,7 +72,17 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: dendritic
+kinds:
+- giant-landslide-sector-collapse

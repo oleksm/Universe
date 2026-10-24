@@ -4,15 +4,6 @@ identity:
   name: TECT_SETTING
   about: plate setting, crust type (passive margin, orogen, craton, rift, hotspot)
 source: TECT_SETTING
-reads:
-  layers:
-  - planet-layer.crust-kind
-  - planet-layer.zones
-  lines:
-  - planet-line.plate-edge
-  - planet-line.suture
-  - planet-line.arc-front
-  - planet-line.rift-margin
 levels:
 - planet-level.1000-km
 - planet-level.100-km
@@ -22,9 +13,70 @@ basis:
   tier: derived
   note: planet-trees-pgs2 docs/landforms/deciding_factors_vocab.md.
 - of:
-  - reads
   - signal
   tier: invented
   review: true
-  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17): for planets to correct.'
+  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17):
+    for planets to correct.'
+- of:
+  - reads
+  - kind
+  - unit
+  - reading
+  tier: derived
+  source: planet-forge 89d78fc docs/field-inventory-2026-10-24.md; current registry field definitions
+  note: Literal producer/registry audit; unavailable means no valid current binding. This does not source a scientific
+    causal law, calibrate retained ramps, or prove a proxy.
+- of:
+  - class_map
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Scientific class intent named, but no saved classification field provides these values. Empty possible-code
+    lists remain unknown everywhere; no fabricated category driver.
 status: draft
+kind: categorical
+reading:
+  status: unavailable
+  source: planet-forge 89d78fc docs/field-inventory-2026-10-24.md; current registry field definitions
+  note: crust-kind distinguishes only ocean/continent; it cannot identify craton/passive margin/orogen/rift/hotspot.
+    Event lines are separate evidence, not a comparable numeric category.
+class_map:
+- key: oceanic
+  codes: []
+  unresolved: true
+- key: craton-shield
+  codes: []
+  unresolved: true
+- key: platform
+  codes: []
+  unresolved: true
+- key: magmatic-arc
+  codes: []
+  unresolved: true
+- key: passive-margin
+  codes: []
+  unresolved: true
+- key: hotspot
+  codes: []
+  unresolved: true
+- key: active-orogen
+  codes: []
+  unresolved: true
+- key: old-orogen
+  codes: []
+  unresolved: true
+- key: rift-extensional
+  codes: []
+  unresolved: true
+- key: intermontane-basin
+  codes: []
+  unresolved: true
+- key: foreland-basin
+  codes: []
+  unresolved: true
+- key: back-arc
+  codes: []
+  unresolved: true
+- key: transform
+  codes: []
+  unresolved: true

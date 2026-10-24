@@ -8,7 +8,11 @@ factors:
 - factor: planet-factor.rock-type
   weight: 3
   why: 'Homogeneous weak material: clay, mudstone, thick soil, weak rock over clay'
-  want: low
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - clastic-fine
+  - unconsolidated
 - factor: planet-factor.rock-layers
   weight: 1
   why: Strong caprock over clay favours deep slumps and back-tilted blocks
@@ -41,6 +45,9 @@ factors:
   weight: 1
   why: Slump scars degrade over 0-10 kyr
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 88
 sources:
 - https://pubs.usgs.gov/fs/2004/3072/fs-2004-3072.html
@@ -70,7 +77,17 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: dendritic
+kinds:
+- landslide-rotational-translational

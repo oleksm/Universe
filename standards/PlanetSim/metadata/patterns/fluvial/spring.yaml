@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.fluvial.catalogue.spring
+  name: Spring
+  about: The named feature trigger owns recognition; an empty factor vector is not a placement rule.
+family: fluvial
+look: dendritic
+kinds:
+- spring
+trigger_rule: planet-feature.spring
+factors: []
+source: catalogue.spring
+levels:
+- planet-level.10-km
+- planet-level.1-m
+sources:
+- planet-forge docs/research/kinds-without-pattern-2026-10-24.json
+- docs/planet-feature-trigger-rules-2026-10-22.md
+- planet-forge a1f0a57 docs/research/remaining-22-kinds-map-2026-10-24.json
+status: draft
+basis:
+- of:
+  - kinds
+  - trigger_rule
+  - identity
+  tier: derived
+  source: planet-feature.spring.trigger; planet-forge a1f0a57 remaining22 mapping
+  note: Feature trigger and its local trigger_params are the rule, not an inferred family-wide control vector. Requires
+    full trigger evaluation/record evidence; an empty weighted vector never places a kind.
+- of:
+  - look
+  tier: invented
+  review: true
+  note: Conservative existing render archetype pending explicit consumer treatment; not a scientific class or new
+    placement rule.

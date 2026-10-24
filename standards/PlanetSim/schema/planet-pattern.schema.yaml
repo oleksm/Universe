@@ -1,46 +1,225 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Planet landform pattern
-x-kind: [planet-pattern]
-description: "standards/PlanetSim/metadata/patterns/<family>/<name>.yaml: a landform pattern of the library (planet-trees docs/landforms): its family, its deciding factors with their weights (the matching rules), any hard conditions, its id in the ground's pattern vocabulary, and its sources. tools/standards/planet_lod_match.py ranks patterns for a place's signature by these."
+x-kind:
+- planet-pattern
+description: 'standards/PlanetSim/metadata/patterns/<family>/<name>.yaml: a landform pattern of the library (planet-trees
+  docs/landforms): its family, its deciding factors with their weights (the matching rules), any hard conditions,
+  its id in the ground''s pattern vocabulary, and its sources. tools/standards/planet_lod_match.py ranks patterns
+  for a place''s signature by these.'
 type: object
 additionalProperties: false
-required: [identity, family, look, factors]
+required:
+- identity
+- family
+- look
+- factors
 allOf:
-  - { $ref: "../../common.schema.yaml#/definitions/planet_context" }
+- $ref: ../../common.schema.yaml#/definitions/planet_context
 properties:
   identity:
     type: object
     additionalProperties: false
-    required: [key, name, about]
+    required:
+    - key
+    - name
+    - about
     properties:
-      key: { $ref: "../../common.schema.yaml#/definitions/key" }
-      name: { type: string }
-      about: { type: string }
-  family: { enum: [aeolian, arid, coastal, fluvial, glacial, hillslope, karst, lacustrine, periglacial, structural, tectonic, volcanic] }
+      key:
+        $ref: ../../common.schema.yaml#/definitions/key
+      name:
+        type: string
+      about:
+        type: string
+  family:
+    enum:
+    - aeolian
+    - arid
+    - coastal
+    - fluvial
+    - glacial
+    - hillslope
+    - karst
+    - lacustrine
+    - periglacial
+    - structural
+    - tectonic
+    - volcanic
+    - marine
+    - biotic
+    - orographic
+    - impact
   look:
-    enum: [dendritic, trellis, tableland, canyon, floodplain, fan, dunes, playa, glacial, periglacial, karst, volcanic, basin-range, coastal, shield, inselberg, badlands]
-    description: "Render archetype, explicitly selected by the record. Consumers dispatch on this value, never infer it from a pattern key prefix. A draft mapping is not a measured terrain classification."
+    enum:
+    - dendritic
+    - trellis
+    - tableland
+    - canyon
+    - floodplain
+    - fan
+    - dunes
+    - playa
+    - glacial
+    - periglacial
+    - karst
+    - volcanic
+    - basin-range
+    - coastal
+    - shield
+    - inselberg
+    - badlands
+    description: Render archetype, explicitly selected by the record. Consumers dispatch on this value, never infer
+      it from a pattern key prefix. A draft mapping is not a measured terrain classification.
   factors:
     type: array
     items:
       type: object
       additionalProperties: false
-      required: [factor, weight, want]
+      required:
+      - factor
+      - weight
+      - want
       properties:
-        factor: { type: string, x-ref: [planet-factor] }
-        weight: { type: number, minimum: 0, x-unit: "1", description: "Its share of the match: the library's top three 3, the rest 1, until tuned." }
-        want: { enum: [high, low, band], description: "Preference over normalized factor strength s: high=s; low=1-s; band uses from/to/soft. A missing signal does not satisfy a low preference." }
-        from: { type: number, minimum: 0, maximum: 1, x-unit: "1", description: "Band only: lower full-score bound in normalized factor strength; strictly less than to." }
-        to: { type: number, minimum: 0, maximum: 1, x-unit: "1", description: "Band only: upper full-score bound in normalized factor strength." }
-        soft: { type: number, exclusiveMinimum: 0, maximum: 1, x-unit: "1", description: "Band only, required: each outside ramp has width soft*(to-from). Score is 1 within [from,to], falls linearly to 0 at from-width and to+width, and remains 0 beyond. No inferred width." }
+        factor:
+          type: string
+          x-ref:
+          - planet-factor
+        weight:
+          type: number
+          minimum: 0
+          x-unit: '1'
+          description: 'Its share of the match: the library''s top three 3, the rest 1, until tuned.'
+        want:
+          enum:
+          - high
+          - low
+          - band
+          - in
+          - not-in
+          description: Numeric high/low strength, SI band, or explicit categorical membership. Never infer intent
+            from prose.
+        soft:
+          type: number
+          exclusiveMinimum: 0
+          maximum: 1
+          x-unit: '1'
+          description: Required band ramp width as a fraction of max-min, applied outside the inclusive full-score
+            interval.
         signal:
-          $ref: "planet-factor.schema.yaml#/definitions/factor_signal"
-          description: "Per-pattern evidence override. Feature proximity is model screening, not measured composition or origin."
-        why: { type: string, description: "The library's own words: how the factor makes or shapes it." }
-  when: { type: array, items: { $ref: "planet-layer.schema.yaml#/definitions/condition" }, description: "Hard conditions: a place that fails one does not match at all (no glacier below the snowline)." }
-  vocabulary_id: { type: integer, minimum: 1, maximum: 65535, x-unit: "1", description: "Its id in ground-vocabulary.pattern." }
-  scale: { type: number, exclusiveMinimum: 0, x-unit: m, description: "How big one is, typically." }
-  sources: { type: array, items: { type: string } }
-  library_status: { type: string, description: "The library's own status for it (written, stub...)." }
-  status: { enum: [draft, published, retired] }
-  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }
+          $ref: planet-factor.schema.yaml#/definitions/factor_signal
+          description: Per-pattern evidence override. Feature proximity is model screening, not measured composition
+            or origin.
+        why:
+          type: string
+          description: 'The library''s own words: how the factor makes or shapes it.'
+        required:
+          type: boolean
+          description: A gate, excluded from weighted scoring. Unknown evidence never satisfies it.
+        min:
+          type: number
+          x-unit-from: factor
+          description: Band bound in the raw signal SI unit; not normalized strength.
+        max:
+          type: number
+          x-unit-from: factor
+          description: Band bound in the raw signal SI unit; not normalized strength.
+        classes:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            type: string
+          description: Explicit class_map keys of the referenced categorical factor.
+        unresolved:
+          type: boolean
+          description: Unresolved scientific intent or decay constant. Always evaluates unknown; cannot gate or
+            place.
+        tau_relax_s:
+          type: number
+          exclusiveMinimum: 0
+          x-unit: s
+          description: 'TIME only: decay age since actual formation/last activity, never crust age.'
+        source:
+          type: string
+        when:
+          type: array
+          items:
+            $ref: '#/definitions/numeric_condition'
+  when:
+    type: array
+    items:
+      $ref: '#/definitions/numeric_condition'
+  vocabulary_id:
+    type: integer
+    minimum: 1
+    maximum: 65535
+    x-unit: '1'
+    description: Its id in ground-vocabulary.pattern.
+  scale:
+    type: number
+    exclusiveMinimum: 0
+    x-unit: m
+    description: How big one is, typically.
+  sources:
+    type: array
+    items:
+      type: string
+  library_status:
+    type: string
+    description: The library's own status for it (written, stub...).
+  status:
+    enum:
+    - draft
+    - published
+    - retired
+  basis:
+    $ref: ../../common.schema.yaml#/definitions/basis
+  legacy_when:
+    type: array
+    items:
+      $ref: planet-layer.schema.yaml#/definitions/condition
+    description: Historical op/value conditions, ignored by the new rule evaluator.
+  kinds:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items:
+      type: string
+      pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+    description: Catalogue kind slugs this rule realises; each resolves to planet-feature.<slug>.
+  trigger_rule:
+    type: string
+    x-ref:
+    - planet-feature
+    description: Feature trigger is the authoritative recognition rule; factors alone cannot place this kind.
+  legacy_sources:
+    type: array
+    items:
+      type: string
+    description: Retired duplicate source names resolve to this one canonical rule.
+  legacy_vocabulary_ids:
+    type: array
+    items:
+      type: integer
+      minimum: 1
+      maximum: 65535
+      x-unit: '1'
+    description: Frozen ground vocabulary IDs retained as aliases; never reassigned.
+definitions:
+  numeric_condition:
+    type: object
+    additionalProperties: false
+    required:
+    - field
+    properties:
+      field:
+        type: string
+        x-ref:
+        - planet-field
+      min:
+        type: number
+        x-unit-from: field
+      max:
+        type: number
+        x-unit-from: field
+      source:
+        type: string

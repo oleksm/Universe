@@ -7,39 +7,51 @@ family: fluvial
 factors:
 - factor: planet-factor.tect-fault
   weight: 3
-  why: active range-front fault keeps relief and accommodation
+  why: 'active range-front fault keeps relief and accommodation Duplicate library context: Active range-front normal
+    faults create relief and accommodation at the apex'
   want: high
 - factor: planet-factor.tect-uplift
   weight: 1
-  why: range uplift vs basin subsidence; slow uplift causes fan-head trenching
+  why: 'range uplift vs basin subsidence; slow uplift causes fan-head trenching Duplicate library context: Uplift
+    renews catchment relief and supply; ratio to basin subsidence sets fan entrenchment'
   want: high
 - factor: planet-factor.slope-relief
   weight: 3
-  why: steep catchment debouches onto low gradient; fan slope 1.5-25 deg
+  why: 'steep catchment debouches onto low gradient; fan slope 1.5-25 deg Duplicate library context: Abrupt slope
+    drop where confined channel exits; fan slope 1.5-25 deg'
   want: low
 - factor: planet-factor.rock-type
   weight: 1
-  why: mudstone basins give larger steeper fans (Af=2.4Ad^0.88 vs 1.3 sandstone)
-  want: high
+  why: 'mudstone basins give larger steeper fans (Af=2.4Ad^0.88 vs 1.3 sandstone) Duplicate library context: Mudstone
+    or clay-rich saprolite source favours debris-flow fans; coarse permeable regolith gives fluvial fans'
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - clastic-fine
 - factor: planet-factor.sed-supply
   weight: 3
-  why: abundant weathered debris; fine regolith favours debris-flow fans
+  why: 'abundant weathered debris; fine regolith favours debris-flow fans Duplicate library context: Coarse, abundant
+    supply; calibre and catchment size set slope and area'
   want: high
 - factor: planet-factor.clim-arid
   weight: 1
-  why: arid/semi-arid sparse cover favours fans and debris flows
+  why: 'arid/semi-arid sparse cover favours fans and debris flows Duplicate library context: Arid/semi-arid with
+    sparse vegetation; also humid areas with intense rain'
   want: high
 - factor: planet-factor.clim-storm
   weight: 1
-  why: flash floods and debris flows build lobes, avulse channels
+  why: 'flash floods and debris flows build lobes, avulse channels Duplicate library context: Intense rare storms
+    trigger debris flows and sheetfloods'
   want: high
 - factor: planet-factor.base-level
   weight: 1
-  why: axial river erosion trims toe, entrenches fan
+  why: 'axial river erosion trims toe, entrenches fan Duplicate library context: Basin floor or axial river trims
+    toe; base-level fall entrenches fan'
   want: high
 - factor: planet-factor.clim-history
   weight: 1
-  why: wetter/glacial phases shift aggradation/incision
+  why: 'wetter/glacial phases shift aggradation/incision Duplicate library context: Pluvial-arid shifts cause aggradation/incision
+    phases, fan segmentation'
   want: high
 - factor: planet-factor.ice-extent
   weight: 1
@@ -47,11 +59,20 @@ factors:
   want: high
 - factor: planet-factor.time
   weight: 1
-  why: 1 kyr-2 Myr
+  why: '1 kyr-2 Myr Duplicate library context: 1 kyr-1 Myr; desert varnish and pavements age the surfaces'
+  want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
+- factor: planet-factor.events
+  weight: 1
+  why: Debris flows and floods build lobes, avulsions
   want: high
 vocabulary_id: 47
 sources:
 - https://en.wikipedia.org/wiki/Alluvial_fan
+- https://en.wikipedia.org/wiki/Basin_and_Range_Province
+- https://www.nps.gov/subjects/geology/arid-landforms.htm
 library_status: written
 source: fluvial.fan.alluvial_fan
 levels:
@@ -78,15 +99,37 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
 - of:
   - factors.want
   tier: derived
   review: true
   source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
-  note: 'planet-factor.tect-uplift: Range uplift supplies relief; slow uplift describes fan-head trenching
-    rather than the primary driver. planet-factor.clim-arid: The why text favors arid conditions; sparse vegetation,
-    low rain/relief or weak soil are effects or other quantities.'
+  note: 'planet-factor.tect-uplift: Range uplift supplies relief; slow uplift describes fan-head trenching rather
+    than the primary driver. planet-factor.clim-arid: The why text favors arid conditions; sparse vegetation, low
+    rain/relief or weak soil are effects or other quantities.'
+- of:
+  - legacy_sources
+  - legacy_vocabulary_ids
+  - factors
+  tier: derived
+  source: planet-forge docs/research/reconcile-sim-registry-2026-10-24.md
+  note: Duplicate control vector merged once; canonical weights/wants retained on shared factors, alternate explanatory
+    text retained. Frozen vocabulary IDs resolve as aliases; no ID is reassigned.
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: fan
+legacy_sources:
+- arid.slope.alluvial_fan
+legacy_vocabulary_ids:
+- 14
+kinds:
+- alluvial-fan

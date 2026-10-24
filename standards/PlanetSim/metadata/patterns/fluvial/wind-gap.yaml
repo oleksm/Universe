@@ -24,7 +24,10 @@ factors:
 - factor: planet-factor.rock-soluble
   weight: 1
   why: karst subsurface piracy
-  want: high
+  want: in
+  classes:
+  - rock-unit.limestone
+  source: https://www.usgs.gov/publications/subsidence-hazards-due-evaporite-dissolution-united-states
 - factor: planet-factor.base-level
   weight: 1
   why: lower base level of the capturing stream
@@ -33,6 +36,9 @@ factors:
   weight: 1
   why: persists on divide Myr after capture
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 154
 sources:
 - https://en.wikipedia.org/wiki/Stream_capture
@@ -63,8 +69,8 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
 - of:
   - factors.want
   tier: derived
@@ -72,5 +78,15 @@ basis:
   source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
   note: 'planet-factor.rock-layers: Alternating strong/weak beds or caprock require layering contrast; flat/weak
     does not request absence of layering.'
+- of:
+  - factors.classes
+  - factors.required
+  tier: derived
+  source: https://www.usgs.gov/publications/subsidence-hazards-due-evaporite-dissolution-united-states
+  note: Soluble lithology is necessary for the named solutional-karst forms; limestone purity, thickness, groundwater
+    and dissolution history still require separate evidence. Elsewhere it remains a modifier. Unknown evaporites
+    cannot become absence.
 status: draft
 look: trellis
+kinds:
+- wind-gap

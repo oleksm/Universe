@@ -16,7 +16,12 @@ factors:
 - factor: planet-factor.rock-type
   weight: 1
   why: Cap bed must resist weathering; underlying shale erodes faster
-  want: high
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - clastic-coarse
+  - carbonate
+  required: true
 - factor: planet-factor.water-discharge
   weight: 3
   why: Regularly spaced cross-strike streams cut hogback into a row of triangles
@@ -37,6 +42,9 @@ factors:
   weight: 1
   why: Facets degrade as streams lower base; age of exposure sets height
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 160
 sources:
 - https://en.wikipedia.org/wiki/Flatiron_(geomorphology)
@@ -67,8 +75,8 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
 - of:
   - factors.want
   tier: derived
@@ -76,5 +84,15 @@ basis:
   source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
   note: 'planet-factor.rock-layers: Alternating strong/weak beds or caprock require layering contrast; flat/weak
     does not request absence of layering.'
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: trellis
+kinds:
+- flatiron

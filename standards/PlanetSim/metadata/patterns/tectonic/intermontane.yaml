@@ -9,22 +9,26 @@ factors:
   weight: 3
   why: 'a structural trough between ranges: forearc (California''s Central Valley), foreland, or between thrust
     sheets'
-  want: high
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - intermontane-basin
+  - foreland-basin
+  required: true
 - factor: planet-factor.sed-supply
   weight: 3
-  why: 'filled by the sediment the ranges shed: alluvial fans at the margins, fine floodplain and lake beds
-    in the axis; fill several km thick'
+  why: 'filled by the sediment the ranges shed: alluvial fans at the margins, fine floodplain and lake beds in the
+    axis; fill several km thick'
   want: high
 - factor: planet-factor.base-level
   weight: 3
-  why: '(the library writes HYDRO_BASIN, which its vocabulary lacks: mapped here by the registry, to confirm)
-    an axial river gathers the fans'' streams; closed or poorly drained floors hold lakes in wet periods (Tulare,
-    Corcoran)'
+  why: '(the library writes HYDRO_BASIN, which its vocabulary lacks: mapped here by the registry, to confirm) an
+    axial river gathers the fans'' streams; closed or poorly drained floors hold lakes in wet periods (Tulare, Corcoran)'
   want: high
 - factor: planet-factor.clim-arid
   weight: 1
-  why: '(the library writes CLIM, which its vocabulary lacks: mapped here by the registry, to confirm) rain
-    shadow of the seaward range sets fan size and lake persistence'
+  why: '(the library writes CLIM, which its vocabulary lacks: mapped here by the registry, to confirm) rain shadow
+    of the seaward range sets fan size and lake persistence'
   want: high
 vocabulary_id: 166
 sources:
@@ -56,7 +60,15 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: dendritic

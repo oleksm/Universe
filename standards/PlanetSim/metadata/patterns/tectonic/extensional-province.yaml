@@ -8,7 +8,12 @@ factors:
 - factor: planet-factor.tect-setting
   weight: 3
   why: thickened/hot continental lithosphere, back-arc or post-orogenic collapse
-  want: high
+  want: in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - rift-extensional
+  - back-arc
+  required: true
 - factor: planet-factor.other-extension-amount
   weight: 3
   why: strain ~100% (Basin and Range) gives wide rift; low strain narrow rift
@@ -37,6 +42,9 @@ factors:
   weight: 1
   why: ~17 Myr (Basin and Range)
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 173
 sources:
 - https://en.wikipedia.org/wiki/Basin_and_Range_Province
@@ -66,14 +74,21 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
 - of:
   - factors.want
   tier: derived
   review: true
   source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
-  note: 'planet-factor.other-extension-amount: Large strain gives broad extension; low strain is a narrow-rift
-    contrast.'
+  note: 'planet-factor.other-extension-amount: Large strain gives broad extension; low strain is a narrow-rift contrast.'
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: dendritic

@@ -646,6 +646,20 @@ params:
   said_as:
     unit: Myr
     factor: 31557600000000.0
+- name: range crest height
+  value: 1500.0
+  unit: m
+  meaning: Inherited range-crest recognition screen from the exact consumer fallback; not a universal physical formation
+    threshold.
+  source: planet-forge42817cd crates/forge-core/src/models/tectonic/landscape.rs:749; docs/research/threshold-inventory-2026-10-24.md
+  open: true
+- name: range crest relief
+  value: 1000.0
+  unit: m
+  meaning: Inherited range-crest recognition screen from the exact consumer fallback; not a universal physical formation
+    threshold.
+  source: planet-forge42817cd crates/forge-core/src/models/tectonic/landscape.rs:749; docs/research/threshold-inventory-2026-10-24.md
+  open: true
 depends_on:
 - planet-process.coast-features
 - planet-process.relief-volcano-types
@@ -665,6 +679,14 @@ basis:
   note: 'planets, 22 Oct 2026: docs/full-landscape-plan-2026-10-22.md phase 1 Phase3 seasonal/wind/coastal settings
     from planet-forge042215e, corrected SI/provenance in3c06390; all retained for review.'
   review: true
+- of:
+  - params
+  tier: invented
+  review: true
+  source: planet-forge42817cd docs/research/threshold-inventory-2026-10-24.md
+  note: 75 inherited calibrated-later values unchanged; two previously silent range-crest fallbacks now recorded
+    verbatim. Source code documents provenance, not scientific calibration. No inherited arbitrary number promoted
+    to a sourced hard gate.
 unverified:
 - First coarse-lattice recognition rules do not establish all proposed feature.trigger predicates, origin or fine
   geometry. Preserve proxy/candidate provenance and missing required evidence; raw emitted counts are not a confirmed-type

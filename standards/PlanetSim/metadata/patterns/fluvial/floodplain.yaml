@@ -12,7 +12,7 @@ factors:
 - factor: planet-factor.water-discharge
   weight: 3
   why: 'specific stream power: <10 W/m2 low, 10-300 medium, 300-1000 high energy'
-  want: low
+  want: high
 - factor: planet-factor.clim-storm
   weight: 1
   why: overbank floods every 1-2 yr deposit levees, splays
@@ -28,7 +28,10 @@ factors:
 - factor: planet-factor.bio-veg
   weight: 1
   why: vegetation stabilizes banks, traps fines
-  want: high
+  want: not-in
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  classes:
+  - barren
 - factor: planet-factor.base-level
   weight: 1
   why: rising base level aggrades; fall incises into terraces
@@ -41,6 +44,9 @@ factors:
   weight: 1
   why: 0.1 kyr-1 Myr
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 vocabulary_id: 58
 sources:
 - https://en.wikipedia.org/wiki/Floodplain
@@ -71,7 +77,23 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors.want
+  tier: derived
+  source: planet-forge docs/research/reconcile-kinds-2026-10-24.md
+  note: 'M3 semantic correction: water-discharge wants high; direction checked against its literal signal and the
+    supplied geomorphic explanation.'
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: floodplain
+kinds:
+- floodplain

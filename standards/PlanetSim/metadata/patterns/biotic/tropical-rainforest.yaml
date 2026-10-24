@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../../schema/planet-pattern.schema.yaml
+identity:
+  key: planet-pattern.biotic.catalogue.tropical-rainforest
+  name: Tropical rainforest
+  about: Recognition is owned by the explicit feature trigger; unavailable causal and geometric evidence remains
+    unknown.
+family: biotic
+look: shield
+kinds:
+- tropical-rainforest
+trigger_rule: planet-feature.tropical-rainforest
+factors: []
+source: catalogue.tropical-rainforest
+levels:
+- planet-level.10000-km
+- planet-level.10-km
+sources:
+- planet-forge docs/research/kinds-without-pattern-2026-10-24.json
+- docs/planet-feature-trigger-rules-2026-10-22.md
+status: draft
+basis:
+- of:
+  - kinds
+  - trigger_rule
+  - identity
+  tier: derived
+  source: planet-feature.tropical-rainforest.trigger; planet-forge f3efbac registry-rules-contract-2026-10-24.md
+  note: Feature trigger and its local trigger_params are the rule, not an inferred family-wide control vector. Requires
+    full trigger evaluation/record evidence; an empty weighted vector never places a kind.
+- of:
+  - look
+  tier: invented
+  review: true
+  note: Conservative existing render archetype pending explicit consumer treatment; not a scientific class or new
+    placement rule.

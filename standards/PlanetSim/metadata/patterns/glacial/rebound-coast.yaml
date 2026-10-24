@@ -29,10 +29,15 @@ factors:
   weight: 1
   why: since deglaciation; present peak ~11 mm/yr (Gulf of Bothnia)
   want: high
+  unresolved: true
+  source: planet-forge docs/research/process-geomorphology-2026-10-24.md section 3.2 (unverified order-of-magnitude
+    table; not a decay constant)
 - factor: planet-factor.tect-setting
   weight: 1
   why: former ice-sheet centre vs peripheral bulge (subsiding coast)
-  want: high
+  want: in
+  unresolved: true
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
 - factor: planet-factor.clim-history
   weight: 1
   why: readvances add load, causing transgressive phases
@@ -67,7 +72,17 @@ basis:
     arch_of
   note: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference,
     corrected to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous
-    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers
-    use explicit fields, never repeat prose/key inference.
+    categorical, compound or nonmonotonic factors remain review-required; no band bounds invented. Consumers use
+    explicit fields, never repeat prose/key inference.
+- of:
+  - factors.classes
+  - factors.required
+  - factors.unresolved
+  tier: derived
+  source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json
+  note: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class
+    evidence is not a verified physical classification; unresolved classes remain unknown.
 status: draft
 look: glacial
+kinds:
+- raised-shoreline-rebound
