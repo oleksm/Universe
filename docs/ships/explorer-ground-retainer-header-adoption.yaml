@@ -194,6 +194,21 @@ header_choice:
     disposition: Existing0.042618110kgdensity-times-compressed-shape is provisional until free/closed material volume
       is reconciled. This is new explicit strip design; do not silently alter silicone density, all other seals
       or wholemass.
+  frozen_v4_receipt:
+    packet: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/rear-headroom-current-study/frozen-handoff-v4.json
+    packet_sha256: 26f2f6917029f2051773aaf939fe9b77c3c3c037539950212758a3b612a29762
+    candidate_sha256: 3ff9f56783cf8720bb8f279ee36e544614df2412cded5bc169568f727d59a2eb
+    delta_sha256: 27a9339f723aa30a5739850e35d8ddc9f4cdf95ed557dd388d66cd4e73301312
+    checks: 15frozen file hashes/sizes verified;8positive raw indexed-closed meshes and final-audit row volumes
+      checked.6replace+2add exactmap. V4audit delta binding matches; old V3aliases historical.
+    adoption: Accept bounded header/frame/cover/leaf/channel geometry and replay evidence as locally scoped; upper
+      silicone cross-section/material quantity still must incorporate explicit free/closed-volume decision89c9f01d2
+      before final combined quantity.
+    reported_checks: 138affected sampled states and4rear traversals with>=50.075mm path sphere margin reported;
+      not independently rerun. Full combined V5/header export/state/wholemass still needed.
+    gross_delta_kg: -16.542060356929028
+    mass_scope: Gross localdelta only. Same-material union in combined ledger required, free/closedseal correction
+      pending; do not add this directly to6751.249877kg and call it wholemass.
 next: Blender integrates adopted V5+chosen header onto latest ground candidate, freezes complete material ledger/current
   named residual witnesses and fresh closed/open export/state/envelope. Registry can then record whole ground-stage
   figures; separate flight fit/pressure/load qualification not required to report truthful ground quantities.
