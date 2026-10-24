@@ -34,6 +34,17 @@ choice:
       parts split, never the wire or bend.
     confidence: invented/review; no circuit, EMC or thermal design
   wire_support: One lacing/clip point per bundle to the housing
+rear_retention:
+  source_task: 20261024T163810-blender-bd27
+  proposal: 2 mm keyed rear plate and steel circlip at the existing shell rear, a 1.8 mm hole per wire, reduced 0.5 mm2
+    contact barrels, no internal jacket
+  choice: Accepted with one change - the plate is rigid 30% glass-filled PEEK (about 1510 kg/m3), not PTFE, which cold
+    flows under the steady retention load. Contacts are held by stainless retention clips in the insert; the plate
+    backs them and is keyed against turning; holes 1.8 mm with a 0.3 mm lead-in for the 1.6 mm wire. Same direction as
+    the shell 25 retention (docs/ships/explorer-shell25-insert-layout.yaml).
+  CAN: H/L twisted from the plate to the board terminal once its route is drawn; the short fan-out stays untwisted
+    only within the last 25 mm
+  invented/review: true
 remaining:
 - Drawn internal routing, clips and board mount with clearance
 - Reconcile the 8 kg nominal (optics 4, housing 2, electronics 2) with the drawn 2.2025 kg partial exterior
