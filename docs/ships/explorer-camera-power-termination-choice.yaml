@@ -1,0 +1,56 @@
+status: Chosen prototype internal termination for equipment.sensors.camera.s1 service study; not product release,
+  rating or selected fit
+source_task: 20261024T123807-blender-1e9c
+packet: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-fit-current-study/camera-service-v3/handoff.json
+packet_sha256: d88eba14bb212213ab757a023eea01dd4869c960c9e6ba9564e83c2aae68243d
+finding: The shell 17 dc-in and shell 11 data-1/data-2 receptacles are the product's half (male power, female CAN).
+  The 7.4 mm run.cable-dc-600v-3x2p5mm2 and 4.4 mm run.cable-data-can are the HARNESS on the mating side, behind
+  the harness plug. They do not enter the camera. V3's four R59 power bends fail because they put the harness
+  inside the housing; that is the wrong side, not a cable to shrink.
+choice:
+  internal_power:
+    item: run.wire-0p5mm2
+    count: 3            # contacts 1 plus, 2 minus, 3 earth; spares 4..7 unwired, sealed by the insert
+    OD_m: 0.0016
+    bend_radius_m: 0.016
+    draw_A: 0.357       # 10 W at 28 V, record ports dc-in
+    single_wire_vacuum_A: 5
+    check: 0.357 A is 7% of a single wire's 5 A; a three-wire bundle keeps a wide margin even at half rating.
+      Drop over a 0.15 m tail, both ways, at 0.0344 ohm/m is 3.7 mV.
+  internal_CAN:
+    item: run.wire-0p5mm2
+    per_port: 4         # H, L, return, screen drain; spares unwired
+    pairing: H/L twisted as a pair; data-1 to data-2 pass-through as the record's internal joined bus, with one stub
+      to the electronics
+  contacts: Shell 17 crimp contacts are for wires up to 2.5 mm2; use the reduced-barrel contact for 0.5 mm2 in the
+    same insert cavities. Visible connector geometry unchanged. Contact size choice is invented/review.
+  straight_tail: Keep V3's clear 10 mm straight terminal reservation behind each insert, then the wires bend at R16
+    or more to the electronics.
+  electronics_allocation:
+    what: Power-conditioning and CAN interface board reservation inside the CAM1-01 lens/sensor envelope
+    box_m: [0.06, 0.06, 0.008]
+    place: Where it fits behind the sensor in the current housing; author measures and reports it
+    mass: Inside the record's undisclosed 2 kg nominal; no new mass row until the electronics are drawn
+    confidence: invented/review; no circuit, EMC or thermal design
+  wire_support: One lacing/clip point per bundle to the housing, no grip on the harness jacket inside
+  internal_saddles: V3's internal 12 mm saddles, silicone liners and 7.4/4.4 mm witnesses on the product side retire.
+    The grooved terminal capture, removable carriers, M2 receivers and extraction path stay.
+harness_side:
+  power: run.cable-dc-600v-3x2p5mm2, female shell 17 harness plug, 12 mm grip at the plug backshell, R59 bend
+    outside the product
+  CAN: run.cable-data-can, male shell 11 harness plug, 12 mm grip at its backshell, R35 bend outside
+  open: Plug insertion, bayonet turn and the external bends against the installed hull, mount and neighbours are
+    the installed replay still owed; not checked here.
+same_rule_elsewhere: Any product-side panel (LS, altimeter, coolant loop, air cooler) terminates its receptacle
+  contacts with internal wire; harness jacket grips and bends sit on the harness plug side. LS V3 intake
+  (docs/ships/explorer-ls-service-connections-v3-intake.yaml) carries this as an open question on where its rear
+  cables are.
+remaining:
+- Drawn electronics board and wire routing with actual clearance in the housing
+- Harness plug insertion, bayonet and external bends in the installed replay
+- Contact crimp, EMC, thermal and vibration qualification
+- Raw GLB service frames, generator/package/registry update after exact bytes
+scope:
+  active_record_created: false
+  product_original_changed: false
+  installed_ground_changed: false
