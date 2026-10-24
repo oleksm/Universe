@@ -1,0 +1,156 @@
+status: chosen draft physical boundary design policy; named-interface application still pending
+request: 20261023T202250-blender-7836
+source_sha256: 8fc3a7e3ab384395592c35dde78b59a440830bbdae1f4a7ed59e55c07af8927e
+bindings:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/material-solid-unions.json: 5306a950b2ffd55f5f5d7b045996532dadc8791e5b23a416ada66f4b2b35992e
+  docs/ships/explorer-material-stock-schedule.yaml: bda8762b7c57d724ff1e416da6817307d3a5ce5309874bdda74d30ae67af04e3
+current_measurement:
+  objects: 952
+  positive_candidate_solids: 939
+  rejected_objects: 13
+  same_material_union_candidate_kg: 5920.434566216857
+  hidden_dry_reserve_kg: 96.1
+  accepted_whole_mass_kg: null
+  cross_material_pairs:
+  - material_a: material.aluminium-alloy-6061
+    material_b: material.fused-silica
+    intersection_volume_m3: 0.012270359763780608
+    status: Error.NoError
+    disposition: physical material conflict or intentionally unresolved visual envelope; no automatic material priority
+  - material_a: material.aluminium-alloy-6061
+    material_b: material.silicone-rubber
+    intersection_volume_m3: 0.026021614751507972
+    status: Error.NoError
+    disposition: physical material conflict or intentionally unresolved visual envelope; no automatic material priority
+  - material_a: material.aluminium-alloy-6061
+    material_b: material.high-strength-steel-4340
+    intersection_volume_m3: 0.0004979091706367862
+    status: Error.NoError
+    disposition: physical material conflict or intentionally unresolved visual envelope; no automatic material priority
+  - material_a: material.aluminium-alloy-6061
+    material_b: material.epdm-rubber
+    intersection_volume_m3: 1.237008172389622e-05
+    status: Error.NoError
+    disposition: physical material conflict or intentionally unresolved visual envelope; no automatic material priority
+  - material_a: material.aluminium-alloy-6061
+    material_b: material.titanium-alloy-ti-6al-4v
+    intersection_volume_m3: 3.773684449900208e-05
+    status: Error.NoError
+    disposition: physical material conflict or intentionally unresolved visual envelope; no automatic material priority
+  - material_a: material.aluminium-alloy-6061
+    material_b: material.ptfe
+    intersection_volume_m3: 9.35996493952543e-05
+    status: Error.NoError
+    disposition: physical material conflict or intentionally unresolved visual envelope; no automatic material priority
+  - material_a: material.fused-silica
+    material_b: material.silicone-rubber
+    intersection_volume_m3: 0.02135542939517519
+    status: Error.NoError
+    disposition: physical material conflict or intentionally unresolved visual envelope; no automatic material priority
+  rejected_names:
+  - Shoulder -1 aft interface blind cover
+  - Shoulder 1 aft interface blind cover
+  - Shoulder 1 end closure -1
+  - Shoulder 1 casing 2-4
+  - Shoulder -1 end closure -1
+  - Shoulder -1 casing 2-2
+  - Aft housing 1 casing 1-4
+  - Aft housing 1 casing 0-4
+  - Crew access floor | round opening
+  - Crew access belly | round opening
+  - Raised floor | perimeter return 2
+  - Raised floor | perimeter return 5
+  - Raised floor | perimeter return 6
+authority: Registry selects prototype physical boundary intent within chosen material schedule; no density/gauge
+  reduction, qualification or old mass transfer. Blender owns geometry study; active hull remains unchanged until
+  explicit reviewed repair.
+rules:
+  same_material: 'Union can remove coincident duplicated matter in a defined physical component/assembly. Global
+    material unions are a measurement screen, not final assembly quantities: retain distinct moving parts, joint
+    boundaries and ownership even if same material. A collision is not a weld. Confirm common pose and closed orientation/voids;
+    do not discard internal cavities.'
+  cross_material: No material-wide priority, global subtraction order, averaged density or percentage discount.
+    Decide each named interface by function, using policy below. Different physical materials must partition material
+    space with explicit faces, clearances and ownership.
+  triple_overlap: Resolve all participating objects together into one nonoverlapping partition; pairwise intersection
+    volumes are not additive mass deductions. Keep volumes counted once and record all original/final material assignments.
+  geometry_vs_measurement: An overlap subtraction is a physical design assumption. Produce a separate derived solid/repair
+    study and explicit edit map, preserve source hashes and external appearance intent; do not silently change original
+    art mesh or report the boolean result as as-built geometry.
+  unresolved: Rejected/degenerate meshes and unclassified contacts remain explicit unknown quantities, never zero-mass
+    accepted parts. No whole mass until these and boundary conflicts are reconciled.
+  reserves: The96.1kg hidden dry reserve remains separate and unchanged; never spend it to cover known missing solid
+    volume, eliminate it to offset overlaps or add procurement offcut to installed mass.
+interface_policies:
+- materials:
+  - material.aluminium-alloy-6061
+  - material.fused-silica
+  policy: glazing_recess
+  chosen_intent: Preserve explicitly identified pane/lens/diffuser solid and its optical external surfaces. Design
+    named metal frame/bezel pocket/rebate around it; remove only an explicitly approved frame recess in a derived
+    assembly study. A pane cutting pressure skin or unrelated structure is a failed interface requiring redesign,
+    not automatic subtraction.
+  limits: Glass thickness/retention, frame load path and aperture remain explicit; no generic glass-over-metal priority.
+- materials:
+  - material.aluminium-alloy-6061
+  - material.silicone-rubber
+  policy: seal_land
+  chosen_intent: Define gasket/bondline as its own bounded land between named metal faces or between glazing and
+    metal, with a real finite gap. Retain necessary frame/pressure-wall thickness. Reconstruct overdrawn seal on
+    that land; metal pocket only if explicitly designed.
+  limits: No silicone wins over structural metal. No assumed compressed rubber geometry, modulus or pressure-seal
+    rating.
+- materials:
+  - material.fused-silica
+  - material.silicone-rubber
+  policy: glazing_bondline
+  chosen_intent: Preserve intended complete pane solid. Seal/bondline lies outside glass matter at the intended
+    edge/perimeter land, not as a second filled pane or whole-pane coating. Derive the named gasket from the drawn
+    perimeter and designed mating gap; if no space remains, mark interface failed and design a finite seal land.
+  limits: Do not merely subtract glass until the seal vanishes then call it resolved. Preserve external envelope/intent
+    and report any required design change.
+- materials:
+  - material.aluminium-alloy-6061
+  - material.high-strength-steel-4340
+  policy: fastener_or_pin_bore
+  chosen_intent: For an identified fixing/pin/shaft intended to penetrate a named metal receiver, preserve actual
+    steel hardware and create the explicit matching bore/seat in that receiver. Name actual axis, shank and head/washer
+    seats, engagement and tool path.
+  limits: No subtracting steel from arbitrary structural mesh; an unintended clash, undersized receiver or missing
+    bearing/engagement returns to design.
+- materials:
+  - material.aluminium-alloy-6061
+  - material.epdm-rubber
+  policy: replaceable_wear_pad
+  chosen_intent: For a named sole/grip/cap/anti-slip piece, define the rubber backing and support mating face. Place
+    rubber on its receiver or design an explicit shallow seat with retained metal support.
+  limits: Do not carve structural metal to preserve a rubber visual envelope. No traction, cold, landing or compression
+    rating inferred.
+- materials:
+  - material.aluminium-alloy-6061
+  - material.titanium-alloy-ti-6al-4v
+  policy: gear_mount_or_moving_joint
+  chosen_intent: Treat edited titanium gear bodies and aluminium pad/support pieces as separate physical components.
+    Identify intended attachment/bearing/pivot surfaces; design bore/seat or reposition a wrong attachment only
+    in a reversible study.
+  limits: No default material priority. Moving interference must be tested over gear states; merging or subtracting
+    the titanium core to clear a pad cannot hide a mechanism clash.
+- materials:
+  - material.aluminium-alloy-6061
+  - material.ptfe
+  policy: slide_wear_insert
+  chosen_intent: For each named slide shoe, use an explicit PTFE insert/liner pocket and retained aluminium carrier
+    with separate contact faces. Preserve finite PTFE thickness and required metal web; no body-wide subtraction.
+  limits: Confirm intended sliding direction, retained shoe and all states. Zero-volume liner or missing carrier
+    web is a design failure, not mass correction.
+application_rows_required:
+- exact object names, assemblies/material roles and source/pose
+- intersection volume and bounds; grouped triple/higher conflicts
+- physical function and chosen policy or justified exception
+- protected surfaces, intended mating gap and receiver wall/engagement retained
+- explicit source-to-derived operations and final positive valid material volumes
+- each-material/each-assembly mass and boundary contact verification
+- state/sweep implications, rejected solids and remaining unknowns
+next_task: '20261023T202329-registry-325b: Blender produces named conflict roster before final partitions. Apply
+  local policies in separate reviewed geometry study; new numerical seal/gap/bore choices must be explicit prototype
+  design assumptions, not silently inferred compliance.'

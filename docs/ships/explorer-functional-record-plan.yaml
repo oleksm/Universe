@@ -1174,3 +1174,10 @@ current_material_design:
     calculation proceeds from reconciled solids; whole mass not yet computed.
   hidden_dry_allowance_kg: 96.1
   historical_source: Earlier b29b source ledger and studies above remain historical; no QC acceptance transfer.
+  boundary_policy: docs/ships/explorer-material-boundary-policy.yaml
+  latest_candidate_mass:
+    same_material_union_subtotal_kg: 5920.434566216857
+    positive_objects: 939
+    rejected_objects: 13
+    scope: Measurement candidates only; seven cross-material conflicts and rejected geometry remain unresolved.
+      No whole mass.
