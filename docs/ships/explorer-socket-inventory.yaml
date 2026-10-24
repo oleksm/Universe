@@ -1,7 +1,7 @@
 status: Registry's initial hull-owned socket inventory for hull.explorer-study (hull-and-sockets delivery); kinds, sizes
   and mount interfaces only - no equipment, holders, poses or ratings. A proposal the owner may revise.
 source_task: 20261024T175941-blender-96ad (with ships 20261024T180012-ships-6fe6)
-contract: /home/alexm/.agents/reviews/ships/explorer-socket-only-record-contract.json
+contract: /home/alexm/.agents/reviews/ships/explorer-final-ground-20261024/explorer-socket-only-record-contract.json
 rule: standards/SpaceshipBuilding ship-rule.scope 1.1.1 - sockets on the bare hull, fit and thrusters stay empty
 basis:
   why_this_set: One socket set for each base block the engine requires to commission a ship (docs/ships/explorer-flight-contract.md
@@ -14,15 +14,16 @@ basis:
   review: true
 sockets:                        # name, kind, size, mount, count; zone is a requirement on Blender's receiver placement
 - {names: [main_port, main_starboard], kind: engine, size: 1, mount: mount.engine-s1,
-   zone: 'Aft, thrust axis along the nose (+X push), symmetric about the centreline'}
+   zone: 'Aft, thrust axis along the nose (the source frame''s nose is -X, so the push is toward -X), symmetric about the centreline'}
 - {names: [lift_port, lift_starboard], kind: engine, size: 1, mount: mount.engine-s1,
-   zone: 'Belly, thrust up, symmetric about the centreline, longitudinally within the ship''s loaded COM band so level hover
-     can hold across a propellant burn; Ships sets the station on the bare hull'}
+   zone: 'Belly, thrust up, symmetric about the centreline, authored at X 1.12 from the bare hull COM 1.118 (Ships
+     socket-authoring-station-guidance.json). A loaded COM band cannot be promised before a player fits it; hover trim
+     with a given loadout is the shipyard''s check, not a socket claim'}
 - {names: [rcs_fore_port, rcs_fore_starboard, rcs_aft_port, rcs_aft_starboard], kind: engine, size: 1, mount: mount.engine-s1,
    zone: 'Four hull extremities, fore and aft on each side, as far from the COM as the hull allows; exterior, plumes clear of
      the skin and gear for a block up to 0.4 m'}
 - {names: [tank_1, tank_2], kind: tank, size: 1, mount: mount.tank-s1,
-   zone: 'Near the COM band so propellant burn shifts it least (the burn-shift finding of c5207d9b8)'}
+   zone: 'Near the bare COM (X 1.12) so a propellant burn shifts it least (the burn-shift finding of c5207d9b8)'}
 - {names: [power_1, power_2], kind: power, size: 1, mount: mount.power-s1, zone: Interior, serviceable}
 - {names: [computer], kind: computer, size: 1, mount: mount.computer-s1, zone: Interior}
 - {names: [avionics], kind: avionics, size: 1, mount: mount.avionics-s1, zone: Interior}
