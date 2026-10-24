@@ -1159,6 +1159,12 @@ owner_roof_tank_study:
         exist.
       fuel_only_screen: 500kg gives44s for one50kN CHS1pair or22s for fourCHS1atfull thrust, before reserves/cell/unusable;
         no mission selected.
+  attachment_contract:
+    path: docs/ships/explorer-roof-cradle-contract.yaml
+    route: Separate hull-owned measured cradle; four actual compact saddles/eight bores to real named hull frames.
+      No claim to generic tank-s1/M42 attachment.
+    services: 12 observed capped markers; physical mating/duty/COM data still required, with explicit owners.
+    status: Draft geometry contract, no new installed adapter/product/rating.
 current_material_design:
   schedule: docs/ships/explorer-material-stock-schedule.yaml
   source_sha256: 8fc3a7e3ab384395592c35dde78b59a440830bbdae1f4a7ed59e55c07af8927e

@@ -1,0 +1,545 @@
+status: chosen draft attachment route; measured geometry contract, no new installed/rated product
+request: 20261023T200501-ships-124c
+decision:
+  tank: Keep unchanged equipment.tank.hydrolox.0p5t and exact model SHA. Single centreline roof candidate as owner
+    requested; capacity/mission/fit not selected.
+  cradle: Develop a separate hull-owned roof cradle against actual four tank saddles/eight bore sites and real named
+    hull frames. Treat as owned structure/parts, outside the existing952-object schedule until its own roster/material/mass
+    exists.
+  identity: Reserve design identity explorer-study.roof-tank-cradle in this ledger only. Do not claim adapter.tank-s1,
+    mount.tank-s1 or an insert-M42 mate. Promote to part records after real drawing/stock/mass; a reusable adapter
+    product requires a complete independent interface/rating contract.
+  generic_record: mount.tank-s1 and the equipment generated M42 feet are geometrically incompatible with this installed
+    visual. Nominal class/envelope compatibility is not physical connection evidence. No generic mount bears/attachment
+    loads apply to compact feet.
+  no_silent_rewrite: Do not patch only generated foot coordinates, declare scale or move the unchanged visual to
+    match generic feet. Preserve discrepancy explicitly until a product-specific physical attachment definition
+    and generator handling are reviewed together.
+  runtime: A future static package/nominal slot draw is not proof of mechanical attachment, fluid connection or
+    commissioning. Whole mass and exact source/export remain mandatory for a truthful registered stage.
+bindings:
+  /home/alexm/.agents/reviews/ships/explorer-functional-20261023/roof-cradle-services-v2.json:
+    sha256: cff83ef33a9e638f20052df9e101a8b609758fb89793721ef2c31a8cecc65347
+  standards/SFO/metadata/equipment/tank-hydrolox-0p5t.yaml:
+    sha256: 3c75097f645dfe4fb9bc5014b6ca8aa1f5b13ae5115ec0fe7e0eda3e45abc64d
+  standards/SFO/metadata/mounts/tank-s1.yaml:
+    sha256: b648bb633aa0b3258d5033131714479e975a237b15e635c0acc7f33a14316883
+  /home/alexm/git/freefall-assets/models/tank-hydrolox-0p5t/v1/manifest.json:
+    sha256: d9ba6a61e6de461e32ec390f1cd29c487568c5ecfbdea0e925dea46ad689cd46
+  /home/alexm/git/freefall-assets/models/tank-hydrolox-0p5t/v1/model.glb:
+    sha256: 52fd4af3e84b13c03bd77ef7694cf694b02aa6a168a4891015c391f3ea431cf3
+  tools/standards/equipment_ports.py:
+    sha256: 069c1655670f5f4730ad4d2181d2983849fb10f7bd5acf93e5328002f53e8776
+  tools/standards/mounting.py:
+    sha256: e0de2e1b58a77a5bd24f1e622ee563fecd51e65674ed6a8c5bfbd4253ebe97d8
+frames:
+  package: glTF +Y up. Primary mount identity at base centre; metre, unit scale. Saddle datums independently read
+    from actual GLB.
+  source: Study Blender +Z up, nose -X. source = (3.3+gltf.x,-gltf.z,4.25+gltf.y). Study pose only; current hull
+    attachment still to be measured.
+  formal: Do not copy package/source axes into ship formal frame; use recorded full placement matrices.
+  package_to_source_rows:
+  - - 1.0
+    - 0.0
+    - 0.0
+    - 3.3
+  - - 0.0
+    - 0.0
+    - -1.0
+    - 0.0
+  - - 0.0
+    - 1.0
+    - 0.0
+    - 4.25
+  - - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+geometry:
+  actual_saddle_pitch_m: 0.5578171014785767
+  generic_socket_pitch_m: 5.292
+  pitch_ratio: 9.486980564010626
+  rigid_transform_result: 'Different interpoint distances: no rigid placement reconciles these two squares. A physical
+    transition piece would need both real interfaces, not a relabel.'
+  saddles:
+  - node: mount_saddle_1
+    package_gltf_m:
+    - 0.27890855073928833
+    - 0
+    - -0.27890855073928833
+    source_study_m:
+    - 3.578908550739288
+    - 0.27890855073928833
+    - 4.25
+    meaning: Saddle datum, not bolt centre, bearing face or rated port.
+  - node: mount_saddle_2
+    package_gltf_m:
+    - -0.27890855073928833
+    - 0
+    - -0.27890855073928833
+    source_study_m:
+    - 3.0210914492607115
+    - 0.27890855073928833
+    - 4.25
+    meaning: Saddle datum, not bolt centre, bearing face or rated port.
+  - node: mount_saddle_3
+    package_gltf_m:
+    - -0.27890855073928833
+    - 0
+    - 0.27890855073928833
+    source_study_m:
+    - 3.0210914492607115
+    - -0.27890855073928833
+    - 4.25
+    meaning: Saddle datum, not bolt centre, bearing face or rated port.
+  - node: mount_saddle_4
+    package_gltf_m:
+    - 0.27890855073928833
+    - 0
+    - 0.27890855073928833
+    source_study_m:
+    - 3.578908550739288
+    - -0.27890855073928833
+    - 4.25
+    meaning: Saddle datum, not bolt centre, bearing face or rated port.
+  eight_bearing_sites_package_blender_xyz_m:
+  - - 0.22810651386816758
+    - 0.27890855073928833
+    - 0.004781368176105483
+  - - 0.3297105876104091
+    - 0.27890855073928833
+    - 0.004781368176105483
+  - - -0.3297105876104091
+    - 0.27890855073928833
+    - 0.004781368176105483
+  - - -0.22810651386816758
+    - 0.27890855073928833
+    - 0.004781368176105483
+  - - -0.3297105876104091
+    - -0.27890855073928833
+    - 0.004781368176105483
+  - - -0.22810651386816758
+    - -0.27890855073928833
+    - 0.004781368176105483
+  - - 0.22810651386816758
+    - -0.27890855073928833
+    - 0.004781368176105483
+  - - 0.3297105876104091
+    - -0.27890855073928833
+    - 0.004781368176105483
+  bearing_site_scope: 'Measured bearing-site centres from Ships, not accepted contact plane/bolt-axis measurement.
+    Package Blender -> source: (3.3+x,y,4.25+z).'
+  observed_bore_diameter_m: 0.01673
+  reported_tool_corridor_m: 0.01076
+  reported_washer_footprint_m: 0.0269
+  fastener_decision: No bolt/thread/grade selected. Resolve whether reported tool/washer measures are radii/diameters
+    and check actual shank/head/washer/nut/tool insertion, bearing thickness and removal before choosing a real
+    stocked fastener. A16.73mm bore is not M42 and does not alone certify M16.
+joint_contract:
+  upper: Each of four saddle contacts names actual bearing faces/normals and its two bore axes. Cradle faces must
+    mate without unreported gaps/penetrations. Identify tank-side vs cradle-side ownership; retain existing saddle
+    mass in115kg tank tare.
+  lower: Each foot names actual hull member mesh/part, contact frame/face, stock section and continuous path into
+    hull structure. Proposed X3.0211/3.5789,Y+/-1.65,Z3.15 are seeds only; do not create fake sockets at them.
+  parts: Cradle beams, braces, pads, downstands, fasteners, thermal isolators and service brackets need separate
+    named solids, stock/material, cut size, mass/COM and joined endpoints. Roof skin, trim and tank insulation are
+    not substituted for a frame.
+  motion_and_thermal: State which joint fixes each degree of freedom and which provides thermal compliance. Avoid
+    silently fixing four cold feet rigidly. No stiffness/friction/preload credited without explicit evidence.
+  loads: Use Ships reaction convention and full force/moment load path, tank dry+contents+cradle/services and thermal/dynamic
+    cases. Four-way equal sharing is a screening assumption, not a capacity. No mission acceleration/rating selected.
+  registry_migration: equipment_ports.py:feet currently derives cradle foot ports from mount sockets and with_feet
+    replaces all foot-* entries; mounting.py:sockets regenerates generic sockets. A reviewed explicit physical-interface
+    source must be consumed by generator before activating compact foot ports. New mount records currently require
+    positive bears and per-point tension/compression/shear; do not fill these with zero/guesses to pass schema.
+services:
+- node: port_H2_outlet
+  circuit: H2
+  function: outlet
+  package_local:
+    rotation:
+    - 0
+    - -1
+    - 0
+    - 7.549790126404332e-08
+    translation:
+    - -0.03884861618280411
+    - 0.8836566209793091
+    - 0.8886172771453857
+  source_study_matrix:
+  - - -1.0
+    - 0.0
+    - -1.5099580252808664e-07
+    - 3.2611513838171957
+  - - -1.5099580252808664e-07
+    - 0.0
+    - 1.0
+    - -0.8886172771453857
+  - - 0.0
+    - 1.0
+    - 0.0
+    - 5.133656620979309
+  - - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+  semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+- node: port_H2_filldrain
+  circuit: H2
+  function: filldrain
+  package_local:
+    rotation:
+    - 0
+    - -1
+    - 0
+    - 7.549790126404332e-08
+    translation:
+    - 0.05080203711986542
+    - 0.8717032074928284
+    - 0.8886172771453857
+  source_study_matrix:
+  - - -1.0
+    - 0.0
+    - -1.5099580252808664e-07
+    - 3.3508020371198652
+  - - -1.5099580252808664e-07
+    - 0.0
+    - 1.0
+    - -0.8886172771453857
+  - - 0.0
+    - 1.0
+    - 0.0
+    - 5.121703207492828
+  - - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+  semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+- node: port_H2_pressurant
+  circuit: H2
+  function: pressurant
+  package_local:
+    rotation:
+    - 0
+    - -1
+    - 0
+    - 7.549790126404332e-08
+    translation:
+    - 0.041836973279714584
+    - 0.9374470114707947
+    - 0.8886172771453857
+  source_study_matrix:
+  - - -1.0
+    - 0.0
+    - -1.5099580252808664e-07
+    - 3.3418369732797144
+  - - -1.5099580252808664e-07
+    - 0.0
+    - 1.0
+    - -0.8886172771453857
+  - - 0.0
+    - 1.0
+    - 0.0
+    - 5.187447011470795
+  - - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+  semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+- node: port_H2_vent
+  circuit: H2
+  function: vent
+  package_local:
+    rotation:
+    - 0
+    - -1
+    - 0
+    - 7.549790126404332e-08
+    translation:
+    - -0.011953420005738735
+    - 0.9673305749893188
+    - 0.8886172771453857
+  source_study_matrix:
+  - - -1.0
+    - 0.0
+    - -1.5099580252808664e-07
+    - 3.288046579994261
+  - - -1.5099580252808664e-07
+    - 0.0
+    - 1.0
+    - -0.8886172771453857
+  - - 0.0
+    - 1.0
+    - 0.0
+    - 5.217330574989319
+  - - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+  semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+- node: port_H2_relief
+  circuit: H2
+  function: relief
+  package_local:
+    rotation:
+    - 0
+    - -1
+    - 0
+    - 7.549790126404332e-08
+    translation:
+    - -0.05976710468530655
+    - 0.9553771615028381
+    - 0.8886172771453857
+  source_study_matrix:
+  - - -1.0
+    - 0.0
+    - -1.5099580252808664e-07
+    - 3.2402328953146933
+  - - -1.5099580252808664e-07
+    - 0.0
+    - 1.0
+    - -0.8886172771453857
+  - - 0.0
+    - 1.0
+    - 0.0
+    - 5.205377161502838
+  - - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+  semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+- node: port_H2_gauge
+  circuit: H2
+  function: gauge
+  package_local:
+    rotation:
+    - 0
+    - -1
+    - 0
+    - 7.549790126404332e-08
+    translation:
+    - 0.04781368002295494
+    - 0.8328545689582825
+    - 0.8886172771453857
+  source_study_matrix:
+  - - -1.0
+    - 0.0
+    - -1.5099580252808664e-07
+    - 3.3478136800229548
+  - - -1.5099580252808664e-07
+    - 0.0
+    - 1.0
+    - -0.8886172771453857
+  - - 0.0
+    - 1.0
+    - 0.0
+    - 5.0828545689582825
+  - - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+  semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+- node: port_O2_outlet
+  circuit: O2
+  function: outlet
+  package_local:
+    translation:
+    - -0.03884861618280411
+    - 0.8836566209793091
+    - -0.8886172771453857
+  source_study_matrix:
+  - - 1.0
+    - 0.0
+    - 0.0
+    - 3.2611513838171957
+  - - 0.0
+    - 0.0
+    - -1.0
+    - 0.8886172771453857
+  - - 0.0
+    - 1.0
+    - 0.0
+    - 5.133656620979309
+  - - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+  semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+- node: port_O2_filldrain
+  circuit: O2
+  function: filldrain
+  package_local:
+    translation:
+    - 0.05080203711986542
+    - 0.8717032074928284
+    - -0.8886172771453857
+  source_study_matrix:
+  - - 1.0
+    - 0.0
+    - 0.0
+    - 3.3508020371198652
+  - - 0.0
+    - 0.0
+    - -1.0
+    - 0.8886172771453857
+  - - 0.0
+    - 1.0
+    - 0.0
+    - 5.121703207492828
+  - - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+  semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+- node: port_O2_pressurant
+  circuit: O2
+  function: pressurant
+  package_local:
+    translation:
+    - 0.041836973279714584
+    - 0.9374470114707947
+    - -0.8886172771453857
+  source_study_matrix:
+  - - 1.0
+    - 0.0
+    - 0.0
+    - 3.3418369732797144
+  - - 0.0
+    - 0.0
+    - -1.0
+    - 0.8886172771453857
+  - - 0.0
+    - 1.0
+    - 0.0
+    - 5.187447011470795
+  - - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+  semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+- node: port_O2_vent
+  circuit: O2
+  function: vent
+  package_local:
+    translation:
+    - -0.011953420005738735
+    - 0.9673305749893188
+    - -0.8886172771453857
+  source_study_matrix:
+  - - 1.0
+    - 0.0
+    - 0.0
+    - 3.288046579994261
+  - - 0.0
+    - 0.0
+    - -1.0
+    - 0.8886172771453857
+  - - 0.0
+    - 1.0
+    - 0.0
+    - 5.217330574989319
+  - - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+  semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+- node: port_O2_relief
+  circuit: O2
+  function: relief
+  package_local:
+    translation:
+    - -0.05976710468530655
+    - 0.9553771615028381
+    - -0.8886172771453857
+  source_study_matrix:
+  - - 1.0
+    - 0.0
+    - 0.0
+    - 3.2402328953146933
+  - - 0.0
+    - 0.0
+    - -1.0
+    - 0.8886172771453857
+  - - 0.0
+    - 1.0
+    - 0.0
+    - 5.205377161502838
+  - - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+  semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+- node: port_O2_gauge
+  circuit: O2
+  function: gauge
+  package_local:
+    translation:
+    - 0.04781368002295494
+    - 0.8328545689582825
+    - -0.8886172771453857
+  source_study_matrix:
+  - - 1.0
+    - 0.0
+    - 0.0
+    - 3.3478136800229548
+  - - 0.0
+    - 0.0
+    - -1.0
+    - 0.8886172771453857
+  - - 0.0
+    - 1.0
+    - 0.0
+    - 5.0828545689582825
+  - - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+  semantic_status: Observed capped visual interface; connector/duty not yet a registry service port.
+service_contract:
+  circuits: H2 and O2 remain independent; each retains outlet, fill/drain, pressurant, vent, relief and gauge. No
+    geometric marker is proof of compatible coupling or connected line.
+  port_definition_needed:
+  - medium and liquid/gas phase for operating state
+  - connector standard/nominal bore and mating half/seal material
+  - operating/design pressure and temperature ranges
+  - allowed mass flow, pressure drop and direction
+  - valve/isolation state, pressure sensing and relief setpoint/capacity
+  - actual approach/removal vector and hose/pipe bend/support envelope
+  pressure_evidence: Tank basis describes provisional0.35MPa shell sizing; not a rated service-port pressure or
+    relief setpoint. Engine coolant7MPa is not tank delivery pressure. Preserve these distinctions.
+  feed: Separate H2/O2 feeds with defined isolation/filtering and fuel-cell branches. Native combined hydrolox fuel
+    pool cannot establish real mixture/feed compatibility, priming/settling, pump inlet conditions or boiloff handling.
+  vent: Independent vent and relief paths to separately assessed exterior destinations. Do not join H2 and O2 or
+    terminate in crew exits, ladder, radiator/antenna or engine plume envelopes. Size from defined pressure/fill/thermal
+    cases, not thrust alone.
+  geometry: Both capped faces remain accessible for actual selected connectors/tools/lines; screen added cradle
+    and rack, approach/service/removal, engine/radiator interaction and crew escape through relevant states. Current
+    tank-only17pose zero-hit screen does not cover these.
+  mass: Allocate service hardware/runs/fluids and cradle separately;115kg tank tare already includes its fittings
+    allocation. New external manifold/lines/controls are not free and not counted twice.
+mass_and_com:
+  tank_tare_kg: 115
+  contents_capacity_kg: 500
+  full_product_kg: 615
+  single_roof_allocation_subtotal:
+    instances: 31
+    empty_equipment_kg: 1622.8
+    contents_kg: 600
+    equipment_plus_contents_kg: 2222.8
+    scope: Ships conditional allocation only. Includes tank and100kg separateN2; excludes bare hull, new cradle/services,
+      crew/payload.
+  tank_dry_com: null
+  lox_com_vs_fill: null
+  lh2_com_vs_fill: null
+  method: Use115kg component allocation/actual placement evidence, independent liquid compartment centres and supported
+    fill/slosh/settling model. Outer opaque sphere volume or bounding-box midpoint is not COM. Publish bounded COM
+    regions when precise centres lack support.
+  loads_and_stability: Evaluate dry/full/partial tank plus cradle, services and other masses against actual gear
+    contacts and whole spatial mass ledger. No precise loaded CG/inertia or tipping margin exists yet.
+assignments:
+  blender: Current cradle geometry, contact faces/axes and lower frame endpoints; stock/cut sizes, actual solids/mass
+    and service/removal envelopes. Registry task20261023T201558-registry-8a82.
+  ships: Load cases/reaction model, supported COM bounds, conditional system flows and budgets; do not silently
+    select mission.
+  registry: Promote only supported parts/interface/product definitions; migrate generator and record source together
+    when actual physical mating data exists. Preserve unknown service/rating fields absent.
