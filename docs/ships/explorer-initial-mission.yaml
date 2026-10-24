@@ -1,0 +1,43 @@
+status: owner-selected mission intent; numerical operating envelope pending actual allocation
+request: 20261023T231537-blender-77c1
+owner_choice:
+  crew_persons: 1
+  cargo_payload_kg: 0
+  environment: airless moon
+  trip: short local trips; distance and duration to be derived
+  selection_scope: Mission intent only. No specific moon, gravity, flight profile, endurance or existing equipment
+    fit selected by this message.
+duration_policy: Derive an initial sortie and return reserve from the limiting actual fuel, nitrogen, electrical,
+  thermal and life-support budgets. Short is not a numerical duration. Prior 120 s software-test cap is a proposed
+  test cap, not selected sortie endurance.
+allocation_basis:
+  file: /home/alexm/.agents/reviews/ships/explorer-functional-20261023/roof-single-allocation-v2.json
+  status: 31-instance conditional candidate, not installed; preserve explicit command deferral pending operational
+    crew-control design
+  scope: Use actual current installed quantities and full wet mass when available. Do not transfer old model mass
+    or treat candidate capacity as usable sortie fuel.
+ships_derivation:
+- Separate a bounded software freeflight test from the eventual one-person surface-to-surface trip. Retain the selected
+  mission in both accounts; no atmospheric scope.
+- Choose and document a provisional low-gravity design case for screening if no body is selected; label it an assumption,
+  not owner choice. Report admissible gravity interval from actual mass, thrust/throttle floor, control authority
+  and margins; do not infer all moons are flyable.
+- Budget ascent, translation, braking, descent, hover if supported, abort and return. Include start/chilldown/unusable
+  and fuel-cell demand or explicit unresolved bounds. Check minimum throttle as well as maximum lift; no assumed
+  pulse-hover workaround.
+- Bound nitrogen control authority at mass/COM/fill extremes; include stop/recovery and retained reserve.
+- Derive electrical duty cycle from installed sources/storage and all loads; heat rejection/buffer from actual routing
+  and exposure. Gross radiator nameplate is not net cooling.
+- Include one-person pressure, oxygen, CO2 removal, thermal and emergency consumables using real equipment capacities.
+  Missing life-support or command interfaces remain design inputs; no fabricated endurance.
+- Include actual gear, ground contact, stability, exit/boarding state and crew control requirements for surface
+  operations. Give concrete design changes where the current allocation cannot meet the mission.
+- Publish reproducible quantities, assumptions and limiting budget with a conservative proposed sortie limit and
+  explicit reserve policy. If data cannot bound duration, report that numerical duration remains unresolved while
+  closing supported sub-budgets.
+release_policy: Whole current mass, measured fit, current export/record and demonstrated controls remain required.
+  Mission choice does not accept the rejected glazing prototype, unbuilt frame interfaces or old static preview.
+basis:
+  tier: owner instruction
+  note: Mission words relayed by Blender task 20261023T231537-blender-77c1; numerical limits must be separately
+    derived and labelled.

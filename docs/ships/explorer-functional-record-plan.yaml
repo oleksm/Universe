@@ -3,8 +3,9 @@ identity:
   reserved_hull_key: hull.explorer-study
   stage: record evidence and conditional allocation
   request: 20261023T182845-blender-b844
-authority: Owner authorizes collaborative missing-record work toward a functional Explorer. No selected mission,
-  installed equipment or qualification is implied.
+authority: Owner authorizes collaborative missing-record work toward a functional Explorer. Mission intent is now
+  one person, zero cargo, short airless-moon trips (explorer-initial-mission.yaml); installed equipment and qualification
+  are not implied.
 source:
   packet: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/install-20261023/packet.json
   blend_sha256: b29b247085bb847b065febcf8b4e349b3db0fb583d14a657c5bf927307378a1c
@@ -41,10 +42,10 @@ supported_values:
     current_gear: Edited assembly derived from gear-strut-180kn/v1; old S0 label is historical. No source-product
       mass/rating transfer.
 remaining_owner_design_inputs:
-- 'Environment: atmosphere and surfaces versus airless/space. Chemical CH S1/S2 catalogue chamber is vacuum_only.'
-- Mission and delta-v/acceleration/landing gravity; short samples, long expedition or rover remain unanswered options.
+- 'Environment selected: airless moon. Specific body/gravity and surface flight profile remain to derive; see explorer-initial-mission.yaml.'
+- Short local trips selected; derive delta-v, acceleration, landing gravity interval and conservative return/abort reserves from the actual allocation.
 - Endurance, consumables and duty cycle.
-- Payload/cargo allowance and landing empty versus loaded.
+- Zero cargo selected; include one person and actual consumables in departure/return mass cases.
 - Pressure-boundary and boarding isolation design.
 - Future command scope and pilot station/controls before operational flight; no seat or dashboard installed now.
 record_plan:
@@ -1181,3 +1182,11 @@ current_material_design:
     rejected_objects: 13
     scope: Measurement candidates only; seven cross-material conflicts and rejected geometry remain unresolved.
       No whole mass.
+
+current_owner_mission:
+  file: docs/ships/explorer-initial-mission.yaml
+  request: 20261023T231537-blender-77c1
+  crew_persons: 1
+  cargo_payload_kg: 0
+  environment: airless moon
+  duration: derive from actual allocation; not yet a numerical endurance
