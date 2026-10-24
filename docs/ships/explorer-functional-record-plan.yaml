@@ -983,3 +983,34 @@ compatible_tank_gap:
     capacity. Methalox substitution or model scaling invalid.
   installed_capacity_kg: 0
   capacity_scope: No installed tank product or propellant capacity is established by these studies.
+owner_roof_tank_study:
+  owner_input: maybe mount it on the roof
+  interpretation: Evaluate an external roof installation with the unchanged existing hydrolox product; this does
+    not select capacity, approve exterior appearance, structure, fit or operation.
+  candidate:
+    key: equipment.tank.hydrolox.0p5t
+    source: standards/SFO/metadata/equipment/tank-hydrolox-0p5t.yaml
+    sha256: 3c75097f645dfe4fb9bc5014b6ca8aa1f5b13ae5115ec0fe7e0eda3e45abc64d
+    tare_kg: 115
+    capacity_kg: 500
+    full_product_kg: 615
+    scope: Single centreline vessel first; pair only a comparison if space/fuel purpose warrants. Cradle, plumbing,
+      shielding and support mass excluded.
+  study_owners:
+    blender: Unscaled actual product on current hull; separate cradle concept and actual saddle datums; full-ship
+      side/top/front evidence and access/mechanism/plume checks.
+    ships: Conditional capacity, loaded CG, real mounting/interface and frame load path; current whole craft mass
+      remains unknown.
+    registry: Retain product identity and no scaled/relabelled tank; no hull fit entry until actual allocation/evidence
+      exists.
+  prior_internal_studies: 100/200kg and later50kg-per-bay reservations remain historical unqualified study alternatives;
+    roof is now the requested alternative to evaluate.
+  unresolved:
+  - "Shared tank-s1 metadatafeet at\xB12.646m cannot be assumed actual saddle geometry."
+  - A cradle concept must not imply roof skin or hull frames are load-qualified.
+  - Pressurant/LOX/LH2 feed, isolation, thermal exposure, vent/relief and service/remove route need explicit design.
+  - Loaded CG and landing stability need whole current mass/CG and actual tank position/support.
+  - Current mechanisms, egress, visibility, thermal panels and engine plumes must be reviewed together.
+  requests:
+  - 20261023T193818-registry-56c6
+  - 20261023T193818-registry-2b33
