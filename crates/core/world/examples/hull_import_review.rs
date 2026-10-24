@@ -187,6 +187,7 @@ fn review(path: &str, key: &str) -> Result<Value, Box<dyn Error>> {
             }
             report["effective"] = json!({"key":spec.key,"visual":spec.visual,"slots":slots,"fit":fit,"thruster_links":nozzles,
                 "bare_kg":spec.frame_mass,"dry_kg":spec.dry_mass,"fuel_capacity_kg":spec.fuel_capacity,"hold_capacity_kg":spec.hold_capacity,
+                "flight_commissioned":spec.commissioned,"native_limits":spec.limits,
                 "shape_made_centre_m":spec.shape().made_centre.to_array(),"dry_com_m":spec.dry_com.to_array(),
                 "power_draw_w":spec.power_draw,"power_output_w":spec.power_output,
                 "radius_m":spec.radius,"drag_area_m2":spec.drag_area,"hull_strength_j":spec.hull_strength,

@@ -1,0 +1,458 @@
+{
+  "comparison": {
+    "fit": {
+      "added_or_changed": [],
+      "missing_or_changed": []
+    },
+    "slots": {
+      "added_or_changed": [],
+      "missing_or_changed": []
+    },
+    "thruster_links": {
+      "added_or_changed": [],
+      "missing_or_changed": []
+    }
+  },
+  "comparison_clear": true,
+  "effective": {
+    "bare_kg": 6829.395259018859,
+    "crowded": [],
+    "drag_area_m2": 15.52527409043894,
+    "dry_com_m": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "dry_kg": 6829.395259018859,
+    "fit": [],
+    "flight_commissioned": false,
+    "fuel_capacity_kg": -0.0,
+    "hold_capacity_kg": 0.0,
+    "hull_strength_j": 4097637.1554113156,
+    "inactive_registry_nozzles": [],
+    "key": "hull.import.explorer_study",
+    "missing_mount_nodes": [],
+    "native_limits": [
+      "not commissioned: no Power: every ship must carry one"
+    ],
+    "power_draw_w": -0.0,
+    "power_output_w": -0.0,
+    "radius_m": 7.654787962324947,
+    "shape_made_centre_m": [
+      0.00003672683534729522,
+      2.414062161277848,
+      1.115605864882347
+    ],
+    "slots": [],
+    "thruster_links": [],
+    "thrusters": [],
+    "visual": "assets/models/explorer-study.glb"
+  },
+  "empty_recorded_fit": true,
+  "empty_recorded_slots": true,
+  "equipment_consumers": [],
+  "exact_path_bindings": [
+    "hull.explorer-study"
+  ],
+  "faults": [],
+  "fit_consumer_source_sha256": "cada0e9261530a659361ff0b187e353864ccbb25c559cc2ee89d6566f3ce18b9",
+  "format": "freefall-hull-import-review/1",
+  "importer_source_sha256": "8b4d53007bdd4c97b5e8e7d851924b197ed4e7ec42d054daa10e132fcc3611ba",
+  "mass": {
+    "basis": "Some(Recorded(6829.395259018859))",
+    "limit": "Record arithmetic only; geometry composition, duplicate baked equipment, crew, cargo and consumables need independent review.",
+    "missing": [],
+    "registry_bare_kg": 6829.395259018859,
+    "registry_dry_kg": 6829.395259018859,
+    "registry_fit_kg": 0.0
+  },
+  "mass_consumer_source_sha256": "25dffa1700f6ad904434a83792c9b08f1cc77329447cbfe56d7d48a52773454f",
+  "model_bytes": 15868456,
+  "model_canonical_path": "/home/alexm/git/universe-ships/explorer-ground-install/assets/models/explorer-study.glb",
+  "model_path_argument": "assets/models/explorer-study.glb",
+  "model_sha256": "5ba56b39d25098985064ff5839f5fe37cfd8c7178b4fcff68453cb6fb9184d24",
+  "module_consumer_source_sha256": "98f16af9f08b9f22c807d6fe6932cfd4848f03c644c6f211ae2b57139249436f",
+  "operational_acceptance": false,
+  "operational_limits": [],
+  "record": {
+    "basis": [
+      {
+        "note": "Exact1040solid roster on e7077eb0:7per-material same-material unions 6737.795259018859kg + separate91.6kg surviving invented dry allowance from explorer-material-stock-schedule.yaml. Raw source vertices/roles/hash/volume arithmetic audited; Boolean union producer is Blender. Named41mixed mating residuals retained without arbitrary subtraction, conservative combined accounting bound 0.001007442521kg; not a clearance/pressure proof. Twelve inherited M4raw/constructor differences add 0.000776070652kg bounded accounting uncertainty; one nonstructural return3 indexed4incident edge remains explicit. These are not mesh repairs or physical topology acceptance.",
+        "of": [
+          "physical.mass"
+        ],
+        "review": true,
+        "rule": null,
+        "source": "/home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/mass-cross-material-audit.json",
+        "tier": "derived"
+      },
+      {
+        "note": "Exact closed/rest GLB transformed raw POSITION vertices, including static hull-owned gear. Refresh after export changes.",
+        "of": [
+          "physical.length",
+          "physical.width",
+          "physical.height"
+        ],
+        "review": null,
+        "rule": null,
+        "source": "5ba56b39d25098985064ff5839f5fe37cfd8c7178b4fcff68453cb6fb9184d24",
+        "tier": "derived"
+      },
+      {
+        "note": "Chosen closed/rest3Dconvex clearance-envelope approximation; includes concavities/gaps between extremities. Independent rawGLB convex hull/tetrahedral volume cross-check. Not material/cabin/hold volume, watertight displacement, sweep or render/collision remesh.",
+        "of": [
+          "physical.volume"
+        ],
+        "review": true,
+        "rule": null,
+        "source": "/home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/closed-convex-envelope.json",
+        "tier": "derived"
+      },
+      {
+        "note": "Exact5ba56b39closed/2e55f0caopen bytes;6parent-local root targets replay1076world node matrices within5.916e-7. Declared terrain/exit states need exact runtime acceptance.",
+        "of": [
+          "mechanisms",
+          "exits",
+          "model",
+          "model_sha256"
+        ],
+        "review": null,
+        "rule": null,
+        "source": "/home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2/mechanism-record-inputs.yaml",
+        "tier": "derived"
+      },
+      {
+        "note": "Owner-authorized bare ground-stage scope. Empty slots,fit,thrusters deliberate;6061material assignment from prototype stock schedule. No propulsion/equipment/strength/mission ratings invented.",
+        "of": [
+          "identity.class",
+          "slots",
+          "fit",
+          "thrusters",
+          "flight.frame_material"
+        ],
+        "review": true,
+        "rule": null,
+        "source": null,
+        "tier": "invented"
+      }
+    ],
+    "built_of": {
+      "parts": null
+    },
+    "capacity": {
+      "fuel": null,
+      "hold": null,
+      "hold_volume": null
+    },
+    "design": {
+      "cabin_pressure": null,
+      "landing_speed": null,
+      "lands": null,
+      "leak_rate": null,
+      "lift_thrust": null,
+      "loaded_mass": null,
+      "main_thrust": null,
+      "minimum_gauge": null,
+      "pressure_factor": null,
+      "safety_factor": null,
+      "strut_efficiency": null,
+      "thrust_path": []
+    },
+    "exits": [
+      {
+        "foot": "RearRamp_Toe",
+        "key": "rear",
+        "kind": "walk",
+        "requires": [
+          {
+            "mechanism": "rear_ramp",
+            "state": "deployed"
+          }
+        ],
+        "top": "RearRamp_Top"
+      },
+      {
+        "foot": "CrewLadder_Foot",
+        "key": "belly",
+        "kind": "climb",
+        "requires": [
+          {
+            "mechanism": "crew_hatch",
+            "state": "deployed"
+          },
+          {
+            "mechanism": "crew_ladder",
+            "state": "deployed"
+          }
+        ],
+        "top": "CrewLadder_Top"
+      }
+    ],
+    "fit": [],
+    "flight": {
+      "drag_area": null,
+      "frame_material": "material.aluminium-alloy-6061",
+      "hull_strength": null,
+      "radius": null
+    },
+    "identity": {
+      "class": "Uncommissioned ground stage",
+      "description": "Bare Explorer ground stage with hull-owned edited landing gear and authored rear ramp, belly hatch and folding ladder. No command station, propulsion or fitted equipment; flight is not commissioned.",
+      "key": "hull.explorer-study",
+      "maker": null,
+      "name": "Explorer Study",
+      "revision": null,
+      "traded_as": null
+    },
+    "life": null,
+    "making": {
+      "batch_size": null,
+      "facility": null,
+      "fitting_out": null,
+      "inspection": null,
+      "module": null,
+      "time": null,
+      "tolerance": null,
+      "tooling": null,
+      "yield": null
+    },
+    "mechanisms": [
+      {
+        "contact": {
+          "ground": "required",
+          "node": "RearRamp_Toe"
+        },
+        "default": "closed",
+        "deploys_when": "landed",
+        "key": "rear_ramp",
+        "kind": "ramp",
+        "nodes": [
+          "RearRamp_Pivot",
+          "RearRamp_ExtensionPivot"
+        ],
+        "states": [
+          {
+            "key": "closed",
+            "poses": [
+              {
+                "kind": "rest",
+                "node": "RearRamp_Pivot"
+              },
+              {
+                "kind": "rest",
+                "node": "RearRamp_ExtensionPivot"
+              }
+            ]
+          },
+          {
+            "key": "deployed",
+            "poses": [
+              {
+                "kind": "rigid",
+                "node": "RearRamp_Pivot",
+                "rotation_xyzw": [
+                  0.0,
+                  0.0,
+                  -0.8651100993156433,
+                  0.5015820860862732
+                ],
+                "translation_m": [
+                  4.949999809265137,
+                  1.75,
+                  0.0
+                ]
+              },
+              {
+                "kind": "rigid",
+                "node": "RearRamp_ExtensionPivot",
+                "rotation_xyzw": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ],
+                "translation_m": [
+                  -0.10000002384185791,
+                  1.600000262260437,
+                  0.0
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "contact": null,
+        "default": "closed",
+        "deploys_when": "landed",
+        "key": "crew_hatch",
+        "kind": "hatch",
+        "nodes": [
+          "CrewHatch_FloorSlide",
+          "CrewHatch_BellySlide"
+        ],
+        "states": [
+          {
+            "key": "closed",
+            "poses": [
+              {
+                "kind": "rest",
+                "node": "CrewHatch_FloorSlide"
+              },
+              {
+                "kind": "rest",
+                "node": "CrewHatch_BellySlide"
+              }
+            ]
+          },
+          {
+            "key": "deployed",
+            "poses": [
+              {
+                "kind": "rigid",
+                "node": "CrewHatch_FloorSlide",
+                "rotation_xyzw": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ],
+                "translation_m": [
+                  1.399999976158142,
+                  -0.014999999664723873,
+                  0.0
+                ]
+              },
+              {
+                "kind": "rigid",
+                "node": "CrewHatch_BellySlide",
+                "rotation_xyzw": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ],
+                "translation_m": [
+                  1.399999976158142,
+                  0.009999999776482582,
+                  0.0
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "contact": {
+          "ground": "required",
+          "node": "CrewLadder_Foot"
+        },
+        "default": "stowed",
+        "deploys_when": "landed",
+        "key": "crew_ladder",
+        "kind": "ladder",
+        "nodes": [
+          "CrewLadder_UpperPivot",
+          "CrewLadder_LowerPivot"
+        ],
+        "states": [
+          {
+            "key": "stowed",
+            "poses": [
+              {
+                "kind": "rest",
+                "node": "CrewLadder_UpperPivot"
+              },
+              {
+                "kind": "rest",
+                "node": "CrewLadder_LowerPivot"
+              }
+            ]
+          },
+          {
+            "key": "deployed",
+            "poses": [
+              {
+                "kind": "rigid",
+                "node": "CrewLadder_UpperPivot",
+                "rotation_xyzw": [
+                  0.0,
+                  0.0,
+                  -0.2022344321012497,
+                  0.979337215423584
+                ],
+                "translation_m": [
+                  0.5000000596046448,
+                  1.684999942779541,
+                  0.0
+                ]
+              },
+              {
+                "kind": "rigid",
+                "node": "CrewLadder_LowerPivot",
+                "rotation_xyzw": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ],
+                "translation_m": [
+                  0.0549999475479126,
+                  -0.7999999523162842,
+                  0.0
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "model": "assets/models/explorer-study.glb",
+    "model_requests": [],
+    "model_sha256": "5ba56b39d25098985064ff5839f5fe37cfd8c7178b4fcff68453cb6fb9184d24",
+    "open_questions": [
+      "Ground stage only: no command station, propulsion, RCS, tank, power or life-support allocation; not commissioned for flight.",
+      "Geometry/load/pressure qualification remains open. Edited gear is hull-owned and has no inherited catalogue landing rating.",
+      "Upper seal has an explicit184.285mm2endland deficit; side/lower perimeter pressure closure remains unqualified.",
+      "Discrete mechanism states are not continuous-motion or actuator/holding-load certification. Ground contact and boarding must pass exact installed-model runtime checks.",
+      "Convex physical.volume is a closed/rest clearance-envelope approximation; it is not material/cabin/hold/pressure volume or a collision mesh.",
+      "Exact numerical mating residuals remain named in docs/ships/explorer-ground-stage-registration-audit.yaml; no global collision tolerance.",
+      "Whole mass includes91.6kg surviving invented dry actuator/electronics allowances pending explicit matched part replacement; COM and inertia not qualified.",
+      "Inherited raw/constructor numeric domains of12smallM4fasteners and one nonstructural return3 edge junction remain explicit in registration audit; raw render geometry is not silently repaired."
+    ],
+    "physical": {
+      "bulk_density": null,
+      "envelope": null,
+      "height": 3.9599998965859413,
+      "impact_resistance": null,
+      "length": 11.031919964872138,
+      "mass": 6829.395259018859,
+      "operating_max_temperature": null,
+      "operating_min_temperature": null,
+      "shock_limit": null,
+      "specific_heat": null,
+      "storage_max_temperature": null,
+      "storage_min_temperature": null,
+      "volume": 164.79543387159498,
+      "width": 6.534206536726907
+    },
+    "revision": {
+      "ask": "docs/ships/explorer-ground-stage-registration-audit.yaml",
+      "because": "Registered bare ground stage from exact measured candidate; no flight/equipment/pressure/load qualification.",
+      "fixed": [],
+      "on_conflict": "propose",
+      "open_to": [],
+      "owner": "registry",
+      "priority": null,
+      "replaced_by": null,
+      "status": "draft"
+    },
+    "shape": null,
+    "slots": [],
+    "thrusters": [],
+    "visual": null
+  },
+  "registry_encoded_sha256": "caa049ac5d262a80f709c65016ada4b3860519e674e853c5dd3f00320d3fcd3f",
+  "requested_registry_key": "hull.explorer-study",
+  "scope": "Read-only hull_from_gltf result, before commission adds a handle. No flight, physical mount, human clearance or motion acceptance."
+}

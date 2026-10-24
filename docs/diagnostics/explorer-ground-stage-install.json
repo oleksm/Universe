@@ -9,6 +9,40 @@
   "open_review_sha256": "2e55f0ca90a89966b8d57893f52b05e3b5ecbc1b7a4af770bb36ca4a1418b827",
   "source_project": "blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-combined-v2",
   "intake": "14 source/export bindings independently verified. Canonical file exact copied closed bytes, no mesh edits.",
-  "registry": "Await final physical record/package binding and compiled registry. Proposed6829.395259kg is not independently promoted by installing this file.",
-  "validation": "Native registered importer, pose/route and package-exposure equality pending. This is a staged candidate, not final installation acceptance."
+  "registry": {
+    "record_commit": "308238a07",
+    "key": "hull.explorer-study",
+    "bare_mass_kg": 6829.395259018859,
+    "volume_m3": 164.79543387159498,
+    "volume_domain": "Chosen closed/rest convex stowage envelope, not material/cabin/pressure volume.",
+    "visual_route": "Direct hull.model binding; no separate versioned visual package identity claimed."
+  },
+  "validation": {
+    "registered_import_exit": 0,
+    "comparison_clear": true,
+    "faults": [],
+    "receipt": "docs/diagnostics/explorer-ground-stage-native-import.json",
+    "flight_commissioned": false,
+    "native_limits": [
+      "not commissioned: no Power: every ship must carry one"
+    ],
+    "empty_slots_fit_thrusters_preserved": true,
+    "mechanism_world_nodes_replayed": 1076,
+    "maximum_world_matrix_component_error": 5.915025944602803e-07,
+    "internal_belly_routes_replayed": 14,
+    "rear_routes_replayed": 4,
+    "applicable_routes_finish_grounded": true,
+    "closed_belly_gated": true,
+    "forced_closed_rear_blocked_without_ejection": true,
+    "collision_multiplicity_test": "10mm push for2,8,64triangles after31a210639",
+    "scope": "Static exported-state/native Walker tests and native registered importer; Engine owns integration and live-game validation. No flight/load/pressure/human qualification."
+  },
+  "compiled_sources": {
+    "importer_source_sha256": "8b4d53007bdd4c97b5e8e7d851924b197ed4e7ec42d054daa10e132fcc3611ba",
+    "mass_consumer_source_sha256": "25dffa1700f6ad904434a83792c9b08f1cc77329447cbfe56d7d48a52773454f",
+    "fit_consumer_source_sha256": "cada0e9261530a659361ff0b187e353864ccbb25c559cc2ee89d6566f3ce18b9",
+    "module_consumer_source_sha256": "98f16af9f08b9f22c807d6fe6932cfd4848f03c644c6f211ae2b57139249436f",
+    "registry_encoded_sha256": "caa049ac5d262a80f709c65016ada4b3860519e674e853c5dd3f00320d3fcd3f"
+  },
+  "audit_tool_source_sha256": "28e69f46fe6ad7ecad6b363bddbc79d07deb169a80d471b3423f1612176dedc6"
 }
