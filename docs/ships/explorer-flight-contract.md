@@ -15,8 +15,7 @@ walked, ramp/hatch/ladder in their discrete states. `ClassSpec::commissioned` is
 Every base block filled with a working (not inert) module: power (a plant, or batteries alone if their rate
 covers the draw), drive (or engine slots with a main push along the nose), thrusters (or cold-gas engines), tank,
 flight computer, transponder, sensors (camera or altimeter suffice), comm, **life support**. Its draw within plant
-output plus battery rate; engine nozzles bound to real `nozzle_*` empties with shares summing to 1 per slot. The
-module draw must stay within plant output plus battery rate.
+output plus battery rate; engine nozzles bound to real `nozzle_*` empties with shares summing to 1 per slot.
 
 - **No command station or cockpit is required to fly.** The ship is flown by the pilot's controls through the
   engine's pilot path (test drive). Without a `cockpit` node there's no seat to stand up from (getting up says "no
