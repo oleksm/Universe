@@ -66,3 +66,33 @@ The owner chose one person, no cargo, short trips on an airless moon. What the g
   trace) only when a ship is wrecked. A whole session's inputs are recorded with `UNIVERSE_RECORD=<file>` and
   replayed with `core/sim/examples/replay.rs` (seed-only). There's no landing report: a safe touchdown files nothing.
   Ask if a test needs a trace dump on landing; it's a small engine addition.
+
+## Airless moons in the game (registry `20261023T231721-registry-78d0`; seed 1984, home system Treistun)
+
+Surface gravity at runtime is `mu / r²` (`Body::surface_gravity`: G × mass / radius², radius the body's rail
+radius). The seed's figures, unless the celestial registry's overrides change a body's mass or radius. Air: only
+temperate (Terran) worlds get an atmosphere; every moon is airless. All the moons below have terrain (cratered),
+so a ship can land on them. Ports are where play can start or dock; a moon without one is still landable.
+
+| Moon | Parent | g (m/s²) | Radius (km) | Ports |
+| --- | --- | --- | --- | --- |
+| Cinder B I | Cinder B | 1.415 | 1687 | Port Seiwiti |
+| Anvil C I | Anvil C | 1.114 | 1328 | Port Fabindum |
+| Heath D I | Heath D (home) | 1.281 | 1527 | Port Sirnendis |
+| Drum G I | Drum G | 1.872 | 2232 | none |
+| Drum G II | Drum G | 1.006 | 1199 | none |
+| Drum G III | Drum G | 0.701 | 836 | none |
+| Pale H I | Pale H | 0.702 | 837 | none |
+| Pale H II | Pale H | 2.178 | 2597 | Port Weisonum |
+| Hush I I | Hush I | 0.971 | 1157 | none |
+| Hush I II | Hush I | 1.096 | 1307 | Port Aipika |
+| Hush I III | Hush I | 0.471 | 561 | none |
+| Verge J I | Verge J | 1.254 | 1496 | none |
+| Verge J II–IV | Verge J | 0.47–0.63 | 560–751 | none |
+
+In 1–3 m/s² with a port: Cinder B I, Anvil C I, Heath D I (the home world's moon, nearest), Pale H II, Hush I II.
+Rime F (4.06 m/s², airless, Port Trethi) is the nearest airless world above that.
+
+Runtime limits asked: no life-support depletion (air, water, CO2) is simulated. A fuel cell's part-load is
+constant efficiency with no heat simulated (fuel burned = energy taken / (fuel energy × efficiency)); its heat isn't
+tracked anywhere.
