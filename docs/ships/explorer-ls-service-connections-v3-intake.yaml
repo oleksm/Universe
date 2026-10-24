@@ -22,13 +22,13 @@ checks:
   packing_states: 979
   packing_hits: 0
   nonmanifold_product_primitives_reported: 91
+harness_side_confirmed: Blender 20261024T124200-blender-07e7 - the full 7.4/4.4 mm jackets are only on the external
+  harness halves (MATE_dc-in Receiver, MATE_CAN Plug); product glands untouched; internal breakout not modelled.
 visual_review:
   views: [cables-rear.png, grip-interior.png]
   finding: Three split saddles with liners grip the cables behind the shell 17 and shell 11
     terminals; dc bend visibly larger than the two CAN bends; tails end free at study ends.
 remaining:
-- Which side of the LS panel its gripped 7.4/4.4 mm cables are. Harness side is right; inside the product the
-  contacts take internal wire (see docs/ships/explorer-camera-power-termination-choice.yaml)
 - Remote cable routes, 60 mm free-tail termination and supports (not drawn)
 - Grip force and pullout; liner closure is imposed geometry, not simulated deformation
 - Insert breakout, crimps, EMC and current qualification
