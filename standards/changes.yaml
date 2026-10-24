@@ -3189,6 +3189,7 @@
 - { record: rule.first-design-parts, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "df023ad2523350df" }
 - { record: rule.fitted-within, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "fcf39d85d239c0c5" }
 - { record: rule.haul-truck-shares, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "89331ccaced1749c" }
+- { record: rule.joint-bearing-evidence, at: "2026-10-24T22:43:16Z", status: review, summary: "first tracked", sha: "78d027924c1c7873" }
 - { record: rule.life-building, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "73b6d73f69db7d83" }
 - { record: rule.life-hull, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "c7ee9eaf08afffd3" }
 - { record: rule.life-plant, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "fbda7bc757c6f115" }

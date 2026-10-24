@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.joint-bearing-evidence
+  name: A retained joint needs its bearing shown
+  about: What evidence makes a bolted or clamped joint count as retained in a model or a fit.
+statement: 'Clearance and no clash never prove a joint. A bolted or clamped joint counts as retained only when the model
+  shows, for each fastener: both bearing lands actually under the head or washer and under the nut or receiver (measured
+  area, not a projected footprint); the grip it clamps and its thread engagement or protrusion (runout); and positive
+  retention (a lock, tab, wire or captive part). A fastener whose land is missing on either side - a bolt pattern outside
+  the flange it is meant to hold, a washer on air - is no joint, however clean the clash screen.'
+tier: invented
+source: 'Blender QC counterexample 2026-10-24 (20261024T174111-blender-39dd): a square +-0.30 m bolt pattern lay outside
+  the circular CHS1 fixture with zero washer land and zero clash; actual-bearing-lands.json'
+review: true
