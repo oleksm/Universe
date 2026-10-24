@@ -1,0 +1,199 @@
+status: Scoped V5 retainer geometry/quantity adopted; supported offset header construction selected, not whole-stage
+  acceptance
+requests:
+- 20261024T102846-blender-fa41
+- 20261024T103059-blender-6d06
+- 20261024T103531-blender-2dd6
+- 20261024T103850-blender-b9d8
+bindings:
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/ground-guide-entry-v5-handoff.json: 0f5480cfe9f9baa449f6ccd5c3e378f70877cf76e3b40b0eb254b514b5abb761
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/ground-guide-entry-v5-meshes.json: e4c040dfe98278ba58ae47147fc33b00668a7aa57d07d58159354048d8b8b02a
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/ground-guide-entry-v5-check.json: c214ae031ec5226751a9303fd6f6c17cdc2d3684668004711b1041b0fa37d924
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/ground-guide-entry-v5-access.json: 49ccf618f97cce0393238c5f22f1fb07e0107cc32755e6e52e4b6f7db11598c8
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-guide-v5/mass-delta.json: 54a5abdf19a732457329189f00eac3ae8415ecd4db7197aa41a573849b532892
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/ground-stage-guide-v5/ramp-numerical-residue.json
+  : 177be582a353ac9705b48d2490b003bf991450975ff9b84dc1a23752df781380
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/rear-headroom-current-study/header-offset-design-v3.json
+  : 0d55aa247cab62c2967001823f7a8cc76eb07349574ff9dab5ed5aa40ce642d2
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/rear-headroom-current-study/header-offset-delta-v3.json
+  : e94d6ebf02dc1884a55eba34631f6840d3ff36556769752b92b92ce9018d451e
+  ? /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/rear-headroom-current-study/offset-final-audit-v3.json
+  : c70ad71a27201f6969c418ea879bbb43966d1a003883a3e8f13f400489c1997d
+v5_adoption:
+  parts: 58
+  replace_once:
+  - Crew hatch floor slide shoe -1
+  - Crew hatch floor carrier ear -1
+  - Crew hatch floor slide shoe 1
+  - Crew hatch floor carrier ear 1
+  - Crew hatch belly slide shoe -1
+  - Crew hatch belly carrier ear -1
+  - Crew hatch belly slide shoe 1
+  - Crew hatch belly carrier ear 1
+  - Crew ladder foot cap -1
+  - Crew ladder lower rail -1
+  - Crew ladder foot cap 1
+  - Crew ladder lower rail 1
+  - Crew hatch pocket guide -1
+  - Crew hatch track floor bracket (-1, 0.10999999999999999)
+  - Crew hatch track floor bracket (-1, 1.01)
+  - Crew hatch track floor bracket (-1, 1.9)
+  - Crew hatch pocket guide 1
+  - Crew hatch track floor bracket (1, 0.10999999999999999)
+  - Crew hatch track floor bracket (1, 1.01)
+  - Crew hatch track floor bracket (1, 1.9)
+  - Crew hatch floor carrier seat -1
+  - Crew hatch floor carrier seat 1
+  - Crew hatch belly carrier seat -1
+  - Crew hatch belly carrier seat 1
+  - Crew hatch round floor leaf
+  - Crew hatch round belly leaf
+  add_once:
+  - Crew hatch floor carrier ear -1 | removable endplate M2 0
+  - Crew hatch floor carrier ear -1 | removable endplate M2 1
+  - Crew hatch floor carrier ear -1 | removable endplate
+  - Crew hatch floor carrier ear 1 | removable endplate M2 0
+  - Crew hatch floor carrier ear 1 | removable endplate M2 1
+  - Crew hatch floor carrier ear 1 | removable endplate
+  - Crew hatch belly carrier ear -1 | removable endplate M2 0
+  - Crew hatch belly carrier ear -1 | removable endplate M2 1
+  - Crew hatch belly carrier ear -1 | removable endplate
+  - Crew hatch belly carrier ear 1 | removable endplate M2 0
+  - Crew hatch belly carrier ear 1 | removable endplate M2 1
+  - Crew hatch belly carrier ear 1 | removable endplate
+  - Crew ladder lower rail -1 | backing M3 -1 0
+  - Crew ladder lower rail -1 | backing M3 -1 1
+  - Crew ladder lower rail -1 | split cap backing -1
+  - Crew ladder lower rail -1 | backing M3 1 0
+  - Crew ladder lower rail -1 | backing M3 1 1
+  - Crew ladder lower rail -1 | split cap backing 1
+  - Crew ladder lower rail 1 | backing M3 -1 0
+  - Crew ladder lower rail 1 | backing M3 -1 1
+  - Crew ladder lower rail 1 | split cap backing -1
+  - Crew ladder lower rail 1 | backing M3 1 0
+  - Crew ladder lower rail 1 | backing M3 1 1
+  - Crew ladder lower rail 1 | split cap backing 1
+  - Crew hatch floor carrier ear -1 | leaf attachment M4 0
+  - Crew hatch floor carrier ear -1 | leaf attachment M4 1
+  - Crew hatch floor carrier ear 1 | leaf attachment M4 0
+  - Crew hatch floor carrier ear 1 | leaf attachment M4 1
+  - Crew hatch belly carrier ear -1 | leaf attachment M4 0
+  - Crew hatch belly carrier ear -1 | leaf attachment M4 1
+  - Crew hatch belly carrier ear 1 | leaf attachment M4 0
+  - Crew hatch belly carrier ear 1 | leaf attachment M4 1
+  checks: 'All11handoff hashes and3integrated ledger hashes verified;58raw positive signed volumes/indexed edges
+    incident twice and density checked.157consecutive motion report frames inspected: moving hatch/guide/coaming
+    no hits above1e-9m3. This independently audits frozen results/geometry, not Boolean or continuous sweep replay.'
+  fasteners:
+    M2: 8
+    M3: 8
+    M4: 8
+  service: All4shoe withdrawal reports empty; M2/M3 require named open service poses; M4 tools clear closed657 only.
+    Supporting the leaf and performing those operations in their named states is part of construction. No closed-M2
+    or open-M4 access waiver.
+  preserved: BearingY, full6mmshoe/web, leaf axes, floor/skin/coaming preserved; upper carrier/shoe stack moved1.5mm
+    and seats locally shortened.
+  mass:
+    gross_kg: 137.21448866401096
+    local_guide_joint_overlap_kg: 0.8080566699685873
+    local_net_kg: 136.40643199404238
+    named_gross_delta_kg: 3.977038433346169
+    whole_material_union_delta_kg: 11.279393878421615
+    previous_overlap_recovered_kg: 7.302355445075446
+    combined_same_material_subtotal_kg: 6751.249876743758
+    surviving_hidden_reserve_kg: 91.6
+    rule: Use whole same-material union, not gross delta or pairwise overlap sums. No reserve reduction for these
+      external joints. This subtotal is pre-final-header, not whole accepted mass.
+  limitations: Inherited ladder rail/tread/fold-stop/inter-rail collisions remain named failures. No whole ladder,
+    continuous motion, pressure/load or boarding approval.
+ramp_named_numerical_disposition:
+  choice: Accept these15bound anti-slip strip/leaf pairs as local representational mating residuals for ground-stage
+    quantity accounting, provided exact name/geometry/pose binding is retained. Keep all material meshes and sum
+    per-material union masses without arbitrary subtraction; disclose uncertainty. No global mesh tolerance or exemption
+    for other interfaces.
+  maximum_normal_depth_m: 4.345431188212956e-07
+  explicit_local_ceiling_m: 5.0e-07
+  total_intersection_m3: 2.6139131133812494e-07
+  epdm_mass_bound_kg: 0.00030060000803884367
+  al_mass_bound_kg: 0.0007057565406129373
+  combined_conservative_accounting_bound_kg: 0.001006356548651781
+  names:
+  - strip: Rear ramp anti-slip strip 0
+    host: Rear ramp main leaf
+  - strip: Rear ramp anti-slip strip 1
+    host: Rear ramp main leaf
+  - strip: Rear ramp anti-slip strip 2
+    host: Rear ramp main leaf
+  - strip: Rear ramp anti-slip strip 3
+    host: Rear ramp main leaf
+  - strip: Rear ramp anti-slip strip 4
+    host: Rear ramp main leaf
+  - strip: Rear ramp anti-slip strip 5
+    host: Rear ramp main leaf
+  - strip: Rear ramp anti-slip strip 6
+    host: Rear ramp main leaf
+  - strip: Rear ramp anti-slip strip 7
+    host: Rear ramp main leaf
+  - strip: Folding ramp anti-slip strip 0
+    host: Rear ramp folding tread
+  - strip: Folding ramp anti-slip strip 1
+    host: Rear ramp folding tread
+  - strip: Folding ramp anti-slip strip 2
+    host: Rear ramp folding tread
+  - strip: Folding ramp anti-slip strip 3
+    host: Rear ramp folding tread
+  - strip: Folding ramp anti-slip strip 4
+    host: Rear ramp folding tread
+  - strip: Folding ramp anti-slip strip 5
+    host: Rear ramp folding tread
+  - strip: Folding ramp anti-slip strip 6
+    host: Rear ramp folding tread
+  future: Refresh these exact witnesses after header/fold/pose edits. Anything else or deeper/larger is unresolved;
+    no automatic acceptance by small volume alone. Bounds qualify numerical accounting, not strength/clearance/pressure.
+header_choice:
+  choice: Select the supported offset closure, retaining two existing ramp nodes, hinges, toe and walking face.
+    Reject the plain extended leaf because it collides with folding tread/ribs; do not cut that tread or introduce
+    an extra closure motion to hide the clash.
+  geometry: 12mm6061plate at leaflocalX+50..62mm with actual12mmnormal-stock transition below upper-extension startZ1.69,
+    per frozen polygon in bound design. Retain full positive connection to original leaf. The~62mmrear profile change
+    is explicit local construction, not silent exterior preservation.
+  fixed_carrier: Back the matching fixed seal face with a closed structural channel spanning the actual~68mmoffset:3mm6061walls,6mmfrontface
+    and finite attachment land onto the actual header. Do not count a floating6mmface as a supported bridge. Exact
+    side/rear views inspected; whole appearance/strength not approved.
+  seal: Reuse chosen12mmwide silicone upper strip,2mmfree thickness,1.6mmclosed thickness (20%prototype compression).
+    Provide20mmcarrier land where geometry permits,4mmedge margins, actual leaf contact and hard closing stops outside
+    gasket. Match the actual offset leaf plane; oldX4.9364 coordinates do not apply after offset. Explicitly retain
+    free/installed material amount and model closed shape as compressed, not a claim of changed density/material
+    capacity.
+  joining: Join supported carrier continuously to named fixed header with finite weld/support geometry and bounded
+    material union. Leaf transition is a connected stock/weld construction; name actual joint, retain plate thickness
+    and build any stop/latch attachments required for compression. Neither gasket nor visual overlap substitutes
+    for structural closure.
+  quantity: Eight rawdelta meshes checked positive/indexedclosed, volumes match report;6replacements+2additions,
+    preserve2negative oriented header cavity shells. New3mmroof/cover facets and12mmleaf transition are explicit
+    local new stock design, not mass-only thinning. Same-material frame/skin/carrier contact unions count once;
+    no summed gross delta promoted.
+  checks: Run actual83leaf/55fold pose sets against the new closure, carrier, seal, support and rear frame; refresh
+    native rear board/exit and measured head gap on final combined export. Side/lower historical gaps are separate
+    unresolved perimeter issues, so upper contact alone is not a cabin pressure seal.
+  audit_binding:
+    audit_declared_delta_sha256: 27a9339f723aa30a5739850e35d8ddc9f4cdf95ed557dd388d66cd4e73301312
+    actual_delta_sha256: e94d6ebf02dc1884a55eba34631f6840d3ff36556769752b92b92ce9018d451e
+    matches: false
+    disposition: Header design direction selected; exact header audit adoption pending consistent frozen audit binding
+      (task20261024T104231-registry-ac55). Current integration delta/blend binding and raw8mesh arithmetic checked
+      separately.
+  seal_material_accounting:
+    choice: Model the new strip from12mmwide x2mmfree silicone stock. A1.6mmclosed gap alone must not discard20%of
+      its material. Choose a volume-conserving closed cross-section within20mmland (nominal15mmwidth x1.6mm before
+      any corner radii,2.5mmside margins); actual rounded profile must preserve free cross-sectional area. Replay
+      the extra lateral bulge and full contact, do not infer elasticity/pressure capability.
+    current_reported_closed_shape_volume_m3: 3.964475380514583e-05
+    free_stock_equivalent_volume_m3: 4.9555942256432285e-05
+    free_stock_mass_kg: 0.05327263792566471
+    disposition: Existing0.042618110kgdensity-times-compressed-shape is provisional until free/closed material volume
+      is reconciled. This is new explicit strip design; do not silently alter silicone density, all other seals
+      or wholemass.
+next: Blender integrates adopted V5+chosen header onto latest ground candidate, freezes complete material ledger/current
+  named residual witnesses and fresh closed/open export/state/envelope. Registry can then record whole ground-stage
+  figures; separate flight fit/pressure/load qualification not required to report truthful ground quantities.
