@@ -333,7 +333,8 @@ fn bounded_import(
     bytes: &[u8],
 ) -> Result<(gltf::Document, Vec<gltf::buffer::Data>, Vec<Image>), String> {
     const INPUT: usize = 64 * 1024 * 1024;
-    const EXPANDED: usize = 128 * 1024 * 1024;
+    // (A ship's model as made, its parts apart: the Explorer's 235k triangles over 1,040 meshes estimate 130 MiB.)
+    const EXPANDED: usize = 256 * 1024 * 1024;
     if bytes.len() > INPUT {
         return Err("GLB exceeds 64 MiB input limit".into());
     }
@@ -412,7 +413,7 @@ fn bounded_import(
         image_ranges.push((view.offset(), end, w, h));
     }
     if expanded > EXPANDED {
-        return Err("asset exceeds 128 MiB expanded payload estimate".into());
+        return Err("asset exceeds 256 MiB expanded payload estimate".into());
     }
     let mut images = Vec::new();
     for (start, end, w, h) in image_ranges {

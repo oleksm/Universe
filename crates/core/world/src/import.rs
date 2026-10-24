@@ -477,6 +477,9 @@ mod tests {
         bare.thrusters.clear();
         let stage = hull_from_record(&glb, "assets/models/mc07.glb", Some(&bare)).unwrap();
         assert!(stage.slots.is_empty() && !stage.commissioned, "{:?}", stage.slots);
+        // (And it can join the game's hulls: a stage is checked as a body, not as a flyer.)
+        use crate::content::Entry;
+        stage.validate().unwrap();
     }
 
     /// A hull's engines as its record binds them: exactly, or refused (a missing nozzle or slot, twice, a share

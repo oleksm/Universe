@@ -648,6 +648,16 @@ impl Entry for ClassSpec {
     }
 
     fn validate(&self) -> Result<(), String> {
+        // (A stage before it can fly (`commissioned` false) is checked as a body: its mass and size, not its drive,
+        // thrusters or turn rates, which it hasn't got. It makes no thrust (`Ship::drive`).)
+        if !self.commissioned {
+            for (what, v) in [("dry_mass", self.dry_mass), ("radius", self.radius), ("drag_area", self.drag_area), ("hull_strength", self.hull_strength)] {
+                if !(v.is_finite() && v > 0.0) {
+                    return Err(format!("{what} must be positive ({v})"));
+                }
+            }
+            return Ok(());
+        }
         let positive = [("dry_mass", self.dry_mass), ("radius", self.radius), ("drag_area", self.drag_area), ("hull_strength", self.hull_strength), ("turn_rate", self.turn_rate), ("roll_rate", self.roll_rate)];
         let not_negative = [("fuel_capacity", self.fuel_capacity), ("hold_capacity", self.hold_capacity), ("main_thrust", self.main_thrust), ("rcs_thrust", self.rcs_thrust), ("lift_thrust", self.lift_thrust)];
         for (what, v) in positive {
