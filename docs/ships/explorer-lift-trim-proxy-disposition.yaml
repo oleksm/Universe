@@ -1,0 +1,32 @@
+status: Registry disposition of the software-only assumptions in Ships' lift-trim proxy study; physical COM bounds stay
+  authoritative; no record adoption
+source_task: 20261024T164421-ships-1001
+packet: /home/alexm/.agents/reviews/ships/explorer-final-ground-20261024/lift-trim-software-proxy-sensitivity.json
+packet_sha256: 34d1897a7bc46b90cc1a864964b5447a50aad9f03d7f76ed995fb4651e4173c4
+accepted_as_software_proxies:     # labelled software-study hypotheses, never physical closure
+- Catalogue mass spread uniformly through each product's actual signed mesh volume
+- Hidden reserves at their assembly box midpoints (docs/ships/explorer-com-allocation-bounds.yaml keeps the boxes)
+- Draft outboard RCS at its measured material COM plus reserve proxy
+- Wingframe I at its geometric occupancy, 718 kg
+- Crew box X 0.4..1.4, Y -0.3..0.3, Z 2.1..2.9 as a seated-crew hypothesis only; the physical bound stays the cabin
+  floor region and the owner's deferred command seat stays deferred
+rejected:
+  fuel_range: Fuel tested only at 450..500 kg. Not acceptable - hover must hold over the whole burn.
+  why: The hydrolox COM sits at X 3.3, aft of the ship's 1.354. Burning it moves the ship's COM forward
+  com_shift_m:                    # from the packet's 9803 kg row, all else fixed
+    fuel_500: 1.354
+    fuel_400: 1.334
+    fuel_250: 1.303
+    fuel_100: 1.271               # a 20% reserve floor
+    fuel_0: 1.249
+  consequence: The study's own rows hover only with COM within about 0.05 m of the lift station (lift 1.25 and 1.7
+    fail at COM 1.352). Lifts fixed at X1.35 lose level hover near half a tank.
+required_next:
+- Run the software proxy over HLOX 0..500 kg (at least down to the 100 kg reserve floor) and N2 0..100 kg, with the crew
+  box, for each candidate lift station
+- If no fixed station covers the burn - trim by the main engines in hover, move the hydrolox nearer the lift line, or
+  gimbal or differentially throttle the lifts. A choice among these is a design fork - bring the numbers; registry
+  and the owner decide.
+- The 20% throttle floor note stands - four unmodified S1 lifts at 20% exceed hover weight; no automatic fix
+scope:
+  active_record_created: false
