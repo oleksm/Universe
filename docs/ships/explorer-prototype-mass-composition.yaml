@@ -27,11 +27,24 @@ composed_so_far:
     roof, engines, optics and equipment still excluded; not the whole mass yet
   check: Ships' base + K 7340.527 + the full 94.635 holder row = 7435.162; the 1.0 kg left is the wing crossings -
     consistent, all 395 parts counted once
+final_prototype_hull:          # audited 2026-10-24 for 20261024T174548-blender-7072
+  source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-prototype-composition/final-full-spatial.json
+  sha256: bc9229f2b3e9732e09ce1fcf2fbaf932e9ff4f598756dad41a9096839f9b9a48
+  meshes: 2942
+  drawn_kg: 7694.549559223854
+  hidden_reserves_kg: 91.6
+  bare_kg: 7786.149559223854    # the record's whole hull mass once the export installs
+  com_m: [1.1313343, 0.0023461, 2.5481606]
+  audit: 5 input hashes match; 9 material rows sum exactly to the drawn mass; COM and inertia recompute exactly;
+    principal inertias 64398, 111723, 125775 kg m2, all positive; each row's density equals the registry material's
+    (6061 2700, steel 7850, fused silica 2203, Ti 4470, silicone 1075, bronze-filled PTFE 3900, 304 7916, 1150, 2200)
+  delta_from_composed: +258.39 kg over 7436.162 - corrected engine retention, roof, optics and RCS seats
+  authority: The full Mesh64 reference is the mass authority; the runtime LOD (at most 320k triangles) carries it, not
+    its own volume
 external:
 - row: 31 equipment (V11 marker-fit payload, fit not hull mass)
   kg: 1665.9293551044705
   source: /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/flight-fit-current-study/native-export-payload-v11/marker-fit-payload.json
 pending:
-- Radiator retention on the K wing, if not inside K
-- Roof tank cradle at X1.35, comm relocation to X3.9, pipes and harness (RCS branches about 34 kg)
+- Pipes and harness (RCS branches about 34 kg) stay inside the ledger allowance until drawn
 limits: Pressure, structural, thread and fabrication qualification are limits, not gates
