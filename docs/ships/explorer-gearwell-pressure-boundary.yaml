@@ -194,3 +194,48 @@ closure_candidate_review:
   - riser/collar/base
   - maintenance sequence
   - whole cabin pressure/engineering qualification
+chosen_service_topology_v6:
+  proposal: /home/alexm/.agents/reviews/ships/explorer-functional-20261023/gearwell-service-sequence-v6.json
+  sha256: 622877aba1d2feaa61fbf7fcc35a28248893374d3c8d422eaaa8d236bbd386d5
+  choice: RoutinegearservicefromBELOWusingcaptivenutsentirelyOUTSIDEpressurepan;retainpermanentlyweldedriser/collarinsideFIXEDlidisland.
+    AddSEPARATEremovableaccesspanelthatcontainsNOriserhole. No splitpressuresealaroundriserandno wholeweldedlidremovalassumption.
+  ownership: Allnewpressurepan/riser/adapter/captivenuttrackandaccesspanelhardwarehull-owned. Actualeditedgeargeometryand3x12mmboresunchanged;no180kNstockrating/mountschemaadoption.
+  prototype_material_choices:
+    new_nutplates_bolts: stock.st4340-fg / material.high-strength-steel-4340,7850kg/m3;newcustommachineddraftparts,
+      no grade/preload/corrosion/fatigue rating.
+    captures_rims_bridges: stock.al6061-sh-3 andstock.al6061-pl-8,2700kg/m3;formed/cut geometrypendingactualmesh.
+    gaskets: stock.chem-ptfe / material.ptfe,2200kg/m3;newonepieceformed/cutdraftstock, no approvedsealservice.
+  state: Separate geometry proposal, no service/pressure/fit acceptance
+  well_count: 3
+  gear_bore_counts_preserved: 9
+  access_panel_screw_count: 78
+  pressure_separation: Fixed riser island remains sealed to stationary riser. Separate removable panel contains
+    no riser hole; routine gear service stays below/exterior, with captured nut tracks and actual bolt withdrawal
+    witness.
+  panel_sealing: New one-piece PTFE loop, blind screws and explicit rim/bridge support per proposal are chosen new
+    prototype parts/stock; not existing rated seals or thread strength. No automatic gasket field from old952-object
+    schedule.
+  mass:
+    new_pan_lid_rim_bridge_gasket_plus_existing_trial_sides_kg: 73.71326648462029
+    new9nutplate_bolt_track_uncut_proxy_kg: 1.0257045704702932
+    new_panel_screw_count: 78
+    panel_screw_proxy_kg: 0.3289351180866082
+    retire_v5_9M10x55_sets_kg: 0.6066001671211723
+    v5_uncoped_joint_frame_proxy_kg: 365.3329802393918
+    combined_study_gross_proxy_kg: 439.7942862454479
+    not_a_net_bare_mass: Existingwalkfloorpatchesandgearcoverreplacementcutsmustberetiredfromactualhullrosterbeforemassrollup.
+      Pantrialsidewallsnotcompleteweld/cornergeometry. Trackstops/retainerfasteners,weldbeads/seallandfinish,actualpartcutsandmanufacturingstockdiffer.
+      Noacceptedwholeaddedmass.
+  tests_required:
+  - BuildV6singlewellfirst(noseoractualmostconstrained)onseparatecopy:fixedisland/riserseamandseparatepanel/rim/bridge/gasket/blindholes,notoverlapping8mmlidprimitives.
+    Cloneandretireonlyidentifiedfloorpatch;livehullunchanged.
+  - Verifyall3belowtools/boltwithdrawalpathswithactualgearstates:61samples241..469minimumandmechanismextremes. Specifyexactreachableposeforeachbolt;doNOTassumeeveryboltaccessibleindeployedpose.
+    Gearlowering/riggingpathalsoneedswitness.
+  - Modelcaptiveblock/track/endstopand40mmadapterservicewindows. ProvevolumesremainOUTSIDEpan,closedriserbasecorehasnoholesandnutreplacementsequenceactuallyescapesfrombelow.
+    Threeadapterwindowsarenewstrengthcuts,notfreeaccesscredits.
+  - Execute10mmpanellift,250mminboardthen400mmforwardforafts,100mmliftONLYafterframeclearance;nosetrajectoryseparate.
+    Exactdriver/gasket/paneledge/carryrouteandfullrigidpanelclearancerequired. Re-splitpanelfurtheriftrajectoryfails;noactor/gear/framehullscaling.
+  - Measureallpressureseamfullfaces/cornersandblindthreadbottomligaments. Boltholesendinginwellmustnotleakcabinunlessseparatelysealed;nominal2mmblindbottomisnotproofpressureallowable.
+  - Returnexactnewroster/stock/meshvolume/COMandretiredoldpatchvolumes,allunbuiltjointpartsandfailedcontacts. Noqualifiedpressureseal/operationalacceptancefromzerotrianglehits.
+  remaining: Pressure/loadallowables,weld/HAZdesign,fastenergrade/threadengagement/preload,tolerancesandsealmaterial/pressuretestcriteriaremainopen.
+    Nominalgapsareasgeometryseeds. Maintainsunknownmission/commanddeferral.
