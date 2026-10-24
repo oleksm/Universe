@@ -1,5 +1,5 @@
-status: supported draft geometric quantities for seven replacement candidates, not net whole mass
-request: 20261023T220854-blender-8c0a
+status: supported draft geometric quantities for eight replacement candidates, not net whole mass
+request: 20261023T221438-blender-3ebc
 source_sha256: 8fc3a7e3ab384395592c35dde78b59a440830bbdae1f4a7ed59e55c07af8927e
 bindings:
   /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/closure-plate-reconstruction.json: d5538ba838bbcb49492a575eef84a2bd0f9bd2571324763da69c69ea723867e8
@@ -7,6 +7,8 @@ bindings:
   docs/ships/explorer-floor-return-stock.yaml: 43d940e81ea1493e1b5ca25b625f759da4deb7eb5afab343caf0edf2897d9f51
   standards/SFO/metadata/mill-stock/AL6061-INGOT.yaml: a4ab7e02f141392975a8cfb5bb61bcc728177baff3e4e54e2f8c7f602ff0feed
   standards/SFO/metadata/mill-stock/AL6061-SH-2.yaml: 71117e5c00ea7af0eec43a4eeb8273ae76bb45e69b827196793b184bf20abfef
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/functional-current/review/belly-intent-rebuild.json: fcceadef24f72d09e1276343a25a39c42127bae51d820ac2a88d58d5efb78506
+  /home/alexm/git/blender/ships/explorer-study/crew-hatch-01/source/crew-hatch.py: eca8a8c89732033088cc3789a317485c682277da1365e41767f2562e2844cd55
 decision: Adopt these quantities into the candidate replacement ledger as prototype geometry at existing2700kg/m3,
   with exact original retirement/new replacement names. Do not wait for pressure/load ratings; do not claim those
   ratings. Actual cumulative export/source adoption and contact/material partitions remain separate.
@@ -102,11 +104,34 @@ parts:
   edit_map: Retain original outward quad, new2mm inward thickness
   geometry_decision: Physical realization from explorer-floor-return-stock.yaml; outward face retained, positiveclosed
     geometry; contact trims and overlaps remain explicit.
+- source_name: Crew access belly | round opening
+  replacement_role: closed belly sheet with original64gon coaming outer-seat opening
+  material: material.aluminium-alloy-6061
+  feedstock: stock.al6061-ingot
+  thickness_m: 0.005999922752380371
+  bounds_source_m:
+  - - -0.4099999964237213
+    - -0.800000011920929
+    - 1.590000033378601
+  - - 2.799999952316284
+    - 0.800000011920929
+    - 1.5959999561309814
+  volume_m3: 0.02159426938087524
+  candidate_mass_kg: 58.30452732836315
+  single_surface_area_m2: 3.5990912341488617
+  projected_symmetric_difference_m2: 2.2650165423264913e-07
+  geometry_decision: Rectangle source(-.41,-.8)..(2.8,.8), centre(.35,0), outer-seatR.70/N64, actual bounds/thickness
+    retained. Closed sheet replaces disconnected source faces once. ClearR.65 and hatch/skin contacts remain separate.
+  stock_decision: Raw6061feed for measured~6mm finished sheet; do not thin to earlier nominal cover gauge or invent
+    laminate.
+  scope: Supported draft geometry quantity, not pressure/load/runtime acceptance.
 totals:
   closure_plates_kg: 83.93806938661754
   returns_kg: 4.320091491881756
   seven_candidate_parts_kg: 88.2581608784993
   max_area_difference_mass_equivalent_kg: 1.7913950761951786e-05
+  belly_kg: 58.30452732836315
+  eight_candidate_parts_kg: 146.56268820686245
 net_rollup_rules:
 - Retire each invalid original once; measure actual new same-material/physical interface overlap, do not add raw
   part sums blindly to global unions.
@@ -115,5 +140,5 @@ net_rollup_rules:
   assignments and any removed matter in edit map.
 - Newframe/pans/equipment and96.1kg hidden dry reserves stay separate until actual complete added/replaced quantities
   exist.
-- 'Remaining5rejected source objects from prior12: shoulder casings2-4/2-2, aft housing1casings1-4/0-4, Crew access
-  belly round opening. Confirm roster after including these7candidates; do not assert whole mass.'
+- 'Remaining4rejected source objects: Shoulder1casing2-4, Shoulder-1casing2-2, Aft housing1casing1-4 and0-4. Confirm
+  cumulative candidate roster; material conflicts and final frame/pans still separate.'
