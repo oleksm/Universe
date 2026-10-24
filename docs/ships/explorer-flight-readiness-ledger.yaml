@@ -1,0 +1,61 @@
+status: Registry ledger of what stands between the Explorer's accepted ground baseline and a ready ship, with the
+  registry's own closure of mass, propellant and heat at the site; first-order, not acceptance
+source_task: 20261024T163432-blender-fee0 (owner, via blender - full-auto finish to a ready ship)
+baseline: hull.explorer-study @308238a07, 6829.395 kg, installed main fe824f20f; uncommissioned, no thrust
+mission: One person, no cargo, short hops on an airless moon from Port Sirnendis (body.treistun.treistun-d-i, 1.281 m/s2,
+  lat -32.1 deg, sunlight 1454 W/m2, 12 h day, regolith about 377 K at local noon)
+
+decided:                       # registry choices on fso (all merged to main)
+  com_bounds: d6f4ea155 docs/ships/explorer-com-allocation-bounds.yaml (reserves boxed; crew 50-110 + suit 90-130 kg)
+  service_interfaces:
+  - ccaa093e4 LS V3 intake; 8d473a65e camera; 25656afd2 465644777 d0fa0f650 altimeter; d0fa0f650 8cebf7594 68a3b9efa coolant
+  - 3412bc9b2 3d0d77dfa d22f6aeea air cooler; c0fb89fa4 d22f6aeea shell 25 insert
+  structure:
+  - b541dac69 radiator root loads (20 m/s2 limit, 1.25/2.0); 27d6bc952 one-V2 review (guide fails; V3 wide guide in build)
+  - 659980dff wingframe tied to the central/gear foundation; aft node now X1.950 on the rail (Ships H)
+  rcs: 71fd15e54 outboard RCS V2 intake (draft 25.78 kg each, 8 kg invented reserve)
+
+mass_budget_kg:                # interval; Ships equipped-com-intervals-20261024.json V10 plus what it excludes
+  known_V10_with_fills_and_crew: [8635.3, 9335.3]   # tare 8495.3 + HLOX 0..500 + N2 0..100 + crew 140..240
+  wingframe_F_coarse: 535.7
+  radiator_retention_8_x_1.389: 11.1
+  undrawn_structure_allowance: [0, 300]   # foundation, nodes, sleeves, joints - invented/review placeholder
+  harness_and_plumbing_allowance: [0, 100] # invented/review placeholder
+  full_tank_range: [9682, 10282]         # with 500 kg HLOX and its share of the rest
+  rule: Allowances retire as drawn parts replace them; never add twice
+
+propellant_and_range:          # 500 kg hydrolox at the CHS1 target ve 4400 m/s (target, not a rating)
+  delta_v_m_s: [219, 233]      # heavy, light
+  hover_s: [171, 182]
+  hover_thrust_kN: [12.4, 13.2] # two mains at 25 kN target each: T/W about 3.8 local
+  hop: 20% reserve and 20 s for touchdown kept; the rest split between launch and landing burns
+  hop_range_km: [4.4, 5.1]     # one-way ballistic, flat ground, impulsive; a sortie out and back needs two tanks or a refill
+  sortie_defined: One hop of up to 4 km from a pad to a site with a pad or prepared ground, refuelled before the return,
+    is the first flight envelope. Anything longer waits for a bigger tank. invented/review choice for the owner's
+    "short trips"
+
+heat_at_the_site:
+  load_W: 7690           # known aux 4230 W plus fuel-cell heat at that output (40.909/50 of electrical)
+  radiators: 8 x radiator.s0, 2.4 kW each to empty space at 330 K
+  night_or_shade_W_each: 2370    # ground at about 150 K: about 19 kW in all - closes with margin
+  noon_horizontal_W_each: -81    # sunlit top (absorptance 0.2, invented) and 377 K regolith under it: they take in heat
+  noon_vertical_W_each: 225      # half sky, half ground: about 1.8 kW in all - does not cover 7.7 kW
+  buffer: About 30 kg of water-glycol over a 30 K swing holds about 3.2 MJ - 420 s of the load
+  finding: In local daylight on the ground the radiators cannot reject the ship's heat. A hop (about 3 min) rides on
+    the coolant's heat capacity; a daytime stop needs port cooling through a service umbilical or shade. Nighttime and
+    shade operation closes. Hard physics - kept, not hidden.
+  next: A thermal model with the real radiator poses, coatings and the coolant's actual mass; a port cooling umbilical
+    (a new service interface) as the daytime answer
+
+open_to_ready:                 # owner of each in brackets
+- Wingframe H geometry, coarse gate, foundation-to-gear path shown [ships, blender]
+- Radiator wide guide V3 build and replay; product feet material [blender, ships]
+- Altimeter, camera, coolant, air cooler, LS service panels built to the choices; harness routes [blender]
+- Whole wet COM against the hover band from drawn parts (V10 known COMx 1.148..1.719 vs band ~1.643..1.757) [ships]
+- RCS feed pressure, valves, regulator; main engine and RCS performance beyond targets [registry + ships]
+- Pilot station and suit stowage drawn (tightens crew COM) [blender]
+- Thermal model and daytime cooling umbilical [registry]
+- Installed fit record, wet mass record, commissioning (thrust on) [registry, engine]
+scope:
+  active_record_created: false
+  installed_ground_changed: false
