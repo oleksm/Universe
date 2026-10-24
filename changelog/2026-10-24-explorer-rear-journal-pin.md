@@ -1,0 +1,1 @@
+Chose explicit21mmoutboard extensions to both unchanged66mmdiameter rear ramp pins, reaching the real8mmknuckles. Added a2mmendplate and measured-stack thrustspacer/axial-screw prototype route with positive opposite-stop requirement. Oldpins retire once; actual newstock/hardware quantities and motion/pressurecase checks remain required. No rating or hidden drive-reserve credit.

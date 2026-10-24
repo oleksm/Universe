@@ -1,0 +1,66 @@
+status: chosen explicit hull-owned prototype pin extension and positive axial keeper; no bearing/load acceptance
+request: 20261024T000206-blender-aa89
+parent_policy: docs/ships/explorer-local-mechanical-interface-policy.yaml
+pin:
+  names:
+  - Rear ramp pivot pin 1
+  - Rear ramp pivot pin -1
+  material: material.high-strength-steel-4340
+  stock: stock.st4340-fg
+  diameter_m: 0.066
+  axis: unchanged sourceY throughX4.95/Z1.75; journal stationsY+/-1.05
+  positive_side_old_extent_Y_m:
+  - 0.98
+  - 1.13
+  positive_side_new_extent_Y_m:
+  - 0.98
+  - 1.151
+  negative_side_new_extent_Y_m:
+  - -1.151
+  - -0.98
+  extension_m_per_pin: 0.021
+  choice: Extend both actual pin solids21mmoutboard, mirror byYsign, keeping bore axis/diameter and all other sourcepin
+    faces unchanged except a new explicit axial keeper screw bore. Retire each old pin once; do not silently relabel
+    oldhash.
+  nominal_full_cylinder_added_mass_kg_per_pin_before_new_bore: 0.5639838968003182
+outside_knuckle:
+  positive_side_extent_Y_m:
+  - 1.137
+  - 1.145
+  thickness_m: 0.008
+  policy: Keep intended8mmknuckle and2mmjournal-pocket gap/3mmwall construction. The extra21mm is to reach through
+    this real stack, not a bearing capacity increase. Check realcylindricalbore/knuckleweb and all motion/pressurepan
+    faces.
+keeper_choice:
+  material: material.high-strength-steel-4340
+  stock: stock.st4340-fg
+  kind: new separate axial end plate, nominal2mmthick,78mmOD,9mmcentral clearance hole; mirror outside both pins
+  positive_side_plate_Y_m:
+  - 1.151
+  - 1.153
+  fastener: New hull-owned nominalM8axial end screw into an explicitly drawn blind tapped receiver in solid pinend;
+    choose10mmminimum geometric thread-depth target, preserve blind bottom, count actual screw/receiver material.
+    No standard grade/proof/torque/engagement capacity inferred. Place screw/tool outside pocket so it never pierces
+    pressurecase.
+  spacer: New steel thrust spacer ID66.5mm/OD78mm/thickness5.5mm between outer knuckle faceY1.145 andY1.1505, leaving0.5mmnominal
+    axialfloat to keeper undersideY1.151. This is a concrete geometric seed, not a thermal fit or wear rating; adjust
+    only to actual measured stack and record changes.
+  positive_retention: Endplate overlaps the knuckle bore radially through spacer; show a genuine opposite shoulder
+    or fixed pin-to-moving-leaf retention so pin/keeper cannot translate together out the other side. If absent,
+    build/count that shoulder/leaf-pin lock before calling the assembly retained. No friction-only invisible pin
+    fixing.
+  nominal_plate_mass_kg_per_pin: 0.07402149924553565
+  nominal_spacer_mass_kg_per_pin: 0.05634922080975999
+  limits: Nominal prism/cylinder masses are comparison quantities only; final machinedgeometry, newbore and all
+    hardware determine actual mass.2mmplate is not a loadrating.
+next:
+- Freeze old/new exactpin/keeper/spacer/fastener meshes, axialstack/contactfaces and sourcecoordinate/hierarchy
+  map. Newparts retain correctmoving/fixed ownership.
+- Show assembly/removal and real toolpath after pin extension; keep pressurepocket closed/continuous around thefixedjournal,
+  not around a rotating shaftpenetration.
+- Replay actual two-leaf motion and contacts to pocket,knuckle,floor,skin and adjoiningretainers; no oldshortpin
+  or isolatedclearance transfer.
+- Reconcile newsteel materialvolume/COMand retiring2oldpinsonce in coherentMesh64domain; procurementstock/machiningseparate.
+  No hidden drive reserve credit.
+limits: Explicit geometry/quantity design under owner finish authority, not bearing strength, pressure closure,
+  load, fatigue, torque, crew or game release acceptance.
