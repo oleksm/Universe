@@ -23,6 +23,7 @@ rule: 'Only physics that requires seamless cross-player interaction, and only wh
   are cleaned off this lane: power, fuel, heat and life support to machinery; coasting and FTL cruise to rails; unwatched
   NPC action to the NPC lane. The input deadline k is in ticks (k = 2 is 10 ms here); a player further away gets a larger
   k, per player.'
+defer: false
 basis:
 - of:
   - trigger

@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/clock.schema.yaml
+identity:
+  key: clock.realtime-far
+  name: Realtime, far
+  about: Crafts 50 to 200 km from a player, integrated with a larger step.
+parent: clock.system
+scope: bubble
+coupling: fast_loose
+trigger:
+  kind: period
+  every: 0.1
+runs:
+- flight of crafts 50-200 km from a player, integrated with this step
+reads:
+- clock.celestial
+- clock.machinery
+posts:
+- clock.realtime-near
+defer: true
+basis:
+- of:
+  - trigger
+  - coupling
+  - runs
+  - defer
+  tier: invented
+  review: true
+  note: 'planet-lod and engine, 25 Oct 2026: tick tiers (planet-data land/evidence/tick-tiers-design.md); the period is a
+    proposal for the owner to set'

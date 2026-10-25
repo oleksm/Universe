@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/clock.schema.yaml
+identity:
+  key: clock.field
+  name: Field
+  about: A craft's look-up of the belt patch or rock field around it.
+parent: clock.system
+scope: craft
+coupling: fast_loose
+trigger:
+  kind: period
+  every: 0.1
+runs:
+- belt-patch and rock-field look-up around a craft, or on 2 km moved
+reads:
+- clock.celestial
+posts:
+- clock.realtime
+defer: true
+basis:
+- of:
+  - trigger
+  - coupling
+  - runs
+  - defer
+  tier: invented
+  review: true
+  note: 'planet-lod and engine, 25 Oct 2026: tick tiers (planet-data land/evidence/tick-tiers-design.md); the period is a
+    proposal for the owner to set'

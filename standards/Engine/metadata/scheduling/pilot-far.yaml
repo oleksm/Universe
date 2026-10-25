@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/clock.schema.yaml
+identity:
+  key: clock.pilot-far
+  name: Pilot, far
+  about: A far craft's pilot thinking.
+parent: clock.system
+scope: craft
+coupling: slow_loose
+trigger:
+  kind: period
+  every: 1.0
+runs:
+- an AI pilot's decisions for a craft beyond ~50 km of a player
+reads:
+- clock.realtime-far
+posts:
+- clock.realtime-far
+defer: true
+basis:
+- of:
+  - trigger
+  - coupling
+  - runs
+  - defer
+  tier: invented
+  review: true
+  note: 'planet-lod and engine, 25 Oct 2026: tick tiers (planet-data land/evidence/tick-tiers-design.md); the period is a
+    proposal for the owner to set'

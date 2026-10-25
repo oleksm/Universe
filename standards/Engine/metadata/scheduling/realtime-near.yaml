@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/clock.schema.yaml
+identity:
+  key: clock.realtime-near
+  name: Realtime, near
+  about: Crafts within about 50 km of a player, outside the realtime bubble's core.
+parent: clock.system
+scope: bubble
+coupling: fast_loose
+trigger:
+  kind: period
+  every: 0.02
+runs:
+- 'flight of crafts within ~50 km of a player outside the bubble''s core: thrust and integration against Dogma at this step'
+reads:
+- clock.celestial
+- clock.machinery
+posts:
+- clock.realtime
+defer: true
+basis:
+- of:
+  - trigger
+  - coupling
+  - runs
+  - defer
+  tier: invented
+  review: true
+  note: 'planet-lod and engine, 25 Oct 2026: tick tiers (planet-data land/evidence/tick-tiers-design.md); the period is a
+    proposal for the owner to set'

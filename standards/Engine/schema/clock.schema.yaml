@@ -33,6 +33,8 @@ properties:
   reads: { type: array, items: { type: string, x-ref: [clock] }, description: "Clocks whose last published state this one reads (stale by at most their period)." }
   posts: { type: array, items: { type: string, x-ref: [clock] }, description: "Clocks this one posts stamped operations to (due at a tick)." }
   rule: { type: string, description: "The constraint that keeps this clock lean: what belongs here and what must leave." }
+  budget: { type: number, x-unit: "s", exclusiveMinimum: 0, description: "Time one step may take on its thread." }
+  defer: { type: boolean, description: "true: a step over its budget rolls its rest to the next step (counted); a tight clock is never deferred." }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"
     default: { status: review, owner: user, on_conflict: propose, because: "The user's design of the engine's time, 2026-10-06; periods are configuration and may be tuned with a reason.", ask: docs/registry-ssot-request.md }
