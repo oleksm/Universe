@@ -17,6 +17,8 @@
     python3 tools/standards/ship.py modules (--mount=<key> | --socket=<hull>:<slot> | --kind=<kind> [--class=N]) [--all] [--json]
         The products that fit: key, size, mass, power, thrust, mount, revision, whether an installed model exists.
         --socket judges each against the slot's whole spec; --all also lists the rejected ones and why.
+        --installed: only products with an installed model; --models: each product's model.glb path (to open
+        and review its look); --json rows carry it as glb.
     python3 tools/standards/ship.py shipyard <hull> [--candidate=fit.json] [--json]
         The ship as fitted, from its fitted products only: each fitted product against its slot's spec, every
         required block filled, and the hull's spec (ship.lift_to_weight, power_margin, attitude_axes, ...). Exit 1
@@ -193,8 +195,9 @@ def _model(rec):
     v = rec.get("visual") or {}
     path = v.get("path")
     store = os.environ.get("UNIVERSE_ASSETS") or os.path.expanduser("~/git/freefall-assets")
-    return {"path": path, "manifest_sha256": v.get("manifest_sha256"),
-            "installed": bool(path and os.path.isfile(os.path.join(store, path, "model.glb")))}
+    glb = os.path.join(store, path, "model.glb") if path else None
+    ok = bool(glb and os.path.isfile(glb))
+    return {"path": path, "manifest_sha256": v.get("manifest_sha256"), "installed": ok, "glb": glb if ok else None}
 
 
 def modules(opt):
@@ -237,12 +240,19 @@ def modules(opt):
         rows.append({"key": k, "size_class": q.get("size_class"), "mass_kg": ph.get("mass"),
                      "dims_m": [ph.get("length"), ph.get("width"), ph.get("height")], "power_W": n.get("power"),
                      "function": f.get("kind"), "thrust_N": f.get("thrust"), "fits": q.get("fits"),
-                     "revision": q["identity"].get("revision"), "model": _model(q)["installed"]})
+                     "revision": q["identity"].get("revision"), "model": _model(q)["installed"], "glb": _model(q)["glb"]})
+    if opt.get("--installed"):
+        rows = [r for r in rows if r["model"]]
     if opt.get("--json"):
         return print(json.dumps({"fit": rows, "rejected": [{"key": k, "why": bad} for k, bad in rejected]} if opt.get("--all") else rows, indent=1))
-    print(f"{'product':44}{'mass kg':>9}{'power W':>9}  {'function':16}{'mount':26}{'rev':10}model")
-    for r in rows:
-        print(f"{r['key']:44}{r['mass_kg'] or 0:>9g}{r['power_W'] or 0:>9g}  {str(r['function']):16}{str(r['fits']):26}{str(r['revision']):10}{'yes' if r['model'] else 'NO'}")
+    if opt.get("--models"):
+        for r in rows:
+            print(f"{r['key']:44}{r['glb'] or 'no model installed'}")
+        print(f"(models from {os.environ.get('UNIVERSE_ASSETS') or '~/git/freefall-assets'}; dims, mass and ports: product <key>)") if rows else None
+    else:
+        print(f"{'product':44}{'mass kg':>9}{'power W':>9}  {'function':16}{'mount':26}{'rev':10}model")
+        for r in rows:
+            print(f"{r['key']:44}{r['mass_kg'] or 0:>9g}{r['power_W'] or 0:>9g}  {str(r['function']):16}{str(r['fits']):26}{str(r['revision']):10}{'yes' if r['model'] else 'NO'}")
     if opt.get("--all"):
         for k, bad in rejected:
             print(f"  no  {k:40} " + "; ".join(bad))

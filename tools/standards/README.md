@@ -65,6 +65,7 @@ The parameter `of` can be:
 | A slot's whole spec, each limit with where it comes from | `spec hull.x:slot` |
 | Products that pass a slot's whole spec (`--all`: the rejected ones and why) | `modules --socket=hull.x:slot [--all]` |
 | Products for a mount or a kind | `modules --mount=mount.engine-s1c` / `modules --kind=tank --class=1` |
+| Every product of a slot kind with its model file, to open and review the look | `modules --kind=engine --models [--installed]` (or `--socket=hull.x:slot --models`) |
 | One product's sheet: size, mass, power, ports and pins, mount, holder, model | `product <equipment-key>` |
 | Any record: material, cable run, connector, interface, rule | `get <key>` |
 | Find a key | `find <words...>` |

@@ -14,6 +14,7 @@ Full guide (slot specs, frames and nozzles, hull and sockets workflow, criteria)
 | Sockets (mounts) a size class offers, which fit a hull | `python3 $S sockets --class=1 [--kind=engine] [--hull=hull.x \| --dims=L,W,H]` |
 | A slot's spec: every parameter a product there must meet (min, max, one of, push direction), and where each comes from | `python3 $S spec hull.x:slot` |
 | Products that fit a socket (judged on its whole spec), a mount or a kind | `python3 $S modules --socket=hull.x:slot [--all]` / `--mount=mount.engine-s1c` / `--kind=tank --class=1` |
+| Every product of a slot kind with its model file, to open and review the look | `python3 $S modules --kind=engine --models [--installed]` (or `--socket=hull.x:slot --models`) |
 | One product's sheet: size, mass, power, ports and pins, mount, holder, model | `python3 $S product equipment.sensors.camera.s1` |
 | Any record: material (density), cable/wire run (OD, bend, amps), connector, interface, rule | `python3 $S get material.ptfe` |
 | Find a key | `python3 $S find shell 25` |
