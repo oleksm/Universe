@@ -71,7 +71,7 @@ properties:
         connector: { type: string, x-ref: [stock, connector], description: "The fastener the registry joins it with (a bolt), by key" }
         key: { enum: [index], description: "The index socket: the equipment's index foot lands here, so only poses that keep it so are allowed." }
   mating:
-    description: "How a mountable meets it. The mating plane is z = 0 of the mount frame (on a hull its mount_<slot> node, z out of the hull; on a product its model's root): the mountable lies on +z within the envelope, nothing of it below the plane."
+    description: "How a mountable meets it. The mating plane is z = 0 of the mount frame (on a hull its mount_<slot> node, z out of the hull; on a product its model's root): the mountable lies on +z within the envelope, nothing of it below the plane. In a glTF model (+Y up) that z is the node's +Y."
     type: object
     additionalProperties: false
     required: [clocking, approach]
