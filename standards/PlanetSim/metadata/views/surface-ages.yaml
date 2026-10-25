@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+# (draft by planet-sim: the viewer layer `ages`, crates/viewer/src/layers/ages.rs, reads these rows by key)
+identity:
+  key: planet-view.surface-ages
+  name: Surface ages
+  about: a cratered planet's ground by when it was last made or resurfaced (planet-field.surface-age) and its craters >= 20 km as rings by age class
+title: Surface ages
+row: line rings
+file_suffix: _ages.png (+ .legend.json)
+draws:
+  words: the ground by its surface age's class over the shaded relief; the run's live craters as rings coloured by when they formed
+legend:
+  title: Surface ages
+  rows:
+  - kind: head
+    label: 'Ground by when it was last made or resurfaced; craters by when they formed'
+  - key: age:old
+    kind: fill
+    colour: [150, 95, 60]
+    label: 'older than 3.7 Ga (Noachian-like): {old_pct} % of the surface'
+  - key: age:middle
+    kind: fill
+    colour: [205, 160, 90]
+    label: '3.7-3.0 Ga (Hesperian-like): {middle_pct} %'
+  - key: age:young
+    kind: fill
+    colour: [235, 225, 185]
+    label: 'younger than 3.0 Ga (Amazonian-like): {young_pct} %'
+  - key: crater:old
+    kind: line
+    colour: [80, 40, 20]
+    label: 'craters >= 20 km older than 3.7 Ga: {n_old}'
+  - key: crater:middle
+    kind: line
+    colour: [170, 90, 20]
+    label: 'craters 3.7-3.0 Ga: {n_middle}'
+  - key: crater:young
+    kind: line
+    colour: [30, 30, 30]
+    label: 'craters younger than 3.0 Ga: {n_young}'
+shown: true
+implementations:
+- where: planet-forge crates/viewer/src/layers/ages.rs
+  state: current
+  note: the viewer layer
+status: draft
+styles:
+- key: coast
+  colour: [0, 0, 0]
+- key: base-land
+  colour: [200, 196, 186]
+- key: base-sea
+  colour: [205, 220, 232]

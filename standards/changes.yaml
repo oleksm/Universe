@@ -3029,6 +3029,7 @@
 - { record: planet-view.rings-relief, at: "2026-10-18T04:18:55Z", status: "", summary: "changed: implementations, legend", sha: "79670bf835501f27" }
 - { record: planet-view.rings-zones, at: "2026-10-18T02:17:46Z", status: "", summary: "changed: implementations, legend, styles, basis", sha: "0fc5f055f6792537" }
 - { record: planet-view.samples, at: "2026-10-18T02:00:15Z", status: "", summary: "changed: identity, draws, implementations, legend, basis", sha: "b5a19ea8b7d9fb5c" }
+- { record: planet-view.surface-ages, at: "2026-10-25T04:23:24Z", status: "", summary: "first tracked", sha: "480850a40e9c90aa" }
 - { record: planet-view.vectors, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "700be0ead9cb524e" }
 - { record: planet-view.world, at: "2026-10-18T02:40:07Z", status: "", summary: "first tracked", sha: "385e591c73f743f1" }
 - { record: plant-mount.bay-s1, at: "2026-10-16T23:35:55Z", status: draft, summary: "changed", sha: "e86faa8435b9213a" }
