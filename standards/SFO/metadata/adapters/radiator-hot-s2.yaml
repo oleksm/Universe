@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/adapter.schema.yaml
-# Written by tools/standards/mounting.py: change it there.
 identity:
   key: adapter.radiator-hot-s2
   name: Hot radiator cradle, class 2

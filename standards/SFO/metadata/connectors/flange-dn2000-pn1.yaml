@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: connector.flange-dn2000-pn1, name: Flange DN 2000 PN 1, description: 'A bolted pair of weld-neck flanges for a pipe of 2000 mm nominal bore at up to 1 bar inside (on airless ground, the whole of it against vacuum).'}
 kind: flange
 size: 2.0

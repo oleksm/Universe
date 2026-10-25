@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: connector.flange-dn50-pn16-ss-double, name: 'Flange DN 50 PN 16, stainless, double seal', description: 'A bolted pair of weld-neck flanges for a pipe of 50 mm nominal bore at up to 16 bar inside (on airless ground, the whole of it against vacuum).'}
 kind: flange
 size: 0.05

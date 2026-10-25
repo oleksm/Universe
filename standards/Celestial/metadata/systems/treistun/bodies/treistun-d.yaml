@@ -1,8 +1,4 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# and its orbit moved out from 0.408 to 0.525 AU (2026-10-06, with the planet lab): at 0.408 AU it would take in 422 W/m2, half again over
-# the runaway-greenhouse limit of about 282, and could keep no sea; at 0.525 AU it takes 254 and keeps them. Story follows physics.
-# Its mean temperature is the run's to give, not written here. The water share and the radioactive heat are the lab's defaults, chosen.
-# Baked: grown by the planet simulation (world TRD1, simulator 523b820fd74d). The survey it points at owns what the run derived; this record owns the inputs.
 provenance: baked
 survey:
   format: "planet-sim-survey/1"
@@ -89,7 +85,6 @@ surface:
 interior: {radiogenic: 1.0}
 water: {mass_share: 0.00023}
 atmosphere: {surface_density: 1.225, scale_height: 7928.0, top: 111000.0, breathable: true}
-# Life, from the run (the lab's release note for TRD1, 2026-10-06): when it began and its great steps, as ages. Fertile soil follows from forests.
 life:
   present: "plants and animals"
   soil: "fertile"

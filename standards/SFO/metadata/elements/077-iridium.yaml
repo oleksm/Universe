@@ -1,7 +1,4 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
-# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   key: element.ir
   name: Iridium

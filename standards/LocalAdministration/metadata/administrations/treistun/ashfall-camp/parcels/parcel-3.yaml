@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
-# Invented: the strip's yard.
 identity:
   key: parcel.treistun.ashfall-camp.3
 number: 3

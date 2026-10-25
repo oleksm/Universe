@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/plant-mount.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: plant-mount.bay-s3, name: 'Plant bay, class 3', size_class: 3, description: A 24 m square of prepared ground or floor and the feeds to it.}
 footprint: {length: 24.0, width: 24.0}
 bears: {load: 39600000.0}

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/interface.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: interface.bus-joint-dc-44ka, name: 'Bus joint, DC, 44 kA', description: 'The mating face of the Bus joint, DC, 44 kA joint: any maker''s half built to it mates with any other''s, whatever its metal.'}
 domain: power
 kind: bus-joint

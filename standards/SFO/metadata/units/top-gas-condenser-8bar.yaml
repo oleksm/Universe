@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: unit.top-gas-condenser-8bar, name: 'Top gas condenser, 57 MW', description: 'Two vertical shell-and-tube condensers at 8 bar: the top gas down through the tubes from 125 to 80 deg C, its water condensing (dew point about 116 deg C at this pressure, so the heat leaves warm), the loop''s water round the tubes from about 62 to 72 deg C; 20.5 kg/s of water drains to a pot and on to the hydrogen plant. A candle filter ahead of it takes the dust. Gas in at local (-6, 0, 12), out at (6, 0, 2).'}
 size_class: 2
 fits: plant-mount.bay-s2

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# What is sold is stock. This is cattle as it lies in a store and is sold: in bulk, by weight.
 identity:
   key: stock.live-cattle-bulk
   traded_as: market.biologics

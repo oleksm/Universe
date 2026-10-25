@@ -39,7 +39,6 @@ basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "A ruggedised camera head of 2 kg with a heater, 90 degrees across, 10 W. From memory; chosen." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 1.0, at: [-0.0254, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
 - {id: foot-2, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 1.0, at: [0.0254, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}

@@ -39,7 +39,6 @@ basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The room its load takes at 500 kg a m3, a middling cargo as stowed: 20,000 kg is 40 m3, twice as long as wide. The racks themselves are in it." }
   - { of: [physical.mass, built_of.list], tier: derived, review: true, note: "For the modeller (2026-10-10, blender's blockout): the frame's twelve edges are 39.88 m of tube; at 120 x 7 mm that is 778 kg at 7,850 kg/m3, with about 47 kg of corner nodes: the record's 825 kg (120 x 10 mm would be 1,082 kg); the rack stays 1,500 kg. The stock 120 x 10 is a proxy; whether 7 mm carries 20 t at 3 g is not checked (review). Its mount bears it full (rack and 20 t), by the mounts rule. Static: locks and drives drawn at rest, no motion." }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 187.5, at: [-3.9105, -1.4445, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s3''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 187.5, at: [3.9105, -1.4445, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s3''s socket of the same id, bolted through'}

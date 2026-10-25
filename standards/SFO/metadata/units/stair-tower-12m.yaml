@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: unit.stair-tower-12m, name: 'Stair tower, 12 m', description: 'Four switchback flights of steel stairs (each 18 risers of 167 mm over a 4 m run, 0.9 m wide) with 1 m landings at the ends, inside a perimeter lattice of kit struts 3 x 6 m (none across its middle, where the flights pass); the top landing at z 12 on its -x face at local (-1.5, 0, 12) meets a walkway, its guard rails to z 13.1. For people and hand tools only.'}
 size_class: 1
 fits: plant-mount.bay-s1

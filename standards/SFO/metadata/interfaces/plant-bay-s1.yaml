@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/interface.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: interface.plant-bay-s1, name: 'Plant bay seat, class 1', description: 'Where a unit''s feet bear on a class 1 bay (6 m square): its seats and anchor bolts. The unit brings its feet, the bay its seats.'}
 domain: load
 kind: mount

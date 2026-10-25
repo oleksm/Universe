@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: unit.ladle-car-80t, name: 'Ladle and transfer car, 80 t', description: 'A refractory-lined steel ladle that takes one tap, seated in a cradle on a motor car that runs on rails from under the furnace''s tap to the ladle station. It travels along its x; eight wheels on four axles at 3 m gauge, its origin on the rails'' running plane (the flanges reach 40 mm below); the ladle''s lip 4.4 m up.'}
 size_class: 2
 physical: {length: 6.0, width: 4.0, height: 4.4, mass: 55720.0}

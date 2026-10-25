@@ -52,7 +52,6 @@ basis:
   - { of: [life], rule: rule.life-ship-system }
   - { of: [built_of.list], tier: derived, review: true, note: "Flag: the motor (FAN3-03) is 122 kg for 5.7 MW, 47 kW/kg, and the inverter (FAN3-04) 35 kg, 163 kW/kg; motors of the 2020s ran about 10 to 15 kW/kg continuous and SiC inverters about 50 to 100 kW/kg (from memory), which would make them about 400 to 570 kg and 60 to 115 kg, the fan about 700 to 900 kg. Either a better motor (label it invented) or the mass rises; for review, not changed." }
   - { of: [function.heat_to_hull], tier: derived, review: true, note: "The motor and inverter lose about 8% of the electrical power as heat in the hull (0.92 efficient); electrical power is jet power / 0.75, so that is 0.107 of the jet power, the share lib.jet_heat counts. The duct's own losses go to the air it moves, not the hull." }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m80, half: male, make: bolted, mass: 43.75, force: 7500.0, at: [3.96, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s3''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m80, half: male, make: bolted, mass: 43.75, force: 7500.0, at: [2.8001, 2.8001, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s3''s socket of the same id, bolted through'}

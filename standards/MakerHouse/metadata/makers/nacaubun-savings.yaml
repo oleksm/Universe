@@ -1,6 +1,4 @@
 # yaml-language-server: $schema=../../../organisation.schema.yaml
-# Invented (2026-10-06): the system's bank, so that lending is a described thing. Its rates are shares and chosen: 6% a year,
-# three fifths of the security's worth, ten years at most, a fifth of deposits kept. A frontier bank's, from memory; review.
 identity:
   key: org.nacaubun-savings
   name: Nacaubun Savings

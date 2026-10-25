@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: run.conductor-rail-1000a
   name: Conductor rail, 1000 A, 690 V

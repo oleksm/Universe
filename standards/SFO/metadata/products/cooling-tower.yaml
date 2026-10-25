@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.cooling-tower, name: Cooling tower, description: 'An induced-draught wet tower of 12 m cells over a sunk basin, the loop''s pumps and plate exchanger on a skid within it.'}
 kind: family
 params:

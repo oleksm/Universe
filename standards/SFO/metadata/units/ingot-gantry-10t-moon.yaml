@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: unit.ingot-gantry-10t-moon, name: 'Ingot gantry, 10 t', description: 'A double-girder ingot gantry on its own legs, running on two ground rails 22.8 m apart: on its own legs over the cooling beds, the tipper and the saws: it lifts hot ingots off the ingot car onto the beds, later sets each on the tipper, lays it on a saw''s table and the cropped ingot in a steel crate on the crating line. Hangs on the frame; names no bay. It travels along its x, its wheels at y -11.4 and +11.4 (22.8 m between the rails), its ends 0.3 m beyond; its origin on the ground rails'' plane, its girders 12 m up; the trolley, with scissor ingot tongs, about 1.5 t of the trolley''s, runs 9 m either way along y, the hook raised under the bridge. Parked at the hall''s centre. Sized for 2 m/s2. Its scissor tongs as the ingot crane''s (unit.ingot-crane-10t).'}
 size_class: 2
 physical: {length: 8.0, width: 25.0, height: 14.0, mass: 35750.0}

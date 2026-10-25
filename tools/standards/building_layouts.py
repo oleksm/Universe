@@ -16,6 +16,7 @@ Services (power, water, drains) are not laid yet: the kit has no low-voltage cab
 """
 import glob, math, os, sys
 import yaml
+import lib  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -24,7 +25,6 @@ import furniture  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(HERE))
 M = os.path.join(ROOT, "standards/SFO/metadata")
-HEAD = "# Written by tools/standards/building_layouts.py: change it there.\n"
 G = 9.80665
 CELL, BAY = 3.0, 6.0
 STEEL, SS, AL, PE, GLASS, SILICA, RUB, CONC = ("material.structural-steel-a36", "material.stainless-steel-304", "material.aluminium-alloy-6061",
@@ -301,7 +301,8 @@ def write(folder, slug, d, schema):
     if os.path.exists(path):
         old = yaml.safe_load(open(path, encoding="utf-8")) or {}
         d = dict(d, **{k: old[k] for k in KEEP if k in old and k not in d})
-    text = f"# yaml-language-server: $schema=../../schema/{schema}.schema.yaml\n" + HEAD + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
+    text = f"# yaml-language-server: $schema=../../schema/{schema}.schema.yaml\n" + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
+    lib.own(path, "tools/standards/building_layouts.py")
     if not os.path.exists(path) or open(path).read() != text:
         open(path, "w").write(text)
         return 1

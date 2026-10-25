@@ -38,7 +38,6 @@ basis:
   - { of: [built_of.list, physical.mass, identity.description], tier: derived, review: true, note: "Worked out 2026-10-13 for the modeller's blockout v01. One fluid a port, so oxygen never meets fuel in a coupling. 20 kg/s of the lightest liquid in scope, methane at 422 kg/m3, is 0.047 m3/s; at 4 m/s (kept low so a cryogen does not flash) that wants 123 mm: a 125 mm bore. Rated 1 MPa (the tanks' 0.35 to 0.45 MPa plus the transfer pump's head) from 90 to 370 K, vacuum-jacketed so the cold liquids do not boil in it. Hydrogen at 71 kg/m3 would want a 300 mm bore: another port. Masses: coupling, valve, spool and stays 58 kg as drawn (50 first allowed), door 8 with its actuator, housing 13, controls 3. Total 82 kg (it was 120). The port owns all this; the hull owns its seat and the line from the rear connector." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 20.5, at: [-0.254, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
 - {id: foot-2, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 20.5, at: [0.254, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}

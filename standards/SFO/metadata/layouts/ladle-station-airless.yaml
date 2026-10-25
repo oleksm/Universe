@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/layout.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: layout.ladle-station-airless, name: 'Ladle station, airless', description: 'The ladle station on airless ground at about a moon''s gravity: the heat comes on its car from the arc furnace shop, stands a quarter hour on an open degassing stand where the vacuum takes its gases, then goes under the sealed ladle furnace, which alloys and reheats it under argon, and on to the casting bay. Radiators for the tower, a maintenance gantry crane that nothing crosses, a pressurised crew post. Built separately from the station for air.'}
 stands_for: module.ladle-station
 site:

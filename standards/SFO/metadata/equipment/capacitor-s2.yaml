@@ -44,7 +44,6 @@ basis:
   - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: a coil in its case, to its volume. A stand-in until it is sized from what it must do." }
   - { of: [function.capacity], tier: invented, review: true, note: "Open, as for the S1: 15 GJ in 1,500 kg is 10 MJ/kg; a magnet's structure caps it near 0.2 MJ/kg (titanium alloy, virial theorem), so 15 GJ needs about 75 t. Engine decides the gameplay first." }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 375.0, at: [-1.0305, -0.6885, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.capacitor-s2''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 375.0, at: [1.0305, -0.6885, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.capacitor-s2''s socket of the same id, bolted through'}

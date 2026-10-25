@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/system.schema.yaml
-# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
 identity: {key: system.biraidim, name: Biraidim, index: 21300}
 position:

@@ -249,10 +249,9 @@ def main(argv):
     text = re.sub(r"^survey:\n(?:  .*\n)*", "", text, flags=re.M)
     text = re.sub(r"^# (Curated|Baked): .*\n", "", text, flags=re.M)
     head, rest = text.split("\nprovenance: baked\n", 1)
-    note = f"# Baked: grown by the planet simulation (world {m['world_id']}, simulator {m['simulator']['commit'][:12]}). The survey it points at owns what the run derived; this record owns the inputs."
     block = "survey:\n" + "".join(f"  {k}: {json.dumps(v)}\n" for k, v in survey.items() if k != "contained") + "  contained:\n" + "".join(f"    - {json.dumps(c)}\n" for c in survey["contained"])
     head = re.sub(r"^# As the seed makes it\. Change its provenance to curated.*\n?", "", head, flags=re.M)
-    text = head + "\n" + note + "\nprovenance: baked\n" + block + rest
+    text = head + "\nprovenance: baked\n" + block + rest
     yaml.safe_load(text)
     open(path, "w", encoding="utf-8").write(text)
     text = packages(text, folder, dest, m["world_id"])

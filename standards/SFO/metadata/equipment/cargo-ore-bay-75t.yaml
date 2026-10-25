@@ -44,7 +44,6 @@ basis:
   - { of: [identity.description, physical.length, physical.width, physical.height, physical.volume, built_of.list], tier: derived, review: true, note: "Fitted round its 37.5 m3 at the modeller's request (the first box, 5.32 x 2.66 x 2.66 m, held only 37.6 m3 with no walls, frame or doors). The 100 t bay's section unchanged (outer 3.15 m square, 2.75 m clear wide, 2.7 m clear high, a 45 degree V to a 0.5 m slot: 6.16 m2); 37.5 m3 needs 6.09 m of trough, 6.52 m long with end walls. Inside the class 3 mount (8.69 x 3.21 x 3.21 m). The modeller's proposal (37.51 m3 clear); review." }
   - { of: [visual], tier: derived, review: false, note: "The model (v2) is built to the worked-out design, 8 mm plate and ribs, and weighs 7,984 kg by its material volumes (measured by the modeller), 1% over the 7,910 kg worked out: its ribs 1,893 against 1,813 and its doors 545 against 490, its gate lighter at 845 against 947." }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 988.75, at: [-3.9105, -1.4445, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s3''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 988.75, at: [3.9105, -1.4445, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s3''s socket of the same id, bolted through'}

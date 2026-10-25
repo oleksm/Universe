@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.ladle-furnace-80t, name: 'Ladle furnace, 80 t', description: A gantry over the ladle rail with a water-cooled roof and three electrodes.}
 kind: product
 options:

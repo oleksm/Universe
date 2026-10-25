@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.recycle-compressor, name: Recycle compressor, description: A hydrogen loop's compressor.}
 kind: product
 params:

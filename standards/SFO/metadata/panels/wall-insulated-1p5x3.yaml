@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/panel.schema.yaml
-# Written by tools/standards/building_kit.py: change it there.
 identity:
   key: panel.wall-insulated-1p5x3
   name: Wall panel, insulated, 1.5 x 3 m

@@ -1,7 +1,4 @@
 # yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
-# The planet simulation's energy package (planet-sim-energy/1, docs/survey-format.md there): oil and gas fields in petroleum
-# basins, and coalfields. Their IDs are permanent (TRD1-PB001-F001, TRD1-CF001); claims point at them. Amounts in the package
-# are in place, not recoverable, and are model estimates calibrated on the simulation's Grown Earth.
 identity:
   key: deposit-type.oil-field
   name: "Oil field"

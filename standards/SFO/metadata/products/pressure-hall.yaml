@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.pressure-hall, name: Pressure hall, description: 'A tube hall of welded rings holding a gas at pressure on airless ground, built of sections and two heads.'}
 kind: family
 params:

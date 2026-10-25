@@ -12,6 +12,7 @@ import yaml
 
 sys.path.insert(0, os.path.dirname(__file__))
 import frames  # noqa: E402
+import lib  # noqa: E402
 
 S = "standards/SFO/metadata/"
 REC = S + "structures/platform.yaml"
@@ -105,8 +106,9 @@ def main():
             f"puts about {F / 1e3:.0f} kN on its pad, which a {SECTION['deck']} strut carries many times over; the game's deck speed (10 m/s) would put about "
             f"{ship * 10 ** 2 / (2 * stop) / 1e6:.0f} MN, which no deck takes. Not checked: the station's turn, thermal cycling, the pressurised modules (not designed).")
     rec["basis"] = [b for b in rec.get("basis", []) if b.get("of") != ["built_of", "physical.mass"]] + [{"of": ["built_of", "physical.mass"], "tier": "derived", "review": True, "note": note}]
+    lib.own(REC, "tools/standards/station_platform.py", ["built_of", "physical.mass"])
     with open(REC, "w", encoding="utf-8") as f:
-        f.write("# yaml-language-server: $schema=../../schema/structure.schema.yaml\n# built_of and physical.mass written by tools/standards/station_platform.py; the rest by hand.\n")
+        f.write("# yaml-language-server: $schema=../../schema/structure.schema.yaml\n")
         yaml.safe_dump(rec, f, sort_keys=False, width=1000, allow_unicode=True, default_flow_style=None)
     print(f"platform: frame {frame_m / 1e3:,.0f} t, total {total / 1e3:,.0f} t;", {g: v for g, v in n.items()})
 

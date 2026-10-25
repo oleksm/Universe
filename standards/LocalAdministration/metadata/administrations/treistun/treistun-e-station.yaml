@@ -6,9 +6,7 @@ kind: settlement
 at: body.treistun.treistun-e
 structure: structure.platform
 population: 25000
-# Supplied from Port Eikir: 41.0 t a day of what its people take; 8.2 days each way at a torchship's cruise (1 m/s2) over the two orbits' typical separation; 6 hauler(s) on the run, so a delivery every 3.1 days (tools/standards/census.py).
 resupply: { from: settlement.treistun.port-eikir, interval: 265753 }
-# buildings: what stands here for its 25,000 people: one of each building to its per_people
 buildings:
   - { building: building.shop, count: 358 }
   - { building: building.tavern, count: 50 }
@@ -33,7 +31,6 @@ buildings:
   - { building: building.gaol, count: 1 }
   - { building: building.press, count: 1 }
   - { building: building.college, count: 1 }
-# census: its 25,000 people by trade: the staff of its works (module.staff) and of its buildings (building.staff), pilots from the fleets, the rest dependants (children, the old, the unassigned)
 census:
   - { profession: profession.clerk, count: 2454 }
   - { profession: profession.builder, count: 600 }
@@ -62,7 +59,6 @@ census:
   - { profession: profession.reporter, count: 10 }
   - { profession: profession.judge, count: 5 }
   - { profession: profession.dependant, count: 17431 }
-# independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.drover, count: 30 }
   - { hull: hull.sprint, count: 22 }

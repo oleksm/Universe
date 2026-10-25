@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.dri-cooling-loop, name: Sponge iron cooling loop}
 kind: product
 units: [unit.dri-cooling-loop]

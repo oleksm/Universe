@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/interface.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: interface.cable-reel-11kv-3x95
   name: Reel feed 3 x 95 mm2

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# What is sold is stock. This is red mud as it lies in a store and is sold: in bulk, by weight.
 identity:
   key: stock.red-mud-bulk
   traded_as: market.minerals

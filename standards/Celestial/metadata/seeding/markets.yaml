@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/seeding.schema.yaml
-# How a seeded market is made up. An administration's own bans are its law (its record's trade_bans).
 identity:
   key: seeding.markets
   name: How markets are seeded

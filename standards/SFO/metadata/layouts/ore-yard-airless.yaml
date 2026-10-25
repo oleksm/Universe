@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/layout.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 basis:
 - of: [bays, links, mobile]
   tier: invented

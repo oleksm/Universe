@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
-# Invented: the camp's power station, a year of deuterium in its tank.
 identity:
   key: facility.treistun.ashfall-camp.ashfall-power-station
   name: Ashfall Power Station

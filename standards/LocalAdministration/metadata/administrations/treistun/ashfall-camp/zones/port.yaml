@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/zone.schema.yaml
-# Invented: the strip and its yard south of the shaft.
 identity:
   key: zone.treistun.ashfall-camp.port
   name: Strip

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: stock.kit-flat-face-dn19
   code: KIT-FLAT-FACE-DN19

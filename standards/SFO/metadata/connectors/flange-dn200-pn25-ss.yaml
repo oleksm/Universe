@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: connector.flange-dn200-pn25-ss
   name: Flange DN 200 PN 25, stainless

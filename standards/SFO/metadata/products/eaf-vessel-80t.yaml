@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.eaf-vessel-80t, name: 'Arc furnace vessel, 80 t', description: 'An AC arc furnace tapping 80 t, on a tilting cradle.'}
 kind: product
 options:

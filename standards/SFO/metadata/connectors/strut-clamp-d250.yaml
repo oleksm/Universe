@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
-# Written by tools/standards/mounting.py: change it there.
 identity:
   key: connector.strut-clamp-d250
   name: Strut clamp, 250 mm

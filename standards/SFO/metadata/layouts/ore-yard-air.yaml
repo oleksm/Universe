@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/layout.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: layout.ore-yard-air, name: 'Ore yard, world with air', description: 'Two stockpile beds of ore either side of a bucket wheel stacker-reclaimer''s rail. Trucks from the port tip into a hopper; the yard belt takes the ore to the machine, which stacks it, and later reclaims it onto the belt for the pellet plant. Water sprays keep the dust down. Open ground, no hall. For a world with air at about 1 g.'}
 stands_for: module.ore-yard
 site:

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.water-treatment, name: Water treatment, description: Polishing water for the electrolysers.}
 kind: product
 options:

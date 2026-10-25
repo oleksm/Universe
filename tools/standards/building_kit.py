@@ -11,6 +11,7 @@ steel floor cassettes with a concrete topping); every record says so.
 """
 import os, sys
 import yaml
+import lib  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -18,7 +19,6 @@ from packages import FORMS as PACKAGE_OF  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(HERE))
 M = os.path.join(ROOT, "standards/SFO/metadata")
-HEAD = "# Written by tools/standards/building_kit.py: change it there.\n"
 STEEL, AL, PIR, GLASS, RUB, CONC = ("material.structural-steel-a36", "material.aluminium-alloy-6061", "material.pir-foam",
                                     "material.soda-lime-glass", "material.epdm-rubber", "good.concrete")
 CELL = 3.0
@@ -247,7 +247,8 @@ def write(folder, slug, d, schema):
         old = yaml.safe_load(open(path, encoding="utf-8")) or {}
         d = dict(d, **{k: old[k] for k in KEEP if k in old and k not in d})
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    text = f"# yaml-language-server: $schema=../../schema/{schema}.schema.yaml\n" + HEAD + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
+    text = f"# yaml-language-server: $schema=../../schema/{schema}.schema.yaml\n" + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
+    lib.own(path, "tools/standards/building_kit.py")
     if not os.path.exists(path) or open(path).read() != text:
         open(path, "w").write(text)
         return 1

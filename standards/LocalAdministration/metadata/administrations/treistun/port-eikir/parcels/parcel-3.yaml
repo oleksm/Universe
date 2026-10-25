@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
-# Invented: the whole of the farmland as one holding, and Eikir Growers as its owner.
 identity:
   key: parcel.treistun.port-eikir.3
 number: 3

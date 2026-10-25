@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: unit.hall-crane-20t, name: 'Hall crane, 20 t', description: 'A double-girder bridge crane on the hall''s runways, for the roof, the electrodes and relining. Hangs on the frame; names no bay. It travels along its x on four wheels, two end carriages 6 m long, their wheels at y -11.4 and +11.4 (22.8 m between the rails), their ends 0.3 m beyond; its origin on the runway''s rail plane, the two girders 1.8 m either side of it; the trolley runs 9.5 m either way along y, the hook raised to 0.1 m under the rail plane. Parked at the hall''s centre.'}
 size_class: 2
 physical: {length: 6.0, width: 23.4, height: 3.0, mass: 27420.0}

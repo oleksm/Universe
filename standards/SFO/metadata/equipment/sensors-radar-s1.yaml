@@ -48,7 +48,6 @@ basis:
   - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "A flat array of 8 m2, a hand's breadth thick: a radar is an area, not a box (Sentinel-1's antenna is 12.3 m by 0.8 m). Its weight is kept." }
   - { of: [built_of.list, identity.description], tier: derived, review: true, note: "For the modeller (2026-10-10): the record's box is the whole radar; parts sized from the panel (blender's proposal, 5 mm backplate 4 x 2 m = 108 kg). Heat: nearly all of the 100 kW it draws becomes heat aboard (a radar radiates perhaps a quarter of it as its beam: about 75 kW to remove at full duty, invented), carried by the ship's coolant loop through its cold plate. The mount offers no cooling feed yet: the registry's heat rule (lib.device_heat, SFO 22) counts only plants and jets, an open gap." }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 75.0, at: [-1.98, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.sensors-s1''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 75.0, at: [1.98, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.sensors-s1''s socket of the same id, bolted through'}

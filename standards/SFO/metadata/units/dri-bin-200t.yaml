@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: unit.dri-bin-200t, name: 'Sponge iron bin, 211 t', description: 'A sealed steel bin on four legs that holds two hours of sponge iron, kept dry (it rusts and heats in wet air), with a weigh feeder under its cone onto the furnace''s conveyor: feeder outlet 6 m up, 3 m south of the bin''s axis (local 0, -3, 6), cone 6.8 to 9.8 m, cylinder to 15.1 m, shallow roof to 15.3 m. Its outlet boot reaches local y -3.45, 0.45 m past its class 1 bay, over the belt it feeds (its envelope holds it; its box stays the bay''s).'}
 size_class: 1
 fits: plant-mount.bay-s1

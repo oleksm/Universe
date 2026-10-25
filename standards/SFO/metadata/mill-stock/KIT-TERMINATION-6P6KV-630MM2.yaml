@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: stock.kit-termination-6p6kv-630mm2
   code: KIT-TERMINATION-6P6KV-630MM2

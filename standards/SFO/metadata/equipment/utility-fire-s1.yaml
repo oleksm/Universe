@@ -38,7 +38,6 @@ basis:
   - { of: [function.protects], tier: derived, review: true, note: "The agent is taken as a fluoroketone clean agent (FK-5-1-12 class), kept under nitrogen at 25 bar (invented). It floods a room at about 4.5% by volume, which takes roughly 0.6 kg per m3. So 10 kg covers only about 17 m3; 50 m3 would need about 30 kg. Left for review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 6.25, at: [-0.2032, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
 - {id: foot-2, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 6.25, at: [0.2032, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}

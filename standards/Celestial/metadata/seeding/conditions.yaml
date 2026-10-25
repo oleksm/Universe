@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/seeding.schema.yaml
-# What a place does to what is there. Worked out for each moon of a giant, on its page.
 identity:
   key: seeding.conditions
   name: Conditions

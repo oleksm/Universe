@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: unit.cooling-tower-h2, name: 'Cooling tower, 3 cells', description: 'An induced-draught wet tower: the electrolysers'', rectifiers'' and purifier''s closed water loop gives up its heat through a plate exchanger to tower water, which sprays down through fill against a fan''s draught and evaporates. The loop''s pumps and exchanger stand on a skid inside its footprint; its two loops leave by flanges on its east end (local x +18, 1 m up), facing +x: the electrolysers'', DN 500, out at y -0.6 and back at 0.6; the rectifiers'' and the purifier''s, DN 250, out at 3.9 and back at 5.1; its make-up water at (-14, -6, 1) and its 400 V at (-12, -6, 1), facing -y, and the layout''s pipes and concrete basin are not the unit''s. On a world with air only; airless ground needs radiators instead.'}
 size_class: 4
 fits: plant-mount.bay-s4

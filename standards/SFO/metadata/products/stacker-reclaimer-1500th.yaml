@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.stacker-reclaimer-1500th, name: 'Bucket wheel stacker-reclaimer, 1,500 t an hour'}
 kind: product
 units: [unit.stacker-reclaimer-1500th]

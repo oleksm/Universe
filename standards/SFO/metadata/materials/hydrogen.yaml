@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
-# A fuel, as the game has it (content/base/materials.ron).
 identity:
   key: material.hydrogen
   name: "Hydrogen"

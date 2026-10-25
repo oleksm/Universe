@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: run.pipe-dn150-pn25-mli, name: 'Pipe DN 150 PN 25, lagged', description: 'Welded pipe, 150 mm bore, for up to 25 bar; welded between the units'' flanges, so a run has a flange pair only at its ends. Lagged in multi-layer insulation, 25 mm.'}
 kind: pipe
 size: 0.15

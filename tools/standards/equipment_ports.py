@@ -17,12 +17,14 @@ import os
 import struct
 import sys
 import yaml
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import lib  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 M = os.path.join(ROOT, "standards/SFO/metadata/equipment")
 ASSETS = os.environ.get("UNIVERSE_ASSETS", os.path.expanduser("~/git/freefall-assets"))
-MARK = "# ports and internal: written by tools/standards/equipment_ports.py, change them there.\n"
+TOOL = "tools/standards/equipment_ports.py"
 
 BUSES = [(1000.0, 28.0, "dc-28v"), (30000.0, 270.0, "dc-270v"), (math.inf, 3000.0, "dc-3kv")]     # (W at most, V, channel): ships' limits
 HV = 3000.0
@@ -302,7 +304,7 @@ def with_feet(text, rec):
 
 
 def block(ports, internal):
-    lines = [MARK, "ports:\n"]
+    lines = ["ports:\n"]
     for p in ports:
         lines.append("- " + yaml.safe_dump(p, default_flow_style=True, sort_keys=False, width=100000, allow_unicode=True).strip() + "\n")
     if internal:
@@ -312,10 +314,15 @@ def block(ports, internal):
     return "".join(lines)
 
 
-def strip(text):
-    """The record's text without the block this tool wrote (always its last)."""
-    i = text.find(MARK)
-    return text if i < 0 else text[:i]
+def strip(text, path):
+    """The record's text without the ports and internal this tool wrote."""
+    if "ports" not in ((lib.owned_by(path) or {}).get("keys") or []):
+        return text
+    for k in ("internal", "ports"):
+        b = lib.top_block(text, k)
+        if b:
+            text = text[:b[0]] + text[b[1]:]
+    return text
 
 
 def faults():
@@ -359,10 +366,11 @@ def main(check=False):
     wrote, differ, done = 0, [], 0
     for f in sorted(glob.glob(os.path.join(M, "*.yaml"))):
         text = open(f, encoding="utf-8").read()
-        if "Written by tools/" in text[:400]:
+        o = lib.owned_by(f)
+        if o and not o.get("keys"):
             continue
         rec = yaml.safe_load(text)
-        base = strip(text)
+        base = strip(text, f)
         if "\nports:" in base or base.startswith("ports:"):      # (hand-written ports: kept as written, only its feet rewritten)
             new = with_feet(text, rec)
             done += 1
@@ -377,6 +385,8 @@ def main(check=False):
         if ft:
             b = (ft + (b[0] if b else []), b[1] if b else [])
         new = base if b is None else base.rstrip("\n") + "\n" + block(*b)
+        if b is not None:
+            lib.own(f, TOOL, ["ports", "internal"])
         done += b is not None
         if new != text:
             differ.append(rec["identity"]["key"])

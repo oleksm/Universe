@@ -37,7 +37,6 @@ basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "Carries 20 MW at 50 kg/s. Chosen." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 750.0, at: [-6.21, -3.1005, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s2''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 750.0, at: [6.21, -3.1005, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s2''s socket of the same id, bolted through'}

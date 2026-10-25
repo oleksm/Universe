@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.pellet-gas-loop, name: 'Pellet shaft gas loop, 4 bar'}
 kind: product
 units: [unit.pellet-gas-loop]

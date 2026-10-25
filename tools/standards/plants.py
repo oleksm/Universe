@@ -13,6 +13,7 @@ import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import frames  # noqa: E402
+import lib  # noqa: E402
 import plant_kit as kit  # noqa: E402
 ENVELOPES = yaml.safe_load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "unit_envelopes.yaml"))) or {}
 REQUESTS = yaml.safe_load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "unit_requests.yaml"))) or {}
@@ -470,8 +471,9 @@ def write(path, d):
             d = {k: v for k, v in d.items() if k != "visual"}
     head = {"plant-mounts": "plant-mount", "units": "unit", "layouts": "layout", "connectors": "connector", "runs": "run", "products": "product", "interfaces": "interface"}[path.split("/")[-2]]
     dump = lambda x: yaml.safe_dump(x, sort_keys=False, width=1000, allow_unicode=True, default_flow_style=None) if x else ""
+    lib.own(path, "tools/standards/plants.py")
     with open(path, "w", encoding="utf-8") as f:
-        f.write(f"# yaml-language-server: $schema=../../schema/{head}.schema.yaml\n# Written by tools/standards/plants.py: change it there.\n")
+        f.write(f"# yaml-language-server: $schema=../../schema/{head}.schema.yaml\n")
         if vis:
             f.write(dump({k: v for k, v in d.items() if k != "basis"}) + vis + dump({"basis": d["basis"]} if "basis" in d else {}))
         else:

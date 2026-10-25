@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
-# Written by tools/standards/converters.py: change it there.
 identity:
   key: equipment.power.distribution.270v-10way
   name: Distribution board, 270 V DC, 10 ways

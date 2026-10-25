@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: unit.crop-saws, name: 'Crop saws, 9', description: '9 horizontal band saws in 3 rows of 3 along x, each with its roller table: the ingot crane sets a cooled ingot on a table lying along x, its big end at the blade, and the blade cuts the hot top off (for one ingot of each heat, then a 25 mm coupon off the cut face, for the sampling lab) (255 kg, with its lifting eye) through the 0.48 m square section in about 10 minutes with the handling; the head drops into a scrap bin under the table, which goes back to the arc furnace as scrap, and the crane lifts the sound ingot onto the crating line. 54 ingots an hour from the casting bay need 9.'}
 size_class: 2
 fits: plant-mount.bay-s2

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.transformer, name: Power transformer, description: 'An oil-filled transformer in a closed tank, its size by its rating, cooled by oil to water.'}
 kind: family
 params:

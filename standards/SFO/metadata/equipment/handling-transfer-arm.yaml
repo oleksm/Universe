@@ -56,7 +56,6 @@ basis:
   - { of: [physical.volume, physical.length, physical.width, physical.height], tier: derived, review: true, note: "Stowed: 16.2 m with the tip coupling (the modeller's fit), the boom along +Y on its rest, the turret's centre at the origin on the mount face (Z 0), the luff axis at Z 1.15, the boom from Z 0.8 to 1.55, the tail housing 0.6 m behind the slew axis." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 326.18, at: [-8.01, -0.6345, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.handling-s2''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 326.18, at: [8.01, -0.6345, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.handling-s2''s socket of the same id, bolted through'}

@@ -1,8 +1,4 @@
 # yaml-language-server: $schema=../../../schema/settlement.schema.yaml
-# Invented (2026-10-06): Cinder's mine, and the first on an airless world. The deposit is Cinder's survey's TRB1-INI-000256A-06,
-# the largest of the melt-sheet nickel bodies of district 000256A: 84 Mt at 1.47% nickel and 1.72% copper, with cobalt and the
-# platinum metals, 2.5 km down under a crater floor 2,000 km south-west of Port Zaudalein. Airless and 470 K: everything is
-# sealed, the shaft is the only cool place, and the camp breathes and drinks from its own plant.
 identity:
   key: settlement.treistun.ashfall-camp
   name: "Ashfall Camp"
@@ -12,14 +8,12 @@ position: { latitude: -22.56, longitude: 44.48 }
 structure: structure.outpost
 population: 300
 resupply: { from: settlement.treistun.port-zaudalein, interval: 178530 }
-# buildings: what stands here for its 300 people: one of each building to its per_people
 buildings:
   - { building: building.shop, count: 5 }
   - { building: building.bunkhouse, count: 2 }
   - { building: building.clinic, count: 1 }
   - { building: building.offices, count: 1 }
   - { building: building.tavern, count: 1 }
-# census: its 300 people by trade: the staff of its works (module.staff) and of its buildings (building.staff), pilots from the fleets, the rest dependants (children, the old, the unassigned)
 census:
   - { profession: profession.clerk, count: 57 }
   - { profession: profession.pilot, count: 32 }
@@ -40,7 +34,6 @@ census:
   - { profession: profession.electrician, count: 2 }
   - { profession: profession.innkeeper, count: 2 }
   - { profession: profession.dependant, count: 80 }
-# independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.hauler, count: 1 }
 about: "A sealed mining camp on Cinder's crater plains: a shaft 2.5 km down to a nickel melt sheet, a concentrator, a power station, a life-support plant and a strip. 2,000 km from Port Zaudalein."

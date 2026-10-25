@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.induration-grate-125th, name: 'Induration grate, 125 t an hour'}
 kind: product
 units: [unit.induration-grate-125th]

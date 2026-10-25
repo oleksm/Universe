@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# Written by tools/standards/mounting.py: change it there.
 identity:
   key: stock.kit-adapter-gear-s1
   code: KIT-ADAPTER-GEAR-S1

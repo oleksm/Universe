@@ -1,6 +1,4 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
-# Curated: named by its people; the seed calls it Treistun j I. The rest is as the seed made it.
 provenance: curated
 identity: {key: body.treistun.treistun-j-i, name: Verge J I, also: Treistun j I, kind: moon, parent: body.treistun.treistun-j, about: 'A moon
     of the gas giant Verge, 10.5 AU from the star, the outermost planet. 1,496 km in radius, 0.13 g at the surface, no

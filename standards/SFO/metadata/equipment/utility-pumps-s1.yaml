@@ -39,7 +39,6 @@ basis:
   - { of: [function, needs.power, built_of.list, identity.description], tier: derived, review: true, note: "20 kg/s is the pair, 10 kg/s each in parallel, not two of 20 for redundancy: that would double the motors in the same 250 kg. Water at 1,000 kg/m3: 0.02 m3/s against 1 MPa is 20 kW of hydraulic power; at 70% pump and 92% motor efficiency (from memory) the set draws 31 kW, 16 kW a motor. 10 L/s through an 80 mm bore runs at 2 m/s, a usual line speed. The rating is by volume: a lighter liquid moves fewer kg/s at the same power (methane at 422 kg/m3, 8.4 kg/s for the pair), a denser one needs more power than the motors have. Cryogens boil at a centrifugal inlet without a cooled, pressurised feed: not this set. Impeller and speed from the usual single-stage head (tip speed about 63 m/s for 100 m of head), from memory; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 62.5, at: [-0.4318, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
 - {id: foot-2, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 62.5, at: [0.4318, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}

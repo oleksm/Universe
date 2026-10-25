@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/zone.schema.yaml
-# Invented: the power station's ground west of the road.
 identity:
   key: zone.treistun.halden-camp.industrial
   name: Industrial

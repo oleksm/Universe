@@ -39,7 +39,6 @@ basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The room its load takes at 500 kg a m3, a middling cargo as stowed: 4,000 kg is 8 m3, twice as long as wide. The racks themselves are in it." }
   - { of: [identity.description], tier: derived, review: true, note: "For the modeller (2026-10-11): blender's mass-aware frame (heavier along the bottom, where the load sits) comes to about 180 kg with the pads extra, against the record's 193. The stock named stays a proxy." }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 43.75, at: [-1.5705, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 43.75, at: [1.5705, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1''s socket of the same id, bolted through'}

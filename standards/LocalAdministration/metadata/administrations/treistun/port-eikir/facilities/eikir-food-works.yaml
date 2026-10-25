@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
-# Invented: one each of the works that turn the farms' crops and animals into food, and the fertiliser works that feeds the fields, with the hydrogen plant it needs.
 identity:
   key: facility.treistun.port-eikir.eikir-food-works
   name: Eikir Food Works
@@ -43,7 +42,6 @@ modules:
   - { module: module.grain-silo, count: 1 }
   - { module: module.cold-store, count: 2 }
 stock:
-# Thirty days of what its lines take in at full rate (seed state; after that the economy's): so the chain starts before the first harvest or delivery.
   - { item: good.wheat, quantity: 10000000.0 }
   - { item: good.flour, quantity: 961000.0 }
   - { item: good.maize, quantity: 3960000.0 }

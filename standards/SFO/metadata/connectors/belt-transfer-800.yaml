@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: connector.belt-transfer-800, name: 'Belt transfer, 800 mm', description: 'Where a 800 mm belt''s head drops into a hopper or onto another belt: the hood and the drop chute (3 m). A receiving belt''s skirt is its tail''s. Its origin is the head pulley''s centre: the hood over it to 0.55 m up, inside the pulley''s bearings, the chute flaring below it to its square and down to 3 m under the pulley, where the port is.'}
 kind: belt-transfer
 size: 0.8

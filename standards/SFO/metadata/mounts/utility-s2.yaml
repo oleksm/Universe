@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mount.schema.yaml
-# SFO 19. Set round the equipment of this slot and class on the list today, with a quarter to spare.
 identity:
   key: mount.utility-s2
   name: "Utility mount, class 2"
@@ -19,7 +18,6 @@ attachment:
     tension: 11500.0
     compression: 11500.0
     shear: 5750.0
-# (holder and sockets: written by tools/standards/mounting.py)
 holder: adapter
 sockets:
 - id: s1
@@ -62,7 +60,6 @@ sockets:
   facing: [0.0, 0.0, 1.0]
   interface: interface.insert-m10
   connector: stock.st4340-bolt-m10
-# (end of mounting.py)
 feeds:
   power: 625000.0
 basis:

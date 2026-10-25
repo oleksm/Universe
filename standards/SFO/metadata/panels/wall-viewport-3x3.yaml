@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/panel.schema.yaml
-# Written by tools/standards/building_kit.py: change it there.
 identity:
   key: panel.wall-viewport-3x3
   name: Pressure wall panel with a viewport, 3 x 3 m

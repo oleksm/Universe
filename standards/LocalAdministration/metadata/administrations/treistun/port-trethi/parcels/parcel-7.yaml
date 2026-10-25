@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
-# Invented outline.
 identity:
   key: parcel.treistun.port-trethi.7
 number: 7

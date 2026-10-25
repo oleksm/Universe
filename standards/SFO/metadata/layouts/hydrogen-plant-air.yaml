@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/layout.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: layout.hydrogen-plant-air, name: 'Hydrogen plant, world with air', description: 'Water split by electricity: 5 pressurised alkaline electrolyser blocks of 19 MW in a hall with a ridge vent (hydrogen rises and must find its way out), each fed by its own rectifier transformer outside; a purifier, water treatment and a cooling tower. The hydrogen goes on to the shaft furnace, the oxygen to a vent or to buyers. For a world with air at about 1 g.'}
 stands_for: module.hydrogen-plant
 site:

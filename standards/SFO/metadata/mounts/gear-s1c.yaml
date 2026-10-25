@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mount.schema.yaml
-# SFO 19. Set round the compact class 1 equipment of this slot (at most 2 m a side, 250 kg) on the list today, with a quarter to spare.
 identity:
   key: mount.gear-s1c
   name: "Landing gear mount, class 1 compact"
@@ -20,7 +19,6 @@ attachment:
     tension: 77300.0
     compression: 77300.0
     shear: 38700.0
-# (holder and sockets: written by tools/standards/mounting.py)
 holder: adapter
 sockets:
 - id: s1
@@ -38,7 +36,6 @@ sockets:
   facing: [0.0, 0.0, 1.0]
   interface: interface.insert-m16
   connector: stock.st4340-bolt-m16
-# (end of mounting.py)
 feeds:
   power: 1000.0
 basis:

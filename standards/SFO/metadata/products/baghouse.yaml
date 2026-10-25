@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.baghouse, name: Fume baghouse, description: 'Filter bags in closed compartments over hoppers, fans and stacks at one end.'}
 kind: family
 params:

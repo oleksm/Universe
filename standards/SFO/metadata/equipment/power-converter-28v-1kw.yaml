@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
-# Written by tools/standards/converters.py: change it there.
 identity:
   key: equipment.power.converter.28v-1kw
   name: DC converter, 3 kV to 28 V, 1 kW

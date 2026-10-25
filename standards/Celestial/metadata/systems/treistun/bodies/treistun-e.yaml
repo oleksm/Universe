@@ -1,9 +1,4 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# are the planet lab's (2026-10-06): a snowball at 0.67 of Earth's sunlight, the ice-albedo runaway taking it, never thawed in
-# 4.5 Gyr (the CO2 thermostat held about 3,500 ppm at the end, and the land stayed under ice at every step); no life ever began,
-# so no oxygen: the air is nitrogen with its carbon dioxide, not breathable. The seed's 264 K and 'breathable' were guesses and
-# are gone. The world's survey carries the run's figures; this header says why the lore reads as it does.
-# Baked: grown by the planet simulation (world TRE3, simulator 64229d768f72). The survey it points at owns what the run derived; this record owns the inputs.
 provenance: baked
 survey:
   format: "planet-sim-survey/1"
@@ -44,9 +39,6 @@ survey:
     - {"commodity": "W", "mass": 468800000.0}
     - {"commodity": "PGE", "mass": 24770000.0}
     - {"commodity": "Au", "mass": 6546000.0}
-# Ground: e104 anchor mesh and live land pyramid (owner, 2026-10-21), kept as the planet LOD app package.
-# Its manifest radius is 6,371 km; the body retains its own radius, gravity, climate and lore.
-# The existing TRE3 survey remains installed until e104 has its own survey.
 ground:
   format: "planet-land-pyramid/1"
   path: "worlds/TRE3/ground/forge_e124s43-mesh-v8f-104b-b388e04b7e30"
@@ -80,7 +72,6 @@ surface:
   terrain: terran
   relief: 4397
   colour: [0.3, 0.6, 1.0]
-# The planet lab's defaults for its run (2026-10-06, as Heath's): Earth's water share, Earth's radioactive heat; chosen.
 interior: {radiogenic: 1.0}
 water: {mass_share: 0.00023}
 atmosphere:

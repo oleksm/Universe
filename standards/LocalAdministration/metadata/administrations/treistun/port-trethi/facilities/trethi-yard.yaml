@@ -4,8 +4,6 @@ identity:
   name: Trethi Yard
 kind: yard
 parcel: parcel.treistun.port-trethi.4
-# What it is built of. What it can make at most follows from this; what it does make is the
-# economy's business.
 lines:
   - makes: stock.al6061-sh-2-panel
     also: [stock.al6061-pl-5-panel, stock.sta36-pl-20-panel]
@@ -22,10 +20,8 @@ lines:
       - { module: module.assembly-shop, count: 1 }
   - modules:
       - { module: module.building-dock, count: 1 }
-# Where its stock is kept.
 modules:
   - { module: module.stock-yard, count: 1 }
-# What lies in its store at day 0 (seed state: what happens to it after is the economy's). The stock and bought-in goods for two MC-07s and their equipment, by their parts' bills.
 stock:
   - { item: good.carbon, quantity: 3720.0 }
   - { item: good.computers, quantity: 512.0 }
@@ -47,8 +43,6 @@ stock:
   - { item: stock.st4340-tb-150x10, quantity: 1380.0 }
   - { item: stock.st4340-tb-200x15, quantity: 7460.0 }
   - { item: stock.ti64-pl-5, quantity: 12600.0 }
-# Finished hulls in the yard at day 0 (seed state), each with its mark (SFO 21: the yard's serial, the design, the yard, finished a month apart before day 0): what a company or the insurer takes delivery of at once; past these,
-# a hull is built to order in the dock's time (the game reckons it from the chain: the MC-07 in about 21 days).
   - item: hull.hauler
     pieces: 2
     serials:

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/settlement.schema.yaml
-# As the game makes it: the gate, the star it leads to, how far that is and the ring it is.
 identity:
   key: settlement.treistun.gate-to-driumum
   name: "Gate to Driumum"

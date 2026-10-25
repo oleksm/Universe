@@ -1,7 +1,4 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
-# Data: from memory of Nickel 200 (UNS N02200), commercially pure wrought nickel: density 8,890 kg/m3, yield about
-# 150 MPa and tensile about 460 MPa annealed, elongation about 40%; it resists hot caustic lye, so alkaline
-# electrolysers' electrodes and plates are made of it or plated with it. Review.
 identity:
   key: material.nickel-200
   name: Nickel 200

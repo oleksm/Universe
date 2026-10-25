@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.shaft-furnace-200th, name: 'Hydrogen shaft furnace, 200 t an hour', description: A refractory-lined shaft reducing pellets by hydrogen.}
 kind: product
 params:

@@ -39,7 +39,6 @@ basis:
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [identity.description, built_of.list], tier: invented, review: true, note: "Geometry for the modeller (2026-10-12): the International Docking System Standard's layout, as an analogue at its primary sizes (the 0.8 m passage, three petals, twelve hooks, an androgynous face), not a copy of any real mechanism's drawings. Owned here: ring, tunnel, hooks, seals, soft-capture ring and petals, connectors, controls; the hull owns the pressure hatch, the structure round it and the mount's eight bolts. The rest pose is retracted (petals in, inside the 1.6 x 1.6 x 0.6 m); extending is motion, later. The dock's datum is the centre of the mating plane, its normal outward." }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 66.25, at: [1.485, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s1''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 66.25, at: [1.0501, 1.0501, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s1''s socket of the same id, bolted through'}

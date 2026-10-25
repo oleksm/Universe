@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
-# Its animals breathe the air and drink the water of the place it stands in: from: place. Sealed, it would take both from stores.
 identity:
   key: module.fish-farm
   name: "Fish farm"

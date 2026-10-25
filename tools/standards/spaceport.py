@@ -12,6 +12,7 @@ import yaml
 
 sys.path.insert(0, os.path.dirname(__file__))
 import frames  # noqa: E402
+import lib  # noqa: E402
 
 S = "standards/SFO/metadata/"
 REC = S + "structures/spaceport.yaml"
@@ -128,8 +129,9 @@ def main():
             f"{wall / 1e3:.0f} kN: {sec['wall']} takes {s_w / 1e3:.0f} kN; each the lightest kit section with half again to spare. Not checked: wind on the walls, the door's own frame, "
             f"the footings. Ground works at blender's measured volumes, masses from the goods' bulk densities; the site's grading (106,440 m3 moved in place) not counted.")
     rec["basis"] = [b for b in rec.get("basis", []) if b.get("of") != ["built_of", "ground", "physical.mass"]] + [{"of": ["built_of", "ground", "physical.mass"], "tier": "derived", "review": True, "note": note}]
+    lib.own(REC, "tools/standards/spaceport.py", ["built_of", "ground", "physical.mass"])
     with open(REC, "w", encoding="utf-8") as f:
-        f.write("# yaml-language-server: $schema=../../schema/structure.schema.yaml\n# built_of, ground and physical.mass written by tools/standards/spaceport.py; the rest by hand.\n")
+        f.write("# yaml-language-server: $schema=../../schema/structure.schema.yaml\n")
         yaml.safe_dump(rec, f, sort_keys=False, width=1000, allow_unicode=True, default_flow_style=None)
     print(f"spaceport: {total / 1e3:,.0f} t; chord {sec['chord']}, web {sec['web']}, walls {sec['wall']}, chord {chord / 1e3:.0f} kN;", {g: v for g, v in n.items()})
 

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: connector.hvdc-pole-1000a
   name: HV DC pole connector, 1000 A, 3 kV

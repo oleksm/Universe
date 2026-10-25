@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/layout.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: layout.pellet-plant-air, name: 'Pellet plant, world with air', description: 'Fine ore made into fired pellets for the shaft furnace: a ball mill grinds it wet, disc filters dry it, four balling discs roll it into green balls, and a straight induration grate dries, fires and cools them, its heat from electric plasma torches; a baghouse cleans the waste gas. One crane hall. For a world with air at about 1 g.'}
 stands_for: module.pellet-plant
 site:

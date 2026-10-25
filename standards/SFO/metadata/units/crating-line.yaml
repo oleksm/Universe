@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: unit.crating-line, name: Crating line, description: 'A roller table along x, its rollers'' tops 0.8 m up: a forklift sets an empty heavy crate, its lid on top, at the -x end (x -6 to -2); it rolls to the crating station at x 0, where the lid is lifted aside and the ingot crane lowers a cropped ingot straight into it from the saws, lying, its tongs'' jaws in the gaps between the ingot and the crate''s sides; a platform scale under the station weighs crate and ingot (the crate''s tare known); the crate rolls on to the nailer''s portal at x 3.5, where the lid is nailed on, past the label printer at x 4.8 (heat, grade and mass), and leaves at the +x end for a forklift.'}
 size_class: 2
 fits: plant-mount.bay-s2

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: run.jacketed-duct-dn2000, name: Water-jacketed duct DN 2000, description: 'A 2000 mm duct for a furnace''s hot gas at about 1 bar, its steel kept cool by water in a 100 mm jacket round it; the jacket''s water comes and goes by pipes ending on it. Its bends are mitred, one bore in radius.'}
 kind: jacketed-duct
 size: 2.0

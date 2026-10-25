@@ -1,6 +1,4 @@
 # yaml-language-server: $schema=../../schema/seeding.schema.yaml
-# How a system's small bodies are seeded: the figures the engine's seeder holds (crates/core/world/src/small_bodies.rs, belts.rs),
-# moved here so that they are the registry's and not the code's. Where a figure is given as least and most, the seeder draws between.
 identity:
   key: seeding.small-bodies
   name: How small bodies are seeded

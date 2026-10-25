@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mount.schema.yaml
-# SFO 19. Set round the compact class 1 equipment of this slot (at most 2 m a side, 250 kg) on the list today, with a quarter to spare.
 identity:
   key: mount.access-s1c
   name: "Access mount, class 1 compact"
@@ -19,7 +18,6 @@ attachment:
     tension: 414.0
     compression: 414.0
     shear: 207.0
-# (holder and sockets: written by tools/standards/mounting.py)
 holder: deck
 sockets:
 - id: s1
@@ -54,6 +52,5 @@ sockets:
   at: [0.4826, 0.125, 0.0]
   facing: [0.0, 0.0, 1.0]
   interface: interface.deck-track
-# (end of mounting.py)
 basis:
   - { of: [envelope, bears, attachment], rule: rule.mounts-margin }

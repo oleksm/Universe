@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mount.schema.yaml
-# SFO 19. Set round the hot radiator panel of this class, with a quarter to spare.
 identity:
   key: mount.radiator-hot-s2
   name: Hot radiator mount, class 2
@@ -19,7 +18,6 @@ attachment:
     tension: 254100.0
     compression: 254100.0
     shear: 126800.0
-# (holder and sockets: written by tools/standards/mounting.py)
 holder: adapter
 sockets:
 - id: s1
@@ -42,7 +40,6 @@ sockets:
   facing: [0.0, 0.0, 1.0]
   interface: interface.insert-m30
   connector: stock.st4340-bolt-m30
-# (end of mounting.py)
 basis:
 - of:
   - envelope

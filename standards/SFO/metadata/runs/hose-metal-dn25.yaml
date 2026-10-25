@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: run.hose-metal-dn25
   name: Metal hose, DN 25, PN 25

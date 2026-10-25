@@ -40,7 +40,6 @@ basis:
   - { of: [built_of.list, physical], tier: derived, review: true, note: "Sized as the 2 t (2026-10-13, from the modeller's blockout v01): 3,500 kg at O/F 5.5, each side with 3% ullage, the 100 mm common bulkhead inside a 1.383 m inner radius. Wall: 0.35 MPa plus the oxygen's full-diameter head at 30 m/s2 (95 kPa), times 1.5 against 165 MPa welded, wants 2.8 mm: 3 mm sheet, 195 kg bare plus 20% for lands and bosses. Insulation 100 mm at 3.3 kg/m2, bulkhead 76 kg, saddles 36.5 kg, fittings 50 kg for two circuits (32 drawn). Total 476 kg, 14% of what it holds (it was 420 kg at an assumed 12%). Box: 3.187 x 2.972 x 3.087 m with saddles and opposed service bosses; it was a 2.8 m box with no room for the insulation. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 119.0, at: [-2.646, -2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 119.0, at: [2.646, -2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}

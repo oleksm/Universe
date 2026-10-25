@@ -7,7 +7,6 @@ at: body.treistun.treistun-d
 position: { latitude: 45.649, longitude: 165.925 }
 structure: structure.spaceport
 population: 60000
-# buildings: what stands here for its 60,000 people: one of each building to its per_people
 buildings:
   - { building: building.shop, count: 858 }
   - { building: building.tavern, count: 120 }
@@ -33,7 +32,6 @@ buildings:
   - { building: building.college, count: 2 }
   - { building: building.hospital, count: 1 }
   - { building: building.gaol, count: 1 }
-# census: its 60,000 people by trade: the staff of its works (module.staff) and of its buildings (building.staff), pilots from the fleets, the rest dependants (children, the old, the unassigned)
 census:
   - { profession: profession.clerk, count: 6426 }
   - { profession: profession.nurse, count: 3572 }
@@ -65,7 +63,6 @@ census:
   - { profession: profession.clothier, count: 16 }
   - { profession: profession.judge, count: 10 }
   - { profession: profession.dependant, count: 37452 }
-# independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.drover, count: 72 }
   - { hull: hull.sprint, count: 54 }

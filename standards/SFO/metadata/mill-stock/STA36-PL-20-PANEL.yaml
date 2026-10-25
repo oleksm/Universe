@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# Cut and bent to its curve, ready to be welded into a part. Kept in the works' store until the welding bay takes it.
 identity:
   key: stock.sta36-pl-20-panel
   code: STA36-PL-20-PANEL

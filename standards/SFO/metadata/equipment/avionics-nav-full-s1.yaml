@@ -43,7 +43,6 @@ basis:
   - { of: [physical.length, physical.width, physical.height], tier: sourced, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "One computer, its sensors, and more to run. Real figures: docs/ships/mc-07-equipment-dimensions.md." }
   - { of: [physical.mass, physical.volume, needs.power], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list." }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 5.0, at: [-0.1778, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
 - {id: foot-2, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 5.0, at: [0.1778, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}

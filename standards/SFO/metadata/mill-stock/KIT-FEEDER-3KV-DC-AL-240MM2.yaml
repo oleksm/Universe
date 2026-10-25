@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: stock.kit-feeder-3kv-dc-al-240mm2
   code: KIT-FEEDER-3KV-DC-AL-240MM2

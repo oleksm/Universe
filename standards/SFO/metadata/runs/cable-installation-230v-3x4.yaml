@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: run.cable-installation-230v-3x4
   name: Installation cable, 230 V, 3 x 4 mm2

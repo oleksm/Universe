@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/zone.schema.yaml
-# Invented: the power station's and the life-support plant's ground, west of the road.
 identity:
   key: zone.treistun.ashfall-camp.industrial
   name: Industrial

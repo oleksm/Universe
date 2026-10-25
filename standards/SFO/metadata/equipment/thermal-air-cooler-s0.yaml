@@ -39,7 +39,6 @@ basis:
   - { of: [needs.power, function.transfers], tier: derived, review: true, note: "Flag: 20 kW at a 30 K air rise (an upper bound; air leaving at coolant temperature) needs 0.67 kg/s of air: 0.55 m3/s in sea-level air (1.2 kg/m3), 2.2 m3/s at the 0.3 kg/m3 floor. Core pressure drop goes as 1/density at the same mass flow, so fan power goes as 1/density squared: about 400 W at 1.2 kg/m3 becomes about 6 kW at 0.3, and a 0.21 m fan would need about 64 m/s through its disc. The 400 W holds near sea-level air only; in thin air either the rating falls (about 20 kW x density/1.2 at the same fan) or the fan and power grow. Not changed."}
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 3.75, at: [-0.99, -0.495, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1c''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 3.75, at: [0.99, -0.495, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1c''s socket of the same id, bolted through'}

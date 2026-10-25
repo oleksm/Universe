@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: unit.vacuum-degasser-80t, name: 'Vacuum tank degasser, 80 t', description: 'Takes the dissolved hydrogen and nitrogen out of an 80 t heat: the crane lowers the ladle into a steel tank standing in a pit, a lid on a car closes it, and pumps take it down to about 67 Pa while argon stirs the melt. Local frame: the tank''s centre at (-3, 2), 4.5 m inside and 5.5 m deep, its rim at the floor; the lid car on its own rails parks at (3, 2); the pump set fills the strip y -5 to -2 along the unit, its vacuum line to a flange on the tank''s side. 3 m above the floor and 6 m below it (the pit is the layout''s). Its ports (SFO 25), on the pump set''s +x end: argon in at (5.9, -4.4, 0.6), DN 50, for the stirring lance; its 400 V at (5.9, -3.5, 1). The pumps'' exhaust goes to the air at the set.'}
 size_class: 2
 fits: plant-mount.bay-s2

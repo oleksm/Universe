@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.offgas-cooler-sealed, name: 'Off-gas cooler, evaporative, 2.2 MW'}
 kind: product
 units: [unit.offgas-cooler-sealed]

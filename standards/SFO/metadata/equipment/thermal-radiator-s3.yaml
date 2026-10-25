@@ -39,7 +39,6 @@ basis:
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [built_of.list, identity.description], tier: derived, review: true, note: "As the S2's (2026-10-10): deployable, exported stowed (the record's 24.2 x 12.1 x 0.08 m, inside the mount's 26.6 x 13.3 x 0.088 m envelope), hinge brackets and tip latches the mount's corners, deployed 90 degrees about the root edge (motion later). A 24 m cantilever at 12 kg/m2 is for free fall only: deploying or slewing under thrust loads its root, unchecked (review). Titanium at 1,000 K is open, as for the S2." }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 882.5, at: [-11.97, -5.985, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s3''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m16, half: male, make: bolted, mass: 882.5, at: [11.97, -5.985, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s3''s socket of the same id, bolted through'}

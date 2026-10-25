@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.gas-heater, name: Hydrogen heater, description: An electric heater for a reducing gas loop.}
 kind: product
 params:

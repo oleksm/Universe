@@ -19,7 +19,6 @@ properties:
   note: { type: string, description: One line, as the game shows it. }
   about: { type: array, items: { type: string }, description: 'What it is, in paragraphs.' }
   story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }
-  # A company.
   brand:
     description: "How its products are marked (SFO 21): the name, colours and logo its labels and nameplates carry."
     type: object
@@ -34,7 +33,6 @@ properties:
   business: { enum: [maker, warehousing, exchange, food, insurance, banking, hauling, passage], description: "What kind of company it is. food: it grows or makes food. insurance: it covers hulls and cargoes. banking: it lends. hauling: it carries freight. passage: it carries people. Left out: a maker. Only makers go to the game's brands." }
   who: { type: string, description: Who they are. }
   what: { type: string, description: What they do. }
-  # A standards body.
   prefix: { type: string, pattern: '^[A-Z]{2,6}$', description: "A standards body's letters, before each of its standards' numbers." }
   seat: { type: string }
   form: { enum: [consortium, independent, authority, corporation, players], description: "What a standards body is, and so whom it answers to." }
@@ -45,7 +43,6 @@ properties:
     properties:
       text: { type: array, items: { type: string } }
   founded_by: { type: array, items: { type: string, x-ref: [org] }, description: "The companies that founded it." }
-  # An administration.
   fleet:
     description: "The ships it operates at day 0: hulls, how many, and the settlement they are based at. Finite: a ship lost is one fewer until a yard delivers another. The operator flies these, crewed from the base's census; nothing else flies."
     type: array

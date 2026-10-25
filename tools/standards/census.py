@@ -45,11 +45,11 @@ def buildings_of(pop):
     return out
 
 
-def write_block(text, name, lines, comment=""):
+def write_block(text, name, lines):
     """Replace or append a top-level block `name:` in a record's text."""
     text = re.sub(rf"^{name}:\n(?:  .*\n)*", "", text, flags=re.M)
     text = re.sub(rf"^# {name}: .*\n", "", text, flags=re.M)
-    block = (f"# {name}: {comment}\n" if comment else "") + f"{name}:\n" + lines
+    block = f"{name}:\n" + lines
     m = re.search(r"^about: ", text, re.M)
     return (text[:m.start()] + block + text[m.start():]) if m else text.rstrip("\n") + "\n" + block
 
@@ -171,7 +171,7 @@ def main():
         r_ = next((r for r in routes if r["to"] == key), None)
         if r_:
             s = re.sub(r"^resupply: \{ from: ([^,]+), interval: [0-9.e+]+ \}", lambda m: f"resupply: {{ from: {m.group(1)}, interval: {r_['interval']:.0f} }}", s, flags=re.M)
-            s = re.sub(r"^# Supplied from .*\n", f"# Supplied from {r_['from'].split('.')[-1].replace('-', ' ').title()}: {r_['tonnes_day'] / 1000:.1f} t a day of what its people take; {r_['one_way'] / DAY:.1f} days each way at a torchship's cruise ({CRUISE:g} m/s2) over the two orbits' typical separation; {r_['ships']} hauler(s) on the run, so a delivery every {r_['interval'] / DAY:.1f} days (tools/standards/census.py).\n", s, flags=re.M)
+            s = re.sub(r"^# Supplied from .*\n", "", s, flags=re.M)
         # pilots: two to a ship of every fleet based here (org.*.fleet), the freight line's counted from the routes
         pilots = sum(2 * r["ships"] for r in routes if r["from"] == key)
         for of in glob.glob(os.path.join(ROOT, "standards", "**", "*.yaml"), recursive=True):
@@ -185,8 +185,8 @@ def main():
         lines = "".join(f"  - {{ profession: {k}, count: {v} }}\n" for k, v in sorted(count.items(), key=lambda kv: -kv[1]))
         lines += f"  - {{ profession: profession.dependant, count: {max(dependants, 0)} }}\n"
         blines = "".join(f"  - {{ building: {k}, count: {v} }}\n" for k, v in sorted(d["_buildings"].items(), key=lambda kv: -kv[1]))
-        s = write_block(s, "buildings", blines, f"what stands here for its {pop:,} people: one of each building to its per_people") if blines else s
-        s = write_block(s, "census", lines, f"its {pop:,} people by trade: the staff of its works (module.staff) and of its buildings (building.staff), pilots from the fleets, the rest dependants (children, the old, the unassigned)" + ("; MORE PEOPLE WORK HERE THAN LIVE HERE" if dependants < 0 else ""))
+        s = write_block(s, "buildings", blines) if blines else s
+        s = write_block(s, "census", lines)
         yaml.safe_load(s); open(f, "w", encoding="utf-8").write(s)
         if dependants < 0:
             print(f"{key}: {works:,} at work for {pop:,} people")
@@ -213,7 +213,7 @@ def main():
             if c > 0:
                 lines += f"  - {{ hull: {hs['hull']}, count: {c} }}\n"
         s_ = open(f, encoding="utf-8").read()
-        s_ = write_block(s_, "independents", lines, f"owner-operators based here, its share by population of the {spare} that fill the system's {seeding['ships']} (seeding.traffic) beside the fleets") if lines else re.sub(r"^independents:\n(?:  .*\n)*", "", re.sub(r"^# independents: .*\n", "", s_, flags=re.M), flags=re.M)
+        s_ = write_block(s_, "independents", lines) if lines else re.sub(r"^independents:\n(?:  .*\n)*", "", re.sub(r"^# independents: .*\n", "", s_, flags=re.M), flags=re.M)
         yaml.safe_load(s_); open(f, "w", encoding="utf-8").write(s_)
     print(f"ships: {freight_total} freight + {fleets} other fleets + {spare} independents = {freight_total + fleets + spare} of {seeding['ships']}")
     # ---- fleets: the freight company's haulers at the granary; the administration's patrol; the band's raiders

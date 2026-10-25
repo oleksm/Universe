@@ -4,15 +4,10 @@ identity:
   name: "Port Nacaubun"
 kind: settlement
 at: body.treistun.treistun-e
-# Owner-requested move to the installed Shasta plain, 2026-10-21; measured against
-# forge_e104-land-c4-600-shasta-4ad675930cb1. Site evidence:
-# docs/diagnostics/hoar-port-shasta-20261021.yaml (port relief 2.26 m at source vertices).
 position: { latitude: -13.2735067, longitude: 0.9328005 }
 structure: structure.spaceport
 population: 60000
-# Supplied from Port Eikir: 98.5 t a day of what its people take; 8.2 days each way at a torchship's cruise (1 m/s2) over the two orbits' typical separation; 13 hauler(s) on the run, so a delivery every 1.4 days (tools/standards/census.py).
 resupply: { from: settlement.treistun.port-eikir, interval: 122655 }
-# buildings: what stands here for its 60,000 people: one of each building to its per_people
 buildings:
   - { building: building.shop, count: 858 }
   - { building: building.tavern, count: 120 }
@@ -38,7 +33,6 @@ buildings:
   - { building: building.college, count: 2 }
   - { building: building.hospital, count: 1 }
   - { building: building.gaol, count: 1 }
-# census: its 60,000 people by trade: the staff of its works (module.staff) and of its buildings (building.staff), pilots from the fleets, the rest dependants (children, the old, the unassigned)
 census:
   - { profession: profession.clerk, count: 6423 }
   - { profession: profession.nurse, count: 3572 }
@@ -69,7 +63,6 @@ census:
   - { profession: profession.pilot, count: 12 }
   - { profession: profession.judge, count: 10 }
   - { profession: profession.dependant, count: 38156 }
-# independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.drover, count: 72 }
   - { hull: hull.sprint, count: 54 }

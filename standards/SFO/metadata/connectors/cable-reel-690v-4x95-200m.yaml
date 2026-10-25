@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: connector.cable-reel-690v-4x95-200m
   name: Cable reel, 4 x 95 mm2, 200 m

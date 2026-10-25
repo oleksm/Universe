@@ -1,6 +1,4 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
-# Measured from the model (assets/models/mc07.glb): assets/models/mc07.glb: CargoRamp, CargoRam_*. Once an empty part of the hull (MC07-25); now the MC-07's own product,
-# fitted to its access slot like any other, built of the parts measured from the model.
 identity:
   key: equipment.access.cargo-ramp.mc07
   name: "MC-07 cargo ramp"
@@ -44,7 +42,6 @@ basis:
   - { of: [function, size_class], tier: invented, review: true, note: "The model's ramp, 7.5 m wide, let down 7.8 m from the bay sill to the ground by two rams; 40 t on it is chosen: two loaded ore carts." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The record's box is the thing at rest, stowed, as fitted and carried (the installer checks a model against it; registry convention 2026-10-10); its deployed reach is in function. Measured stowed with both rams and rods by blender (cargo-ramp prototype-v01, 2026-10-10): 7.500 x 9.380 x 3.327 m." }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 483.5, at: [3.96, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s3''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 483.5, at: [2.8001, 2.8001, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s3''s socket of the same id, bolted through'}

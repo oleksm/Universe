@@ -80,7 +80,6 @@ basis:
   - { of: [built_of.list], tier: derived, review: true, note: "CHE2-01's box: 0.35 + 1.61 m long; the rim 1.21 + 2 x 0.05 m across. The engine's 2.3 m: 0.34 m of turbopump, valves and injector ahead of the injector face. At 0.07 rad of gimbal the rim swings 0.14 m to each side: the hull leaves room for it." }
 nozzles:
 - {node: nozzle_CHS2_exit, share: 1.0}
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 37.5, force: 13750.0, at: [1.98, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s2''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 37.5, force: 13750.0, at: [1.4001, 1.4001, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s2''s socket of the same id, bolted through'}

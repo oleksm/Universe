@@ -1,4 +1,3 @@
-# Snapshot: planet-forge 903ae35, docs/catalogue/emitted_kinds.json; source freshness checked upstream.
 source: planet-forge crates/**/*.rs, every "planet-feature.<slug>" string
 commit: 94e4c4f
 kinds:

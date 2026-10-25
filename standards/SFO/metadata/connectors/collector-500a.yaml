@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: connector.collector-500a
   name: Collector trolley, 500 A

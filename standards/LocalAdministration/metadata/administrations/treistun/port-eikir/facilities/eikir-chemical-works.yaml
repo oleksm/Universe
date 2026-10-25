@@ -1,7 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
-# Invented: the works that keep Port Eikir's people in medicine and clothes, placed because nothing in Treistun made either
-# (the integrator, 2026-10-06). Its sulphur and salt are a year's starting stock: no mine in Treistun works a sulphur or a salt
-# deposit yet, though Heath's survey (TRD1) has both; until one does, ships bring them.
 identity:
   key: facility.treistun.port-eikir.eikir-chemical-works
   name: Eikir Chemical Works
@@ -23,7 +20,6 @@ lines:
 modules:
   - { module: module.cold-store, count: 1 }
 stock:
-# Thirty days of what its lines take in at full rate; a year of sulphur and salt (see the header).
   - { item: good.sugar, quantity: 51800.0 }
   - { item: element.s, quantity: 8250.0 }
   - { item: good.salt, quantity: 7370.0 }

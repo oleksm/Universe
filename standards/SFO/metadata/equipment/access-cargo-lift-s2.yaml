@@ -38,7 +38,6 @@ basis:
   - { of: [physical.mass, built_of], tier: invented, review: true, note: "3 t is light for a scissor that carries 20 t up 8 m: lifts of that duty weigh several times that. And folded to 0.21 m a tier, its rams must push about 18 MN to start 20 t at 1 g (blender, 2026-10-11): a real heavy scissor starts from a steeper least angle (a taller box) or lifts less from the floor. Its model is kinematic only; capacity and drive left for review. Measured (candidate-v01): the drawn steel structure, 12 mm deck, 6 mm walls to arms and frame and its side slider guides, is 3,776 kg before the pump and valves, already over its 3 t; the ideal folded force is 18.234 MN before the mechanism's own weight and losses." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 375.0, at: [2.475, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s2''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 375.0, at: [1.7501, 1.7501, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s2''s socket of the same id, bolted through'}

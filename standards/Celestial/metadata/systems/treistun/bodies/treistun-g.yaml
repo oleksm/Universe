@@ -1,6 +1,4 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
-# Curated: named by its people; the seed calls it Treistun g. The rest is as the seed made it.
 provenance: curated
 identity: {key: body.treistun.treistun-g, name: Drum G, also: Treistun g, kind: gas giant, parent: body.treistun.treistun}
 orbit: {semi_major_axis: 266900000000.0, eccentricity: 0.03379, period: 89532864.0, inclination: 0.054}

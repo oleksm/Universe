@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
 identity: {key: body.moryemzai.nikreira, name: Nikreira, kind: asteroid, parent: body.moryemzai.moryemzai}
 orbit: {semi_major_axis: 46495300000.0, eccentricity: 0.1285, period: 9555667.2, inclination: 1.701}

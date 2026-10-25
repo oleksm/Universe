@@ -4,8 +4,6 @@ identity:
   name: Trethi Mill
 kind: mill
 parcel: parcel.treistun.port-trethi.1
-# What it is built of. What it can make at most follows from this; what it does make is the
-# economy's business.
 lines:
   - makes: stock.al6061-pl-5
     also: [stock.al6061-sh-2, stock.al6061-sh-3, stock.al6061-pl-8]
@@ -77,10 +75,8 @@ lines:
     also: [stock.st4340-box-400x400x25]
     modules:
       - { module: module.section-line, count: 1 }
-# Where its stock is kept.
 modules:
   - { module: module.stock-yard, count: 1 }
-# What lies in its store at day 0 (seed state: what happens to it after is the economy's). 3 days of what its lines take in at full rate, of what is not made on its own ground.
 stock:
   - { item: good.polyethylene, quantity: 33500.0 }
   - { item: stock.al6061-ingot, quantity: 6270000.0 }

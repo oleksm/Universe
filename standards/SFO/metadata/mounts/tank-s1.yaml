@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mount.schema.yaml
-# SFO 19. Set round the equipment of this slot and class on the list today, with a quarter to spare.
 identity:
   key: mount.tank-s1
   name: "Tank mount, class 1"
@@ -19,7 +18,6 @@ attachment:
     tension: 397000.0
     compression: 397000.0
     shear: 198000.0
-# (holder and sockets: written by tools/standards/mounting.py)
 holder: adapter
 sockets:
 - id: s1
@@ -42,6 +40,5 @@ sockets:
   facing: [0.0, 0.0, 1.0]
   interface: interface.insert-m42
   connector: stock.st4340-bolt-m42
-# (end of mounting.py)
 basis:
   - { of: [envelope, bears, attachment], rule: rule.mounts-margin }

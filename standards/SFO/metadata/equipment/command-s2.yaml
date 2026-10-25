@@ -46,7 +46,6 @@ basis:
   - { of: [needs.power], tier: derived, review: true, note: "Its 2.5 kW all ends as heat. The life support's cabin cooler is sized for 500 W a head, a person's 137 W and the rest for displays, lights and fans (the three-person plant's 1.5 kW), so the computers cannot dump it all into the cabin air: they sit on cold plates on a capped coolant pair at the rear, to the ship's coolant loop, and only about a fifth (the screens' faces and the fans), 500 W, about 300 W a seat, reaches the cabin air. It takes power, data and coolant." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 85.0, at: [-1.089, -0.594, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.command-s2''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 85.0, at: [1.089, -0.594, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.command-s2''s socket of the same id, bolted through'}

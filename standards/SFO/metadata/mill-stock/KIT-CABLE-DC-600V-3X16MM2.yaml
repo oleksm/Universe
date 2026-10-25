@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: stock.kit-cable-dc-600v-3x16mm2
   code: KIT-CABLE-DC-600V-3X16MM2

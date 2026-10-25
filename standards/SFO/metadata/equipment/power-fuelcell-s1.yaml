@@ -40,7 +40,6 @@ basis:
   - { of: [built_of, physical.mass], tier: derived, review: true, note: "The case from the modeller's layout (blockout-v01): 2 mm 6061 walls and lids, 1.7 m2, 9.2 kg plus fasteners; 5 mm base 0.4 m2, 5.4 kg, and four 8 mm corner feet, 6.3 kg. No radiator on the case: 50 kW at 55% leaves 40.9 kW of heat at stack temperature (about 350 K), which needs about 53 m2 of radiating face in vacuum (emissivity 0.9) against the case's 2.1 m2, so a rear coolant pair hands it to the ship's loop (thermal-coolant-loop) and the hull's radiators. The stack-to-loop heat exchanger is in FCL1-02. H2 and O2 come in as separate gases; the hull's tanks own storage and boil-off. Product water leaves by its own outlet." }
   - { of: [making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 21.95, at: [-0.3556, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
 - {id: foot-2, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 21.95, at: [0.3556, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}

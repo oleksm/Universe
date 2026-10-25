@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# Written by tools/standards/supply_chains.py: change it there.
 identity:
   key: stock.pkg-bulk-bag
   code: PKG-BULK-BAG

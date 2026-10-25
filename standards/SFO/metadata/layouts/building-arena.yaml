@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/layout.schema.yaml
-# Written by tools/standards/building_layouts.py: change it there.
 identity:
   key: layout.building-arena
   name: Arena, world with air

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: stock.kit-pipe-dn50-pn16-ss-double
   code: KIT-PIPE-DN50-PN16-SS-DOUBLE

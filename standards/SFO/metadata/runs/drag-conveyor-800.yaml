@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: run.drag-conveyor-800, name: 'Drag chain conveyor, 800 mm, hot', description: 'Flights on two chains drawn through a closed insulated casing 800 mm wide, for hot bulk up to 650 deg C; it bends gently in the vertical.'}
 kind: drag-conveyor
 size: 0.8

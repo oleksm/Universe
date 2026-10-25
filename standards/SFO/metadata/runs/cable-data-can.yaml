@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: run.cable-data-can
   name: Data cable, control bus, 2 x 0.5 mm2 pair, screened

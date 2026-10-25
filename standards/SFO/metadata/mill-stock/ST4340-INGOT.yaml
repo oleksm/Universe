@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# What a foundry ships and a mill starts from. Its size is not settled, so it has none here.
 identity:
   key: stock.st4340-ingot
   code: ST4340-INGOT

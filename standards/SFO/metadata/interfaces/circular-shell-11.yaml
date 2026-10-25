@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/interface.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: interface.circular-shell-11
   name: Circular shell 11

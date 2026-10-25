@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: run.belt-1000-sealed, name: 'Belt conveyor, 1000 mm, in a sealed gallery', description: 'An open troughed belt 1000 mm wide on idlers and stringers, carried on trestles; it runs straight (a turn is a transfer to another belt). Its drive is at its head. It runs in a sealed gallery tube 3 m across, its axis the tube''s, at the hall''s gas pressure; where the tube meets a hall''s nozzle the joint is the nozzle''s flange.'}
 kind: belt
 size: 1.0

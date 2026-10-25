@@ -1,8 +1,4 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# Airless, by the planet lab's check (2026-10-06): at 5.4 km/s of escape speed and 0.23 of Earth's sunlight Rime sits on the keeps-air
-# side of the cosmic shoreline (Zahnle & Catling 2017) by a factor of 2.6, as Mars does; no air is defensible, a thin Mars-like
-# carbon dioxide veil as plausible. The lore keeps it airless. Its 189 K agrees with the lab's 185.
-# Baked: grown by the planet simulation (world TRF1, simulator fb414b42059a). The survey it points at owns what the run derived; this record owns the inputs.
 provenance: baked
 survey:
   format: "planet-sim-survey/1"
@@ -49,6 +45,4 @@ surface:
   mean_temperature: 159.9
   terrain: dry
   relief: 2544
-  # The run's colour, 2026-10-06: grey regolith, basalt plains and anorthositic highlands, no oxidised iron (no air or water to
-  # rust it); the seed's reddish [0.75, 0.4, 0.35] was overridden, story following physics.
   colour: [0.45, 0.44, 0.43]

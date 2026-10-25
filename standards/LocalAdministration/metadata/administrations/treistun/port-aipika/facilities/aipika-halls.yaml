@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
-# Invented: hydroponic halls for the leaf and salad that do not ship. The rest of what its people eat is brought.
 identity:
   key: facility.treistun.port-aipika.aipika-halls
   name: Aipika Halls

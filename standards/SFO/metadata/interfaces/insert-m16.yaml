@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/interface.schema.yaml
-# Written by tools/standards/mounting.py: change it there.
 identity:
   key: interface.insert-m16
   name: Threaded insert M16

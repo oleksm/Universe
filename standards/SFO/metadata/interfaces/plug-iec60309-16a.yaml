@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/interface.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: interface.plug-iec60309-16a
   name: IEC 60309 16 A 5-pin

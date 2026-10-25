@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/panel.schema.yaml
-# Written by tools/standards/building_kit.py: change it there.
 identity:
   key: panel.roof-3x3
   name: Roof panel, 3 x 3 m

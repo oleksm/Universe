@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# What is sold is stock. This is coal as it lies in a store and is sold: in bulk, by weight.
 identity:
   key: stock.coal-bulk
   traded_as: market.fuel

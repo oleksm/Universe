@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
-# Invented: the temperate band's farms round Port Eikir, as the starting state of docs/registry-food.md has them. What each field is set to is the farmer's. The hot band's crops (rice, maize, citrus and the rest) are not here: they want ground 1,500 km to the south.
 identity:
   key: facility.treistun.port-eikir.eikir-farms
   name: Eikir Farms
@@ -28,7 +27,6 @@ lines:
 modules:
   - { module: module.grain-silo, count: 2 }
 stock:
-# Thirty days of what its lines take in at full rate (seed state; after that the economy's): so the chain starts before the first harvest or delivery.
   - { item: good.fertiliser, quantity: 123000.0 }
   - { item: good.hay, quantity: 4190000.0 }
   - { item: good.animal-feed, quantity: 3680000.0 }

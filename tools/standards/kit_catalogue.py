@@ -13,6 +13,7 @@ otherwise; every record says so.
 """
 import glob, math, os, sys
 import yaml
+import lib  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import plant_kit as pk  # noqa: E402
@@ -21,7 +22,6 @@ from packages import FORMS as PACKAGE_OF  # noqa: E402
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 M = os.path.join(ROOT, "standards/SFO/metadata")
-HEAD = "# Written by tools/standards/kit_catalogue.py: change it there.\n"
 
 A36, SS, AL, CU, RUB, PE, BR = ("material.structural-steel-a36", "material.stainless-steel-304", "material.aluminium-alloy-6061",
                                "material.copper", "material.epdm-rubber", "material.polyethylene-uhmw", "material.bearing-bronze-c93200")
@@ -624,7 +624,8 @@ def write(folder, slug, d, schema):
     if os.path.exists(path):
         old = yaml.safe_load(open(path, encoding="utf-8")) or {}
         d = dict(d, **{k: old[k] for k in KEEP if k in old and k not in d})
-    text = f"# yaml-language-server: $schema=../../schema/{schema}.schema.yaml\n" + HEAD + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
+    text = f"# yaml-language-server: $schema=../../schema/{schema}.schema.yaml\n" + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
+    lib.own(path, "tools/standards/kit_catalogue.py")
     if not os.path.exists(path) or open(path).read() != text:
         open(path, "w").write(text)
         return 1

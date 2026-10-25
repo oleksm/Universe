@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: connector.lined-flange-dn1200-pn1, name: Lined flange DN 1200 PN 1, description: 'The flange pair of a refractory-lined hot gas duct whose steel shell is 1200 mm nominal bore, the lining''s joint packed; the shell kept cool by the lining.'}
 kind: lined-flange
 size: 1.2

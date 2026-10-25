@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/layout.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: layout.ingot-yard-airless, name: 'Ingot yard, airless', description: 'The ingots on airless ground at about a moon''s gravity: they come hot on their car from the casting bay; a gantry crane on its own legs stands them on cast iron beds open to the black sky, where they cool by radiation alone; it tips them, the saws crop them dry, a sealed lab reads each heat, and they go one to a steel crate (no timber here), stacked four high by forklifts. No hall, no water. Built separately from the yard for air.'}
 stands_for: module.ingot-yard
 site:

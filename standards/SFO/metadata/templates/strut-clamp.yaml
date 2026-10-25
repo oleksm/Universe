@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/template.schema.yaml
-# Written by tools/standards/mounting.py: change it there.
 identity:
   key: template.strut-clamp
   name: Strut clamp

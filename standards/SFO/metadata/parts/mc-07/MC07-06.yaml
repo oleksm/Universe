@@ -1,7 +1,4 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
-# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
-# clamps and lasers stowed, bay doors shut. Its mass is its surface in the stock it is cut
-# from; it is welded from panels cut and formed of that stock (the cutting table loses 15%, an invented allowance).
 identity:
   key: part.mc07-06
   code: MC07-06

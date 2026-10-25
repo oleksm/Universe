@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/zone.schema.yaml
-# Invented: east of the port, 100 m clear of it.
 identity:
   key: zone.treistun.port-trethi.industrial
   name: Industrial

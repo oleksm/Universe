@@ -1,6 +1,4 @@
 # yaml-language-server: $schema=../../schema/rock-class.schema.yaml
-# Not in the game yet. Asked for by the planet simulation (its note on airless worlds, 2026-10-05): the mantle of a body
-# that melted and was broken has to be some class. What is not written here is not known to the registry, and is not made up.
 identity:
   key: rock-class.olivine
   name: Olivine

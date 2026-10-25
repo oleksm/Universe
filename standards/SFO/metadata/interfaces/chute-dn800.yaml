@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/interface.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: interface.chute-dn800, name: Chute flange DN 800, description: 'The mating face of the Chute flange DN 800 joint: any maker''s half built to it mates with any other''s, whatever its metal.'}
 domain: bulk
 kind: chute

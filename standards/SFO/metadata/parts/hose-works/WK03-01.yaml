@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
-# Written by tools/standards/supply_chains.py: change it there.
 identity:
   key: part.wk03-01
   code: WK03-01

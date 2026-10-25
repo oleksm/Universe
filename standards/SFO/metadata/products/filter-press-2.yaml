@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.filter-press-2, name: 'Filter presses, 2'}
 kind: product
 units: [unit.filter-press-2]

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/good.schema.yaml
-# The game's own ore (content/base/ores.ron): its name and how it stows are the game's.
 identity:
   key: good.asteroid-water-ice
   name: Asteroid Water Ice

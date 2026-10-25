@@ -4,8 +4,6 @@ identity:
   name: Trethi Foundry
 kind: foundry
 parcel: parcel.treistun.port-trethi.1
-# What it is built of. What it can make at most follows from this; what it does make is the
-# economy's business.
 lines:
   - makes: stock.sta36-ingot
     also: [stock.st4340-ingot, stock.st304-ingot]
@@ -28,7 +26,6 @@ lines:
   - makes: stock.sic-tl-10
     modules:
       - { module: module.carbide-furnace, count: 1 }
-# What lies in its store at day 0 (seed state: what happens to it after is the economy's). 7 days of what its lines take in at full rate, of what is not made on its own ground.
 stock:
   - { item: element.al, quantity: 18700.0 }
   - { item: element.ar, quantity: 13600.0 }

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/panel.schema.yaml
-# Written by tools/standards/mounting.py: change it there.
 identity:
   key: panel.deck-0p5x0p5
   name: Deck panel, 0.5 x 0.5 m

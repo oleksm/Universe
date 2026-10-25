@@ -2,7 +2,7 @@
 
     import sys, os; sys.path.insert(0, os.path.dirname(__file__)); from lib import jet_heat, plant_waste
 """
-import hashlib, os
+import atexit, hashlib, json, os
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 TREE = os.path.join(ROOT, "standards")
@@ -139,3 +139,42 @@ def derived_parts(eq):
     """[(code, yaml text)] for every item of an equipment record's built_of.list."""
     bo = eq.get("built_of") or {}
     return [(it["code"], part_yaml(eq, bo.get("parts"), it)) for it in bo.get("list") or []]
+
+
+GENERATED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "generated.json")
+_owned = None
+
+
+def generated():
+    """{path from the repo root: {"by": tool, "keys": [top-level keys it writes] (absent: the whole file)}}."""
+    global _owned
+    if _owned is None:
+        _owned = json.load(open(GENERATED)) if os.path.isfile(GENERATED) else {}
+        atexit.register(_save)
+    return _owned
+
+
+def owned_by(path):
+    return generated().get(os.path.relpath(os.path.abspath(path), ROOT))
+
+
+def own(path, tool, keys=None):
+    """Note that `tool` (tools/standards/x.py) wrote `path`, or only its top-level `keys`."""
+    generated()[os.path.relpath(os.path.abspath(path), ROOT)] = {"by": tool, **({"keys": list(keys)} if keys else {})}
+
+
+def _save():
+    d = {k: v for k, v in sorted(_owned.items()) if os.path.isfile(os.path.join(ROOT, k))}
+    text = json.dumps(d, indent=0, sort_keys=True) + "\n"
+    if not os.path.isfile(GENERATED) or open(GENERATED).read() != text:
+        open(GENERATED, "w").write(text)
+
+
+def top_block(text, key):
+    """(start, end) of a top-level `key:` block in a YAML text, or None."""
+    import re
+    m = re.search(rf"^{key}:.*\n", text, re.M)
+    if not m:
+        return None
+    n = re.search(r"^[A-Za-z_]", text[m.end():], re.M)
+    return m.start(), m.end() + n.start() if n else len(text)

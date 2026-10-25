@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# Written by tools/standards/mounting.py: change it there.
 identity:
   key: stock.kit-adapter-radiator-hot-s2
   code: KIT-ADAPTER-RADIATOR-HOT-S2

@@ -52,9 +52,7 @@ if "  resupply:" not in s:
 # 2. the law, on Treistun
 p = LA[:-1] + ".yaml"; s = open(p).read()
 if "compulsory_stock:" not in s:
-    s = s.replace("zoning:\n", '''# The reserve law (2026-10-06): the needs people die without, as a cautious state keeps them. Four months of food and three of
-# medicine are Switzerland's compulsory stocks (from memory; review); held at the two big ports under open sky, half each.
-compulsory_stock:
+    s = s.replace("zoning:\n", '''compulsory_stock:
   warehouse_cover: 1.5
   reserves:
     - { need: need.food, lasts: 10368000, held_at: [{ settlement: settlement.treistun.port-eikir, share: 0.5 }, { settlement: settlement.treistun.port-nacaubun, share: 0.5 }], note: "120 days of food for everyone in Treistun." }
@@ -70,7 +68,7 @@ for slug, rs in RESUPPLY.items():
     p = LA + slug + ".yaml"; s = open(p).read()
     if "resupply:" in s or rs is None: continue
     frm, days = rs
-    s = re.sub(r"^(population: .*\n)", lambda m: m.group(1) + f"# Supplied from {frm.replace('-', ' ').title()} every {days} days: chosen by how far it lies (the inner worlds three weeks, Rime a month, the giants' moons two); a haul reckoned from the orbits is owed.\nresupply: {{ from: settlement.treistun.{frm}, interval: {days * DAY:g} }}\n", s, count=1, flags=re.M)
+    s = re.sub(r"^(population: .*\n)", lambda m: m.group(1) + f"resupply: {{ from: settlement.treistun.{frm}, interval: {days * DAY:g} }}\n", s, count=1, flags=re.M)
     assert "resupply:" in s, slug; yaml.safe_load(s); open(p, "w").write(s)
 # 4. day-0 warehouse stock from the layers
 needs = {yaml.safe_load(open(f))["identity"]["key"]: yaml.safe_load(open(f)) for f in glob.glob("standards/People/metadata/needs/*.yaml")}
@@ -108,11 +106,8 @@ for key, d in setts.items():
     s = re.sub(r"^# Ninety days of medicine.*\n", "", s, flags=re.M)
     s = re.sub(r"^# (Thirty|Ninety) days.*\n", "", s, flags=re.M)
     s = "".join(l for l in s.splitlines(True) if not any(it in l for it in stock))
-    held = [r_["need"].split(".")[1] for r_ in law["reserves"] if any(h["settlement"] == key for h in r_["held_at"])]
-    comment = (f"# Distribution stock: {cover:g} resupply cycles ({interval / DAY:g} days) of what its {pop:,} people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine."
-               + (f" Plus the administration's compulsory reserve of {' and '.join(held)} for all {total:,} people of Treistun, its share (org.treistun compulsory_stock)." if held else "") + "\n")
     lines = "".join(f"  - {{ item: {k}, quantity: {float(f'{v:.3g}')} }}\n" for k, v in stock.items() if v > 0)
-    if "\nstock:\n" in s: s = s.rstrip("\n") + "\n" + comment + lines
-    else: s = s.rstrip("\n") + "\nstock:\n" + comment + lines
+    if "\nstock:\n" in s: s = s.rstrip("\n") + "\n" + lines
+    else: s = s.rstrip("\n") + "\nstock:\n" + lines
     yaml.safe_load(s); open(path, "w").write(s)
     print(slug, pop, f"{interval / DAY:g} d", {k.split('.')[1]: round(v / 1000) for k, v in stock.items() if k in ("stock.flour-bulk", "stock.medicines-bulk", "stock.clothes-bulk")})

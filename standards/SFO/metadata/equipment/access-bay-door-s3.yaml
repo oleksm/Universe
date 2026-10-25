@@ -38,7 +38,6 @@ basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "A 12 by 8 m opening in the hull: the leaves at 30 kg/m2 of aluminium plate with their frame (chosen), opening in 50 s. The frame round the clear opening makes it 12.3 by 8.3 m (blender, 2026-10-11). Its two leaves, hinged along the 12 m edges, swing outward, standing about 4.4 m clear of the hull when open: that is a keep-out outside the hull for its designer, not part of the mount's envelope (the installed door, inside the skin). It holds no pressure: a bay is open to space, and an airlock keeps the air." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 1500.0, at: [3.96, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s3''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 1500.0, at: [2.8001, 2.8001, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s3''s socket of the same id, bolted through'}

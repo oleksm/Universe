@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
-# Invented: the town's water works, on the power station's ground. It cleans used water, and draws fresh from the place.
 identity:
   key: facility.treistun.port-eikir.eikir-water-works
   name: Eikir Water Works
@@ -11,6 +10,5 @@ lines:
       - { module: module.water-works, count: 1 }
 modules:
   - { module: module.tank-farm, count: 1 }
-# What lies in its store at day 0 (seed state). A week of water for its people, at 50 kg a head a day.
 stock:
   - { item: good.water, quantity: 21000000.0 }

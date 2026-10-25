@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.pellet-shaft-63th, name: 'Pellet shaft furnace, 62 t an hour, sealed'}
 kind: product
 units: [unit.pellet-shaft-63th]

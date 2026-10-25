@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/interface.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: interface.flange-dn500-pn10, name: Flange DN 500 PN 10, description: 'The mating face of the Flange DN 500 PN 10 joint: any maker''s half built to it mates with any other''s, whatever its metal.'}
 domain: fluid
 kind: flange

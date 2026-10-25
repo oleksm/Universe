@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: connector.termination-132kv-240mm2, name: 'Cable termination, 132 kV, 240 mm2, plug-in', description: 'Three screened plug-in terminations for 240 mm2 cores at 132 kV, their phases 0.5 m apart on a 1.5 x 0.5 m gland plate, each 0.7 m into a socket of the unit''s box (the box''s sockets and its leads to the bushings are the unit''s); before the plate the cores fan out from the tray''s pitch to the phases'' over 1.2 m.'}
 kind: termination
 size: 0.00023999999999999998

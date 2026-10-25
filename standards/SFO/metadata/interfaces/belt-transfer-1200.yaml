@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/interface.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: interface.belt-transfer-1200, name: 'Belt transfer, 1200 mm', description: 'The mating face of the Belt transfer, 1200 mm joint: any maker''s half built to it mates with any other''s, whatever its metal.'}
 domain: bulk
 kind: belt-transfer

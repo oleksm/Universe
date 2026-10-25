@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: run.belt-1400, name: 'Belt conveyor, 1400 mm', description: 'An open troughed belt 1400 mm wide on idlers and stringers, carried on trestles; it runs straight (a turn is a transfer to another belt). Its drive is at its head.'}
 kind: belt
 size: 1.4

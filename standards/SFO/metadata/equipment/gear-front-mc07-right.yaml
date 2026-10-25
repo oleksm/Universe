@@ -87,7 +87,6 @@ basis:
   note: 'A linear spring and damper standing for the oleo strut: the spring takes holds at the end of the stroke (1e+06 N / 0.8 m); the damper is 0.7 x holds at the design sink rate (3.05 m/s). 0.7 is chosen (invented): dropped at 3.05
     m/s with the mass whose touchdown fills the stroke at efficiency 0.8 (2 holds stroke eff / v^2), it peaks at 1.03 x holds and uses 0.87 of the stroke; at rest under holds/3 (an aircraft-like limit load factor of 3, from memory)
     it settles with a damping ratio about 0.48. A real oleo is nonlinear (gas spring, orifice damping).'
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m80, half: male, make: bolted, mass: 349.33, at: [1.5998, -1.6515, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gear-s3''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m80, half: male, make: bolted, mass: 349.33, at: [1.5998, 1.6515, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.gear-s3''s socket of the same id, bolted through'}

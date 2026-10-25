@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: run.cable-flexible-11kv-3x95
   name: Flexible cable, 11 kV, 3 x 95 mm2

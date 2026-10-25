@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/template.schema.yaml
-# Written by tools/standards/building_kit.py: change it there.
 identity:
   key: template.wall-glazed
   name: Glazed wall panels

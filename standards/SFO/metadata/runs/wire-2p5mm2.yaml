@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: run.wire-2p5mm2
   name: Hook-up wire, 2.5 mm2, 600 V

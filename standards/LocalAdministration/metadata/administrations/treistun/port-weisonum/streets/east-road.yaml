@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/street.schema.yaml
-# Invented: from the port's edge east through the industrial zone, as at Port Trethi.
 identity:
   key: street.treistun.port-weisonum.east-road
   name: East Road

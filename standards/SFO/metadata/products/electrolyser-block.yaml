@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.electrolyser-block, name: Electrolyser block, description: Alkaline electrolysis stacks with their separators in a block.}
 kind: product
 params:

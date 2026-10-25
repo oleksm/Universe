@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: run.feeder-3kv-dc-25mm2
   name: Feeder, 3 kV DC, 25 mm2

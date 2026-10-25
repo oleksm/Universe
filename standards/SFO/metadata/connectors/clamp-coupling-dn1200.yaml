@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: connector.clamp-coupling-dn1200, name: Clamp coupling DN 1200, description: 'A sealed, clamped joint between a moving outlet and a fixed 1200 mm duct. To let the outlet move (a sealed furnace tilting to tap or deslag), its slide gate shuts, the clamp opens and the duct''s spool draws back 0.15 m. The outlet''s face then slides across the duct''s, never into it. The gate is the outlet''s; its mass is the unit''s.'}
 kind: clamp-coupling
 size: 1.2

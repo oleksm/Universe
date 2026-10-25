@@ -1,6 +1,4 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
-# Curated: its age is the planet lab's default (4.57 Gyr, the Sun's), chosen for the runs of its worlds; the seed does not say.
 provenance: curated
 identity: {key: body.treistun.treistun, name: Treistun, kind: star}
 star: {class: K, luminosity: 1.1269632e+26}

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/interface.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: interface.conductor-rail-1000a
   name: Conductor rail 1000 A

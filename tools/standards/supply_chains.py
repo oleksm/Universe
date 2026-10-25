@@ -8,10 +8,10 @@ Run this, then kit_works.py. --check checks only this generator's owned files.
 from pathlib import Path
 import sys
 import yaml
+import lib  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 META = ROOT / "standards/SFO/metadata"
-HEADER = "# Written by tools/standards/supply_chains.py: change it there.\n"
 SOURCE = "standards/sources/production-chains.yaml"
 OUT = {}
 
@@ -19,7 +19,8 @@ OUT = {}
 def put(folder, slug, kind, d):
     path = META / folder / (slug + ".yaml")
     rel = "../" * (len(Path(folder).parts) + 1)
-    OUT[path] = f"# yaml-language-server: $schema={rel}schema/{kind}.schema.yaml\n" + HEADER + yaml.safe_dump(d, sort_keys=False, width=150)
+    lib.own(path, "tools/standards/supply_chains.py")
+    OUT[path] = f"# yaml-language-server: $schema={rel}schema/{kind}.schema.yaml\n" + yaml.safe_dump(d, sort_keys=False, width=150)
 
 
 def basis(of, note, tier="invented"):

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/interface.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: interface.termination-132kv-240mm2, name: 'Cable termination, 132 kV, 240 mm2, plug-in', description: 'The mating face of the Cable termination, 132 kV, 240 mm2, plug-in joint: any maker''s half built to it mates with any other''s, whatever its metal.'}
 domain: power
 kind: termination

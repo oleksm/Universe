@@ -1,7 +1,4 @@
 # yaml-language-server: $schema=../../schema/seeding.schema.yaml
-# How asteroids lie in a system: the Sun's, as the measure for every other. A system's own belts are
-# worked out from these and its planets (see each system's page). The game's fields are a
-# simplification of this (see the note on the Celestial Registry's page); the engine is to follow.
 identity:
   key: seeding.asteroids
   name: How asteroids lie

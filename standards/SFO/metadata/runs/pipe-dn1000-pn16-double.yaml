@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: run.pipe-dn1000-pn16-double, name: 'Pipe DN 1000 PN 16, double-sealed joints', description: 'Welded pipe, 1000 mm bore, for up to 16 bar; welded between the units'' flanges, so a run has a flange pair only at its ends.'}
 kind: pipe
 size: 1.0

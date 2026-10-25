@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: connector.chute-dn400, name: Chute flange DN 400, description: A sealed bolted flange where bulk falls through a 400 mm chute into a closed conveyor.}
 kind: chute
 size: 0.4

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.rail-car, name: Rail car, description: 'A self-propelled flat car on bogies, its frame by its load and length, with a payload fixture.'}
 kind: family
 params:

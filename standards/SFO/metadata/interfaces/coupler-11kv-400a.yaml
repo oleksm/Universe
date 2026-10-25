@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/interface.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: interface.coupler-11kv-400a
   name: Coupler 11 kV 400 A

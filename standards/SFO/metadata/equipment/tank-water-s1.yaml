@@ -38,7 +38,6 @@ basis:
   - { of: [physical, built_of.list], tier: derived, review: true, note: "For the modeller (2026-10-10): the 5 mm plate makes the ball 2.13 m outside and 192 kg (4 pi r2 t rho); pressure needs far less (0.2 MPa: 0.6 mm), so the plate is for handling and stiffness. The fittings' boss adds 0.12 m on top: 2.13 x 2.13 x 2.25 m overall." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 67.0, at: [-2.646, -2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 67.0, at: [2.646, -2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}

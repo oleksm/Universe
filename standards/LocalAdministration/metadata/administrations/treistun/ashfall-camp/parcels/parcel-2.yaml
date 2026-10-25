@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
-# Invented: the power station's and the life-support plant's lot.
 identity:
   key: parcel.treistun.ashfall-camp.2
 number: 2

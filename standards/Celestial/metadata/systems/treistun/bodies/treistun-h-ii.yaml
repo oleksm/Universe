@@ -1,6 +1,4 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
-# Curated: named by its people; the seed calls it Treistun h II. The rest is as the seed made it.
 provenance: curated
 identity:
   key: body.treistun.treistun-h-ii

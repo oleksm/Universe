@@ -1,6 +1,4 @@
 # yaml-language-server: $schema=renames.schema.yaml
-# Every record key the registry has renamed, old to new, so anything that saved a key (the game's saves through
-# content/base/aliases.ron, the ships studio's designs, a peer's notes) can follow. Appended by the rename tools; never pruned.
 renames:
   - { was: equipment.access.bay.door.s1, is: equipment.access.bay-door.s1, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
   - { was: equipment.access.bay.door.s2, is: equipment.access.bay-door.s2, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }

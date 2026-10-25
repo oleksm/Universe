@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: unit.plant-transformer-35mva, name: 'Plant transformer, 35 MVA', description: 'Steps the grid down for the pellet plant: its torches, mill, fans and drives, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. Three secondary terminals on one long face (+y), 2.9 m up; the oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault. Fed at 33 kV through a cable box over its HV bushings (gland plate on top at (0, -0.9, 5.2)); its 6.6 kV leaves through a box over its secondary pads (gland plate facing +y at (0, 2.35, 2.9)); its cooler''s water ports at (-2.9, -0.6, 1) and (-2.9, 0.6, 1).'}
 size_class: 1
 fits: plant-mount.bay-s1

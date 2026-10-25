@@ -40,7 +40,6 @@ basis:
   - { of: [physical], tier: derived, note: "Fitted envelope from Blender's model (2026-10-12): 1.2 x 1.061 x 2 m (exported bounds) with the door grip 61 mm proud of the face; inside 1.14 x 0.94 x 1.94 m; door 0.816 x 1.90 m with a 20 mm sill. The open door sweeps 1.382 m out from the case centre, about 0.88 m beyond the door face, so it blocks a 0.8 m corridor while open. Mass kept at 200; the drawn case is about 127 kg, leaving about 73 kg for fan, separator, canister and plumbing." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 50.0, at: [-0.7425, -0.594, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1c''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 50.0, at: [0.7425, -0.594, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s1c''s socket of the same id, bolted through'}

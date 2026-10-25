@@ -40,7 +40,6 @@ basis:
   - { of: [built_of.list, physical.mass, identity.description], tier: derived, review: true, note: "As window S2: panes as a square plate simply supported at its edges, 0.709 m across, at 101.3 kPa, stress = 0.287 x p x side^2 / t^2 at 20 MPa allowed (invented) gives 27 mm a pane; the debris pane scaled from S2, 6 mm. Modelled (blockout-v01 2026-10-13: 0.5 m2 clear, panes held over 0.551 m2) the panes at 2,200 kg/m3 weigh 72.8 kg and the titanium frame 26.7 kg; the four compression sleeves are calculated, 40/20 mm x 60 mm titanium, 1 kg. 100.5 kg in all, against the 60 kg first listed. No pane stock exists yet; SiC is a stand-in. Air pushes 101.3 kPa x 0.5 m2 = 51 kN on it, carried by the hull's window ring as for S2." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 25.12, at: [-0.3556, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
 - {id: foot-2, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 25.12, at: [0.3556, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}

@@ -39,7 +39,6 @@ basis:
   - { of: [function, physical, needs], tier: derived, review: true, note: "20 kW at a 10 K rise in water-glycol (3.8 kJ/kg K) is 0.53 kg/s (1.6 m/s in a 20 mm bore); a 300 W pump; 30 kg of pump, lines and plates, the lines and plates (CLP0-02) a loose kit fitted along the ship, not inside the skid box. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 7.5, at: [-0.99, -0.495, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1c''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 7.5, at: [0.99, -0.495, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.thermal-s1c''s socket of the same id, bolted through'}

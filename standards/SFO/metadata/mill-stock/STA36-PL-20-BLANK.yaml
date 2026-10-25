@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# Cut to each panel's outline on the cutting table, not yet formed. Kept in the works' store until the panel former takes it.
 identity:
   key: stock.sta36-pl-20-blank
   code: STA36-PL-20-BLANK

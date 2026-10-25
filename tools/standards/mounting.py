@@ -23,11 +23,11 @@ The rules, chosen (every figure here is review-pending until ships and the owner
 """
 import glob, math, os, sys
 import yaml
+import lib  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 M = os.path.join(ROOT, "standards/SFO/metadata")
-HEAD = "# Written by tools/standards/mounting.py: change it there.\n"
 KEEP = ("visual", "model_requests")
 sys.path.insert(0, HERE)
 from packages import FORMS as PACKAGE_OF  # noqa: E402
@@ -66,7 +66,8 @@ def write(folder, slug, d, schema):
         old = yaml.safe_load(open(path, encoding="utf-8")) or {}
         d = dict(d, **{k: old[k] for k in KEEP if k in old and k not in d})
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    text = f"# yaml-language-server: $schema=../../schema/{schema}.schema.yaml\n" + HEAD + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
+    text = f"# yaml-language-server: $schema=../../schema/{schema}.schema.yaml\n" + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
+    lib.own(path, "tools/standards/mounting.py")
     if not os.path.exists(path) or open(path, encoding="utf-8").read() != text:
         if not DRY:
             open(path, "w", encoding="utf-8").write(text)
@@ -184,16 +185,15 @@ def sockets(m):
 
 
 def set_mount(path, holder, socks):
-    """Write `holder` and `sockets` into a hand-written mount, keeping its text and comments; replaces what it wrote before."""
+    """Write `holder` and `sockets` into a hand-written mount, keeping the rest of its text; replaces what it wrote before."""
     text = open(path, encoding="utf-8").read()
-    mark = "# (holder and sockets: written by tools/standards/mounting.py)\n"
-    if mark in text:
-        head, tail = text.split(mark, 1)
-        rest = tail.split("\n# (end of mounting.py)\n", 1)[1] if "\n# (end of mounting.py)\n" in tail else ""
-        text = head + rest
+    for k in ("sockets", "holder"):
+        b = lib.top_block(text, k)
+        if b:
+            text = text[:b[0]] + text[b[1]:]
     block = yaml.safe_dump({"holder": holder, "sockets": socks}, sort_keys=False, width=230, default_flow_style=None)
-    new = text.replace("\nfeeds:", "\n" + mark + block + "# (end of mounting.py)\nfeeds:", 1) if "\nfeeds:" in text else \
-        text.replace("\nbasis:", "\n" + mark + block + "# (end of mounting.py)\nbasis:", 1)
+    new = text.replace("\nfeeds:", "\n" + block + "feeds:", 1) if "\nfeeds:" in text else text.replace("\nbasis:", "\n" + block + "basis:", 1)
+    lib.own(path, "tools/standards/mounting.py", ["holder", "sockets"])
     if new != open(path, encoding="utf-8").read():
         if not DRY:
             open(path, "w", encoding="utf-8").write(new)

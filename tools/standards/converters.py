@@ -9,11 +9,12 @@ import os
 import yaml
 
 import equipment_ports as ep
+import lib
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 M = os.path.join(ROOT, "standards/SFO/metadata/equipment")
-HEAD = "# yaml-language-server: $schema=../../schema/equipment.schema.yaml\n# Written by tools/standards/converters.py: change it there.\n"
+HEAD = "# yaml-language-server: $schema=../../schema/equipment.schema.yaml\n"
 KEEP = ("visual", "model_requests")
 MEMORY = "From memory of aerospace and traction DC-DC converters (isolated SiC stages, liquid-cooled); to be sourced."
 
@@ -162,6 +163,7 @@ def main():
             d["basis"].insert(1, {"of": ["ports"], "tier": "derived", "note": "Places from the installed model's empties where it has them (each port's note says); connectors by current (ports() here); docs/proposals/equipment-ports.md."})
         d["ports"] = ep.feet(d) + d["ports"]           # (its feet on the deck track: docs/proposals/physical-mounts.md)
         text = HEAD + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
+        lib.own(path, "tools/standards/converters.py")
         if not os.path.exists(path) or open(path).read() != text:
             open(path, "w").write(text)
             n += 1

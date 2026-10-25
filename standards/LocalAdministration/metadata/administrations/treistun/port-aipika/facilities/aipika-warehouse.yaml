@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
-# Invented: the port's warehouse, built as Port Trethi's is. What lies on the market here lies in it.
 identity:
   key: facility.treistun.port-aipika.aipika-warehouse
   name: Aipika Warehouse
@@ -12,26 +11,8 @@ modules:
   - { module: module.tank-farm, count: 2 }
   - { module: module.ore-yard, count: 1 }
   - { module: module.loading-dock, count: 2 }
-# What lies in its store at day 0 (seed state: what happens to it after is the economy's). 100 t of deuterium, for the ships that call: twenty-five fills of a 4 t tank. Chosen.
 stock:
   - { item: stock.deuterium-liq, quantity: 100000.0 }
-# Distribution stock: 1.5 resupply cycles (60 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-# Distribution stock: 1.5 resupply cycles (60 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-# Distribution stock: 1.5 resupply cycles (23.3717 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-# Distribution stock: 1.5 resupply cycles (23.3717 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-# Distribution stock: 1.5 resupply cycles (23.3717 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-# Distribution stock: 1.5 resupply cycles (23.3717 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-# Distribution stock: 1.5 resupply cycles (23.3717 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-# Distribution stock: 1.5 resupply cycles (23.3717 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-# Distribution stock: 1.5 resupply cycles (23.3717 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-# Distribution stock: 1.5 resupply cycles (23.3717 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-# Distribution stock: 1.5 resupply cycles (23.3717 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-# Distribution stock: 1.5 resupply cycles (23.3717 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-# Distribution stock: 1.5 resupply cycles (23.3717 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-# Distribution stock: 1.5 resupply cycles (23.3717 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-# Distribution stock: 1.5 resupply cycles (23.3717 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-# Distribution stock: 1.5 resupply cycles (23.3717 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-# Distribution stock: 1.5 resupply cycles (23.3717 days) of what its 3,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
   - { item: stock.flour-bulk, quantity: 39400.0 }
   - { item: stock.potatoes-bulk, quantity: 31500.0 }
   - { item: stock.cabbage-bulk, quantity: 7890.0 }

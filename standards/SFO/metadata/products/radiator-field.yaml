@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.radiator-field, name: Radiator field, description: 'Raised horizontal radiator panels filling a 48 m bay on airless ground, the loop''s headers round its edge.'}
 kind: family
 params:

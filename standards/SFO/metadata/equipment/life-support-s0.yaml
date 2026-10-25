@@ -46,7 +46,6 @@ basis:
   - { of: [needs.power], tier: derived, review: true, note: "Flag: 2 kW looks high. A heat pump lifting 400 W at a COP of 2 to 3 takes 130 to 200 W, the fans about 100 W and the controller about 20 W: about 300 to 400 W. All input ends as heat, so the coolant loop takes the input plus the 400 W lifted (2.4 kW as recorded, about 0.8 kW if lowered). Not changed." }
   - { of: [built_of.list], tier: derived, review: true, note: "Flag: 2.2 kg of oxygen at 300 bar is about 6 L of gas; a composite bottle of that size with its regulator weighs about 5 to 8 kg, not 45 (from memory). The spare mass would cover the case, plumbing and more lithium hydroxide (2.5 kg is near the bare 2.4 kg that 2.2 kg of carbon dioxide needs; packed canisters run about half as much again). Not changed." }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 37.5, at: [-0.3556, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
 - {id: foot-2, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 37.5, at: [0.3556, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}

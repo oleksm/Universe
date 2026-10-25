@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.disc-filter-2, name: 'Disc filters, 2'}
 kind: product
 units: [unit.disc-filter-2]

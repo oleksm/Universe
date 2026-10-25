@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
-# Written by tools/standards/kit_works.py: change it there.
 identity:
   key: module.cable-works
   name: Cable works

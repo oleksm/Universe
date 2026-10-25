@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
-# Its nitrogen is drawn from the air of the place it stands in (four fifths of any Earth-like air is nitrogen): from: place.
 identity:
   key: module.fertiliser-works
   name: "Fertiliser works"

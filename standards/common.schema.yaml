@@ -1,15 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Common definitions
 description: 'standards/common.schema.yaml: what every schema of the registry shares. A schema refers to one of these with $ref: <path to this file>#/definitions/<name>, and does not write its own.'
-# A property that names another record takes that record's key, and says so with `x-ref`: the kinds
-# of record it may name (x-ref: [element, material, good]). The build checks the key is a record's,
-# and of one of those kinds.
-# A property with a dimension says its unit with `x-unit`, and its values are in that unit: SI (kg, m, s,
-# K, W, N, J, Pa and what is made of them), never t, km, hours, AU or light years. Angles are the one
-# exception: degrees, `x-unit: deg`. A share, a ratio or a count has no x-unit.
-# A schema says which kind of record it holds with `x-kind`: the first part of those records' keys
-# (x-kind: [hull]; a settlement's schema holds two, [settlement, rig]). The build checks each record's
-# key against it.
 definitions:
   slot_kind: { $ref: "dictionary.schema.yaml#/definitions/slot_kind" }
   spec_limit:

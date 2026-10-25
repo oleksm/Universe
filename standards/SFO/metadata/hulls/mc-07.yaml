@@ -1,6 +1,4 @@
 # yaml-language-server: $schema=../../schema/hull.schema.yaml
-# The spec. Its size is the model's. What it is made of, and so what it weighs: its parts, in
-# parts/mc-07/. Where this differs from what the game flies today, this is what is meant.
 identity:
   key: hull.mc-07
   name: MC-07
@@ -112,9 +110,6 @@ fit:
   - { slot: clamp_aft, item: equipment.access.anchor-clamp.mc07-aft }
   - { slot: hardpoint_1, item: equipment.hardpoint.mining-hammer.mc07 }
   - { slot: hardpoint_2, item: equipment.hardpoint.mining-hammer.mc07-right }
-  # Heat, people, air and water (the ships session's request, docs/ships/mc07-heat-cabin-request.md on branch ships, 2026-10-06):
-  # 47.4 MW aboard at full burn (the plant's loss, everything drawn, the jets' share) wants 54 MW of radiator and 50 MW of loops;
-  # six seats; air and water for them. The mass is the mass: 18.7 t more, and the figures say what the MC-07 is.
   - { slot: radiator_1, item: equipment.thermal.radiator.s3 }
   - { slot: radiator_2, item: equipment.thermal.radiator.s2 }
   - { slot: radiator_3, item: equipment.thermal.radiator.s2 }

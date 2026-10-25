@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/layout.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: layout.shaft-furnace-airless, name: 'Hydrogen shaft furnace, airless', description: 'Direct reduction by hydrogen on airless ground at about a moon''s gravity: the gas loop at 8 bar so the top gas''s water condenses warm enough for radiators to take its heat, the sponge iron discharged hot through a lock straight to the arc furnace shop, the heat to fields of radiators. Hydrogen leaking into vacuum just leaves (no air, no fire), so the tower is an open lattice for bracing, not for venting. Built separately from the plant for air.'}
 stands_for: module.shaft-furnace
 site:

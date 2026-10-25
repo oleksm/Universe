@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/street.schema.yaml
-# Invented: from the strip north to the pit.
 identity:
   key: street.treistun.halden-camp.pit-road
   name: Pit Road

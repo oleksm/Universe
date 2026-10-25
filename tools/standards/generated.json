@@ -1,0 +1,5759 @@
+{
+"standards/SFO/metadata/adapters/access-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/access-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/access-s3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/capacitor-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/capacitor-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/capacitor-s3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/cargo-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/cargo-s1c.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/cargo-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/cargo-s3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/cargo-s4.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/comm-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/command-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/command-s1c.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/command-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/command-s3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/drive-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/drive-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/drive-s3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/engine-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/engine-s1c.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/engine-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/engine-s3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/engine-s4.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/gate-s3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/gate-s4.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/gear-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/gear-s1c.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/gear-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/gear-s3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/handling-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/handling-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/hardpoint-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/hardpoint-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/hardpoint-s3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/hyperdrive-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/hyperdrive-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/hyperdrive-s3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/life-support-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/life-support-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/lift-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/lift-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/lift-s3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/power-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/power-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/power-s3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/radiator-hot-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/radiator-hot-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/sensors-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/tank-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/tank-s1c.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/tank-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/tank-s3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/tank-s4.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/thermal-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/thermal-s1c.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/thermal-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/thermal-s3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/thrusters-s1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/thrusters-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/thrusters-s3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/adapters/utility-s2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/arrangements/cell.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/classroom.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/counter.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/court.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/dining.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/dorm.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/flat.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/garage.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/garden.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/kitchen.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/office.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/press-room.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/reception.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/sales-floor.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/seating.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/stage.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/store.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/treatment.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/ward.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/washroom.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/arrangements/workshop.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/connectors/belt-transfer-1000-sealed.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/belt-transfer-1000.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/belt-transfer-1200.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/belt-transfer-1400.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/belt-transfer-650.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/belt-transfer-800-sealed.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/belt-transfer-800.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/bus-joint-ac-27ka.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/bus-joint-ac-65ka.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/bus-joint-dc-44ka.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/cable-reel-11kv-3x95-300m.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/cable-reel-690v-4x35-100m.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/cable-reel-690v-4x95-200m.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/camlock-dn100.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/camlock-dn150.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/camlock-dn25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/camlock-dn50.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/chute-dn1000.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/chute-dn400.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/chute-dn600.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/chute-dn800.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/circular-shell-11.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/circular-shell-17.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/circular-shell-25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/circular-shell-33.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/clamp-coupling-dn1200.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/collector-1000a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/collector-100a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/collector-250a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/collector-500a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/corner-casting-iso1161.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/coupler-11kv-400a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/deck-support-shoe.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/expansion-joint-dn100-pn10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/expansion-joint-dn1000-pn10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/expansion-joint-dn300-pn10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/expansion-joint-dn600-pn10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/flange-dn100-pn10-ss.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn100-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn100-pn16-ss-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn100-pn25-ss.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/flange-dn100-pn25.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn1000-pn1.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn1000-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn1000-pn16-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn1200-pn1.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn1200-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn1400-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn150-pn10-ss.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn150-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn150-pn16-ss-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn150-pn25.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn1600-pn16-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn1800-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn200-pn1-ss.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn200-pn10-ss.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn200-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn200-pn16-ss-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn200-pn25-ss.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/flange-dn2000-pn1.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn2000-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn2200-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn2400-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn250-pn10-ss-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn250-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn250-pn16-ss-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn2800-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn300-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn3000-pn1-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn350-pn10-ss.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn350-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn3600-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn400-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn450-pn10-ss-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn450-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn50-pn10-ss.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn50-pn16-ss-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn50-pn16-ss.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn500-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn600-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn700-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flange-dn900-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/flat-face-dn13.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/flat-face-dn19.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/flat-face-dn25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/flat-face-dn6.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/hood-dn2000.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/hose-union-dn25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/hose-union-dn50.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/hvdc-pole-1000a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/hvdc-pole-150a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/hvdc-pole-400a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/hvdc-pole-650a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/lined-flange-dn1200-pn1.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/lined-flange-dn2400-pn16-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/lined-flange-dn3600-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/plug-iec60309-125a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/plug-iec60309-16a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/plug-iec60309-32a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/plug-iec60309-63a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/powerlock-400a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/run-clip-d10.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/run-clip-d100.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/run-clip-d16.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/run-clip-d160.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/run-clip-d25.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/run-clip-d250.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/run-clip-d40.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/run-clip-d400.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/run-clip-d63.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/strut-clamp-d100.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/strut-clamp-d120.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/strut-clamp-d150.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/strut-clamp-d160.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/strut-clamp-d200.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/strut-clamp-d250.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/strut-clamp-d60.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/strut-clamp-d80.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/connectors/termination-11kv-500mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-132kv-240mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-33kv-120mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-33kv-150mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-33kv-185mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-33kv-630mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-400v-120mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-400v-16mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-400v-185mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-400v-240mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-400v-25mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-400v-300mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-400v-35mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-400v-400mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-400v-500mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-400v-50mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-400v-630mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-400v-70mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-400v-95mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-6p6kv-185mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-6p6kv-400mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-6p6kv-50mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-6p6kv-630mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-6p6kv-70mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/termination-6p6kv-95mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/connectors/twistlock-iso1161.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/valve-ball-dn100-pn10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/valve-ball-dn50-pn10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/valve-butterfly-dn1000-pn10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/valve-butterfly-dn150-pn10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/valve-butterfly-dn300-pn10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/valve-butterfly-dn600-pn10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/valve-check-dn100-pn10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/valve-check-dn300-pn10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/valve-gate-dn100-pn10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/valve-gate-dn300-pn10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/valve-relief-dn100-pn10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/valve-relief-dn50-pn10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/connectors/wiring-box-lv.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/equipment/access-airlock-cargo.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/access-airlock-crew.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/access-anchor-clamp-mc07-aft.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/access-anchor-clamp-mc07-fwd.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/access-bay-door-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/access-bay-door-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/access-bay-door-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/access-boarding-ramp-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/access-cargo-lift-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/access-cargo-ramp-mc07.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/access-cargo-ramp-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/access-cargo-ramp-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/access-docking-clamp.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/access-docking-collar.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/access-door-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/avionics-nav-basic-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/avionics-nav-full-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/capacitor-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/capacitor-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/capacitor-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-berths-2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-berths-4.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-berths-6.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-cabin-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-cabin-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-cabin-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-cabin-s4.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-food-store-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-galley-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-head-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-ore-bay-100t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-ore-bay-10t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-ore-bay-150t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-ore-bay-200t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-ore-bay-20t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-ore-bay-300t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-ore-bay-35t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-ore-bay-50t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-ore-bay-5t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-ore-bay-75t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-rack-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-rack-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-rack-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/cargo-rack-s4.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/comm-basic-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/comm-long-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/command-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/command-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/command-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/computer-fbw-fast.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/computer-fbw-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/drive-kestrel-k2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/drive-torch-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/drive-torch-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/drive-torch-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-ca-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-cg-outboard-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-cg-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-cg-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-ch-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-ch-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-ch-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-ch-s4.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-fan-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-fan-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-fan-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-nt-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-nt-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-nt-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-swivel-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-swivel-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-swivel-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/engine-swivel-s4.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/gate-relay-gate.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/gate-relay-hyper.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/gate-terminal-ground-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/gate-throat-coil-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/gate-transceiver-beacon.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/gate-transceiver-station.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/gear-front-mc07-right.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/gear-front-mc07.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/gear-rear-mc07-right.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/gear-rear-mc07.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/gear-strut-180kn.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/gear-strut-s0.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/gear-strut-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/gear-strut-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/gear-strut-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/handling-conveyor-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/handling-conveyor-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/handling-ore-scoop-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/handling-transfer-arm.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/hardpoint-mass-driver-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/hardpoint-mining-hammer-mc07-right.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/hardpoint-mining-hammer-mc07.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/hardpoint-pulse-laser-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/hyperdrive-halcyon-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/hyperdrive-halcyon-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/hyperdrive-halcyon-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/hyperdrive-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/hyperdrive-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/hyperdrive-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/life-support-cartridge.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/life-support-s0.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/life-support-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/life-support-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/lift-belly-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/lift-belly-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/lift-belly-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/power-aurel-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/power-aurel-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/power-aurel-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/power-battery-s0.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/power-battery-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/power-battery-vtol-s0.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/power-battery-vtol-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/power-battery-vtol-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/power-converter-270v-100kw.yaml": {
+"by": "tools/standards/converters.py"
+},
+"standards/SFO/metadata/equipment/power-converter-270v-10kw.yaml": {
+"by": "tools/standards/converters.py"
+},
+"standards/SFO/metadata/equipment/power-converter-270v-40kw.yaml": {
+"by": "tools/standards/converters.py"
+},
+"standards/SFO/metadata/equipment/power-converter-28v-1kw.yaml": {
+"by": "tools/standards/converters.py"
+},
+"standards/SFO/metadata/equipment/power-converter-28v-3kw.yaml": {
+"by": "tools/standards/converters.py"
+},
+"standards/SFO/metadata/equipment/power-converter-28v-5kw.yaml": {
+"by": "tools/standards/converters.py"
+},
+"standards/SFO/metadata/equipment/power-distribution-270v-10way.yaml": {
+"by": "tools/standards/converters.py"
+},
+"standards/SFO/metadata/equipment/power-distribution-28v-16way.yaml": {
+"by": "tools/standards/converters.py"
+},
+"standards/SFO/metadata/equipment/power-fuelcell-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/power-fusion-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/power-fusion-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/power-fusion-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/power-solar-array-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/power-switchgear-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/sensors-altimeter-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/sensors-camera-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/sensors-radar-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-air-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-deuterium-s0.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-deuterium-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-deuterium-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-deuterium-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-deuterium-s4.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-gas-cargo-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-hydrogen-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-hydrogen-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-hydrolox-0p5t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-hydrolox-1t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-hydrolox-2t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-hydrolox-3p5t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-hydrolox-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-hydrolox-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-liquid-cargo-s4.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-methalox-0p5t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-methalox-1t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-methalox-2t.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-methalox-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-methalox-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-nitrogen-100kg.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-nitrogen-50kg.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-nitrogen-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-oxygen-10kg.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-oxygen-20kg.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-waste-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-water-100kg.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-water-50kg.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-water-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/tank-water-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/thermal-air-cooler-s0.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/thermal-coolant-loop-s0.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/thermal-coolant-loop-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/thermal-coolant-loop-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/thermal-heat-exchanger.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/thermal-heat-sink.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/thermal-radiator-s0.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/thermal-radiator-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/thermal-radiator-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/thermal-radiator-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/thrusters-quad-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/thrusters-quad-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/thrusters-quad-s3.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/transponder-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/utility-compressor-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/utility-fire-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/utility-mining-rig-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/utility-pumps-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/utility-reaction-wheels-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/utility-refuelling-port-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/utility-suits-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/utility-transfer-boom.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/utility-window-s1.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/equipment/utility-window-s2.yaml": {
+"by": "tools/standards/equipment_ports.py",
+"keys": [
+"ports",
+"internal"
+]
+},
+"standards/SFO/metadata/goods/fibreboard.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/goods/fluorspar.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/goods/hydrogen-chloride.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/goods/hydrogen-fluoride.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/goods/packaging-waste.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/goods/paper.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/interfaces/belt-transfer-1000-sealed.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/belt-transfer-1000.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/belt-transfer-1200.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/belt-transfer-1400.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/belt-transfer-650.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/belt-transfer-800-sealed.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/belt-transfer-800.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/bus-joint-ac-27ka.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/bus-joint-ac-65ka.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/bus-joint-dc-44ka.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/cable-reel-11kv-3x95.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/cable-reel-690v-4x35.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/cable-reel-690v-4x95.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/camlock-dn100.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/camlock-dn150.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/camlock-dn25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/camlock-dn50.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/chute-dn1000.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/chute-dn400.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/chute-dn600.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/chute-dn800.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/circular-shell-11.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/circular-shell-17.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/circular-shell-25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/circular-shell-33.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/clamp-coupling-dn1200.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/conductor-rail-1000a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/conductor-rail-100a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/conductor-rail-250a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/conductor-rail-500a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/coupler-11kv-400a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/deck-track.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn100-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn100-pn16-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn100-pn25.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn1000-pn1.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn1000-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn1000-pn16-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn1200-pn1.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn1200-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn1400-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn150-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn150-pn16-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn150-pn25.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn1600-pn16-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn1800-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn200-pn1.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn200-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn200-pn16-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn200-pn25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn2000-pn1.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn2000-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn2200-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn2400-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn250-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn250-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn250-pn16-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn2800-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn300-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn3000-pn1-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn350-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn3600-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn400-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn450-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn450-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn50-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn50-pn16-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn50-pn16.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn500-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn600-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn700-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flange-dn900-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/flat-face-dn13.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/flat-face-dn19.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/flat-face-dn25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/flat-face-dn6.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/hood-dn2000.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/hose-union-dn25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/hose-union-dn50.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/hvdc-pole-1000a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/hvdc-pole-150a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/hvdc-pole-400a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/hvdc-pole-650a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/insert-m10.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/insert-m100.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/insert-m16.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/insert-m20.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/insert-m30.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/insert-m42.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/insert-m56.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/insert-m64.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/insert-m80.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/kit-clamp.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/lined-flange-dn1200-pn1.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/lined-flange-dn2400-pn16-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/lined-flange-dn3600-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/plant-bay-s1.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/plant-bay-s2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/plant-bay-s3.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/plant-bay-s4.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/plug-iec60309-125a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/plug-iec60309-16a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/plug-iec60309-32a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/plug-iec60309-63a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/powerlock-400a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/run-clip-d10.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/run-clip-d100.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/run-clip-d16.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/run-clip-d160.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/run-clip-d25.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/run-clip-d250.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/run-clip-d40.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/run-clip-d400.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/run-clip-d63.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/interfaces/termination-11kv-500mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-132kv-240mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-33kv-120mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-33kv-150mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-33kv-185mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-33kv-630mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-400v-120mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-400v-16mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-400v-185mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-400v-240mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-400v-25mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-400v-300mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-400v-35mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-400v-400mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-400v-500mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-400v-50mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-400v-630mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-400v-70mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-400v-95mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-6p6kv-185mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-6p6kv-400mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-6p6kv-50mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-6p6kv-630mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-6p6kv-70mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/termination-6p6kv-95mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/interfaces/twistlock-iso1161.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/interfaces/wiring-box-lv.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/layouts/arc-furnace-air.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/layouts/arc-furnace-airless.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/layouts/building-arena.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-bank.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-builders-yard.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-bunkhouse.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-care-home.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-clinic.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-college.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-courthouse.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-depot.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-dwelling-block.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-flight-school.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-gaol.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-hospital.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-inn.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-market-hall.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-offices.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-park.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-press.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-repair-shop.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-school.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-shop.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-studio.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-tavern.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-theatre.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/building-watch-house.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/layouts/casting-bay-air.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/layouts/casting-bay-airless.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/layouts/hydrogen-plant-air.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/layouts/hydrogen-plant-airless.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/layouts/ingot-yard-air.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/layouts/ingot-yard-airless.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/layouts/ladle-station-air.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/layouts/ladle-station-airless.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/layouts/ore-yard-air.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/layouts/ore-yard-airless.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/layouts/pellet-plant-air.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/layouts/pellet-plant-airless.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/layouts/shaft-furnace-air.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/layouts/shaft-furnace-airless.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-ACCESS-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-ACCESS-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-ACCESS-S3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-CAPACITOR-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-CAPACITOR-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-CAPACITOR-S3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-CARGO-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-CARGO-S1C.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-CARGO-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-CARGO-S3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-CARGO-S4.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-COMM-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-COMMAND-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-COMMAND-S1C.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-COMMAND-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-COMMAND-S3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-DRIVE-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-DRIVE-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-DRIVE-S3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-ENGINE-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-ENGINE-S1C.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-ENGINE-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-ENGINE-S3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-ENGINE-S4.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-GATE-S3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-GATE-S4.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-GEAR-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-GEAR-S1C.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-GEAR-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-GEAR-S3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-HANDLING-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-HANDLING-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-HARDPOINT-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-HARDPOINT-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-HARDPOINT-S3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-HYPERDRIVE-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-HYPERDRIVE-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-HYPERDRIVE-S3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-LIFE-SUPPORT-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-LIFE-SUPPORT-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-LIFT-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-LIFT-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-LIFT-S3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-POWER-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-POWER-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-POWER-S3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-RADIATOR-HOT-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-RADIATOR-HOT-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-SENSORS-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-TANK-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-TANK-S1C.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-TANK-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-TANK-S3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-TANK-S4.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-THERMAL-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-THERMAL-S1C.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-THERMAL-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-THERMAL-S3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-THRUSTERS-S1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-THRUSTERS-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-THRUSTERS-S3.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-ADAPTER-UTILITY-S2.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BELT-1000-SEALED.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BELT-1000.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BELT-1200.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BELT-1400.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BELT-650.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BELT-800-SEALED.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BELT-800.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BELT-TRANSFER-1000-SEALED.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BELT-TRANSFER-1000.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BELT-TRANSFER-1200.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BELT-TRANSFER-1400.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BELT-TRANSFER-650.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BELT-TRANSFER-800-SEALED.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BELT-TRANSFER-800.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BUS-JOINT-AC-27KA.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BUS-JOINT-AC-65KA.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BUS-JOINT-DC-44KA.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BUSBAR-AC-27KA.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BUSBAR-AC-65KA.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-BUSBAR-DC-44KA.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-11KV-500MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-132KV-240MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-33KV-120MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-33KV-150MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-33KV-185MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-33KV-630MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-400V-120MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-400V-16MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-400V-185MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-400V-240MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-400V-25MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-400V-300MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-400V-35MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-400V-400MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-400V-500MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-400V-50MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-400V-630MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-400V-70MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-400V-95MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-6P6KV-185MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-6P6KV-400MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-6P6KV-50MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-6P6KV-630MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-6P6KV-70MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-6P6KV-95MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-DATA-CAN.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-DC-600V-2X50MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-DC-600V-3X16MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-DC-600V-3X1MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-DC-600V-3X2P5MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-DC-600V-3X6MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-FLEXIBLE-11KV-3X95.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-FLEXIBLE-690V-4X16.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-FLEXIBLE-690V-4X35.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-FLEXIBLE-690V-4X95.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-INSTALLATION-230V-3X10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-INSTALLATION-230V-3X1P5.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-INSTALLATION-230V-3X2P5.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-INSTALLATION-230V-3X4.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-INSTALLATION-230V-3X6.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-INSTALLATION-400V-5X16.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-INSTALLATION-400V-5X2P5.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-INSTALLATION-400V-5X6.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-REEL-11KV-3X95-300M.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-REEL-690V-4X35-100M.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CABLE-REEL-690V-4X95-200M.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CAMLOCK-DN100.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CAMLOCK-DN150.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CAMLOCK-DN25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CAMLOCK-DN50.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CHUTE-DN1000.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CHUTE-DN400.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CHUTE-DN600.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CHUTE-DN800.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CIRCULAR-SHELL-11.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CIRCULAR-SHELL-17.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CIRCULAR-SHELL-25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CIRCULAR-SHELL-33.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CLAMP-COUPLING-DN1200.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-COLLECTOR-1000A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-COLLECTOR-100A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-COLLECTOR-250A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-COLLECTOR-500A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CONDUCTOR-RAIL-1000A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CONDUCTOR-RAIL-100A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CONDUCTOR-RAIL-250A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CONDUCTOR-RAIL-500A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-CORNER-CASTING-ISO1161.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-COUPLER-11KV-400A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-DECK-SUPPORT-SHOE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-DRAG-CONVEYOR-800.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-EXPANSION-JOINT-DN100-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-EXPANSION-JOINT-DN1000-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-EXPANSION-JOINT-DN300-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-EXPANSION-JOINT-DN600-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FEEDER-3KV-DC-150MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FEEDER-3KV-DC-240MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FEEDER-3KV-DC-25MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FEEDER-3KV-DC-50MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FEEDER-3KV-DC-95MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FEEDER-3KV-DC-AL-150MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FEEDER-3KV-DC-AL-240MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FEEDER-3KV-DC-AL-400MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FEEDER-3KV-DC-AL-50MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FEEDER-3KV-DC-AL-95MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FESTOON-690V-4X16.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FESTOON-690V-4X35.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FESTOON-690V-4X95.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN100-PN10-SS.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN100-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN100-PN16-SS-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN100-PN25-SS.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN100-PN25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN1000-PN1.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN1000-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN1000-PN16-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN1200-PN1.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN1200-PN10-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN1400-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN150-PN10-SS.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN150-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN150-PN16-SS-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN150-PN25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN1600-PN16-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN1800-PN10-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN200-PN1-SS.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN200-PN10-SS.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN200-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN200-PN16-SS-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN200-PN25-SS.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN2000-PN1.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN2000-PN10-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN2200-PN10-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN2400-PN10-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN250-PN10-SS-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN250-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN250-PN16-SS-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN2800-PN10-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN300-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN3000-PN1-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN350-PN10-SS.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN350-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN3600-PN10-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN400-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN450-PN10-SS-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN450-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN50-PN10-SS.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN50-PN16-SS-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN50-PN16-SS.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN500-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN600-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN700-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLANGE-DN900-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLAT-FACE-DN13.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLAT-FACE-DN19.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLAT-FACE-DN25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-FLAT-FACE-DN6.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HOOD-DN2000.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HOSE-DN100-PN16.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HOSE-DN150-PN16.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HOSE-DN25-PN16.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HOSE-DN50-PN16.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HOSE-HYDRAULIC-DN13.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HOSE-HYDRAULIC-DN19.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HOSE-HYDRAULIC-DN25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HOSE-HYDRAULIC-DN6.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HOSE-METAL-DN100.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HOSE-METAL-DN200.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HOSE-METAL-DN25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HOSE-METAL-DN50.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HOSE-UNION-DN25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HOSE-UNION-DN50.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HVDC-POLE-1000A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HVDC-POLE-150A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HVDC-POLE-400A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-HVDC-POLE-650A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-JACKETED-DUCT-DN2000.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-LINED-DUCT-DN1200-PN1.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-LINED-DUCT-DN2400-PN16-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-LINED-DUCT-DN3600-PN10-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-LINED-FLANGE-DN1200-PN1.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-LINED-FLANGE-DN2400-PN16-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-LINED-FLANGE-DN3600-PN10-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-DECK-0P5X0P5.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-DECK-1X0P5.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-DECK-1X1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-DECK-2X1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-FLOOR-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-FLOOR-PRESSURE-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-PARTITION-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-PARTITION-DOOR-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-PARTITION-PRESSURE-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-PARTITION-PRESSURE-HATCH-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-ROOF-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-ROOF-PRESSURE-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-STAIR-3M.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-WALL-CARGO-DOOR-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-WALL-DOOR-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-WALL-DOUBLE-DOOR-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-WALL-GLAZED-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-WALL-HATCH-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-WALL-INSULATED-1P5X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-WALL-INSULATED-3X1P5.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-WALL-INSULATED-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-WALL-PRESSURE-1P5X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-WALL-PRESSURE-3X1P5.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-WALL-PRESSURE-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-WALL-ROLLER-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-WALL-SHOPFRONT-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-WALL-VIEWPORT-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PANEL-WALL-WINDOW-3X3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN100-PN10-SS.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN100-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN100-PN16-SS-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN100-PN25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN1000-PN1.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN1000-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN1000-PN16-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN1000-PN16-MLI-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN1200-PN1.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN1200-PN10-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN1400-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN150-PN10-SS.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN150-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN150-PN16-SS-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN150-PN25-MLI.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN1600-PN16-MLI-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN1800-PN10-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN200-PN1-SS.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN200-PN10-SS.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN200-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN200-PN16-SS-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN2000-PN1.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN2000-PN10-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN2200-PN10-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN2400-PN10-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN250-PN10-SS-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN250-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN250-PN16-SS-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN2800-PN10-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN300-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN350-PN10-SS.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN350-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN3600-PN10-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN400-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN450-PN10-SS-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN450-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN50-PN10-SS.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN50-PN16-SS-DOUBLE.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN50-PN16-SS.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN500-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN600-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN700-PN10-MLI.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN700-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PIPE-DN900-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PLUG-IEC60309-125A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PLUG-IEC60309-16A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PLUG-IEC60309-32A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-PLUG-IEC60309-63A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-POWERLOCK-400A.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-RUN-CLIP-D10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-RUN-CLIP-D100.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-RUN-CLIP-D16.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-RUN-CLIP-D160.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-RUN-CLIP-D25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-RUN-CLIP-D250.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-RUN-CLIP-D40.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-RUN-CLIP-D400.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-RUN-CLIP-D63.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-STRUT-CLAMP-D100.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-STRUT-CLAMP-D120.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-STRUT-CLAMP-D150.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-STRUT-CLAMP-D160.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-STRUT-CLAMP-D200.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-STRUT-CLAMP-D250.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-STRUT-CLAMP-D60.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-STRUT-CLAMP-D80.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-11KV-500MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-132KV-240MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-33KV-120MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-33KV-150MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-33KV-185MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-33KV-630MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-400V-120MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-400V-16MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-400V-185MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-400V-240MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-400V-25MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-400V-300MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-400V-35MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-400V-400MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-400V-500MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-400V-50MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-400V-630MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-400V-70MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-400V-95MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-6P6KV-185MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-6P6KV-400MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-6P6KV-50MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-6P6KV-630MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-6P6KV-70MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TERMINATION-6P6KV-95MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-TWISTLOCK-ISO1161.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-VALVE-BALL-DN100-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-VALVE-BALL-DN50-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-VALVE-BUTTERFLY-DN1000-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-VALVE-BUTTERFLY-DN150-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-VALVE-BUTTERFLY-DN300-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-VALVE-BUTTERFLY-DN600-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-VALVE-CHECK-DN100-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-VALVE-CHECK-DN300-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-VALVE-GATE-DN100-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-VALVE-GATE-DN300-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-VALVE-RELIEF-DN100-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-VALVE-RELIEF-DN50-PN10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-WIRE-0P5MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-WIRE-16MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-WIRE-1MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-WIRE-2P5MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-WIRE-50MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-WIRE-6MM2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/mill-stock/KIT-WIRING-BOX-LV.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/modules/building-panel-works.yaml": {
+"by": "tools/standards/kit_works.py"
+},
+"standards/SFO/metadata/modules/cable-works.yaml": {
+"by": "tools/standards/kit_works.py"
+},
+"standards/SFO/metadata/modules/conveyor-shop.yaml": {
+"by": "tools/standards/kit_works.py"
+},
+"standards/SFO/metadata/modules/cradle-shop.yaml": {
+"by": "tools/standards/kit_works.py"
+},
+"standards/SFO/metadata/modules/electrical-fittings-works.yaml": {
+"by": "tools/standards/kit_works.py"
+},
+"standards/SFO/metadata/modules/factory-works.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/modules/hose-works.yaml": {
+"by": "tools/standards/kit_works.py"
+},
+"standards/SFO/metadata/modules/packaging-works.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/modules/pipe-shop.yaml": {
+"by": "tools/standards/kit_works.py"
+},
+"standards/SFO/metadata/modules/specialty-chemical-works.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/modules/valve-shop.yaml": {
+"by": "tools/standards/kit_works.py"
+},
+"standards/SFO/metadata/mounts/access-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/access-s1c.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/access-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/access-s3.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/avionics-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/avionics-s1c.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/capacitor-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/capacitor-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/capacitor-s3.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/cargo-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/cargo-s1c.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/cargo-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/cargo-s3.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/cargo-s4.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/comm-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/command-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/command-s1c.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/command-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/command-s3.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/computer-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/computer-s1c.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/drive-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/drive-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/drive-s3.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/engine-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/engine-s1c.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/engine-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/engine-s3.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/engine-s4.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/gate-s3.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/gate-s4.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/gear-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/gear-s1c.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/gear-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/gear-s3.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/handling-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/handling-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/hardpoint-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/hardpoint-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/hardpoint-s3.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/hyperdrive-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/hyperdrive-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/hyperdrive-s3.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/life-support-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/life-support-s1c.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/life-support-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/lift-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/lift-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/lift-s3.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/power-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/power-s1c.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/power-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/power-s3.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/radiator-hot-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/radiator-hot-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/sensors-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/sensors-s1c.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/tank-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/tank-s1c.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/tank-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/tank-s3.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/tank-s4.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/thermal-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/thermal-s1c.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/thermal-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/thermal-s3.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/thrusters-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/thrusters-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/thrusters-s3.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/transponder-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/transponder-s1c.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/utility-s1.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/utility-s1c.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/mounts/utility-s2.yaml": {
+"by": "tools/standards/mounting.py",
+"keys": [
+"holder",
+"sockets"
+]
+},
+"standards/SFO/metadata/panels/deck-0p5x0p5.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/panels/deck-1x0p5.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/panels/deck-1x1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/panels/deck-2x1.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/panels/floor-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/floor-pressure-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/partition-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/partition-door-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/partition-pressure-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/partition-pressure-hatch-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/roof-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/roof-pressure-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/stair-3m.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/wall-cargo-door-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/wall-door-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/wall-double-door-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/wall-glazed-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/wall-hatch-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/wall-insulated-1p5x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/wall-insulated-3x1p5.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/wall-insulated-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/wall-pressure-1p5x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/wall-pressure-3x1p5.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/wall-pressure-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/wall-roller-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/wall-shopfront-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/wall-viewport-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/panels/wall-window-3x3.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/parts/building-panel-works/WK06-01.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/building-panel-works/WK06-02.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/building-panel-works/WK06-03.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/building-panel-works/WK06-04.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/cable-works/WK01-01.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/cable-works/WK01-02.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/cable-works/WK01-03.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/cable-works/WK01-04.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/conveyor-shop/WK08-01.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/conveyor-shop/WK08-02.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/conveyor-shop/WK08-03.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/conveyor-shop/WK08-04.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/cradle-shop/WK07-01.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/cradle-shop/WK07-02.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/cradle-shop/WK07-03.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/cradle-shop/WK07-04.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/electrical-fittings-works/WK05-01.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/electrical-fittings-works/WK05-02.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/electrical-fittings-works/WK05-03.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/electrical-fittings-works/WK05-04.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/factory-works/WK11-01.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/factory-works/WK11-02.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/factory-works/WK11-03.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/factory-works/WK11-04.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/hose-works/WK03-01.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/hose-works/WK03-02.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/hose-works/WK03-03.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/hose-works/WK03-04.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/packaging-works/WK10-01.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/packaging-works/WK10-02.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/packaging-works/WK10-03.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/packaging-works/WK10-04.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/pipe-shop/WK02-01.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/pipe-shop/WK02-02.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/pipe-shop/WK02-03.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/pipe-shop/WK02-04.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/specialty-chemical-works/WK09-01.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/specialty-chemical-works/WK09-02.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/specialty-chemical-works/WK09-03.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/specialty-chemical-works/WK09-04.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/valve-shop/WK04-01.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/valve-shop/WK04-02.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/valve-shop/WK04-03.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/parts/valve-shop/WK04-04.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/plant-mounts/bay-s1.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/plant-mounts/bay-s2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/plant-mounts/bay-s3.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/plant-mounts/bay-s4.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/alloy-bins-8.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/baghouse.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/ball-mill-4m4.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/balling-disc-7m5.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/cooling-tower.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/crating-line.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/crew-post.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/crop-saws.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/degassing-stand.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/disc-filter-2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/dri-bin-200t.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/dri-cooling-loop.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/eaf-vessel-80t.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/electrolyser-block.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/filter-press-2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/forklift-2t5.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/gas-heater.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/hydrogen-purifier.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/induration-grate-125th.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/ingot-tipper.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/ladle-furnace-80t.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/offgas-cooler-sealed.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/offgas-filter-sealed.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/ore-lock-hopper.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/overhead-crane.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/pellet-gas-loop.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/pellet-shaft-63th.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/pressure-hall.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/radiator-field.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/rail-car.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/recuperator.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/recycle-compressor.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/sampling-lab.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/shaft-furnace-200th.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/stacker-reclaimer-1500th.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/stair-tower-12m.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/top-gas-condenser-8bar.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/top-gas-scrubber.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/transformer.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/truck-dump-hopper.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/vacuum-degasser-80t.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/water-treatment.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/products/yard-tripper-1500th.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/rules/run-support.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/runs/belt-1000-sealed.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/belt-1000.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/belt-1200.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/belt-1400.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/belt-650.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/belt-800-sealed.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/belt-800.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/busbar-ac-27ka.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/busbar-ac-65ka.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/busbar-dc-44ka.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-11kv-500mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-132kv-240mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-33kv-120mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-33kv-150mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-33kv-185mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-33kv-630mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-400v-120mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-400v-16mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-400v-185mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-400v-240mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-400v-25mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-400v-300mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-400v-35mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-400v-400mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-400v-500mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-400v-50mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-400v-630mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-400v-70mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-400v-95mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-6p6kv-185mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-6p6kv-400mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-6p6kv-50mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-6p6kv-630mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-6p6kv-70mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-6p6kv-95mm2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/cable-data-can.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-dc-600v-2x50mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-dc-600v-3x16mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-dc-600v-3x1mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-dc-600v-3x2p5mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-dc-600v-3x6mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-flexible-11kv-3x95.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-flexible-690v-4x16.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-flexible-690v-4x35.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-flexible-690v-4x95.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-installation-230v-3x10.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-installation-230v-3x1p5.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-installation-230v-3x2p5.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-installation-230v-3x4.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-installation-230v-3x6.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-installation-400v-5x16.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-installation-400v-5x2p5.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/cable-installation-400v-5x6.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/conductor-rail-1000a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/conductor-rail-100a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/conductor-rail-250a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/conductor-rail-500a.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/drag-conveyor-800.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/feeder-3kv-dc-150mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/feeder-3kv-dc-240mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/feeder-3kv-dc-25mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/feeder-3kv-dc-50mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/feeder-3kv-dc-95mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/feeder-3kv-dc-al-150mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/feeder-3kv-dc-al-240mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/feeder-3kv-dc-al-400mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/feeder-3kv-dc-al-50mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/feeder-3kv-dc-al-95mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/festoon-690v-4x16.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/festoon-690v-4x35.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/festoon-690v-4x95.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/hose-dn100-pn16.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/hose-dn150-pn16.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/hose-dn25-pn16.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/hose-dn50-pn16.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/hose-hydraulic-dn13.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/hose-hydraulic-dn19.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/hose-hydraulic-dn25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/hose-hydraulic-dn6.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/hose-metal-dn100.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/hose-metal-dn200.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/hose-metal-dn25.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/hose-metal-dn50.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/jacketed-duct-dn2000.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/lined-duct-dn1200-pn1.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/lined-duct-dn2400-pn16-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/lined-duct-dn3600-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn100-pn10-ss.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn100-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn100-pn16-ss-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn100-pn25.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn1000-pn1.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn1000-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn1000-pn16-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn1000-pn16-mli-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn1200-pn1.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn1200-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn1400-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn150-pn10-ss.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn150-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn150-pn16-ss-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn150-pn25-mli.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn1600-pn16-mli-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn1800-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn200-pn1-ss.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn200-pn10-ss.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn200-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn200-pn16-ss-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn2000-pn1.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn2000-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn2200-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn2400-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn250-pn10-ss-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn250-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn250-pn16-ss-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn2800-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn300-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn350-pn10-ss.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn350-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn3600-pn10-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn400-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn450-pn10-ss-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn450-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn50-pn10-ss.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn50-pn16-ss-double.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn50-pn16-ss.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn500-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn600-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn700-pn10-mli.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn700-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/pipe-dn900-pn10.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/runs/wire-0p5mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/wire-16mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/wire-1mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/wire-2p5mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/wire-50mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/runs/wire-6mm2.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/stock/CHEM-EPDM-RUBBER.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/CHEM-PIR-FOAM.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/CHEM-POLYIMIDE-FILM.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/CHEM-PTFE.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/CHEM-SILICA-AEROGEL.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/CHEM-SILICONE-RUBBER.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/FIBREBOARD-BULK.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/FLUORSPAR-BULK.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/HYDROGEN-CHLORIDE-BULK.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/HYDROGEN-FLUORIDE-BULK.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PACKAGING-WASTE-BULK.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PAPER-BULK.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-BALE.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-BAR-BUNDLE.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-BULK-BAG.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-CARTON-PALLET.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-COIL.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-COLD-CRATE.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-CRATE-HEAVY.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-CRATE-STEEL.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-CRYO-DEWAR.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-FISH-TANK.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-GAS-RACK.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-LADLE.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-LIVESTOCK-CRATE.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-PLATE-STACK.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-PRODUCE-CRATE.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-SKIP.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/PKG-TOTE.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/stock/REFRACTORY-BRICK-BULK.yaml": {
+"by": "tools/standards/supply_chains.py"
+},
+"standards/SFO/metadata/structures/platform.yaml": {
+"by": "tools/standards/station_platform.py",
+"keys": [
+"built_of",
+"physical.mass"
+]
+},
+"standards/SFO/metadata/structures/spaceport.yaml": {
+"by": "tools/standards/spaceport.py",
+"keys": [
+"built_of",
+"ground",
+"physical.mass"
+]
+},
+"standards/SFO/metadata/templates/cable-flexible.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/cable-installation.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/cable-reel.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/camlock.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/circular-connector.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/collector.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/conductor-rail.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/corner-casting.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/coupler.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/cradle.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/templates/deck.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/templates/expansion-joint.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/feeder.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/festoon.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/flat-face.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/floor-pressure.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/floor.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/hose-hydraulic.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/hose-metal.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/hose.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/hvdc-pole.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/partition-door.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/partition-pressure-hatch.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/partition-pressure.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/partition.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/plug-socket.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/roof-pressure.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/roof.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/run-clip.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/templates/single-pole.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/stair.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/strut-clamp.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/templates/support-shoe.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/metadata/templates/twistlock.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/union.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/valve-ball.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/valve-butterfly.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/valve-check.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/valve-gate.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/valve-relief.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/wall-cargo-door.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/wall-door.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/wall-double-door.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/wall-glazed.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/wall-hatch.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/wall-insulated.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/wall-pressure.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/wall-roller.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/wall-shopfront.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/wall-viewport.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/wall-window.yaml": {
+"by": "tools/standards/building_kit.py"
+},
+"standards/SFO/metadata/templates/wire.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/templates/wiring-box.yaml": {
+"by": "tools/standards/kit_catalogue.py"
+},
+"standards/SFO/metadata/units/alloy-bins-8.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/baghouse-200k.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/baghouse-450k.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/baghouse-800k.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/ball-mill-4m4.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/balling-disc-7m5.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/cooling-tower-1cell.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/cooling-tower-h2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/cooling-tower-pellet.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/cooling-tower-shaft.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/cooling-tower.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/crating-line-steel.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/crating-line.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/crew-post.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/crop-saws.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/degassing-stand.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/disc-filter-2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/dri-bin-200t.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/dri-cooling-loop.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/eaf-vessel-80t-sealed.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/eaf-vessel-80t.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/electrolyser-block-20mw-10bar.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/electrolyser-block-20mw.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/filter-press-2.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/fitout-cell.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-classroom.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-counter.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-court.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-dining.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-dorm.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-flat.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-garage.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-garden.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-kitchen.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-office.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-press-room.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-reception.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-sales-floor.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-seating.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-stage.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-store.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-treatment.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-ward.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-washroom.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/fitout-workshop.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/forklift-2t5.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/furnace-transformer-14mva.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/furnace-transformer-90mva.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/furniture-back-shelf.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-basin.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-bed-ward.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-bed.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-bench.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-board.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-bunk.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-cabinet.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-cell-front.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-cell-wall.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-chair.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-charge-point.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-couch.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-counter.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-cubicle.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-desk.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-dock.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-drill.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-fridge.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-hood.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-judge-bench.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-kitchen-bench.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-locker.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-office-chair.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-planter.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-pupil-desk.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-rack.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-range.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-reception-desk.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-seat-row.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-shelf.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-shower.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-sink.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-stage-deck.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-steel-wc.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-table.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-till.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-tool-rack.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-trolley.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-wc.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-web-press.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-witness-box.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/furniture-workbench.yaml": {
+"by": "tools/standards/building_layouts.py"
+},
+"standards/SFO/metadata/units/gantry-crane-150t-moon.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/gantry-crane-20t-moon.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/gas-heater-119mw-8bar.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/gas-heater-122mw.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/hall-crane-20t.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/heater-transformer-131mva.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/hydrogen-purifier-10bar.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/hydrogen-purifier.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/induration-grate-125th.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/ingot-car-40t.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/ingot-crane-10t.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/ingot-gantry-10t-moon.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/ingot-tipper.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/ladle-car-80t.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/ladle-crane-150t.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/ladle-furnace-80t-sealed.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/ladle-furnace-80t.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/mill-crane-30t.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/mould-car-12.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/offgas-cooler-sealed.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/offgas-filter-sealed.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/ore-lock-hopper.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/pellet-gas-loop.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/pellet-shaft-63th.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/plant-transformer-35mva.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/pressure-hall-30m-end.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/pressure-hall-30m.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/radiator-field-330k.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/radiator-field-345k.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/radiator-field-485k.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/rectifier-transformer-21mva.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/recuperator.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/recycle-compressor-8bar.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/recycle-compressor.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/sampling-lab-sealed.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/sampling-lab.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/shaft-furnace-200th-hp.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/shaft-furnace-200th.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/slag-pot-car.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/stack-crane-20t.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/stacker-reclaimer-1500th.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/stair-tower-12m.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/stripper-crane-20t.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/stripper-gantry-20t-moon.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/top-gas-condenser-8bar.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/top-gas-scrubber.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/truck-dump-hopper.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/vacuum-degasser-80t.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/water-treatment-sealed.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/water-treatment.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/metadata/units/yard-tripper-1500th.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/schema/adapter.schema.yaml": {
+"by": "tools/standards/mounting.py"
+},
+"standards/SFO/schema/connector.schema.yaml": {
+"by": "tools/standards/plant_kit.py"
+},
+"standards/SFO/schema/layout.schema.yaml": {
+"by": "tools/standards/plants.py"
+},
+"standards/SFO/schema/run.schema.yaml": {
+"by": "tools/standards/plant_kit.py"
+},
+"standards/changes.yaml": {
+"by": "tools/standards/tracker.py"
+},
+"standards/game-keys.yaml": {
+"by": "tools/standards/build.py"
+}
+}

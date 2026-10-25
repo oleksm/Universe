@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: connector.belt-transfer-800-sealed, name: 'Belt transfer, 800 mm, sealed', description: 'Where a sealed gallery''s 800 mm belt drops out of its head box: a closed chute from the box''s bottom outlet (1.525 m under the head pulley''s centre, the origin) down to 3 m under it, where the port is, bolted and sealed at both ends; the hood is the head box''s.'}
 kind: belt-transfer
 size: 0.8

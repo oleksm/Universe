@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: unit.crew-post, name: 'Crew post, pressurised', description: 'The shift''s control room on airless ground: an aluminium cylinder 4 m across and 4 m long at 1 bar on two saddles, its axis along x 2.3 m up (the shell from x -1 to 3), with a 2 m airlock at its -x end (x -3 to -1), coaxial, its outer door''s threshold at (-3, 0, 1.35); both its round doors (1.9 m clear, 110 mm aluminium sandwich leaves) are plugs that open toward the higher pressure, the outer into the lock and the inner into the cabin, so the air holds them shut (about 280 kN) and their eight dogs are only latches; and closed windows on its +y side; air and water kept for its watch. The berm of loose regolith 1 m deep over it, against radiation and the cold, is the layout''s, with openings for the airlock and the windows. Drawn as its bare shell, saddles and airlock, closed.'}
 size_class: 1
 fits: plant-mount.bay-s1

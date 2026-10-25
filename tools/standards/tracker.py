@@ -17,13 +17,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 TREE = os.path.join(ROOT, "standards")
 PATH = os.path.join(TREE, "changes.yaml")
-HEADER = """# GENERATED. NEVER CHANGE THIS FILE BY HAND.
-# The registry's change tracker, written by tools/standards/tracker.py and by the build.
-# One line a record: its key (kind.name), when it last changed (UTC), its revision's status,
-# what changed, and the hash of its file. A record whose line says `complete` may not change:
-# validation fails if it does. Only the user reopens one:
-#   python3 tools/standards/tracker.py reopen <key> "<why>"
-"""
+HEADER = ""
 
 
 def sha(full):

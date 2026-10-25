@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: connector.termination-6p6kv-630mm2, name: 'Cable termination, 6.6 kV, 630 mm2', description: 'A three-phase cable''s end into a terminal box: lugs, stress control and the gland, for 630 mm2 conductors at 6.6 kV.'}
 kind: termination
 size: 0.0006299999999999999

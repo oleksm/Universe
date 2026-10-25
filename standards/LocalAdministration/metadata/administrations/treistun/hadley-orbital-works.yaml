@@ -1,18 +1,12 @@
 # yaml-language-server: $schema=../../../schema/settlement.schema.yaml
-# Not in the game yet: added to the registry 2026-10-04. A rig, not a settlement: equipment that is
-# brought to where something large is to be built and moved on when it is done, as an oil rig is.
-# It has no ground, no zoning and no administration of its own.
 identity:
   key: rig.treistun.hadley-orbital-works
   name: "Hadley Orbital Works"
 kind: rig
 at: body.treistun.treistun-f
 owner: org.hadley
-# Its furnaces and casting need weight. Invented: the part of it that carries them turns.
 spin: { radius: 150, gravity: 3.0 }
 about: "A works in orbit, now round Rime: a foundry, a mill and a panel works on one frame with its own power plant, fed with metal from the asteroids. The part that melts and casts turns, to give the metal weight; the rest is in free fall. It is equipment, not a place. It is brought to where something too large to lift off a world is to be built, and moved on to the next when that is done."
-# What it is built of. What it can make at most follows from this; what it does make is the
-# economy's business.
 lines:
   - makes: stock.st4340-ingot
     modules:

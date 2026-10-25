@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: run.busbar-dc-44ka, name: 'Busbar, DC, 44 kA', description: 'A direct current bus of two poles, their centres 0.6 m apart (0.3 m clear), each 7 hollow copper tubes 60 mm across, water-cooled, on post insulators: 43.1 kA at 442.7 V; it loses 6,769 W a metre into its water, which the unit at its source carries away.'}
 kind: busbar
 size: 0.011

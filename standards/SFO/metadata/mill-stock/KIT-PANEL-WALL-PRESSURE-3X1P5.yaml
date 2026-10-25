@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# Written by tools/standards/building_kit.py: change it there.
 identity:
   key: stock.kit-panel-wall-pressure-3x1p5
   code: KIT-PANEL-WALL-PRESSURE-3X1P5

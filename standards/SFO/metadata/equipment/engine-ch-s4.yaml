@@ -77,7 +77,6 @@ basis:
   - { of: [life], rule: rule.life-ship-system }
 nozzles:
 - {node: nozzle_CHS4_exit, share: 1.0}
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 203.75, force: 287500.0, at: [1.485, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s4''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 203.75, force: 287500.0, at: [1.0501, 1.0501, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s4''s socket of the same id, bolted through'}

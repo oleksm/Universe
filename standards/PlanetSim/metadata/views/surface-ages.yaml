@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/planet-view.schema.yaml
-# (draft by planet-sim: the viewer layer `ages`, crates/viewer/src/layers/ages.rs, reads these rows by key)
 identity:
   key: planet-view.surface-ages
   name: Surface ages

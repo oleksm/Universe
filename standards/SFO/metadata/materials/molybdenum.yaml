@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
-# Data: Wikipedia: Molybdenum, from memory (2026-10-13); to be checked against the page.
 identity:
   key: material.molybdenum
   name: Molybdenum

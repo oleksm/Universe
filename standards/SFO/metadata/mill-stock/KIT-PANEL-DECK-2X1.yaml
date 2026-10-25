@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# Written by tools/standards/mounting.py: change it there.
 identity:
   key: stock.kit-panel-deck-2x1
   code: KIT-PANEL-DECK-2X1

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
-# A honeycomb core: thin walls of its sheet, bonded and expanded into cells; its figures are the block's, not the wall's.
 identity:
   key: material.aramid-honeycomb
   name: "Aramid honeycomb core"

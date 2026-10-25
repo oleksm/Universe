@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/layout.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: layout.pellet-plant-airless, name: 'Pellet plant, airless', description: 'Fine ore made into fired pellets on airless ground at about a moon''s gravity: the wet section (ball mill, plate presses, four balling discs) in a steel tube hall 30 m across held at 20 kPa of nitrogen so the water stays liquid; the green balls by a sealed gallery to two pellet shaft furnaces in a pit, sealed and fired by plasma torches on a closed gas loop at 4 bar, which keeps the balls'' water; the heat to radiator fields. Built separately from the plant for air (docs/proposals/pellet-plant-airless.md); laid of SFO 25 runs from port to port.'}
 stands_for: module.pellet-plant
 site:

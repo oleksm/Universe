@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/template.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: template.corner-casting
   name: ISO 1161 corner castings

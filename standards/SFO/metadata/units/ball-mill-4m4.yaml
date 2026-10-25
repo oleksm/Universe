@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: unit.ball-mill-4m4, name: 'Ball mill, 4.4 m', description: 'Grinds the ore wet, to about 80% finer than 45 um, so it can be balled: a steel drum 4.4 m across and 7 m long on trunnion bearings, its axis along x 3 m up, a third full of steel balls, turned by a girth gear and a 2.1 MW motor at its +x end: the gear 6.0 m across (about 1.35 times the drum, so its pinion clears the shell; from memory) on a flange by the +x head, in a guard 6.4 m across that reaches z 6.2 and sits in a 0.4 m pit in the floor below; its pinion on the -y side at axis height, a gearbox and the motor on the floor beyond, out to y -4.4. Ore and water in by a chute at its -x trunnion (local -8, 0, 4); the slurry out of its +x trunnion into a sump and pumped on (local 8, 3, 0.5).'}
 size_class: 3
 fits: plant-mount.bay-s3

@@ -38,7 +38,6 @@ basis:
   - { of: [built_of.list, physical], tier: derived, review: true, note: "Wall check (2026-10-13, for the modeller's blockout v01): hoop fibre at 1,500 MPa in the laminate (from memory) times a burst factor of 2.25 wants 17 mm at 30 MPa over 0.375 m; the helical layers about half again: 25 mm, as drawn. 25 mm at 1,580 kg/m3 over the vessel is 98.6 kg against the 97 kg from stored energy: the two agree. Height 0.83 m with the saddles' 30 mm under the bottle." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 29.25, at: [-0.9585, -0.8955, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1c''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 29.25, at: [0.9585, -0.8955, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1c''s socket of the same id, bolted through'}

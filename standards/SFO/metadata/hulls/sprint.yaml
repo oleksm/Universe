@@ -1,7 +1,4 @@
 # yaml-language-server: $schema=../../schema/hull.schema.yaml
-# OUTDATED. One of the game's early stock hulls (content/base/hulls.ron): a rough guess from before
-# the world had physics to answer to. Kept as a record of what the game has. Do not balance against
-# it or design toward it.
 identity:
   key: hull.sprint
   name: "Sprint Courier"

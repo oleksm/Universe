@@ -39,7 +39,6 @@ basis:
   - { of: [physical.mass], tier: invented, review: true, note: "The S1's sections scaled to this ramp come to 14,078 kg as drawn (12 mm deck, 9 mm beam walls, before hydraulics and locks), over its 10 t; left for review, not thinned to fit." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 1250.0, at: [3.96, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s3''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 1250.0, at: [2.8001, 2.8001, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.access-s3''s socket of the same id, bolted through'}

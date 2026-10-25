@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../organisation.schema.yaml
-# Invented: a company of the food trade, made up with its trade (2026-10-04).
 identity:
   key: org.sunward-planters
   name: "Sunward Planters"

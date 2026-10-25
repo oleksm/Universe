@@ -38,7 +38,6 @@ basis:
   - { of: [physical, built_of.list], tier: derived, review: true, note: "Sized as a sphere (2026-10-10, for the modeller): a sphere's wall mass is 1.5 p V rho / allowable, whatever its size; 4340 steel at its 1,420 MPa tensile over a burst factor of 2.25 (a gas cylinder's, from memory): 631 MPa allowable, an 18.6 mm wall, 1,120 kg (the small-cylinder rule above made it 2,678 kg). Fittings 40 kg, invented." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 290.0, at: [-2.646, -2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 290.0, at: [2.646, -2.646, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1''s socket of the same id, bolted through'}

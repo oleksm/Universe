@@ -10,11 +10,11 @@ Sizes, rates, power and staff are chosen (invented); the inputs follow the recor
 """
 import glob, os, sys
 import yaml
+import lib  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 M = os.path.join(ROOT, "standards/SFO/metadata")
-HEAD = "# Written by tools/standards/kit_works.py: change it there.\n"
 KEEP = ("visual", "model_requests")
 
 # material -> what the other works make of it (stock or good); a material with no maker anywhere is taken as itself
@@ -152,7 +152,8 @@ def write(slug, d):
     if os.path.exists(path):
         old = yaml.safe_load(open(path, encoding="utf-8")) or {}
         d = dict(d, **{k: old[k] for k in KEEP if k in old and k not in d})
-    text = "# yaml-language-server: $schema=../../schema/module.schema.yaml\n" + HEAD + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
+    text = "# yaml-language-server: $schema=../../schema/module.schema.yaml\n" + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
+    lib.own(path, "tools/standards/kit_works.py")
     if not os.path.exists(path) or open(path, encoding="utf-8").read() != text:
         open(path, "w", encoding="utf-8").write(text)
         return 1

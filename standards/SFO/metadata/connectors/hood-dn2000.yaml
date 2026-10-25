@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: connector.hood-dn2000, name: Catch hood DN 2000, description: 'The water-cooled mouth of a 2000 mm duct facing a moving outlet''s, 0.15 m clear of it: air drawn in through the gap burns the gas''s CO. It is a sleeve on the duct''s end, drawn back 1 m along its axis before the outlet moves (a furnace tilting to tap or deslag, its arc off), the outlet''s mouth then sliding across its plane. The port it serves is the outlet''s mouth; the duct''s end stands 0.15 m from it, the way it faces.'}
 kind: hood
 size: 2.0

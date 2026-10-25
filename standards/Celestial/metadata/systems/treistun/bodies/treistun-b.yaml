@@ -1,6 +1,5 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
 
-# Baked: grown by the planet simulation (world TRB1, simulator 56275ebec6a5). The survey it points at owns what the run derived; this record owns the inputs.
 provenance: baked
 survey:
   format: "planet-sim-survey/1"

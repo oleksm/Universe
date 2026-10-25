@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.overhead-crane, name: Overhead crane, description: 'A double-girder bridge with end carriages and a trolley; on a hall''s runways, or on its own legs as a gantry.'}
 kind: family
 params:

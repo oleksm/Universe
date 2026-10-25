@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/layout.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: layout.casting-bay-airless, name: 'Casting bay, airless', description: 'Ingot teeming on airless ground at about a moon''s gravity: as for air, a train of mould cars teemed from the ladle and a second freezing, but under gantry cranes on their own legs and no hall; the stream degasses as it falls through the vacuum. Built separately from the bay for air.'}
 stands_for: module.casting-bay
 site:

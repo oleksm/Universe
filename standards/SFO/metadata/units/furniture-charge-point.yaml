@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/building_layouts.py: change it there.
 identity:
   key: unit.furniture-charge-point
   name: Charge point

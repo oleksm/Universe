@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/power-line.schema.yaml
-# Invented: from the food works' line on east to the chemical works. What it can carry is a fifth over what the works draws flat out.
 identity:
   key: power-line.treistun.port-eikir.power-line-5
   name: Power line 5

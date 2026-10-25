@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: unit.baghouse-450k, name: 'Fume baghouse, 450,000 m3/h', description: 'Cleans a furnace''s fume before it goes to the air: filter bags in a closed steel casing over hoppers, the dust shaken down and let out through sealed valves; a fan and its stack at one end draw the gas through. The gas comes in at the top of one long side (local 0, -6, 12). Its stack, 2.9 m across and 68 m tall, stands at the fan''s end (centre local (9, 0)): 27 m of building near it and half again, so the plume clears the building''s wake; steel, 12 mm at its foot tapering to 8 mm, on its own foundation. Its ports (SFO 25): the gas in through a DN 2000 flange at (0, -6, 12), facing -y; the fan''s 400 V at (11.9, 0, 1), facing +x.'}
 size_class: 3
 fits: plant-mount.bay-s3

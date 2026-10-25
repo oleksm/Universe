@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/product.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: product.crating-line, name: Crating line, description: Packing ingots into crates.}
 kind: product
 params:

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/layout.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: layout.ladle-station-air, name: 'Ladle station, world with air', description: 'An 80 t ladle furnace and a vacuum tank degasser on the ladle rail under a crane hall, with the furnace''s transformer, alloy bins, a fume baghouse and a cooling tower. The heat comes in on its car from the arc furnace shop, is reheated and trimmed under the ladle furnace, lifted by the 150 t crane into the degasser and back, and goes on to the casting bay. For a world with air at about 1 g.'}
 stands_for: module.ladle-station
 site:

@@ -45,7 +45,6 @@ basis:
   - { of: [built_of.list, identity.description], tier: invented, review: true, note: "Exterior and packing for the modeller (2026-10-10): sealed module, lugs, coil case 1.0 x 1.0 x 0.95 m, refrigerator and switchgear at one end; no working internals drawn." }
   - { of: [function.capacity], tier: invented, review: true, note: "Open: physics forbids it. A magnet's stored energy is held by its structure's stress; the virial theorem caps the energy at the structure's strength over its density: titanium alloy at 900 MPa and 4,430 kg/m3 gives about 0.2 MJ/kg, so 5 GJ needs at least 25 t of structure, not 500 kg (real stores reach 4 to 40 kJ/kg). The capacity or the mass must change; the game uses this figure, so engine first." }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 125.0, at: [-0.7425, -0.495, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.capacitor-s1''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 125.0, at: [0.7425, -0.495, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.capacitor-s1''s socket of the same id, bolted through'}

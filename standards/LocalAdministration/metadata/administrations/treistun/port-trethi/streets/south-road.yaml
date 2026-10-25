@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../../../../schema/street.schema.yaml
-# Invented: from Dock Road east through the industrial zone, south of East Road's lots.
 identity:
   key: street.treistun.port-trethi.south-road
   name: South Road

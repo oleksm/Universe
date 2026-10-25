@@ -41,7 +41,6 @@ basis:
   - { of: [built_of.list, physical.mass, identity.description], tier: derived, review: true, note: "Worked out 2026-10-13 for the modeller's blockout v01. Air from 0.1 to 30 MPa at 0.1 kg/s and 293 K wants 48 kW isothermal (m R T ln 300); four stages with intercooling reach about 70% of that (from memory): 70 kW at the shaft, 75 kW drawn, and all but the gas's own small warmth leaves as heat into the coolers, so the coolant loop takes about 75 kW. The first stage swallows 0.083 m3/s: at 25 rev/s and 80% filling, 4.2 litres a turn, two cylinders of 120 mm bore. Dry-running rings keep oil out of breathing air; oxygen would want oxygen-clean parts and slower pistons, hydrogen another seal: neither is in scope. Masses: stages 300 kg (estimate), coolers 70, motor at 1 kW/kg 75 (chosen), controller 15, 2 mm covers 38, skid 30. Total 528 kg (it was 600)." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 132.0, at: [-0.6604, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}
 - {id: foot-2, flow: out, medium: load, interface: interface.deck-track, half: male, make: manual, mass: 132.0, at: [0.6604, -0.125, 0.0], facing: [0.0, 0.0, -1.0], note: a stud into the deck track under it}

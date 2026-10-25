@@ -39,7 +39,6 @@ basis:
   - { of: [built_of.list, physical], tier: derived, review: true, note: "Sized as the methalox S2 (2026-10-13, from the modeller's blockout v01): 500 kg at O/F 3.6 is 391 kg of oxygen (1,141 kg/m3) and 109 kg of methane (422 kg/m3), each side with 3% ullage, the 50 mm common bulkhead inside a 0.541 m inner radius. Wall: 0.45 MPa plus the oxygen's head at 30 m/s2, times 1.5 against 165 MPa welded, wants 1.2 mm: the 2 mm sheet, 20 kg bare plus 20% for lands and bosses. Insulation 50 mm at 2 kg/m2, bulkhead 9.4 kg, saddles 2.4 kg, fittings 10 kg for two circuits. Total 53.2 kg, 10.6% of what it holds (the old 40 kg was an assumed 8%). Box: 1.271 x 1.185 x 1.231 m with saddles and opposed service bosses. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 13.3, at: [-0.9585, -0.8955, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1c''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 13.3, at: [0.9585, -0.8955, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.tank-s1c''s socket of the same id, bolted through'}

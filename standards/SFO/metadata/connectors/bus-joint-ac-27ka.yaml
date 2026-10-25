@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/connector.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: connector.bus-joint-ac-27ka, name: 'Bus joint, AC, 27 kA', description: 'Where a 26.3 kA three-phase alternating current bus meets a unit''s terminals: each phase''s tubes brazed into copper plates, bolted to the unit''s pads, the phases'' centres 0.6 m apart (0.3 m clear between them), and the tubes'' water handed by insulating hoses to the unit''s cooling manifold. At the plane: the three phases side by side across y, each phase 0.30 m wide and 0.14 m tall about the axis.'}
 kind: bus-joint
 size: 0.00785

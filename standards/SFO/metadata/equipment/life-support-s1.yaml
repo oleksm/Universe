@@ -57,7 +57,6 @@ basis:
   - { of: [function.water_recovery, function.air_recovery], tier: sourced, review: true, source: "standards/sources/research_people_needs.json", note: "The space station's figures: about 90% of water recovered, about half the oxygen from carbon dioxide (its Sabatier reactor), from memory of its ECLSS reports; the rest is made up from the tanks." }
   - { of: [life], rule: rule.life-ship-system }
   - { of: [function.persons, function.cooling], tier: derived, review: true, note: "By the space station's weights (231 kg of water plant and 62 kg of oxygen plant a head) 800 kg keeps about three people; it carries their heat and their equipment's, 500 W a head (137 W of a person's heat plus displays, lights and fans), and dries the air." }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 200.0, at: [-1.0395, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.life-support-s1''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 200.0, at: [1.0395, -0.99, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.life-support-s1''s socket of the same id, bolted through'}

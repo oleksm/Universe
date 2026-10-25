@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/layout.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: layout.arc-furnace-airless, name: 'Arc furnace shop, airless', description: 'The 80 t arc furnace on airless ground at about a moon''s gravity: sealed, holding its own gas at 1 bar; no hall (no weather to keep off) but a gantry crane on its own legs, which nothing crosses; its heat to fields of radiator panels instead of a cooling tower, one set cool for the panels'' water and one hot for the off-gas cooler''s steam; its off-gas cooled, filtered and let go; the crew in a pressurised post under a berm; its platform of sintered regolith. Built separately from the shop for air, not reused.'}
 stands_for: module.arc-furnace
 site:

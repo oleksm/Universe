@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: unit.sampling-lab, name: Sampling laboratory, description: 'A closed steel cabin where the steel of each heat is read: no ingot comes in. At a crop saw, one ingot of each heat has a second slice taken off its cut face, a coupon 0.48 m square and 25 mm thick (about 45 kg), which a worker brings on a hand cart to the lab''s pass-through hatch. Inside, an abrasive cutter takes a 40 mm piece off it, a grinder dresses its face, and a spark emission spectrometer reads the steel''s composition in minutes, so the heat''s grade can be certified on its crates'' labels; the coupon is kept a while, then goes to scrap. A staff door, the pass-through hatch (0.6 x 0.6 m, 1 m up) beside it, the extraction and power at the rear.'}
 size_class: 1
 fits: plant-mount.bay-s1

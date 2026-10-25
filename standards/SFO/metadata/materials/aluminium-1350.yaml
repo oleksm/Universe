@@ -1,6 +1,4 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
-# Fracture toughness: Wikipedia, Fracture toughness (aluminium, 14 to 28; a range as its middle).
-# Data: Wikipedia: 1350 aluminium alloy. A range there is given as its middle.
 identity:
   key: material.aluminium-1350
   name: Aluminium 1350

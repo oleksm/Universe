@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: unit.cooling-tower-pellet, name: 'Cooling tower, 1 cells', description: 'An induced-draught wet tower: the plasma torches'' and the plant transformer''s closed water loop gives up its heat through a plate exchanger to tower water, which sprays down through fill against a fan''s draught and evaporates. The loop''s pumps and exchanger stand on a skid inside its footprint; its two loops leave by flanges on its east end (local x +6, 0.75 m up), facing +x: the torches'', DN 150, out at y 0.6 and back at -0.6, and the transformer''s, DN 100, out at 3.9 and back at 5.1; its make-up water at (-6, 0, 0.75) and its 400 V at (-6, -3, 1), facing -x, and the layout''s pipes and concrete basin are not the unit''s. On a world with air only; airless ground needs radiators instead.'}
 size_class: 3
 fits: plant-mount.bay-s3

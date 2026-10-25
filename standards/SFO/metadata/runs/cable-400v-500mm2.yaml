@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: run.cable-400v-500mm2, name: 'Cable, 0.4 kV, 500 mm2', description: 'Three single-core cables of 500 mm2 at 0.4 kV on a ladder tray: 1,250 A a circuit on airless ground, where only radiation cools them.'}
 kind: cable
 size: 0.0005

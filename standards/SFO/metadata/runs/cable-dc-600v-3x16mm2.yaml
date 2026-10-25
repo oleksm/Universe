@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: run.cable-dc-600v-3x16mm2
   name: Harness cable, 600 V DC, 3 x 16 mm2

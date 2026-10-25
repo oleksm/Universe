@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mount.schema.yaml
-# SFO 19. Set round the equipment of this slot and class on the list today, with a quarter to spare.
 identity:
   key: mount.engine-s1
   name: "Engine mount, class 1"
@@ -20,7 +19,6 @@ attachment:
     tension: 142000.0
     compression: 142000.0
     shear: 70900.0
-# (holder and sockets: written by tools/standards/mounting.py)
 holder: adapter
 sockets:
 - id: s1
@@ -63,7 +61,6 @@ sockets:
   facing: [0.0, 0.0, 1.0]
   interface: interface.insert-m30
   connector: stock.st4340-bolt-m30
-# (end of mounting.py)
 feeds:
   power: 1210000.0
   cooling: 111000.0

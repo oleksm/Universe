@@ -39,7 +39,6 @@ basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The room its load takes at 500 kg a m3, a middling cargo as stowed: 150,000 kg is 300 m3, twice as long as wide. The racks themselves are in it." }
   - { of: [function.capacity], tier: derived, review: true, note: "Measured by blender (candidate-v01, 2026-10-11): a clear rectangular load of 10 x 4.7 x 4.5 m, 211.5 m3, inside its 300 m3 box, so its 150 t fills it only for cargo of at least 709 kg/m3; lighter cargo fills it by volume first. Frame 4,597 kg (lower-end crossmembers 300 x 200 x 8 mm), deck, rails and ribs 2,028 kg. Strength not checked." }
   - { of: [life], rule: rule.life-ship-system }
-# ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m80, half: male, make: bolted, mass: 1125.0, at: [-13.32, -2.628, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s4''s socket of the same id, bolted through'}
 - {id: foot-2, flow: out, medium: load, interface: interface.insert-m80, half: male, make: bolted, mass: 1125.0, at: [13.32, -2.628, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.cargo-s4''s socket of the same id, bolted through'}

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/run.schema.yaml
-# Written by tools/standards/plants.py: change it there.
 identity: {key: run.lined-duct-dn3600-pn10-double, name: Lined duct DN 3600 PN 10, description: 'A steel shell 3600 mm nominal bore lined with 200 mm of refractory, for hot gas at up to 900 deg C and 10 bar: 3.20 m clear. Its bends are mitred, one bore in radius.'}
 kind: lined-duct
 size: 3.6

@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
-# Written by tools/standards/kit_catalogue.py: change it there.
 identity:
   key: stock.kit-belt-transfer-1000-sealed
   code: KIT-BELT-TRANSFER-1000-SEALED

@@ -13,6 +13,7 @@ below. Where each deposit lies is the simulation's, and is not brought in.
 """
 import json, os, sys
 import yaml
+import lib  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CEL = os.path.join(ROOT, "standards", "Celestial", "metadata")
@@ -78,7 +79,7 @@ for t in voc["deposit_types"]:
     if not old.get("formed_by") or not old.get("ore"):
         sys.exit(f"{slug}: the registry's own part is missing (formed_by, ore): write its record first")
     name = old["identity"]["name"]
-    s = f"# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml\n# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary: change it there, or the\n# registry's own part (name, about, formed_by, ore, counted) here.\nidentity:\n  key: deposit-type.{slug}\n  name: {q(name)}\n" + (f"  about: {q(old['identity']['about'])}\n" if old["identity"].get("about") else "")
+    s = f"# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml\nidentity:\n  key: deposit-type.{slug}\n  name: {q(name)}\n" + (f"  about: {q(old['identity']['about'])}\n" if old["identity"].get("about") else "")
     s += f"sim: {{ key: {t['key']}, code: {t['code']} }}\nformed_by: {old['formed_by']}\ncarries:\n"
     split = t.get("pge_split") or {}
     for said, v in t["grades_typical"].items():
@@ -107,6 +108,7 @@ for t in voc["deposit_types"]:
     if old.get("counted"):
         s += f"  - {{ of: [counted], tier: sourced, review: true, source: \"the planet simulation: brief 'World Geology' v0.3 of 2026-10-05; test world E4\", note: \"Deposits in one test world, against about how many are known on Earth.\" }}\n"
     yaml.safe_load(s)
+    lib.own(os.path.join(CEL, "deposit-types", slug + ".yaml"), "tools/standards/geology_import.py")
     open(os.path.join(CEL, "deposit-types", slug + ".yaml"), "w", encoding="utf-8").write(s)
     n += 1
 m = 0
@@ -115,7 +117,7 @@ for u in voc["rock_units"]:
     old = was("rock-units", slug)
     about, made_by = (old.get("identity") or {}).get("about") or NEW_UNIT[slug][0], old.get("made_by") or NEW_UNIT[slug][1]
     name = (old.get("identity") or {}).get("name") or u["name"].split(" (")[0].capitalize()
-    s = f"# yaml-language-server: $schema=../../schema/rock-unit.schema.yaml\n# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary.\nidentity:\n  key: rock-unit.{slug}\n  name: {q(name)}\n  about: {q(about)}\nsim: {{ key: {u['key']} }}\nmade_by: [{', '.join(made_by)}]\n"
+    s = f"# yaml-language-server: $schema=../../schema/rock-unit.schema.yaml\nidentity:\n  key: rock-unit.{slug}\n  name: {q(name)}\n  about: {q(about)}\nsim: {{ key: {u['key']} }}\nmade_by: [{', '.join(made_by)}]\n"
     s += f"physical:\n  density: {num(u['density_kg_m3'])}\n  magnetic_susceptibility: {num(u['susceptibility_si'])}\n  erodibility: {num(u['erodibility'])}\n"
     ys = [y for y in u["bulk_yields"] if y["material"] in YIELD]
     also = [y for y in u["bulk_yields"] if y["material"] not in YIELD]
@@ -126,6 +128,7 @@ for u in voc["rock_units"]:
         s += "also:\n" + "".join(f"  - {q(y['material'] + ' for ' + y['use'] + (' (' + quality(y) + ')' if quality(y) else ''))}\n" for y in also)
     s += "basis:\n" + basis(["sim", "physical"] + (["yields"] if ys else []) + (["also"] if also else []), "As the simulation has it.")
     yaml.safe_load(s)
+    lib.own(os.path.join(CEL, "rock-units", slug + ".yaml"), "tools/standards/geology_import.py")
     open(os.path.join(CEL, "rock-units", slug + ".yaml"), "w", encoding="utf-8").write(s)
     m += 1
 print(f"{n} deposit types and {m} rock units from {SRC}")
