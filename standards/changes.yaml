@@ -3461,6 +3461,7 @@
 - { record: ship-rule.implementation-phases, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "74ea8c62778537d5" }
 - { record: ship-rule.lifecycle, at: "2026-10-22T03:59:24Z", status: "", summary: "changed", sha: "9f680c876218cb0b" }
 - { record: ship-rule.local-regeneration, at: "2026-10-23T17:47:48Z", status: "", summary: "changed: sources, verification", sha: "458eaa848c318ced" }
+- { record: ship-rule.mass-properties, at: "2026-10-25T02:56:54Z", status: "", summary: "first tracked", sha: "b7cea8be5f0b9be5" }
 - { record: ship-rule.materials-and-surfaces, at: "2026-10-22T04:04:05Z", status: "", summary: "changed", sha: "edd0de5cf4aa68ee" }
 - { record: ship-rule.module-reuse, at: "2026-10-24T22:57:47Z", status: "", summary: "changed: sources, statement, verification", sha: "79719b3cd031eac3" }
 - { record: ship-rule.pilot-scope, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "cafd22baad8b7614" }

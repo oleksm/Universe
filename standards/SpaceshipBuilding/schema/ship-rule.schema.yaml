@@ -150,3 +150,65 @@ properties:
           description: 'true: every ship must carry it to be commissioned (fly); false: optional.'
         note:
           type: string
+  figures:
+    type: array
+    description: 'Named figures a computation the rule defines uses (constants), so no implementation holds its own copy.'
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - name
+      - value
+      - unit
+      properties:
+        name:
+          type: string
+          minLength: 1
+        value:
+          type: number
+          x-unit-from: unit
+        unit:
+          type: string
+          minLength: 1
+        note:
+          type: string
+  cases:
+    type: array
+    description: 'Conformance cases: a hull record as fitted and the values the rule gives for it. Every implementation
+      (the game, tools/standards) must reproduce each within its tolerance; a test on each side reads these.'
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - hull
+      - expect
+      properties:
+        hull:
+          type: string
+          x-ref:
+          - hull
+        note:
+          type: string
+        expect:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - of
+            - value
+            - tolerance
+            properties:
+              of:
+                type: string
+                minLength: 1
+                description: A ship parameter (common.schema.yaml spec_limit), a vector one as .x/.y/.z.
+              value:
+                type: number
+                x-unit-from: of
+              tolerance:
+                type: number
+                minimum: 0
+                x-unit-from: of
+                description: How far an implementation may differ, absolute.

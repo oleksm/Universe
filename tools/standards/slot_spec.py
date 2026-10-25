@@ -87,44 +87,50 @@ _SOLID = {}
 
 
 def solid(path):
-    """The model's solid: its centroid (signed-volume, over every mesh at its node) and its box sides, as the game puts the
-    hull's own mass at its shape's centroid. (centroid, sides) or None."""
+    """A model as a uniform solid (ship-rule.mass-properties): (volume m3, centroid, inertia about the centroid per kg of
+    mass, box sides), from every triangle mesh at its node (signed tetrahedra from the origin). None: no mesh."""
     if path in _SOLID:
         return _SOLID[path]
     b = open(path, "rb").read()
     n = struct.unpack("<I", b[12:16])[0]
     j = json.loads(b[20:20 + n])
     binoff = 20 + n + 8
-    W = {i: m for i, m in ((i, frames_from(j, i)) for i in range(len(j.get("nodes", []))))}
     COMP = {5120: ("b", 1), 5121: ("B", 1), 5122: ("h", 2), 5123: ("H", 2), 5125: ("I", 4), 5126: ("f", 4)}
+
     def acc(i):
-        a = j["accessors"][i]; bv = j["bufferViews"][a["bufferView"]]
+        a = j["accessors"][i]
+        bv = j["bufferViews"][a["bufferView"]]
         code, size = COMP[a["componentType"]]
-        k = {"SCALAR": 1, "VEC3": 3, "VEC2": 2, "VEC4": 4}[a["type"]]
+        k = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4}[a["type"]]
         start = binoff + bv.get("byteOffset", 0) + a.get("byteOffset", 0)
         stride = bv.get("byteStride") or size * k
         arr = np.frombuffer(b, dtype=np.dtype(code).newbyteorder("<"), count=(a["count"] - 1) * stride // size + k, offset=start)
         return arr.reshape(-1, stride // size)[:, :k] if stride != size * k else arr.reshape(-1, k)
-    vol, mom, lo, hi = 0.0, np.zeros(3), np.full(3, np.inf), np.full(3, -np.inf)
+    vol, mom, cov = 0.0, np.zeros(3), np.zeros((3, 3))
+    lo, hi = np.full(3, np.inf), np.full(3, -np.inf)
+    canon = np.array([[2, 1, 1], [1, 2, 1], [1, 1, 2]]) / 120.0
     for ni, node in enumerate(j.get("nodes", [])):
         if "mesh" not in node:
             continue
-        M = W[ni]
+        M = frames_from(j, ni)
         for prim in j["meshes"][node["mesh"]]["primitives"]:
             if prim.get("mode", 4) != 4 or "POSITION" not in prim["attributes"]:
                 continue
-            v = acc(prim["attributes"]["POSITION"]).astype(float)
-            v = v @ M[:3, :3].T + M[:3, 3]
+            v = acc(prim["attributes"]["POSITION"]).astype(float) @ M[:3, :3].T + M[:3, 3]
             idx = acc(prim["indices"]).reshape(-1).astype(np.int64) if "indices" in prim else np.arange(len(v))
-            t = v[idx.reshape(-1, 3)]
-            d = np.einsum("ij,ij->i", t[:, 0], np.cross(t[:, 1], t[:, 2])) / 6.0
-            vol += d.sum(); mom += (d[:, None] * (t.sum(axis=1) / 4.0)).sum(axis=0)
+            t = v[idx.reshape(-1, 3)]                                   # (m, 3 corners, xyz)
+            det = np.einsum("ij,ij->i", t[:, 0], np.cross(t[:, 1], t[:, 2]))
+            vol += det.sum() / 6.0
+            mom += (det[:, None] * t.sum(axis=1)).sum(axis=0) / 24.0
+            cov += np.einsum("m,mai,ab,mbj->ij", det, t, canon, t)         # (the tetrahedron's second moment, origin corner)
             lo, hi = np.minimum(lo, v.min(axis=0)), np.maximum(hi, v.max(axis=0))
-    if not np.isfinite(lo).all():
-        _SOLID[path] = None
-        return None
-    centroid = mom / vol if vol > 1e-9 else (lo + hi) / 2
-    _SOLID[path] = (centroid, hi - lo)
+    if not np.isfinite(lo).all() or vol <= 1e-9:
+        _SOLID[path] = None if not np.isfinite(lo).all() else (0.0, (lo + hi) / 2, None, hi - lo)
+        return _SOLID[path]
+    c = mom / vol
+    cov_c = cov - vol * np.outer(c, c)                                  # about the centroid
+    inertia = (np.eye(3) * np.trace(cov_c) - cov_c) / vol               # per kg
+    _SOLID[path] = (vol, c, inertia, hi - lo)
     return _SOLID[path]
 
 
@@ -221,7 +227,23 @@ def judge(q, lims, slot_frame=None):
     return res
 
 
-STRAIGHT = 0.03   # (the game's thrusters::STRAIGHT: the share of its weakest turn a held course may leave unbalanced)
+RULE = os.path.join(ROOT, "standards/SpaceshipBuilding/metadata/rules/mass-properties.yaml")
+
+
+def figure(name):
+    import yaml
+    for f in yaml.safe_load(open(RULE)).get("figures") or []:
+        if f["name"] == name:
+            return f["value"]
+    raise KeyError(f"ship-rule.mass-properties has no figure {name}")
+
+
+def product_centroid(q):
+    """Where a product's own mass sits in its frame: its model's solid centroid, else its frame's origin."""
+    path = (q.get("visual") or {}).get("path")
+    p = os.path.join(ASSETS, path or "", "model.glb")
+    sol = solid(p) if path and os.path.isfile(p) else None
+    return sol[1] if sol else np.zeros(3)
 
 
 def _point(m, r):
@@ -233,7 +255,7 @@ def ship_values(hull, slots, fit, eq, hf):
     nozzles can keep balanced, turning authority, power margin, unfed engines."""
     hmass = float((hull.get("physical") or {}).get("mass") or 0)
     sol = solid(hull_model(hull)) if hull_model(hull) else None
-    hat = sol[0] if sol else np.zeros(3)
+    hat = sol[1] if sol else np.zeros(3)
     pts = [(hmass, hat)]
     supply = draw = 0.0
     held, engines, jets = set(), [], []
@@ -243,7 +265,7 @@ def ship_values(hull, slots, fit, eq, hf):
             continue
         fn, m = q.get("function") or {}, float((q.get("physical") or {}).get("mass") or 0)
         frame = hf.get(f"mount_{s['name']}") if hf else None
-        at = frame[:3, 3] if frame is not None else hat
+        at = (frame @ np.r_[product_centroid(q), 1.0])[:3] if frame is not None else hat
         pts.append((m, at))
         draw += float((q.get("needs") or {}).get("power") or 0)
         if fn.get("kind") == "power_plant":
@@ -261,9 +283,8 @@ def ship_values(hull, slots, fit, eq, hf):
     mass = sum(m for m, _ in pts)
     com = sum(m * p for m, p in pts) / mass if mass else np.zeros(3)
     I = np.zeros((3, 3))
-    if sol:
-        a, b_, c = sol[1]
-        I += hmass / 12.0 * np.diag([b_ * b_ + c * c, a * a + c * c, a * a + b_ * b_]) + _point(hmass, hat - com)
+    if sol and sol[2] is not None:
+        I += hmass * sol[2] + _point(hmass, hat - com)
     for m, p in pts[1:]:
         I += _point(m, p - com)
     Iinv = np.linalg.inv(I) if np.linalg.det(I) > 1e-9 else None
@@ -289,7 +310,7 @@ def ship_values(hull, slots, fit, eq, hf):
 
     def balanced(role, ax):
         """What of a role's thrust along ax it can give while the attitude nozzles keep the turn it leaves under STRAIGHT x
-        the weakest turn rate (the game's thrusters::balanced)."""
+        the weakest turn rate (ship-rule.mass-properties)."""
         own = [(t, np.cross(at - com, p * t), t * max(0.0, float(p @ np.array(ax)))) for r, t, at, p in jets if r == role]
         full = sum(x[2] for x in own)
         if not full or Iinv is None:
@@ -297,7 +318,7 @@ def ship_values(hull, slots, fit, eq, hf):
         from scipy.optimize import linprog
         A_role = Iinv @ sum(x[1] for x in own)                 # its turn acceleration at full
         A_att = np.array([Iinv @ tq for _, tq in att]).T if att else np.zeros((3, 0))
-        tol = STRAIGHT * turn
+        tol = figure("straight") * turn
         n = A_att.shape[1]
         # variables: k (share of full), u (attitude nozzles); |A_role k + A_att u| <= tol per axis; maximise k
         c = np.r_[-1.0, np.zeros(n)]
@@ -313,7 +334,8 @@ def ship_values(hull, slots, fit, eq, hf):
             "ship.main_balanced": main_b, "ship.lift_balanced": lift_b,
             "ship.main_to_weight": tw(main_t), "ship.lift_to_weight": tw(lift_t),
             "ship.main_balanced_to_weight": tw(main_b), "ship.lift_balanced_to_weight": tw(lift_b),
-            "ship.attitude_authority": turn, "ship.centre_of_mass": [round(float(x), 3) for x in com],
+            "ship.attitude_authority": turn, "ship.centre_of_mass": [round(float(x), 4) for x in com],
+            "ship.inertia": [round(float(I[i, i]), 1) for i in range(3)],
             "ship.power_margin": supply - draw, "ship.attitude_axes": len(senses), "ship.unfed_engines": unfed}
 
 

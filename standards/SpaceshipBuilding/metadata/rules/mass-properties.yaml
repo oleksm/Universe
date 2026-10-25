@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.mass-properties
+  name: Mass properties and balanced thrust of a fitted ship
+  about: How a fitted ship's mass, centre of mass, inertia, turn authority and balanced thrust are worked out, so the
+    game and the registry's tools give the same figures; the cases below are what every implementation must reproduce.
+status: draft
+implementation: proposed
+owner: registry
+sources:
+- document: docs/reports/2026-10-24-slots-fit-shipyard-audit.md
+  section: Stage 3e mass, centre of mass, inertia
+  note: 'Owner, 2026-10-24: the registry is the source of truth, nothing may deviate. The game placed module mass by a
+    shell search and the tools at the slot frame, and the two gave 3 kN and 33 kN of balanced lift for one fit.'
+statement: 'The ship is taken loaded, every fitted tank full. The hull''s mass is spread evenly over its modelled material (every closed
+  triangle mesh of its model, at its node): at that solid''s centroid, with that solid''s inertia. Each fitted product is a point mass at
+  its own model''s solid centroid placed by its slot''s mount_<slot> frame (the frame that places its nozzles; its frame''s
+  origin when it has no model); a tank''s full contents sit with it. Inertia is about the loaded centre of mass. Turn
+  authority is the least turn acceleration the attitude nozzles give about any axis, either way, holding the other two
+  axes at none. Balanced thrust (main along -Z, lift along +Y) is the most of a role''s rated thrust it can give while
+  the attitude nozzles, each between off and full, leave a turn acceleration no larger than straight times the turn
+  authority on every axis.'
+applies_to:
+- ship-check.shipyard-fit Y3 (ship.* values), the game's commissioning and flight authority
+verification:
+- tools/standards/test_slot_spec.py and the game's test both reproduce every case below within its tolerance.
+figures:
+- {name: straight, value: 0.03, unit: '1', note: 'The share of the weakest turn authority a held course may leave unbalanced (the game''s thrusters::STRAIGHT).'}
+cases:
+- hull: hull.explorer-study
+  note: 'The owner-ordered functional fit (fso 98b0fba51), tanks full. Values from tools/standards/slot_spec.py, the reference.'
+  expect:
+  - {of: ship.mass, value: 8935.9, tolerance: 0.5}
+  - {of: ship.centre_of_mass.x, value: 0.0109, tolerance: 0.01}
+  - {of: ship.centre_of_mass.y, value: 2.7075, tolerance: 0.01}
+  - {of: ship.centre_of_mass.z, value: 1.1661, tolerance: 0.01}
+  - {of: ship.inertia.xx, value: 74400.3, tolerance: 744.0}
+  - {of: ship.inertia.yy, value: 93180.0, tolerance: 931.8}
+  - {of: ship.inertia.zz, value: 34655.4, tolerance: 346.6}
+  - {of: ship.attitude_authority, value: 0.0461, tolerance: 0.00092}
+  - {of: ship.main_balanced, value: 18687.0, tolerance: 374.0}
+  - {of: ship.lift_balanced, value: 50000.0, tolerance: 1000.0}

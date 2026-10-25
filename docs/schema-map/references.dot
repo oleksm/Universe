@@ -485,6 +485,7 @@ digraph registry {
   "ship-check" -> "ship-artifact" [color="#bab0ac88", penwidth=0.9, arrowsize=0.5];
   "ship-check" -> "ship-rule" [color="#bab0ac88", penwidth=0.9, arrowsize=0.5];
   "ship-decision" -> "ship-rule" [color="#bab0ac88", penwidth=0.9, arrowsize=0.5];
+  "ship-rule" -> "hull" [color="#bab0ac88", penwidth=0.9, arrowsize=0.5];
   "ship-rule" -> "ship-artifact" [color="#bab0ac88", penwidth=0.9, arrowsize=0.5];
   "ship-rule" -> "ship-check" [color="#bab0ac88", penwidth=0.9, arrowsize=0.5];
   "ship-rule" -> "ship-decision" [color="#bab0ac88", penwidth=0.9, arrowsize=0.5];
