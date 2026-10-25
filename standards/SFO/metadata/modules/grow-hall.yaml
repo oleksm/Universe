@@ -13,6 +13,7 @@ climate:
   efficiency: 0.5
 staff:
   - { profession: profession.farmer, count: 2 }
+does: "Grown in tiers of troughs under lamps, in water and nutrients, sealed from outside. Not measured: worked out from the light, at 0.2 g of dry crop for each mol (NASA's chamber crops made 0.2 to 0.6), under 800 umol/m2/s for 16 hours."
 recipes:
   - makes: good.lettuce
     does: "Grown in tiers of troughs under lamps, in water and nutrients, sealed from outside. 80 to 120 kg a m2 a year in a vertical farm; the low end taken. 250 umol/m2/s for 16 hours."
@@ -106,7 +107,6 @@ recipes:
     rate: 0.000763
     power: 1720000.0
   - makes: good.rice
-    does: "Grown in tiers of troughs under lamps, in water and nutrients, sealed from outside. Not measured: worked out from the light, at 0.2 g of dry crop for each mol (NASA's chamber crops made 0.2 to 0.6), under 800 umol/m2/s for 16 hours."
     inputs:
       - { item: good.carbon-dioxide, quantity: 2.807 }
       - { item: good.water, quantity: 1.292 }
@@ -132,7 +132,6 @@ recipes:
     rate: 0.001839
     power: 2860000.0
   - makes: good.barley
-    does: "Grown in tiers of troughs under lamps, in water and nutrients, sealed from outside. Not measured: worked out from the light, at 0.2 g of dry crop for each mol (NASA's chamber crops made 0.2 to 0.6), under 800 umol/m2/s for 16 hours."
     inputs:
       - { item: good.carbon-dioxide, quantity: 2.699 }
       - { item: good.water, quantity: 1.237 }
@@ -145,7 +144,6 @@ recipes:
     rate: 0.001198
     power: 2860000.0
   - makes: good.oats
-    does: "Grown in tiers of troughs under lamps, in water and nutrients, sealed from outside. Not measured: worked out from the light, at 0.2 g of dry crop for each mol (NASA's chamber crops made 0.2 to 0.6), under 800 umol/m2/s for 16 hours."
     inputs:
       - { item: good.carbon-dioxide, quantity: 2.942 }
       - { item: good.water, quantity: 1.338 }
@@ -158,7 +156,6 @@ recipes:
     rate: 0.001198
     power: 2860000.0
   - makes: good.beans
-    does: "Grown in tiers of troughs under lamps, in water and nutrients, sealed from outside. Not measured: worked out from the light, at 0.2 g of dry crop for each mol (NASA's chamber crops made 0.2 to 0.6), under 800 umol/m2/s for 16 hours."
     inputs:
       - { item: good.carbon-dioxide, quantity: 3.931 }
       - { item: good.water, quantity: 1.759 }
@@ -171,7 +168,6 @@ recipes:
     rate: 0.001209
     power: 2860000.0
   - makes: good.peas
-    does: "Grown in tiers of troughs under lamps, in water and nutrients, sealed from outside. Not measured: worked out from the light, at 0.2 g of dry crop for each mol (NASA's chamber crops made 0.2 to 0.6), under 800 umol/m2/s for 16 hours."
     inputs:
       - { item: good.carbon-dioxide, quantity: 4.068 }
       - { item: good.water, quantity: 1.785 }
@@ -184,7 +180,6 @@ recipes:
     rate: 0.001168
     power: 2860000.0
   - makes: good.lentils
-    does: "Grown in tiers of troughs under lamps, in water and nutrients, sealed from outside. Not measured: worked out from the light, at 0.2 g of dry crop for each mol (NASA's chamber crops made 0.2 to 0.6), under 800 umol/m2/s for 16 hours."
     inputs:
       - { item: good.carbon-dioxide, quantity: 4.087 }
       - { item: good.water, quantity: 1.789 }
@@ -197,7 +192,6 @@ recipes:
     rate: 0.001163
     power: 2860000.0
   - makes: good.chickpeas
-    does: "Grown in tiers of troughs under lamps, in water and nutrients, sealed from outside. Not measured: worked out from the light, at 0.2 g of dry crop for each mol (NASA's chamber crops made 0.2 to 0.6), under 800 umol/m2/s for 16 hours."
     inputs:
       - { item: good.carbon-dioxide, quantity: 4.113 }
       - { item: good.water, quantity: 1.794 }
@@ -210,7 +204,6 @@ recipes:
     rate: 0.001155
     power: 2860000.0
   - makes: good.groundnuts
-    does: "Grown in tiers of troughs under lamps, in water and nutrients, sealed from outside. Not measured: worked out from the light, at 0.2 g of dry crop for each mol (NASA's chamber crops made 0.2 to 0.6), under 800 umol/m2/s for 16 hours."
     inputs:
       - { item: good.carbon-dioxide, quantity: 2.67 }
       - { item: good.water, quantity: 1.186 }
@@ -223,7 +216,6 @@ recipes:
     rate: 0.001148
     power: 2860000.0
   - makes: good.rapeseed
-    does: "Grown in tiers of troughs under lamps, in water and nutrients, sealed from outside. Not measured: worked out from the light, at 0.2 g of dry crop for each mol (NASA's chamber crops made 0.2 to 0.6), under 800 umol/m2/s for 16 hours."
     inputs:
       - { item: good.carbon-dioxide, quantity: 4.085 }
       - { item: good.water, quantity: 1.783 }
@@ -236,7 +228,6 @@ recipes:
     rate: 0.001156
     power: 2860000.0
   - makes: good.sunflower-seed
-    does: "Grown in tiers of troughs under lamps, in water and nutrients, sealed from outside. Not measured: worked out from the light, at 0.2 g of dry crop for each mol (NASA's chamber crops made 0.2 to 0.6), under 800 umol/m2/s for 16 hours."
     inputs:
       - { item: good.carbon-dioxide, quantity: 3.915 }
       - { item: good.water, quantity: 1.682 }

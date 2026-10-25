@@ -25,37 +25,8 @@ built_of:
   mass: 0.0058
   note: 2 mm silicone lining
 ports:
-- id: run
-  flow: in
-  medium: load
-  interface: interface.run-clip-d40
-  half: female
-  make: bolted
-  at:
-  - -0.0385
-  - 0.0
-  - 0.0235
-  facing:
-  - 0.0
-  - 1.0
-  - 0.0
-  note: 'The loop''s axis: one run up to 40 mm outside passes along y, either way, on the 2 mm cushion.'
-- id: fix
-  flow: out
-  medium: load
-  interface: interface.kit-clamp
-  half: male
-  make: bolted
-  at:
-  - 0.0
-  - 0.0
-  - 0.0
-  facing:
-  - 0.0
-  - 0.0
-  - -1.0
-  note: 'Required: the tab''s 11 mm bore, down onto a strut clamp''s lug, closed by one M10 bolt and nut (ST4340-BOLT-M10, separate hardware, not drawn nor in this mass). The lug''s own datum is still open (strut clamp parked, 2026-10-19);
-    no stiffness or load rating is approved.'
+- {id: run, flow: in, medium: load, interface: interface.run-clip-d40, half: female, make: bolted, at: [-0.0385, 0.0, 0.0235], facing: [0.0, 1.0, 0.0], note: 'The loop''s axis: one run up to 40 mm outside passes along y, either way, on the 2 mm cushion.'}
+- {id: fix, flow: out, medium: load, interface: interface.kit-clamp, half: male, make: bolted, at: [0.0, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'Required: the tab''s 11 mm bore, down onto a strut clamp''s lug, closed by one M10 bolt and nut (ST4340-BOLT-M10, separate hardware, not drawn nor in this mass). The lug''s own datum is still open (strut clamp parked, 2026-10-19); no stiffness or load rating is approved.'}
 interface: interface.run-clip-d40
 provides: female
 fixing: interface.kit-clamp

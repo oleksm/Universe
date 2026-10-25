@@ -16,9 +16,9 @@ staff:
   count: 2
 - profession: profession.technician
   count: 2
+does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
 recipes:
 - makes: stock.kit-cable-11kv-500mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7328
@@ -34,7 +34,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-132kv-240mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: good.polyethylene
     quantity: 0.4124
@@ -50,7 +49,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-33kv-120mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: good.polyethylene
     quantity: 0.46
@@ -66,7 +64,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-33kv-150mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: good.polyethylene
     quantity: 0.4506
@@ -82,7 +79,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-33kv-185mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: good.polyethylene
     quantity: 0.4343
@@ -98,7 +94,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-33kv-630mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.5694
@@ -114,7 +109,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-400v-120mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.5282
@@ -130,7 +124,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-400v-16mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.8766
@@ -146,7 +139,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-400v-185mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.5309
@@ -162,7 +154,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-400v-240mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.5925
@@ -178,7 +169,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-400v-25mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.824
@@ -194,7 +184,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-400v-300mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.6418
@@ -210,7 +199,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-400v-35mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7774
@@ -226,7 +214,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-400v-400mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7041
@@ -242,7 +229,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-400v-500mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7461
@@ -258,7 +244,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-400v-50mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7228
@@ -274,7 +259,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-400v-630mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7876
@@ -290,7 +274,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-400v-70mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.6438
@@ -306,7 +289,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-400v-95mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.5722
@@ -322,7 +304,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-6p6kv-185mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.5475
@@ -338,7 +319,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-6p6kv-400mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.6966
@@ -354,7 +334,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-6p6kv-50mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.5886
@@ -370,7 +349,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-6p6kv-630mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7736
@@ -386,7 +364,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-6p6kv-70mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.5351
@@ -402,7 +379,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-6p6kv-95mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.4905
@@ -418,7 +394,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-data-can
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.5886
@@ -430,7 +405,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-dc-600v-2x50mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.8723
@@ -442,7 +416,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-dc-600v-3x16mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7839
@@ -454,7 +427,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-dc-600v-3x1mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.5917
@@ -466,7 +438,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-dc-600v-3x2p5mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.6331
@@ -478,7 +449,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-dc-600v-3x6mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7538
@@ -490,7 +460,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-flexible-11kv-3x95
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.5889
@@ -502,7 +471,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-flexible-690v-4x16
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.6493
@@ -514,7 +482,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-flexible-690v-4x35
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7059
@@ -526,7 +493,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-flexible-690v-4x95
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7547
@@ -538,7 +504,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-installation-230v-3x10
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7123
@@ -550,7 +515,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-installation-230v-3x1p5
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: good.polyethylene
     quantity: 0.5238
@@ -562,7 +526,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-installation-230v-3x2p5
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.5751
@@ -574,7 +537,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-installation-230v-3x4
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.6285
@@ -586,7 +548,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-installation-230v-3x6
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.6824
@@ -598,7 +559,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-installation-400v-5x16
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7932
@@ -610,7 +570,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-installation-400v-5x2p5
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.6236
@@ -622,7 +581,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-cable-installation-400v-5x6
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7215
@@ -634,7 +592,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-feeder-3kv-dc-150mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.828
@@ -646,7 +603,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-feeder-3kv-dc-240mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.8678
@@ -658,7 +614,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-feeder-3kv-dc-25mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.6008
@@ -670,7 +625,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-feeder-3kv-dc-50mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7034
@@ -682,7 +636,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-feeder-3kv-dc-95mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7819
@@ -694,7 +647,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-feeder-3kv-dc-al-150mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.5699
@@ -706,7 +658,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-feeder-3kv-dc-al-240mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.6357
@@ -718,7 +669,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-feeder-3kv-dc-al-400mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7014
@@ -730,7 +680,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-feeder-3kv-dc-al-50mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.chem-ptfe
     quantity: 0.6064
@@ -742,7 +691,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-feeder-3kv-dc-al-95mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.chem-ptfe
     quantity: 0.5133
@@ -754,7 +702,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-wire-0p5mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.5886
@@ -766,7 +713,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-wire-16mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.8321
@@ -778,7 +724,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-wire-1mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.7725
@@ -790,7 +735,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-wire-2p5mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.731
@@ -802,7 +746,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-wire-50mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.9137
@@ -814,7 +757,6 @@ recipes:
   rate: 1.5
   power: 4500000.0
 - makes: stock.kit-wire-6mm2
-  does: Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums.
   inputs:
   - item: stock.cu-wire-2
     quantity: 0.8301

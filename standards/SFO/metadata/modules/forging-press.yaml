@@ -12,6 +12,7 @@ staff:
   - { profession: profession.machinist, count: 4 }
   - { profession: profession.plant-operator, count: 4 }
   - { profession: profession.technician, count: 1 }
+does: "A forged END fitting pressed between dies, bored and machined true."
 recipes:
   - makes: stock.st4340-node-120
     does: "Hot steel pressed between dies into a node, then machined true."
@@ -94,7 +95,6 @@ recipes:
     rate: 1.38888888888889
     power: 6000000
   - makes: stock.st4340-end-50
-    does: "A forged END fitting pressed between dies, bored and machined true."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.2 }
     outputs:
@@ -102,7 +102,6 @@ recipes:
     rate: 1.38888888888889
     power: 6000000
   - makes: stock.st4340-end-60
-    does: "A forged END fitting pressed between dies, bored and machined true."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.2 }
     outputs:
@@ -110,7 +109,6 @@ recipes:
     rate: 1.38888888888889
     power: 6000000
   - makes: stock.st4340-end-80
-    does: "A forged END fitting pressed between dies, bored and machined true."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.2 }
     outputs:
@@ -118,7 +116,6 @@ recipes:
     rate: 1.38888888888889
     power: 6000000
   - makes: stock.st4340-end-100
-    does: "A forged END fitting pressed between dies, bored and machined true."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.2 }
     outputs:
@@ -126,7 +123,6 @@ recipes:
     rate: 1.38888888888889
     power: 6000000
   - makes: stock.st4340-end-120
-    does: "A forged END fitting pressed between dies, bored and machined true."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.2 }
     outputs:
@@ -134,7 +130,6 @@ recipes:
     rate: 1.38888888888889
     power: 6000000
   - makes: stock.st4340-end-150
-    does: "A forged END fitting pressed between dies, bored and machined true."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.2 }
     outputs:
@@ -142,7 +137,6 @@ recipes:
     rate: 1.38888888888889
     power: 6000000
   - makes: stock.st4340-end-160
-    does: "A forged END fitting pressed between dies, bored and machined true."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.2 }
     outputs:
@@ -150,7 +144,6 @@ recipes:
     rate: 1.38888888888889
     power: 6000000
   - makes: stock.st4340-end-200
-    does: "A forged END fitting pressed between dies, bored and machined true."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.2 }
     outputs:
@@ -158,7 +151,6 @@ recipes:
     rate: 1.38888888888889
     power: 6000000
   - makes: stock.st4340-end-250
-    does: "A forged END fitting pressed between dies, bored and machined true."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.2 }
     outputs:
@@ -166,7 +158,6 @@ recipes:
     rate: 1.38888888888889
     power: 6000000
   - makes: stock.st4340-end-300
-    does: "A forged END fitting pressed between dies, bored and machined true."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.2 }
     outputs:
@@ -174,7 +165,6 @@ recipes:
     rate: 1.38888888888889
     power: 6000000
   - makes: stock.st4340-end-400
-    does: "A forged END fitting pressed between dies, bored and machined true."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.2 }
     outputs:

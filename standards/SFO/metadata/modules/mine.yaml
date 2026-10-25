@@ -13,9 +13,9 @@ staff:
   - { profession: profession.miner, count: 12 }
   - { profession: profession.plant-operator, count: 2 }
   - { profession: profession.engineer, count: 1 }
+does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
 recipes:
   - makes: good.skarn-copper-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.skarn-copper-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -24,7 +24,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.skarn-tungsten-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.skarn-tungsten-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -33,7 +32,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.lithium-pegmatite-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.lithium-pegmatite-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -42,7 +40,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.iocg-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.iocg-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -51,7 +48,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.carlin-gold-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.carlin-gold-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -60,7 +56,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.fossil-placer-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.fossil-placer-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -69,7 +64,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.unconformity-uranium-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.unconformity-uranium-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -78,7 +72,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.sandstone-uranium-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.sandstone-uranium-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -87,7 +80,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.rare-earth-clay-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.rare-earth-clay-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -96,7 +88,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.graphite-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.graphite-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -105,7 +96,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.placer-gravel
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.placer-gravel, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -114,7 +104,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.impact-melt-nickel-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.impact-melt-nickel-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -123,7 +112,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.impact-diamond-rock
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.impact-diamond-rock, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -132,7 +120,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.impact-vein-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.impact-vein-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -141,7 +128,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.porphyry-copper-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.porphyry-copper-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -150,7 +136,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.epithermal-gold-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.epithermal-gold-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -159,7 +144,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.massive-sulphide-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.massive-sulphide-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -168,7 +152,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.orogenic-gold-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.orogenic-gold-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -177,7 +160,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.tin-tungsten-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.tin-tungsten-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -186,7 +168,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.nickel-sulphide-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.nickel-sulphide-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -195,7 +176,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.chromite-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.chromite-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -204,7 +184,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.carbonate-zinc-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.carbonate-zinc-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -213,7 +192,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.shale-zinc-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.shale-zinc-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -222,7 +200,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.sediment-copper-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.sediment-copper-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -231,7 +208,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.kimberlite
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.kimberlite, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -240,7 +216,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.laterite-nickel-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.laterite-nickel-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -249,7 +224,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.iron-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.iron-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -258,7 +232,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.bauxite
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.bauxite, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -267,7 +240,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.ilmenite
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.ilmenite, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -276,7 +248,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.limestone
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.limestone, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -285,7 +256,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.clay
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.clay, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -294,7 +264,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.silica-sand
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.silica-sand, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -303,7 +272,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.reef-chromite-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.reef-chromite-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -312,7 +280,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.titanomagnetite-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.titanomagnetite-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -321,7 +288,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.manganese-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.manganese-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -330,7 +296,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.magnesite-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.magnesite-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -339,7 +304,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.volcanic-sulphur-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.volcanic-sulphur-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -348,7 +312,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.heavy-mineral-sand
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.heavy-mineral-sand, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -357,7 +320,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.manganese-nodules
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.manganese-nodules, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -366,7 +328,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.potash-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.potash-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -375,7 +336,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.salt-dome-sulphur-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.salt-dome-sulphur-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -384,7 +344,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.phosphate-rock
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.phosphate-rock, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -393,7 +352,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.carbonatite-ore
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.carbonatite-ore, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -402,7 +360,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.lithium-brine
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.lithium-brine, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }
@@ -411,7 +368,6 @@ recipes:
     rate: 500.0
     power: 64500000
   - makes: good.salt
-    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
       - { item: good.salt, quantity: 1.0, from: place }
       - { item: good.waste-rock, quantity: 0.83, from: place }

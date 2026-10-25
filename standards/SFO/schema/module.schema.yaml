@@ -16,7 +16,7 @@ definitions:
     required: [makes, inputs, rate, power]
     properties:
       makes: { type: string, x-ref: [element, material, good, stock, part, hull, gate, equipment, module], description: "What it makes, by its key." }
-      does: { type: string, description: "What happens in it, set to this." }
+      does: { type: string, description: "What happens in it, set to this, when not the module's own does." }
       inputs: { $ref: "#/definitions/amounts", description: "What goes in. Nothing is made of nothing: a recipe has at least one." }
       outputs: { $ref: "#/definitions/amounts", description: "What else comes out." }
       rate: { type: number, x-unit: "kg/s", description: "kg/s of what it makes, at full rate, set to this" }
@@ -69,6 +69,7 @@ properties:
     properties:
       holds: { type: number, x-unit: "K", description: "K it holds inside" }
       efficiency: { type: number, x-unit: "1", description: "its heat pumps' share of the best physics allows (Carnot's)" }
+  does: { type: string, description: "What happens in it, for each recipe that says nothing of its own." }
   recipes:
     description: "What it can be set to make: each one thing, with what that takes. A module with one recipe makes one thing and needs no choosing; one with several is set to one of them at a time (its setup, which is the game's state, not written here)."
     type: array

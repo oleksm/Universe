@@ -68,6 +68,9 @@ def write(folder, slug, d, schema):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     d = lib.ruled(d)
     text = f"# yaml-language-server: $schema=../../schema/{schema}.schema.yaml\n" + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
+    b = lib.top_block(text, "ports")
+    if b:
+        text = text[:b[0]] + "ports:\n" + "".join("- " + yaml.safe_dump(p, default_flow_style=True, sort_keys=False, width=100000, allow_unicode=True).strip() + "\n" for p in d["ports"]) + text[b[1]:]
     lib.own(path, "tools/standards/mounting.py")
     if not os.path.exists(path) or open(path, encoding="utf-8").read() != text:
         if not DRY:
@@ -287,8 +290,7 @@ def cradle(slot, m, socks, d, tl):
             part["note"] = note + "; measured from Blender cradle candidate-v01 final 48-segment mesh, 2026-10-19 mass-review.json; joint/load qualification pending"
     mass = r(sum(p["mass"] for p in parts), 3 if slot == "access-s1" else 2)
     ports = [{"id": s["id"], "flow": "in", "medium": "load", "interface": s["interface"], "half": "female", "make": "bolted",
-              "at": [s["at"][0], s["at"][1], h], "facing": [0.0, 0.0, 1.0], "optional": True,
-              "note": f"the mount's socket, an M{d} insert (bolt {s['connector']}); spare when no foot is on it"} for s in socks]
+              "at": [s["at"][0], s["at"][1], h], "facing": [0.0, 0.0, 1.0], "optional": True} for s in socks]
     share = (m["bears"]["mass"] + mass) / nfix
     k = 0
     for side in lines:
@@ -296,8 +298,7 @@ def cradle(slot, m, socks, d, tl):
             k += 1
             ports.append({"id": f"fix-{k}", "flow": "out", "medium": "load", "interface": "interface.kit-clamp", "half": "male", "make": "bolted",
                           "mass": r(share, 1), "force": r(n * each["compression"] / nfix, 0),
-                          "at": [r(-Xb + 0.5 + i), r(side), 0.0], "facing": [0.0, 0.0, -1.0],
-                          "note": "clamped onto the strut under it at the middle of a 1 m segment"})
+                          "at": [r(-Xb + 0.5 + i), r(side), 0.0], "facing": [0.0, 0.0, -1.0]})
     name = m["identity"]["name"].replace(" mount, ", " cradle, ")
     return {"identity": {"key": f"adapter.{slot}", "name": name,
                          "description": f"Holds what fits {m['identity']['key']} on a ship's frame: {len(lines)} {tb['name']} beams over the frame's struts, 1 m or more apart, clamped at the middle of every 1 m, {len(cross_x)} cross tubes, the mount's {n} sockets on top."},

@@ -33,7 +33,7 @@ usual limit). Tube and bar of 4340, 6061, Ti-6Al-4V and carbon composite up to 2
 kit. Keys: stock.<section>-s<mm> straight, stock.<section>-d<mm> the diagonal of a <mm> square. In an assembly a strut
 member must run between two nodes exactly its module apart (1 mm): it brings its own ENDs and bolts, and is never cut.
 """
-import glob, math, os, sys
+import glob, math, os, re, sys
 import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -354,8 +354,8 @@ basis:
     text = open(fp, encoding="utf-8").read()
     head, sep, tail = text.partition("\nlife:")
     head = head.split("\nrecipes:\n")[0]
+    head = re.sub(r"\ndoes: .*", "", head) + '\ndoes: "Its section cut to length, an END fitting welded or bonded into each end, a bolt put in each."'
     body = "".join(f"""  - makes: {k}
-    does: "Its section cut to length, an END fitting welded or bonded into each end, a bolt put in each."
     inputs:
 """ + "".join(f"      - {{ item: {i}, quantity: {qq} }}\n" for i, qq in ins) + ("    outputs:\n" + "".join(f"      - {{ item: {i}, quantity: {qq} }}\n" for i, qq in outs) if outs else "") + """    rate: 0.277777777777778
     power: 130000.0

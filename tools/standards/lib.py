@@ -217,3 +217,21 @@ def _rule(e):
         return e
     k = rules().get((e.get("tier"), e.get("source"), e.get("note"), bool(e.get("review"))))
     return {"of": e["of"], "rule": k} if k else e
+
+
+def lifted(d):
+    """A module with `does` said once: the text most of its recipes repeat goes on the module, the rest keep their own."""
+    from collections import Counter
+    rs = d.get("recipes") or []
+    c = Counter(r.get("does") for r in rs if r.get("does"))
+    if not c or c.most_common(1)[0][1] < 2:
+        return d
+    top = c.most_common(1)[0][0]
+    out = {}
+    for k, v in d.items():
+        if k == "recipes":
+            out["does"] = top
+            v = [{a: b for a, b in r.items() if not (a == "does" and b == top)} for r in v]
+        if k != "does":
+            out[k] = v
+    return out

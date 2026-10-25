@@ -13,33 +13,29 @@ staff:
   - { profession: profession.metalworker, count: 2 }
   - { profession: profession.technician, count: 1 }
   - { profession: profession.engineer, count: 1 }
+does: "The ingot is heated through to the temperature it rolls at."
 recipes:
   - makes: good.hot-ingot-6061
-    does: "The ingot is heated through to the temperature it rolls at."
     inputs:
       - { item: stock.al6061-ingot, quantity: 1.0 }
     rate: 33.3333333333333
     power: 45000000
   - makes: good.hot-ingot-4340
-    does: "The ingot is heated through to the temperature it rolls at."
     inputs:
       - { item: stock.st4340-ingot, quantity: 1.0 }
     rate: 33.3333333333333
     power: 45000000
   - makes: good.hot-ingot-a36
-    does: "The ingot is heated through to the temperature it rolls at."
     inputs:
       - { item: stock.sta36-ingot, quantity: 1.0 }
     rate: 33.3333333333333
     power: 45000000
   - makes: good.hot-ingot-304
-    does: "The ingot is heated through to the temperature it rolls at."
     inputs:
       - { item: stock.st304-ingot, quantity: 1.0 }
     rate: 33.3333333333333
     power: 45000000
   - makes: good.hot-ingot-ti64
-    does: "The ingot is heated through to the temperature it rolls at."
     inputs:
       - { item: stock.ti64-ingot, quantity: 1.0 }
     rate: 33.3333333333333

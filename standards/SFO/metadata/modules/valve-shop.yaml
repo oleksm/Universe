@@ -18,9 +18,9 @@ staff:
   count: 2
 - profession: profession.technician
   count: 1
+does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
 recipes:
 - makes: stock.kit-camlock-dn100
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9785
@@ -32,7 +32,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-camlock-dn150
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9785
@@ -44,7 +43,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-camlock-dn25
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9785
@@ -56,7 +54,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-camlock-dn50
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9783
@@ -68,7 +65,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-corner-casting-iso1161
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -78,7 +74,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-flat-face-dn13
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.014
@@ -90,7 +85,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-flat-face-dn19
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.0142
@@ -102,7 +96,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-flat-face-dn25
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.0139
@@ -114,7 +107,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-flat-face-dn6
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.0128
@@ -126,7 +118,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-hose-union-dn25
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -136,7 +127,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-hose-union-dn50
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -146,7 +136,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d10
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.8457
@@ -158,7 +147,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d100
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7847
@@ -170,7 +158,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d16
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.8118
@@ -182,7 +169,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d160
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.8554
@@ -194,7 +180,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d25
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7809
@@ -206,7 +191,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d250
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9083
@@ -218,7 +202,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d40
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7572
@@ -230,7 +213,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d400
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9491
@@ -242,7 +224,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-run-clip-d63
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7385
@@ -254,7 +235,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-strut-clamp-d100
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9659
@@ -268,7 +248,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-strut-clamp-d120
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9852
@@ -282,7 +261,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-strut-clamp-d150
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9842
@@ -296,7 +274,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-strut-clamp-d160
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9902
@@ -310,7 +287,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-strut-clamp-d200
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9705
@@ -324,7 +300,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-strut-clamp-d250
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9552
@@ -338,7 +313,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-strut-clamp-d60
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9733
@@ -352,7 +326,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-strut-clamp-d80
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9952
@@ -366,7 +339,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-twistlock-iso1161
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.st4340-bar-120
     quantity: 1.03
@@ -376,7 +348,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-valve-ball-dn100-pn10
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9665
@@ -392,7 +363,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-valve-ball-dn50-pn10
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9668
@@ -408,7 +378,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-valve-butterfly-dn1000-pn10
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7725
@@ -424,7 +393,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-valve-butterfly-dn150-pn10
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7725
@@ -440,7 +408,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-valve-butterfly-dn300-pn10
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7728
@@ -456,7 +423,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-valve-butterfly-dn600-pn10
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7725
@@ -472,7 +438,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-valve-check-dn100-pn10
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9801
@@ -488,7 +453,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-valve-check-dn300-pn10
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9799
@@ -504,7 +468,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-valve-gate-dn100-pn10
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7725
@@ -518,7 +481,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-valve-gate-dn300-pn10
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7725
@@ -532,7 +494,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-valve-relief-dn100-pn10
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9993
@@ -546,7 +507,6 @@ recipes:
   rate: 0.5
   power: 2500000.0
 - makes: stock.kit-valve-relief-dn50-pn10
-  does: Bodies and trim are machined from stock, fitted with their seats and seals, assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9993

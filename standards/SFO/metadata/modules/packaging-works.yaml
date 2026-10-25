@@ -14,18 +14,16 @@ staff:
   count: 4
 - profession: profession.technician
   count: 1
+does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
+  here.
 recipes:
 - makes: stock.pkg-bale
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: good.cotton-cloth
     quantity: 1
   rate: 0.5
   power: 1000000
 - makes: stock.pkg-bar-bundle
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: good.fibreboard
     quantity: 0.6
@@ -34,8 +32,6 @@ recipes:
   rate: 0.5
   power: 1000000
 - makes: stock.pkg-bulk-bag
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: good.polyethylene
     quantity: 0.4
@@ -44,8 +40,6 @@ recipes:
   rate: 0.5
   power: 1000000
 - makes: stock.pkg-carton-pallet
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: good.paper
     quantity: 0.35
@@ -56,8 +50,6 @@ recipes:
   rate: 0.5
   power: 1000000
 - makes: stock.pkg-coil
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.2
@@ -66,8 +58,6 @@ recipes:
   rate: 0.5
   power: 1000000
 - makes: stock.pkg-cold-crate
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: good.polyethylene
     quantity: 0.3
@@ -78,8 +68,6 @@ recipes:
   rate: 0.5
   power: 1000000
 - makes: stock.pkg-crate-heavy
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: good.fibreboard
     quantity: 0.85
@@ -88,16 +76,12 @@ recipes:
   rate: 0.5
   power: 1000000
 - makes: stock.pkg-crate-steel
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1
   rate: 0.5
   power: 1000000
 - makes: stock.pkg-cryo-dewar
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.95
@@ -108,8 +92,6 @@ recipes:
   rate: 0.5
   power: 1000000
 - makes: stock.pkg-fish-tank
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: good.polyethylene
     quantity: 0.9
@@ -118,8 +100,6 @@ recipes:
   rate: 0.5
   power: 1000000
 - makes: stock.pkg-gas-rack
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.98
@@ -128,8 +108,6 @@ recipes:
   rate: 0.5
   power: 1000000
 - makes: stock.pkg-ladle
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7
@@ -138,16 +116,12 @@ recipes:
   rate: 0.5
   power: 1000000
 - makes: stock.pkg-livestock-crate
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1
   rate: 0.5
   power: 1000000
 - makes: stock.pkg-plate-stack
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: good.fibreboard
     quantity: 0.9
@@ -156,24 +130,18 @@ recipes:
   rate: 0.5
   power: 1000000
 - makes: stock.pkg-produce-crate
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: good.polyethylene
     quantity: 1
   rate: 0.5
   power: 1000000
 - makes: stock.pkg-skip
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1
   rate: 0.5
   power: 1000000
 - makes: stock.pkg-tote
-  does: Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured
-    here.
   inputs:
   - item: good.polyethylene
     quantity: 0.3

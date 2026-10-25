@@ -18,9 +18,9 @@ staff:
   count: 2
 - profession: profession.technician
   count: 1
+does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
 recipes:
 - makes: stock.kit-chute-dn1000
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9789
@@ -36,7 +36,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-chute-dn400
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.975
@@ -52,7 +51,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-chute-dn600
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9766
@@ -68,7 +66,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-chute-dn800
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9775
@@ -84,7 +81,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-clamp-coupling-dn1200
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.8719
@@ -98,7 +94,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-expansion-joint-dn100-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7521
@@ -112,7 +107,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-expansion-joint-dn1000-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7523
@@ -126,7 +120,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-expansion-joint-dn300-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7533
@@ -140,7 +133,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-expansion-joint-dn600-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7525
@@ -154,7 +146,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn100-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9305
@@ -172,7 +163,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn100-pn10-ss
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9427
@@ -186,7 +176,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn100-pn16-ss-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9598
@@ -200,7 +189,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn100-pn25
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9305
@@ -218,7 +206,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn100-pn25-ss
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9427
@@ -232,7 +219,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn1000-pn1
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9619
@@ -250,7 +236,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn1000-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9486
@@ -268,7 +253,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn1000-pn16-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9396
@@ -286,7 +270,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn1200-pn1
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.961
@@ -304,7 +287,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn1200-pn10-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9506
@@ -322,7 +304,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn1400-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.94
@@ -340,7 +321,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn150-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9518
@@ -358,7 +338,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn150-pn10-ss
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9613
@@ -372,7 +351,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn150-pn16-ss-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9499
@@ -386,7 +364,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn150-pn25
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9518
@@ -404,7 +381,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn1600-pn16-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9226
@@ -422,7 +398,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn1800-pn10-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9374
@@ -440,7 +415,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn200-pn1-ss
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9488
@@ -454,7 +428,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn200-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9374
@@ -472,7 +445,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn200-pn10-ss
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9488
@@ -486,7 +458,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn200-pn16-ss-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9632
@@ -500,7 +471,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn200-pn25-ss
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9488
@@ -514,7 +484,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn2000-pn1
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.966
@@ -532,7 +501,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn2000-pn10-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9356
@@ -550,7 +518,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn2200-pn10-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9307
@@ -568,7 +535,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn2400-pn10-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9288
@@ -586,7 +552,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn250-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9484
@@ -604,7 +569,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn250-pn10-ss-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9729
@@ -618,7 +582,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn250-pn16-ss-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9755
@@ -632,7 +595,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn2800-pn10-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.924
@@ -650,7 +612,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn300-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9592
@@ -668,7 +629,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn3000-pn1-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9316
@@ -686,7 +646,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn350-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9491
@@ -704,7 +663,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn350-pn10-ss
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9615
@@ -718,7 +676,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn3600-pn10-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9198
@@ -736,7 +693,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn400-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9552
@@ -754,7 +710,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn450-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9608
@@ -772,7 +727,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn450-pn10-ss-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9746
@@ -786,7 +740,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn50-pn10-ss
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9121
@@ -800,7 +753,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn50-pn16-ss
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9121
@@ -814,7 +766,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn50-pn16-ss-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.9369
@@ -828,7 +779,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn500-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9533
@@ -846,7 +796,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn600-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9523
@@ -864,7 +813,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn700-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.965
@@ -882,7 +830,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-flange-dn900-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.955
@@ -900,7 +847,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-hood-dn2000
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7501
@@ -912,7 +858,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-jacketed-duct-dn2000
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.57
@@ -924,7 +869,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-lined-duct-dn1200-pn1
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: good.refractory-brick
     quantity: 0.8654
@@ -940,7 +884,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-lined-duct-dn2400-pn16-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: good.refractory-brick
     quantity: 0.7866
@@ -956,7 +899,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-lined-duct-dn3600-pn10-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: good.refractory-brick
     quantity: 0.7705
@@ -972,7 +914,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-lined-flange-dn1200-pn1
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9109
@@ -992,7 +933,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-lined-flange-dn2400-pn16-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9084
@@ -1012,7 +952,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-lined-flange-dn3600-pn10-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9134
@@ -1032,7 +971,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn100-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1042,7 +980,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn100-pn10-ss
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -1052,7 +989,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn100-pn16-ss-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -1062,7 +998,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn100-pn25
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1072,7 +1007,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn1000-pn1
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1082,7 +1016,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn1000-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1092,7 +1025,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn1000-pn16-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1102,7 +1034,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn1000-pn16-mli-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.0115
@@ -1114,7 +1045,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn1200-pn1
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1124,7 +1054,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn1200-pn10-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1134,7 +1063,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn1400-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1144,7 +1072,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn150-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1154,7 +1081,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn150-pn10-ss
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -1164,7 +1090,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn150-pn16-ss-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -1174,7 +1099,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn150-pn25-mli
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9847
@@ -1186,7 +1110,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn1600-pn16-mli-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.0172
@@ -1198,7 +1121,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn1800-pn10-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1208,7 +1130,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn200-pn1-ss
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -1218,7 +1139,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn200-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1228,7 +1148,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn200-pn10-ss
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -1238,7 +1157,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn200-pn16-ss-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -1248,7 +1166,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn2000-pn1
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1258,7 +1175,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn2000-pn10-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1268,7 +1184,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn2200-pn10-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1278,7 +1193,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn2400-pn10-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1288,7 +1202,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn250-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1298,7 +1211,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn250-pn10-ss-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -1308,7 +1220,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn250-pn16-ss-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -1318,7 +1229,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn2800-pn10-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1328,7 +1238,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn300-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1338,7 +1247,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn350-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1348,7 +1256,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn350-pn10-ss
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -1358,7 +1265,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn3600-pn10-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1368,7 +1274,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn400-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1378,7 +1283,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn450-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1388,7 +1292,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn450-pn10-ss-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -1398,7 +1301,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn50-pn10-ss
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -1408,7 +1310,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn50-pn16-ss
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -1418,7 +1319,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn50-pn16-ss-double
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -1428,7 +1328,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn500-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1438,7 +1337,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn600-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1448,7 +1346,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn700-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03
@@ -1458,7 +1355,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn700-pn10-mli
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.0043
@@ -1470,7 +1366,6 @@ recipes:
   rate: 3.0
   power: 6000000.0
 - makes: stock.kit-pipe-dn900-pn10
-  does: Plate is rolled and welded, or cut and machined; linings and lagging go on; each piece is pressure tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 1.03

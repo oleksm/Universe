@@ -16,9 +16,9 @@ staff:
   count: 2
 - profession: profession.technician
   count: 1
+does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
 recipes:
 - makes: stock.kit-belt-1000
-  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.68
@@ -30,7 +30,6 @@ recipes:
   rate: 1.5
   power: 3000000.0
 - makes: stock.kit-belt-1000-sealed
-  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9128
@@ -44,7 +43,6 @@ recipes:
   rate: 1.5
   power: 3000000.0
 - makes: stock.kit-belt-1200
-  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.637
@@ -56,7 +54,6 @@ recipes:
   rate: 1.5
   power: 3000000.0
 - makes: stock.kit-belt-1400
-  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.5986
@@ -68,7 +65,6 @@ recipes:
   rate: 1.5
   power: 3000000.0
 - makes: stock.kit-belt-650
-  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7715
@@ -80,7 +76,6 @@ recipes:
   rate: 1.5
   power: 3000000.0
 - makes: stock.kit-belt-800
-  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7293
@@ -92,7 +87,6 @@ recipes:
   rate: 1.5
   power: 3000000.0
 - makes: stock.kit-belt-800-sealed
-  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9289
@@ -106,7 +100,6 @@ recipes:
   rate: 1.5
   power: 3000000.0
 - makes: stock.kit-belt-transfer-1000
-  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9465
@@ -118,7 +111,6 @@ recipes:
   rate: 1.5
   power: 3000000.0
 - makes: stock.kit-belt-transfer-1000-sealed
-  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9592
@@ -130,7 +122,6 @@ recipes:
   rate: 1.5
   power: 3000000.0
 - makes: stock.kit-belt-transfer-1200
-  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9462
@@ -142,7 +133,6 @@ recipes:
   rate: 1.5
   power: 3000000.0
 - makes: stock.kit-belt-transfer-1400
-  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9459
@@ -154,7 +144,6 @@ recipes:
   rate: 1.5
   power: 3000000.0
 - makes: stock.kit-belt-transfer-650
-  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9464
@@ -166,7 +155,6 @@ recipes:
   rate: 1.5
   power: 3000000.0
 - makes: stock.kit-belt-transfer-800
-  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9465
@@ -178,7 +166,6 @@ recipes:
   rate: 1.5
   power: 3000000.0
 - makes: stock.kit-belt-transfer-800-sealed
-  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.9598
@@ -190,7 +177,6 @@ recipes:
   rate: 1.5
   power: 3000000.0
 - makes: stock.kit-drag-conveyor-800
-  does: Stringers, casings and chutes are cut and welded, idlers and chains assembled, belting cut and spliced.
   inputs:
   - item: stock.st304-pl-3
     quantity: 0.8128

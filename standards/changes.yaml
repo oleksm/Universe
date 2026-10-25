@@ -1,65 +1,65 @@
-- { record: adapter.access-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "48826e1bec46568a" }
-- { record: adapter.access-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "6eaa1c9a701cc323" }
-- { record: adapter.access-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "357a7513a3e261e9" }
-- { record: adapter.capacitor-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "fbd82bf05b0dd2e5" }
-- { record: adapter.capacitor-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "04c2809d7c76f97f" }
-- { record: adapter.capacitor-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "d1dd36f8a2aeef80" }
-- { record: adapter.cargo-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "ea13892d27f7f169" }
-- { record: adapter.cargo-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "21e343139c82d849" }
-- { record: adapter.cargo-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "58c29434eccc3eb7" }
-- { record: adapter.cargo-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "9680d4e0aa1e5f9f" }
-- { record: adapter.cargo-s4, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "718828649d57a859" }
-- { record: adapter.comm-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "845e56ecd37c5fb6" }
-- { record: adapter.command-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "f1c51f6f58aa4f22" }
-- { record: adapter.command-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "c62cc7da9e286d37" }
-- { record: adapter.command-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "5aa8eb9678084fa3" }
-- { record: adapter.command-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "32b8becd19216644" }
-- { record: adapter.drive-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "c77142f5fa6f52eb" }
-- { record: adapter.drive-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "f4bd8bd40bd6bec0" }
-- { record: adapter.drive-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "e291c202ad6d2ea9" }
-- { record: adapter.engine-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "5c7b1f3aa7351b31" }
-- { record: adapter.engine-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "3d145d9c5ccbf41e" }
-- { record: adapter.engine-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "a6966ad55f211900" }
-- { record: adapter.engine-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "447f292a758e12ae" }
-- { record: adapter.engine-s4, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "04df69674c86d2f5" }
-- { record: adapter.gate-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "7b2c543ad050e0f7" }
-- { record: adapter.gate-s4, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "12627cc55c58edcd" }
-- { record: adapter.gear-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "e1e6a2518ce21d1f" }
-- { record: adapter.gear-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "665092ab3bd397e5" }
-- { record: adapter.gear-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "df6b1cdb8410f4b3" }
-- { record: adapter.gear-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "3f534ede3747b047" }
-- { record: adapter.handling-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "7a864b0ff100a284" }
-- { record: adapter.handling-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "4886dbf843d48ae0" }
-- { record: adapter.hardpoint-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "24ce5e11b883dfd6" }
-- { record: adapter.hardpoint-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "e312e83ba40cc3cc" }
-- { record: adapter.hardpoint-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "608faca7d2ae13aa" }
-- { record: adapter.hyperdrive-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "b2830a672cb793c0" }
-- { record: adapter.hyperdrive-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "60ac3b048dc7264d" }
-- { record: adapter.hyperdrive-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "f5e7025bb8125420" }
-- { record: adapter.life-support-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "61bb5f9ad38f6260" }
-- { record: adapter.life-support-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "efb4cc5253c539e4" }
-- { record: adapter.lift-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "bd2542883b002e42" }
-- { record: adapter.lift-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "18191476e11de65c" }
-- { record: adapter.lift-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "9069314051bbb562" }
-- { record: adapter.power-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "f9dc056d66ac9f84" }
-- { record: adapter.power-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "800c26c456e6c05c" }
-- { record: adapter.power-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "9d94306be0a07ea4" }
-- { record: adapter.radiator-hot-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "18968a3d3f4e44d6" }
-- { record: adapter.radiator-hot-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "17965603be5c66ca" }
-- { record: adapter.sensors-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "1a5cd9faea773185" }
-- { record: adapter.tank-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "9cc40d502317f640" }
-- { record: adapter.tank-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "1525ffc7e037660e" }
-- { record: adapter.tank-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "38b5ab18466a43ce" }
-- { record: adapter.tank-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "2982e7e0e103a57e" }
-- { record: adapter.tank-s4, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "f70e8d9e82ca319f" }
-- { record: adapter.thermal-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "9bc81e272ed06660" }
-- { record: adapter.thermal-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "95be6454949face8" }
-- { record: adapter.thermal-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "dad8151c444ee323" }
-- { record: adapter.thermal-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "f8422bbfbbc51765" }
-- { record: adapter.thrusters-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "2b751cef0ae08183" }
-- { record: adapter.thrusters-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "977a0bae9a17fdab" }
-- { record: adapter.thrusters-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "79e10e1a07cd0077" }
-- { record: adapter.utility-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "114ad8297c73272b" }
+- { record: adapter.access-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "0d58bf6f5ba2959d" }
+- { record: adapter.access-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "68595c4ee97f729d" }
+- { record: adapter.access-s3, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "fdc552a55f79e72d" }
+- { record: adapter.capacitor-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "a29ca354192858e6" }
+- { record: adapter.capacitor-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "c12f7f6e79b8ae5a" }
+- { record: adapter.capacitor-s3, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "3a95f57d84bf5689" }
+- { record: adapter.cargo-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "8073dbb5e84031f1" }
+- { record: adapter.cargo-s1c, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "e44115dfee6483f1" }
+- { record: adapter.cargo-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "4f6a19e4fbd55423" }
+- { record: adapter.cargo-s3, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "9aa68d0f6db1993b" }
+- { record: adapter.cargo-s4, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "6bd6d32696d73c73" }
+- { record: adapter.comm-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "a3090fbb2c967d39" }
+- { record: adapter.command-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "e08b3422c5f1caa9" }
+- { record: adapter.command-s1c, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "4bc5279c05cca5d9" }
+- { record: adapter.command-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "335d21360d1a6d65" }
+- { record: adapter.command-s3, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "841e31f3cf042bb1" }
+- { record: adapter.drive-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "a18c129020ffe3da" }
+- { record: adapter.drive-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "e297c74c6092553b" }
+- { record: adapter.drive-s3, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "6e574dd3fcda4298" }
+- { record: adapter.engine-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "1836f37d1834399a" }
+- { record: adapter.engine-s1c, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "667c5221269d5d96" }
+- { record: adapter.engine-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "9861786a99af8ef6" }
+- { record: adapter.engine-s3, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "4ce1ca3f68c2b682" }
+- { record: adapter.engine-s4, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "fa773b0286f6cf60" }
+- { record: adapter.gate-s3, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "ec9883c0a831c86a" }
+- { record: adapter.gate-s4, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "7e145bee2a8c33db" }
+- { record: adapter.gear-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "10a278f703dd4df5" }
+- { record: adapter.gear-s1c, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "9d7c15eb709bba5c" }
+- { record: adapter.gear-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "f13143d49dba92ff" }
+- { record: adapter.gear-s3, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "17959f33f11197c5" }
+- { record: adapter.handling-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "634eccea7ef4acda" }
+- { record: adapter.handling-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "a22fbb42f3185ce9" }
+- { record: adapter.hardpoint-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "693e39a65fc80caa" }
+- { record: adapter.hardpoint-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "73ba3fa270e2672b" }
+- { record: adapter.hardpoint-s3, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "a813e9881c6d91e4" }
+- { record: adapter.hyperdrive-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "2327db759fe87837" }
+- { record: adapter.hyperdrive-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "7f2310200b69b5db" }
+- { record: adapter.hyperdrive-s3, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "f30c37b245b4ba9a" }
+- { record: adapter.life-support-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "18daf070b500ad2a" }
+- { record: adapter.life-support-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "34b1d5482aa1f5d1" }
+- { record: adapter.lift-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "fe7e7e489ac368bb" }
+- { record: adapter.lift-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "2b43abf44f9bac05" }
+- { record: adapter.lift-s3, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "87750106da69d7ed" }
+- { record: adapter.power-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "57ac59ee373ae5d6" }
+- { record: adapter.power-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "75a0ba898f7ed34b" }
+- { record: adapter.power-s3, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "449129bcea3f9651" }
+- { record: adapter.radiator-hot-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "4e0ceae5888609d4" }
+- { record: adapter.radiator-hot-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "7cc11af80389b1af" }
+- { record: adapter.sensors-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "e97e2aa895e13f62" }
+- { record: adapter.tank-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "b0e490c850ec2dac" }
+- { record: adapter.tank-s1c, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "d45497b30a48bc3f" }
+- { record: adapter.tank-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "6322a77e6de3a99d" }
+- { record: adapter.tank-s3, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "5c9a21208e3678ee" }
+- { record: adapter.tank-s4, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "a1270bd26a18661d" }
+- { record: adapter.thermal-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "4c6940d6637698f8" }
+- { record: adapter.thermal-s1c, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "637540c668bd59e3" }
+- { record: adapter.thermal-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "8ecca430b3042ba5" }
+- { record: adapter.thermal-s3, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "96fae941055c249b" }
+- { record: adapter.thrusters-s1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "606d899bfeb46de3" }
+- { record: adapter.thrusters-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "c7616857cd808489" }
+- { record: adapter.thrusters-s3, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "8facad7be237b57c" }
+- { record: adapter.utility-s2, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: ports", sha: "37a0a1b84bd5e8c7" }
 - { record: arrangement.cell, at: "2026-10-25T04:55:39Z", status: draft, summary: "changed: basis", sha: "96de633a8b98ffaa" }
 - { record: arrangement.classroom, at: "2026-10-25T04:55:39Z", status: draft, summary: "changed: basis", sha: "0ef3489651b159b0" }
 - { record: arrangement.counter, at: "2026-10-25T04:55:39Z", status: draft, summary: "changed: basis", sha: "ada32db3a5ef9d7e" }
@@ -264,7 +264,7 @@
 - { record: connector.collector-500a, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "eb1174c374a93ab6" }
 - { record: connector.corner-casting-iso1161, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "05f743d00d08999d" }
 - { record: connector.coupler-11kv-400a, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "32436d5d384de23f" }
-- { record: connector.deck-support-shoe, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "67cb966e62bf8645" }
+- { record: connector.deck-support-shoe, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed", sha: "97d1d6656239f524" }
 - { record: connector.expansion-joint-dn100-pn10, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "73c876671611c1ec" }
 - { record: connector.expansion-joint-dn1000-pn10, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "834052c2bd1dad64" }
 - { record: connector.expansion-joint-dn300-pn10, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "73bd476cfab95dc0" }
@@ -333,15 +333,15 @@
 - { record: connector.plug-iec60309-32a, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "476043a902892119" }
 - { record: connector.plug-iec60309-63a, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "858c61fd32795cec" }
 - { record: connector.powerlock-400a, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "c3b5598033913e44" }
-- { record: connector.run-clip-d10, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "5f32d284a9563d84" }
-- { record: connector.run-clip-d100, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "28dfaea6e0e6bce6" }
-- { record: connector.run-clip-d16, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "696b999036cb1818" }
-- { record: connector.run-clip-d160, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "620c626a65b5340f" }
-- { record: connector.run-clip-d25, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "3543de7206f1d9ae" }
-- { record: connector.run-clip-d250, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "3ae4c11ae8c8564f" }
-- { record: connector.run-clip-d40, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "19f0b6a407620568" }
-- { record: connector.run-clip-d400, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "6772538493bc3122" }
-- { record: connector.run-clip-d63, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "8a8499c3857494d6" }
+- { record: connector.run-clip-d10, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed", sha: "04eda9b2f3704976" }
+- { record: connector.run-clip-d100, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed", sha: "1e17019ca7cfbe46" }
+- { record: connector.run-clip-d16, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed", sha: "32f55995aa3fc8bf" }
+- { record: connector.run-clip-d160, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed", sha: "6f0ce77645f0101a" }
+- { record: connector.run-clip-d25, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed", sha: "3c552e4660fb924e" }
+- { record: connector.run-clip-d250, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed", sha: "e5f9c26810e9508e" }
+- { record: connector.run-clip-d40, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed", sha: "4094e3c2fedb14b2" }
+- { record: connector.run-clip-d400, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed", sha: "6f36b0f607c85065" }
+- { record: connector.run-clip-d63, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed", sha: "f2323541b393fd16" }
 - { record: connector.strut-clamp-d100, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "e9a5ea08d8d25c90" }
 - { record: connector.strut-clamp-d120, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "0d104db22f54e24e" }
 - { record: connector.strut-clamp-d150, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "59a2cd7b02a8613d" }
@@ -1348,12 +1348,12 @@
 - { record: module.brewery, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "9c18f6a2f85e6d39" }
 - { record: module.brickworks, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "a3b631829333ec09" }
 - { record: module.building-dock, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "05c2ff7a3d706191" }
-- { record: module.building-panel-works, at: "2026-10-25T04:43:06Z", status: review, summary: "changed", sha: "6a856ff83a0e51b9" }
-- { record: module.cable-works, at: "2026-10-25T04:43:06Z", status: review, summary: "changed", sha: "c55b15bbbf9a9d4d" }
+- { record: module.building-panel-works, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "388eae6e1e013f94" }
+- { record: module.cable-works, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "aaee1280dab49870" }
 - { record: module.carbide-furnace, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "1938f0efb1f93029" }
 - { record: module.carbon-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "337b73dcfc2d5b7a" }
 - { record: module.casthouse, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "97f28623147d0c5c" }
-- { record: module.casting-bay, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "643625b7e72ac481" }
+- { record: module.casting-bay, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "173c757941f74892" }
 - { record: module.cement-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "f5e21c470aa74ba1" }
 - { record: module.chip-fab, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "00d2194e4bd219b3" }
 - { record: module.chlor-alkali-plant, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "9b719d9548390bf5" }
@@ -1365,38 +1365,38 @@
 - { record: module.compost-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "ae0cab5ccc05f4f5" }
 - { record: module.concentrator, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "511b08d120ae70a8" }
 - { record: module.concrete-plant, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "b0735de3330d0132" }
-- { record: module.conveyor-shop, at: "2026-10-25T04:43:06Z", status: review, summary: "changed", sha: "aca19983d84e2431" }
+- { record: module.conveyor-shop, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "d6dccfeae538d5f7" }
 - { record: module.copper-smelter, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "401db2a0961e6f6f" }
-- { record: module.cradle-shop, at: "2026-10-25T04:43:06Z", status: review, summary: "changed", sha: "800a57c193428445" }
+- { record: module.cradle-shop, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "75b689e55fcb04a2" }
 - { record: module.crushing-plant, at: "2026-10-21T01:51:06Z", status: review, summary: "changed: recipes, basis", sha: "e7f7c1b2cd571f84" }
 - { record: module.cutting-table, at: "2026-10-07T04:19:21Z", status: review, summary: "changed: cuts", sha: "2545992d8a3147da" }
 - { record: module.dairy, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "dac4ae81ed1f28d4" }
 - { record: module.deuterium-plant, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "c0cc3a917293ff30" }
-- { record: module.electrical-fittings-works, at: "2026-10-25T04:43:06Z", status: review, summary: "changed", sha: "0fb4bab91eeb248f" }
+- { record: module.electrical-fittings-works, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "ea8605f06093c7e8" }
 - { record: module.electronics-works, at: "2026-10-07T04:19:21Z", status: review, summary: "changed: cuts", sha: "09c82312a21035ed" }
-- { record: module.extrusion-press, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "6807e195a0b22560" }
-- { record: module.factory-works, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "851742f5bc3117a1" }
+- { record: module.extrusion-press, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "518abb3f023448b7" }
+- { record: module.factory-works, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: does, recipes", sha: "c425341714368328" }
 - { record: module.feed-mill, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "fb9312662122a868" }
 - { record: module.ferroalloy-furnace, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "eadb885d0274e66b" }
 - { record: module.fertiliser-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "13d770c6c2ee074e" }
-- { record: module.field, at: "2026-10-11T03:02:00Z", status: review, summary: "changed: visual", sha: "3ced5955f60e9443" }
-- { record: module.filament-winder, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "cac65e2b3c14e43e" }
+- { record: module.field, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "4a80980a7a10dfd4" }
+- { record: module.filament-winder, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "2f1cc406310f5c3d" }
 - { record: module.film-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "c08d330e39b4cf46" }
-- { record: module.finishing-line, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "22d6104efdb58883" }
+- { record: module.finishing-line, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "ae3bbb487e10cf0f" }
 - { record: module.fish-farm, at: "2026-10-25T04:43:06Z", status: review, summary: "changed", sha: "5235913ee20a7ff5" }
 - { record: module.flour-mill, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "a25688086bfc25ca" }
-- { record: module.forging-press, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "d50cd1797793408d" }
+- { record: module.forging-press, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "07bd8daa5081067c" }
 - { record: module.foundry, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "a79e641a520028f2" }
 - { record: module.fusion-power-station, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "6a5bdc8121dd1e12" }
 - { record: module.gas-well, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "87bd449e5ddf5dbd" }
 - { record: module.general-warehouse, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "94ac9dafa1aa51e9" }
-- { record: module.glassworks, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "4393a8405a4f6500" }
+- { record: module.glassworks, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "6c62d588d1f18edb" }
 - { record: module.gold-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "051a897def7736ae" }
 - { record: module.grain-silo, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "e0dec37d17cbeb5c" }
-- { record: module.grow-hall, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "0386f6f594d065b9" }
-- { record: module.honeycomb-works, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: recipes", sha: "106356f2726727f3" }
-- { record: module.hose-works, at: "2026-10-25T04:43:06Z", status: review, summary: "changed", sha: "2c38355e7498d9c6" }
-- { record: module.hot-rolling-mill, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "803e8345f3fef662" }
+- { record: module.grow-hall, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "24f01386493f5a4c" }
+- { record: module.honeycomb-works, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "442ea49ce42776d8" }
+- { record: module.hose-works, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "1ef95f85113ca94f" }
+- { record: module.hot-rolling-mill, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "20950014fd22089e" }
 - { record: module.hydrogen-plant, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "3128559fa36865c5" }
 - { record: module.ice-melter, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "01d948a154477add" }
 - { record: module.incinerator, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "f17ab4b46c8bd180" }
@@ -1409,30 +1409,30 @@
 - { record: module.machine-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "78d6abc7be9f8e13" }
 - { record: module.machining-centre, at: "2026-10-07T04:19:21Z", status: review, summary: "changed: cuts", sha: "f790041a3627e9d2" }
 - { record: module.magnesium-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "e16bb76fcc9fb522" }
-- { record: module.market-garden, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "cb404f9dcff13fe6" }
+- { record: module.market-garden, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "c69a607142ccd793" }
 - { record: module.meat-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "543e075f52004411" }
-- { record: module.mine, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "c4e10ed98d27c650" }
+- { record: module.mine, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "469b049fb372e735" }
 - { record: module.molybdenum-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "343eeead98e30514" }
 - { record: module.nickel-smelter, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "6b9dd5b153464815" }
 - { record: module.oil-press, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "c6bf3c3f51080dc3" }
 - { record: module.oil-well, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "7c6f9092d2d9590e" }
-- { record: module.orchard, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "43b3f0d896c13875" }
+- { record: module.orchard, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "7db2acd2dde8041f" }
 - { record: module.ore-yard, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "9a4780989cee873b" }
 - { record: module.oxygen-plant, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "212982557ceaeec4" }
-- { record: module.packaging-works, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "45eb5fd4c29c1341" }
-- { record: module.panel-former, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "bfe5c3f9e0824d28" }
+- { record: module.packaging-works, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed: does, recipes", sha: "7f22114b93a6ab8a" }
+- { record: module.panel-former, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "951ca05850e2e358" }
 - { record: module.panel-line, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "f668c722f7b9bb13" }
-- { record: module.panel-press, at: "2026-10-06T19:01:21Z", status: review, summary: "first tracked", sha: "760429fe21af17b5" }
+- { record: module.panel-press, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "905d20b30ad126ff" }
 - { record: module.pellet-plant, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "a105314af654a228" }
 - { record: module.pharma-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "7790ce9e68127a05" }
 - { record: module.phosphate-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "1718e9a56ab77960" }
-- { record: module.piercing-mill, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "c176423d1651e3c8" }
-- { record: module.pipe-shop, at: "2026-10-25T04:43:06Z", status: review, summary: "changed", sha: "3b69cb6bb65ebdd2" }
+- { record: module.piercing-mill, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "aedadc1cf8a59868" }
+- { record: module.pipe-shop, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "8b2e6bf2b4389468" }
 - { record: module.potline, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "c03bc07c1b261ee9" }
 - { record: module.propellant-plant, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "b0818ffe6e5c908d" }
-- { record: module.reheat-furnace, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "6f9a3b2963caf23b" }
+- { record: module.reheat-furnace, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "65b48944d6da405c" }
 - { record: module.rendering-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "12cc1566a003fe44" }
-- { record: module.section-line, at: "2026-10-07T04:17:36Z", status: review, summary: "first tracked", sha: "3539f79ad5b8410c" }
+- { record: module.section-line, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "a719eca15d127da1" }
 - { record: module.shaft-furnace, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "8ad64dddccef8dfb" }
 - { record: module.silicon-furnace, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "78687558dcba4ccd" }
 - { record: module.silicon-refinery, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "ca97463fae76f521" }
@@ -1450,10 +1450,10 @@
 - { record: module.titanium-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "8bc4dab0c602e5f0" }
 - { record: module.tungsten-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "726b2d7f2fa5007a" }
 - { record: module.vacuum-furnace, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "0316b0734dbb16e9" }
-- { record: module.valve-shop, at: "2026-10-25T04:43:06Z", status: review, summary: "changed", sha: "563955fcd283ffeb" }
+- { record: module.valve-shop, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "2f38aaee2b7e6405" }
 - { record: module.waste-dump, at: "2026-10-06T18:38:56Z", status: review, summary: "first tracked", sha: "7dad5c67c8500c7a" }
 - { record: module.water-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "9ba454787935f862" }
-- { record: module.welding-bay, at: "2026-10-14T01:37:48Z", status: review, summary: "changed: recipes", sha: "2001e7fb8aad6b4f" }
+- { record: module.welding-bay, at: "2026-10-25T05:05:00Z", status: review, summary: "changed: does, recipes", sha: "0a191fd47f7eff3b" }
 - { record: module.winery, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "6b5add6704ce0354" }
 - { record: module.wire-mill, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "f33938e611965e5e" }
 - { record: module.zinc-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "68cee0c7ff14143b" }
@@ -1598,10 +1598,10 @@
 - { record: package.produce-crate, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "411efd4c2239362d" }
 - { record: package.skip, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "3a787175a737c3ba" }
 - { record: package.tote, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "37e204aee57569bd" }
-- { record: panel.deck-0p5x0p5, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "a81c10be1263e2f5" }
-- { record: panel.deck-1x0p5, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "a251433704e05cf4" }
-- { record: panel.deck-1x1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "9e0899c0936cfdf3" }
-- { record: panel.deck-2x1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "270b367a55751839" }
+- { record: panel.deck-0p5x0p5, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed", sha: "ad8e6323f96e21e9" }
+- { record: panel.deck-1x0p5, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed", sha: "33924dbe9b2eb95f" }
+- { record: panel.deck-1x1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed", sha: "8b8007d097595188" }
+- { record: panel.deck-2x1, at: "2026-10-25T05:05:00Z", status: draft, summary: "changed", sha: "f5355a486e5b1d16" }
 - { record: panel.floor-3x3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "2c0e9e73dfc6c9a5" }
 - { record: panel.floor-pressure-3x3, at: "2026-10-25T04:55:39Z", status: draft, summary: "changed: basis", sha: "aa3acdfb60424554" }
 - { record: panel.partition-3x3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "ba79e9e15ef29300" }

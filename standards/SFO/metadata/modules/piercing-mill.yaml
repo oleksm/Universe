@@ -12,9 +12,9 @@ staff:
   - { profession: profession.machinist, count: 4 }
   - { profession: profession.plant-operator, count: 4 }
   - { profession: profession.technician, count: 1 }
+does: "A hot round pierced to a tube, then cold-drawn to its wall."
 recipes:
   - makes: stock.st4340-tb-60x2
-    does: "A hot round pierced to a tube, then cold-drawn to its wall."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
@@ -22,7 +22,6 @@ recipes:
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-60x3
-    does: "A hot round pierced to a tube, then cold-drawn to its wall."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
@@ -30,7 +29,6 @@ recipes:
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-80x2
-    does: "A hot round pierced to a tube, then cold-drawn to its wall."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
@@ -38,7 +36,6 @@ recipes:
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-80x3
-    does: "A hot round pierced to a tube, then cold-drawn to its wall."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
@@ -46,7 +43,6 @@ recipes:
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-80x5
-    does: "A hot round pierced to a tube, then cold-drawn to its wall."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
@@ -54,7 +50,6 @@ recipes:
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-100x3
-    does: "A hot round pierced to a tube, then cold-drawn to its wall."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
@@ -62,7 +57,6 @@ recipes:
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-100x5
-    does: "A hot round pierced to a tube, then cold-drawn to its wall."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
@@ -70,7 +64,6 @@ recipes:
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-120x3
-    does: "A hot round pierced to a tube, then cold-drawn to its wall."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
@@ -78,7 +71,6 @@ recipes:
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-120x5
-    does: "A hot round pierced to a tube, then cold-drawn to its wall."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
@@ -86,7 +78,6 @@ recipes:
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-160x3
-    does: "A hot round pierced to a tube, then cold-drawn to its wall."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
@@ -94,7 +85,6 @@ recipes:
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-160x5
-    does: "A hot round pierced to a tube, then cold-drawn to its wall."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
@@ -102,7 +92,6 @@ recipes:
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-160x8
-    does: "A hot round pierced to a tube, then cold-drawn to its wall."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
@@ -110,7 +99,6 @@ recipes:
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-200x5
-    does: "A hot round pierced to a tube, then cold-drawn to its wall."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
@@ -118,7 +106,6 @@ recipes:
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-200x8
-    does: "A hot round pierced to a tube, then cold-drawn to its wall."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
@@ -126,7 +113,6 @@ recipes:
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-250x5
-    does: "A hot round pierced to a tube, then cold-drawn to its wall."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
@@ -134,7 +120,6 @@ recipes:
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-250x8
-    does: "A hot round pierced to a tube, then cold-drawn to its wall."
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:

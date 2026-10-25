@@ -15,10 +15,9 @@ staff:
   count: 4
 - profession: profession.technician
   count: 1
+does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are separate.
 recipes:
 - makes: module.cable-works
-  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
-    separate.
   inputs:
   - item: part.wk01-01
     quantity: 0.4
@@ -31,8 +30,6 @@ recipes:
   rate: 0.25
   power: 1000000
 - makes: module.pipe-shop
-  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
-    separate.
   inputs:
   - item: part.wk02-01
     quantity: 0.4
@@ -45,8 +42,6 @@ recipes:
   rate: 0.25
   power: 1000000
 - makes: module.hose-works
-  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
-    separate.
   inputs:
   - item: part.wk03-01
     quantity: 0.4
@@ -59,8 +54,6 @@ recipes:
   rate: 0.25
   power: 1000000
 - makes: module.valve-shop
-  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
-    separate.
   inputs:
   - item: part.wk04-01
     quantity: 0.4
@@ -73,8 +66,6 @@ recipes:
   rate: 0.25
   power: 1000000
 - makes: module.electrical-fittings-works
-  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
-    separate.
   inputs:
   - item: part.wk05-01
     quantity: 0.4
@@ -87,8 +78,6 @@ recipes:
   rate: 0.25
   power: 1000000
 - makes: module.building-panel-works
-  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
-    separate.
   inputs:
   - item: part.wk06-01
     quantity: 0.4
@@ -101,8 +90,6 @@ recipes:
   rate: 0.25
   power: 1000000
 - makes: module.cradle-shop
-  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
-    separate.
   inputs:
   - item: part.wk07-01
     quantity: 0.4
@@ -115,8 +102,6 @@ recipes:
   rate: 0.25
   power: 1000000
 - makes: module.conveyor-shop
-  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
-    separate.
   inputs:
   - item: part.wk08-01
     quantity: 0.4
@@ -129,8 +114,6 @@ recipes:
   rate: 0.25
   power: 1000000
 - makes: module.specialty-chemical-works
-  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
-    separate.
   inputs:
   - item: part.wk09-01
     quantity: 0.4
@@ -143,8 +126,6 @@ recipes:
   rate: 0.25
   power: 1000000
 - makes: module.packaging-works
-  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
-    separate.
   inputs:
   - item: part.wk10-01
     quantity: 0.4
@@ -157,8 +138,6 @@ recipes:
   rate: 0.25
   power: 1000000
 - makes: module.factory-works
-  does: Assemble the works' frames, process machinery, drives and controls, then commission it. Draft construction budget; foundations and buildings are
-    separate.
   inputs:
   - item: part.wk11-01
     quantity: 0.4

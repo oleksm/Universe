@@ -13,9 +13,9 @@ staff:
   - { profession: profession.metalworker, count: 2 }
   - { profession: profession.technician, count: 1 }
   - { profession: profession.engineer, count: 1 }
+does: "The steel is poured into moulds and stripped out as ingots."
 recipes:
   - makes: stock.sta36-ingot
-    does: "The steel is poured into moulds and stripped out as ingots."
     inputs:
       - { item: good.refined-steel-a36, quantity: 1.16 }
     outputs:
@@ -24,7 +24,6 @@ recipes:
     batch: 80000
     power: 1000000
   - makes: stock.st4340-ingot
-    does: "The steel is poured into moulds and stripped out as ingots."
     inputs:
       - { item: good.refined-steel-4340, quantity: 1.16 }
     outputs:
@@ -33,7 +32,6 @@ recipes:
     batch: 80000
     power: 1000000
   - makes: stock.st304-ingot
-    does: "The steel is poured into moulds and stripped out as ingots."
     inputs:
       - { item: good.refined-steel-304, quantity: 1.16 }
     outputs:

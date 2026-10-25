@@ -14,9 +14,9 @@ staff:
   count: 4
 - profession: profession.technician
   count: 1
+does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
 recipes:
 - makes: stock.kit-hose-dn100-pn16
-  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
   inputs:
   - item: stock.chem-epdm-rubber
     quantity: 0.7623
@@ -28,7 +28,6 @@ recipes:
   rate: 0.5
   power: 2000000.0
 - makes: stock.kit-hose-dn150-pn16
-  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
   inputs:
   - item: stock.chem-epdm-rubber
     quantity: 0.7614
@@ -40,7 +39,6 @@ recipes:
   rate: 0.5
   power: 2000000.0
 - makes: stock.kit-hose-dn25-pn16
-  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
   inputs:
   - item: stock.chem-epdm-rubber
     quantity: 0.762
@@ -52,7 +50,6 @@ recipes:
   rate: 0.5
   power: 2000000.0
 - makes: stock.kit-hose-dn50-pn16
-  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
   inputs:
   - item: stock.chem-epdm-rubber
     quantity: 0.7618
@@ -64,7 +61,6 @@ recipes:
   rate: 0.5
   power: 2000000.0
 - makes: stock.kit-hose-hydraulic-dn13
-  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.5664
@@ -76,7 +72,6 @@ recipes:
   rate: 0.5
   power: 2000000.0
 - makes: stock.kit-hose-hydraulic-dn19
-  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.5671
@@ -88,7 +83,6 @@ recipes:
   rate: 0.5
   power: 2000000.0
 - makes: stock.kit-hose-hydraulic-dn25
-  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.5665
@@ -100,7 +94,6 @@ recipes:
   rate: 0.5
   power: 2000000.0
 - makes: stock.kit-hose-hydraulic-dn6
-  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.5663
@@ -112,7 +105,6 @@ recipes:
   rate: 0.5
   power: 2000000.0
 - makes: stock.kit-hose-metal-dn100
-  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -122,7 +114,6 @@ recipes:
   rate: 0.5
   power: 2000000.0
 - makes: stock.kit-hose-metal-dn200
-  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -132,7 +123,6 @@ recipes:
   rate: 0.5
   power: 2000000.0
 - makes: stock.kit-hose-metal-dn25
-  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03
@@ -142,7 +132,6 @@ recipes:
   rate: 0.5
   power: 2000000.0
 - makes: stock.kit-hose-metal-dn50
-  does: A tube is extruded or corrugated, braided, covered, cured and cut to lengths.
   inputs:
   - item: stock.st304-pl-3
     quantity: 1.03

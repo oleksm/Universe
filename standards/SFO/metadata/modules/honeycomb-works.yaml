@@ -11,9 +11,9 @@ physical:
 staff:
   - { profession: profession.technician, count: 4 }
   - { profession: profession.plant-operator, count: 2 }
+does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
 recipes:
   - makes: stock.hc-al-12p7
-    does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
     inputs:
       - { item: stock.al6061-sh-2, quantity: 1.1 }
     outputs:
@@ -21,7 +21,6 @@ recipes:
     rate: 0.3
     power: 400000
   - makes: stock.hc-al-25p4
-    does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
     inputs:
       - { item: stock.al6061-sh-2, quantity: 1.1 }
     outputs:
@@ -29,7 +28,6 @@ recipes:
     rate: 0.3
     power: 400000
   - makes: stock.hc-al-50p8
-    does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
     inputs:
       - { item: stock.al6061-sh-2, quantity: 1.1 }
     outputs:
@@ -37,28 +35,24 @@ recipes:
     rate: 0.3
     power: 400000
   - makes: stock.hc-ar-12p7
-    does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
     inputs:
       - { item: stock.aramid-fb, quantity: 0.75 }
       - { item: good.polyethylene, quantity: 0.35 }
     rate: 0.3
     power: 400000
   - makes: stock.hc-ar-25p4
-    does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
     inputs:
       - { item: stock.aramid-fb, quantity: 0.75 }
       - { item: good.polyethylene, quantity: 0.35 }
     rate: 0.3
     power: 400000
   - makes: stock.hc-ar-50p8
-    does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
     inputs:
       - { item: stock.aramid-fb, quantity: 0.75 }
       - { item: good.polyethylene, quantity: 0.35 }
     rate: 0.3
     power: 400000
   - makes: stock.hc-ti-25p4
-    does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
     inputs:
       - { item: stock.ti64-sh-0p4, quantity: 1.1 }
     outputs:
@@ -66,7 +60,6 @@ recipes:
     rate: 0.3
     power: 400000
   - makes: stock.hc-ti-50p8
-    does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
     inputs:
       - { item: stock.ti64-sh-0p4, quantity: 1.1 }
     outputs:

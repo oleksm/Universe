@@ -329,7 +329,7 @@ def old_names(rec, path, schema=None):
         r = (rec.get("recipes") or [{}])[0]
         k_ = 3.6e9 / 1000 / (r["supplies"] * 1e6) if "supplies" in r else 1
         amt = lambda xs: [{"item": x["item"], "amount": float(f"{x['quantity'] * k_:.12g}") if "supplies" in r else x["quantity"]} for x in xs]
-        every = [{"product": q.get("makes"), "does": q.get("does"), "throughput": q.get("rate"), "batch": q.get("batch"), "power": q.get("power", 0), "supplies": q.get("supplies"),
+        every = [{"product": q.get("makes"), "does": q.get("does") or rec.get("does"), "throughput": q.get("rate"), "batch": q.get("batch"), "power": q.get("power", 0), "supplies": q.get("supplies"),
                   "inputs": [{"item": x["item"], "amount": x["quantity"]} for x in q.get("inputs") or []] if "supplies" not in q else amt(q.get("inputs") or []),
                   "outputs": [{"item": x["item"], "amount": x["quantity"]} for x in q.get("outputs") or []]} for q in rec.get("recipes") or []]
         rate = {**({"throughput": r["rate"]} if "rate" in r else {}), **({"batch": r["batch"]} if "batch" in r else {}), **(rec.get("capacity") or {}),
@@ -1125,7 +1125,7 @@ def route_for(where, fc, ln, target):
     if target not in {r.get("product") for r in chosen.values()}:
         problem(where, f"lines: none of the line's modules has a recipe that makes {target}")
         return None
-    steps = [{"module": s, "does": (chosen.get(s) or {}).get("does") or mod_of[s]["identity"].get("description", "")} for s in order]
+    steps = [{"module": s, "does": (chosen.get(s) or {}).get("does") or mod_of[s].get("does") or mod_of[s]["identity"].get("description", "")} for s in order]
     ms = next((x for x in mill_stock if x.get("slug") == target), None)
     slug = "make-" + target.lower()
     same = next((r for r in routes if r["makes"] == target and [st["module"] for st in r["equipment"]["steps"]] == order), None)

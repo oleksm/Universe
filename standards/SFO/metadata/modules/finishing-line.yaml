@@ -12,9 +12,9 @@ staff:
   - { profession: profession.machinist, count: 4 }
   - { profession: profession.plant-operator, count: 4 }
   - { profession: profession.technician, count: 1 }
+does: "It is levelled, brought to its temper and cut into sheets and plates."
 recipes:
   - makes: stock.al6061-pl-5
-    does: "It is levelled, brought to its temper and cut into sheets and plates."
     inputs:
       - { item: good.cold-rolled-strip-6061, quantity: 1.05 }
     outputs:
@@ -22,7 +22,6 @@ recipes:
     rate: 16.6666666666667
     power: 2000000
   - makes: stock.al6061-sh-2
-    does: "It is levelled, brought to its temper and cut into sheets and plates."
     inputs:
       - { item: good.cold-rolled-strip-6061, quantity: 1.05 }
     outputs:
@@ -30,7 +29,6 @@ recipes:
     rate: 16.6666666666667
     power: 2000000
   - makes: stock.al6061-pl-8
-    does: "It is levelled, brought to its temper and cut into sheets and plates."
     inputs:
       - { item: good.cold-rolled-strip-6061, quantity: 1.05 }
     outputs:
@@ -38,7 +36,6 @@ recipes:
     rate: 16.6666666666667
     power: 2000000
   - makes: stock.al6061-sh-3
-    does: "It is levelled, brought to its temper and cut into sheets and plates."
     inputs:
       - { item: good.cold-rolled-strip-6061, quantity: 1.05 }
     outputs:

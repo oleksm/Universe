@@ -11,9 +11,9 @@ physical:
 site: open sky
 staff:
   - { profession: profession.farmer, count: 2 }
+does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
 recipes:
   - makes: good.wheat
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 2.589, from: place }
       - { item: good.water, quantity: 1.178, from: place }
@@ -24,7 +24,6 @@ recipes:
     rate: 0.01152
     power: 20000
   - makes: good.rice
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 2.849, from: place }
       - { item: good.water, quantity: 1.292, from: place }
@@ -35,7 +34,6 @@ recipes:
     rate: 0.01507
     power: 20000
   - makes: good.maize
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 2.538, from: place }
       - { item: good.water, quantity: 1.174, from: place }
@@ -46,7 +44,6 @@ recipes:
     rate: 0.01839
     power: 20000
   - makes: good.barley
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 2.729, from: place }
       - { item: good.water, quantity: 1.237, from: place }
@@ -57,7 +54,6 @@ recipes:
     rate: 0.01022
     power: 20000
   - makes: good.oats
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 2.972, from: place }
       - { item: good.water, quantity: 1.338, from: place }
@@ -68,7 +64,6 @@ recipes:
     rate: 0.008328
     power: 20000
   - makes: good.potatoes
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 0.4022, from: place }
       - { item: good.water, quantity: 0.9585, from: place }
@@ -79,7 +74,6 @@ recipes:
     rate: 0.07244
     power: 20000
   - makes: good.sweet-potatoes
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 0.4377, from: place }
       - { item: good.water, quantity: 0.9545, from: place }
@@ -90,7 +84,6 @@ recipes:
     rate: 0.03993
     power: 20000
   - makes: good.cassava
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 0.8791, from: place }
       - { item: good.water, quantity: 0.9597, from: place }
@@ -101,7 +94,6 @@ recipes:
     rate: 0.03229
     power: 20000
   - makes: good.soybeans
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 4.109, from: place }
       - { item: good.water, quantity: 1.783, from: place }
@@ -112,7 +104,6 @@ recipes:
     rate: 0.0088
     power: 20000
   - makes: good.beans
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 3.931, from: place }
       - { item: good.water, quantity: 1.759, from: place }
@@ -123,7 +114,6 @@ recipes:
     rate: 0.002847
     power: 20000
   - makes: good.peas
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 4.11, from: place }
       - { item: good.water, quantity: 1.785, from: place }
@@ -134,7 +124,6 @@ recipes:
     rate: 0.006097
     power: 20000
   - makes: good.lentils
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 4.105, from: place }
       - { item: good.water, quantity: 1.789, from: place }
@@ -145,7 +134,6 @@ recipes:
     rate: 0.003891
     power: 20000
   - makes: good.chickpeas
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 4.129, from: place }
       - { item: good.water, quantity: 1.794, from: place }
@@ -156,7 +144,6 @@ recipes:
     rate: 0.003787
     power: 20000
   - makes: good.rapeseed
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 4.13, from: place }
       - { item: good.water, quantity: 1.783, from: place }
@@ -167,7 +154,6 @@ recipes:
     rate: 0.006496
     power: 20000
   - makes: good.sunflower-seed
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 3.952, from: place }
       - { item: good.water, quantity: 1.682, from: place }
@@ -178,7 +164,6 @@ recipes:
     rate: 0.005761
     power: 20000
   - makes: good.groundnuts
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 2.681, from: place }
       - { item: good.water, quantity: 1.186, from: place }
@@ -189,7 +174,6 @@ recipes:
     rate: 0.005853
     power: 20000
   - makes: good.sugar-beet
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 0.3663, from: place }
       - { item: good.water, quantity: 0.9624, from: place }
@@ -200,7 +184,6 @@ recipes:
     rate: 0.1999
     power: 20000
   - makes: good.sugarcane
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 0.5305, from: place }
       - { item: good.water, quantity: 0.9154, from: place }
@@ -211,7 +194,6 @@ recipes:
     rate: 0.2298
     power: 20000
   - makes: good.hay
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 1.261, from: place }
       - { item: good.water, quantity: 0.652, from: place }
@@ -221,7 +203,6 @@ recipes:
     rate: 0.01762
     power: 20000
   - makes: good.seed-cotton
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 3.339, from: place }
       - { item: good.water, quantity: 1.46, from: place }
@@ -232,7 +213,6 @@ recipes:
     rate: 0.007485
     power: 20000
   - makes: good.flax
-    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
       - { item: good.carbon-dioxide, quantity: 11.75, from: place }
       - { item: good.water, quantity: 4.96, from: place }

@@ -18,9 +18,9 @@ staff:
   count: 2
 - profession: profession.technician
   count: 1
+does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
 recipes:
 - makes: stock.kit-bus-joint-ac-27ka
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.cu-ingot
     quantity: 0.8378
@@ -36,7 +36,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-bus-joint-ac-65ka
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.cu-ingot
     quantity: 0.8762
@@ -52,7 +51,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-bus-joint-dc-44ka
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.cu-ingot
     quantity: 0.861
@@ -68,7 +66,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-busbar-ac-27ka
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.cu-ingot
     quantity: 0.8177
@@ -84,7 +81,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-busbar-ac-65ka
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.cu-ingot
     quantity: 0.8543
@@ -100,7 +96,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-busbar-dc-44ka
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.cu-ingot
     quantity: 0.8504
@@ -116,7 +111,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-cable-reel-11kv-3x95-300m
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.5567
@@ -130,7 +124,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-cable-reel-690v-4x35-100m
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7236
@@ -144,7 +137,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-cable-reel-690v-4x95-200m
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.517
@@ -158,7 +150,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-circular-shell-11
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7403
@@ -174,7 +165,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-circular-shell-17
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7642
@@ -190,7 +180,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-circular-shell-25
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7602
@@ -206,7 +195,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-circular-shell-33
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7592
@@ -222,7 +210,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-collector-1000a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.618
@@ -238,7 +225,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-collector-100a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.618
@@ -254,7 +240,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-collector-250a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.618
@@ -270,7 +255,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-collector-500a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.618
@@ -286,7 +270,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-conductor-rail-1000a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.cu-ingot
     quantity: 0.7324
@@ -302,7 +285,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-conductor-rail-100a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: good.polyethylene
     quantity: 0.4622
@@ -318,7 +300,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-conductor-rail-250a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.cu-ingot
     quantity: 0.515
@@ -334,7 +315,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-conductor-rail-500a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.cu-ingot
     quantity: 0.6499
@@ -350,7 +330,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-coupler-11kv-400a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.chem-epdm-rubber
     quantity: 0.6453
@@ -366,7 +345,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-festoon-690v-4x16
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.8197
@@ -380,7 +358,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-festoon-690v-4x35
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.6788
@@ -394,7 +371,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-festoon-690v-4x95
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.cu-ingot
     quantity: 0.5847
@@ -408,7 +384,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-hvdc-pole-1000a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.4623
@@ -424,7 +399,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-hvdc-pole-150a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.462
@@ -440,7 +414,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-hvdc-pole-400a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.4628
@@ -456,7 +429,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-hvdc-pole-650a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.4624
@@ -472,7 +444,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-plug-iec60309-125a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: good.polyethylene
     quantity: 0.7
@@ -484,7 +455,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-plug-iec60309-16a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: good.polyethylene
     quantity: 0.7
@@ -496,7 +466,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-plug-iec60309-32a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: good.polyethylene
     quantity: 0.7
@@ -508,7 +477,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-plug-iec60309-63a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: good.polyethylene
     quantity: 0.7
@@ -520,7 +488,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-powerlock-400a
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.chem-epdm-rubber
     quantity: 0.4494
@@ -536,7 +503,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-11kv-500mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.chem-silicone-rubber
     quantity: 0.7052
@@ -552,7 +518,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-132kv-240mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.fs-pl-6
     quantity: 0.656
@@ -570,7 +535,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-33kv-120mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.chem-silicone-rubber
     quantity: 0.9193
@@ -586,7 +550,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-33kv-150mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.chem-silicone-rubber
     quantity: 0.918
@@ -602,7 +565,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-33kv-185mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.chem-silicone-rubber
     quantity: 0.9154
@@ -618,7 +580,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-33kv-630mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.chem-silicone-rubber
     quantity: 0.8886
@@ -634,7 +595,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-400v-120mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9196
@@ -648,7 +608,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-400v-16mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 1.0098
@@ -662,7 +621,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-400v-185mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.8729
@@ -676,7 +634,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-400v-240mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.8306
@@ -690,7 +647,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-400v-25mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 1.0098
@@ -704,7 +660,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-400v-300mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7923
@@ -718,7 +673,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-400v-35mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9904
@@ -732,7 +686,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-400v-400mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.7464
@@ -746,7 +699,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-400v-500mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.6959
@@ -760,7 +712,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-400v-50mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9904
@@ -774,7 +725,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-400v-630mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.6438
@@ -788,7 +738,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-400v-70mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9717
@@ -802,7 +751,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-400v-95mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.al6061-pl-5
     quantity: 0.9364
@@ -816,7 +764,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-6p6kv-185mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.chem-silicone-rubber
     quantity: 0.6289
@@ -832,7 +779,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-6p6kv-400mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.chem-silicone-rubber
     quantity: 0.5917
@@ -848,7 +794,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-6p6kv-50mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.chem-silicone-rubber
     quantity: 0.6579
@@ -864,7 +809,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-6p6kv-630mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.chem-silicone-rubber
     quantity: 0.5556
@@ -880,7 +824,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-6p6kv-70mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.chem-silicone-rubber
     quantity: 0.6536
@@ -896,7 +839,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-termination-6p6kv-95mm2
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.chem-silicone-rubber
     quantity: 0.6452
@@ -912,7 +854,6 @@ recipes:
   rate: 0.3
   power: 1500000.0
 - makes: stock.kit-wiring-box-lv
-  does: Copper is machined into contacts and bars, housings and insulators are moulded, and the whole assembled and tested.
   inputs:
   - item: stock.sta36-pl-8
     quantity: 0.7357

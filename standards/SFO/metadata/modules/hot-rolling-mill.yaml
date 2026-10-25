@@ -12,6 +12,7 @@ staff:
   - { profession: profession.machinist, count: 4 }
   - { profession: profession.plant-operator, count: 4 }
   - { profession: profession.technician, count: 1 }
+does: "A hot ingot of structural steel passed between rolls until it is plate."
 recipes:
   - makes: good.hot-rolled-strip-6061
     does: "It is squeezed between rolls, pass after pass, into a long thick strip."
@@ -30,7 +31,6 @@ recipes:
     rate: 27.7777777777778
     power: 26500000.0
   - makes: stock.sta36-pl-20
-    does: "A hot ingot of structural steel passed between rolls until it is plate."
     inputs:
       - { item: good.hot-ingot-a36, quantity: 1.22 }
     outputs:
@@ -38,7 +38,6 @@ recipes:
     rate: 27.7777777777778
     power: 26500000.0
   - makes: stock.sta36-pl-8
-    does: "A hot ingot of structural steel passed between rolls until it is plate."
     inputs:
       - { item: good.hot-ingot-a36, quantity: 1.22 }
     outputs:

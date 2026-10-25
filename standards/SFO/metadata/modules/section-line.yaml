@@ -11,9 +11,9 @@ physical:
 staff:
   - { profession: profession.welder, count: 4 }
   - { profession: profession.technician, count: 1 }
+does: "Four plates cut to width, tacked square and welded along the corners."
 recipes:
   - makes: stock.st4340-box-300x300x20
-    does: "Four plates cut to width, tacked square and welded along the corners."
     inputs:
       - { item: stock.st4340-pl-20, quantity: 1.06 }
     outputs:
@@ -21,7 +21,6 @@ recipes:
     rate: 0.5
     power: 500000
   - makes: stock.st4340-box-400x400x25
-    does: "Four plates cut to width, tacked square and welded along the corners."
     inputs:
       - { item: stock.st4340-pl-25, quantity: 1.06 }
     outputs:

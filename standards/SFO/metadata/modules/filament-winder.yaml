@@ -12,9 +12,9 @@ staff:
   - { profession: profession.machinist, count: 4 }
   - { profession: profession.plant-operator, count: 4 }
   - { profession: profession.technician, count: 1 }
+does: "Carbon tow wound wet round a mandrel and cured."
 recipes:
   - makes: stock.cfc-tb-60x2
-    does: "Carbon tow wound wet round a mandrel and cured."
     inputs:
       - { item: good.polyethylene, quantity: 1.617 }
     outputs:
@@ -22,7 +22,6 @@ recipes:
     rate: 0.02
     power: 2000000
   - makes: stock.cfc-tb-60x3
-    does: "Carbon tow wound wet round a mandrel and cured."
     inputs:
       - { item: good.polyethylene, quantity: 1.617 }
     outputs:
@@ -30,7 +29,6 @@ recipes:
     rate: 0.02
     power: 2000000
   - makes: stock.cfc-tb-80x2
-    does: "Carbon tow wound wet round a mandrel and cured."
     inputs:
       - { item: good.polyethylene, quantity: 1.617 }
     outputs:
@@ -38,7 +36,6 @@ recipes:
     rate: 0.02
     power: 2000000
   - makes: stock.cfc-tb-80x3
-    does: "Carbon tow wound wet round a mandrel and cured."
     inputs:
       - { item: good.polyethylene, quantity: 1.617 }
     outputs:
@@ -46,7 +43,6 @@ recipes:
     rate: 0.02
     power: 2000000
   - makes: stock.cfc-tb-100x2
-    does: "Carbon tow wound wet round a mandrel and cured."
     inputs:
       - { item: good.polyethylene, quantity: 1.617 }
     outputs:
@@ -54,7 +50,6 @@ recipes:
     rate: 0.02
     power: 2000000
   - makes: stock.cfc-tb-100x3
-    does: "Carbon tow wound wet round a mandrel and cured."
     inputs:
       - { item: good.polyethylene, quantity: 1.617 }
     outputs:
@@ -62,7 +57,6 @@ recipes:
     rate: 0.02
     power: 2000000
   - makes: stock.cfc-tb-100x5
-    does: "Carbon tow wound wet round a mandrel and cured."
     inputs:
       - { item: good.polyethylene, quantity: 1.617 }
     outputs:
@@ -70,7 +64,6 @@ recipes:
     rate: 0.02
     power: 2000000
   - makes: stock.cfc-tb-120x3
-    does: "Carbon tow wound wet round a mandrel and cured."
     inputs:
       - { item: good.polyethylene, quantity: 1.617 }
     outputs:
@@ -78,7 +71,6 @@ recipes:
     rate: 0.02
     power: 2000000
   - makes: stock.cfc-tb-120x5
-    does: "Carbon tow wound wet round a mandrel and cured."
     inputs:
       - { item: good.polyethylene, quantity: 1.617 }
     outputs:
@@ -86,7 +78,6 @@ recipes:
     rate: 0.02
     power: 2000000
   - makes: stock.cfc-tb-160x3
-    does: "Carbon tow wound wet round a mandrel and cured."
     inputs:
       - { item: good.polyethylene, quantity: 1.617 }
     outputs:
@@ -94,7 +85,6 @@ recipes:
     rate: 0.02
     power: 2000000
   - makes: stock.cfc-tb-160x5
-    does: "Carbon tow wound wet round a mandrel and cured."
     inputs:
       - { item: good.polyethylene, quantity: 1.617 }
     outputs:
@@ -102,7 +92,6 @@ recipes:
     rate: 0.02
     power: 2000000
   - makes: stock.cfc-tb-200x5
-    does: "Carbon tow wound wet round a mandrel and cured."
     inputs:
       - { item: good.polyethylene, quantity: 1.617 }
     outputs:
@@ -110,7 +99,6 @@ recipes:
     rate: 0.02
     power: 2000000
   - makes: stock.cfc-tb-200x8
-    does: "Carbon tow wound wet round a mandrel and cured."
     inputs:
       - { item: good.polyethylene, quantity: 1.617 }
     outputs:
@@ -118,7 +106,6 @@ recipes:
     rate: 0.02
     power: 2000000
   - makes: stock.cfc-tb-250x5
-    does: "Carbon tow wound wet round a mandrel and cured."
     inputs:
       - { item: good.polyethylene, quantity: 1.617 }
     outputs:
@@ -126,7 +113,6 @@ recipes:
     rate: 0.02
     power: 2000000
   - makes: stock.cfc-tb-250x8
-    does: "Carbon tow wound wet round a mandrel and cured."
     inputs:
       - { item: good.polyethylene, quantity: 1.617 }
     outputs:

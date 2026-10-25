@@ -22,53 +22,9 @@ built_of:
   mass: 0.15938280935569557
   note: 40 x 40 x 40 mm 6061, nominal M16 blind bore 25 mm deep from bottom; measured cut volume
 ports:
-- id: panel-a
-  flow: in
-  medium: load
-  interface: interface.insert-m10
-  half: female
-  make: bolted
-  at:
-  - 0.0
-  - -0.04
-  - 0.0
-  facing:
-  - 0.0
-  - 0.0
-  - 1.0
-  optional: true
-  note: One panel edge per seat. At least one seat must be linked; a perimeter shoe may leave the other spare. Thread/insert and bearing strength unqualified.
-- id: panel-b
-  flow: in
-  medium: load
-  interface: interface.insert-m10
-  half: female
-  make: bolted
-  at:
-  - 0.0
-  - 0.04
-  - 0.0
-  facing:
-  - 0.0
-  - 0.0
-  - 1.0
-  optional: true
-  note: One panel edge per seat. At least one seat must be linked; a perimeter shoe may leave the other spare. Thread/insert and bearing strength unqualified.
-- id: frame
-  flow: out
-  medium: load
-  interface: interface.kit-clamp
-  half: male
-  make: bolted
-  at:
-  - 0.0
-  - 0.0
-  - -0.06
-  facing:
-  - 0.0
-  - 0.0
-  - -1.0
-  note: 'Required: one strut clamp. Resolve both seat forces and their offset moments at this face, including the 60 mm vertical offset; no stiffness or load rating is approved.'
+- {id: panel-a, flow: in, medium: load, interface: interface.insert-m10, half: female, make: bolted, at: [0.0, -0.04, 0.0], facing: [0.0, 0.0, 1.0], optional: true, note: One panel edge per seat. At least one seat must be linked; a perimeter shoe may leave the other spare. Thread/insert and bearing strength unqualified.}
+- {id: panel-b, flow: in, medium: load, interface: interface.insert-m10, half: female, make: bolted, at: [0.0, 0.04, 0.0], facing: [0.0, 0.0, 1.0], optional: true, note: One panel edge per seat. At least one seat must be linked; a perimeter shoe may leave the other spare. Thread/insert and bearing strength unqualified.}
+- {id: frame, flow: out, medium: load, interface: interface.kit-clamp, half: male, make: bolted, at: [0.0, 0.0, -0.06], facing: [0.0, 0.0, -1.0], note: 'Required: one strut clamp. Resolve both seat forces and their offset moments at this face, including the 60 mm vertical offset; no stiffness or load rating is approved.'}
 template: template.support-shoe
 basis:
 - of:

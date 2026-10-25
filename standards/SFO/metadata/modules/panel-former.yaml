@@ -10,21 +10,19 @@ physical:
   height: 8
 staff:
   - { profession: profession.metalworker, count: 3 }
+does: "Each cut blank is pressed or rolled to its curve."
 recipes:
   - makes: stock.al6061-sh-2-panel
-    does: "Each cut blank is pressed or rolled to its curve."
     inputs:
       - { item: stock.al6061-sh-2-blank, quantity: 1.0 }
     rate: 0.555555555555556
     power: 300000.0
   - makes: stock.al6061-pl-5-panel
-    does: "Each cut blank is pressed or rolled to its curve."
     inputs:
       - { item: stock.al6061-pl-5-blank, quantity: 1.0 }
     rate: 0.555555555555556
     power: 300000.0
   - makes: stock.sta36-pl-20-panel
-    does: "Each cut blank is pressed or rolled to its curve."
     inputs:
       - { item: stock.sta36-pl-20-blank, quantity: 1.0 }
     rate: 0.555555555555556
