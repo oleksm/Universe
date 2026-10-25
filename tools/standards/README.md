@@ -108,5 +108,8 @@ A candidate is JSON that replaces the record's fields before it is adopted, for 
 Message the registry only then. `missing "<what>" --for=<key>` prints the one command to send. The registry makes
 the record and exposes it through this CLI.
 
+Every object against its schema (records, other YAML, model packages, and schemas against the game's type
+generator): `python3 tools/standards/schema_audit.py [--codegen] [--list] [--json]`.
+
 Code: `ship.py` (commands), `slot_spec.py` (spec, judge, ship values), `ship_qualify.py` (socket qualification). Tests:
 `test_ship_cli.py`, `test_slot_spec.py`, `test_ship_qualify.py`.
