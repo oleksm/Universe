@@ -12,6 +12,23 @@ description: 'standards/common.schema.yaml: what every schema of the registry sh
 # key against it.
 definitions:
   slot_kind: { $ref: "dictionary.schema.yaml#/definitions/slot_kind" }
+  spec_limit:
+    description: "One parameter of a slot's (or a hull's) spec and its limits: what a fitted product, or the ship it makes, must meet. A slot's spec is its mount's limits (kind, size class, envelope, bears, feeds) plus these; together they are the validation base (tools/standards/ship.py spec, shipyard)."
+    type: object
+    additionalProperties: false
+    required: [of]
+    properties:
+      of:
+        type: string
+        description: "The parameter. In a slot's spec: a path into the fitted product's record (physical.mass, function.thrust, function.cycle, function.range, needs.power, nozzles), or push: each of its nozzles' push direction in the hull's frame (the product's model root at the slot's mount_<slot> node; a nozzle node's local -Z is its exhaust, push the opposite). In a hull's spec, the ship as fitted: ship.mass (kg, hull and fit), ship.main_thrust and ship.lift_thrust (N, of the engines in main and lift slots), ship.main_to_weight and ship.lift_to_weight (at gravity), ship.power_margin (W, plants and battery rate less every draw), ship.attitude_axes (how many of the six turning senses its attitude nozzles give), ship.unfed_engines (fitted engines no fitted tank holds the propellant of)."
+      min: { type: number, x-unit-from: of, description: "The least it may be, in the unit of the parameter it limits (of); of a list, how few it may hold" }
+      max: { type: number, x-unit-from: of, description: "The most it may be, in the unit of the parameter it limits (of); of a list, how many it may hold" }
+      one_of: { type: array, minItems: 1, items: { type: [string, number, boolean], x-unit-from: of }, description: "The values it may take" }
+      present: { type: boolean, description: "true: the product must state it; false: it must not" }
+      axis: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "1", description: "For a direction (push): the way it must point, in the hull's frame (glTF: -Z the nose, +Y up)" }
+      within: { type: number, minimum: 0, maximum: 180, x-unit: "deg", description: "deg, how far from axis it may point" }
+      gravity: { type: number, exclusiveMinimum: 0, x-unit: "m/s2", description: "m/s2, the gravity a to_weight ratio is taken at" }
+      note: { type: string }
   made_from:
     description: "What a made thing is made from: each a material, an item of stock, a part or a good, by its key, and how much of it one takes. (A thing put together from parts of its own has none: they are in its folder.)"
     type: array

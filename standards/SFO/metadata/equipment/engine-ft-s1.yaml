@@ -39,6 +39,8 @@ function:
   shield_pass: 0.01
   reaction_offset: 1.8
   heat_to_hull: 0.00071
+nozzles:
+- {node: nozzle, share: 1.0}
 ports:
 - id: coolant-out-1
   flow: out

@@ -73,6 +73,8 @@ basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume, built_of.list], tier: derived, review: true, note: "The first box, 2.5 x 1.2 x 1.2 m, was set for 3.6 km/s; S4's layout scaled by the throat (0.467): 0.54 m of turbopumps, preburners, valves, injector and gimbal ahead of the injector face, 0.358 m of chamber and 0.677 m of bell: 1.57 m; the rim 0.561 + 2 x 0.023 m: 0.61 m. The whole engine swings on the gimbal, 0.26 rad in any direction; with the pivot 0.28 m behind the mount face (S4's 0.6 scaled) the rim sweeps about 0.62 m either side of the axis and 1.60 m aft of the face (1.29 sin 0.26 + 0.30 cos 0.26; 0.28 + 1.29 cos 0.26 + 0.30 sin 0.26), a swept box of about 1.24 x 1.24 x 1.60 m the hull leaves; to be measured. Feeds at the pump inlets at the S4 engine's speed (its 300 and 260 mm bores carry its flow at about 6.8 m/s; the first 5 m/s here was invented and would have swollen the engine): oxygen 119 kg/s, 0.104 m3/s, a 140 mm bore; methane 33 kg/s, 0.078 m3/s, a 121 mm bore, the S4 bores at the throat's scale. Part boxes and stock are mass proxies." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
+nozzles:
+- {node: nozzle_CHS3_exit, share: 1.0}
 # ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m80, half: male, make: bolted, mass: 75.0, force: 62500.0, at: [3.96, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s3''s socket of the same id, bolted through'}

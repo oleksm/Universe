@@ -75,6 +75,8 @@ basis:
   - { of: [physical.mass], tier: derived, review: true, note: "Mass screen (the modeller's candidate v01, measured visible volumes, titanium 4430 and steel 7850 kg/m3): 1,485 kg before the pump and turbine internals, with the chamber and nozzle counted as a solid copper envelope (556 kg, channels not hollowed, an upper bound), injector 85 kg, the four trunnion pins 206 kg. That leaves 145 kg of the 1,630 for impellers, turbines, shafts, preburner plumbing, seals and electronics. Pump work: 547 kg/s of oxygen and 152 kg/s of methane raised to about 45 MPa at 0.7 efficiency is about 55 MW of shaft. Flown turbopumps run roughly 100 to 200 kW per kg (invented, from memory), so 270 to 550 kg. A channel liner in a steel jacket (about 4.5 m2 of wall, 8 mm of copper, 3 mm of steel) weighs about 430 kg, not 556, which leaves about 270 kg: the low end. So the 1,630 kg holds only with light pumps and may be 0 to 400 kg short. Kept at 1,630 kg, not thinned; review once the internals are modelled. The parts list split (734, 489, 244, 163) is unchanged." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
+nozzles:
+- {node: nozzle_CHS4_exit, share: 1.0}
 # ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 203.75, force: 287500.0, at: [1.485, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s4''s socket of the same id, bolted through'}

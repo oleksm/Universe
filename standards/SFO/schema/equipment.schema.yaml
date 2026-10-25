@@ -600,6 +600,17 @@ properties:
         properties:
           kind: { const: camera }
           field_of_view: { type: number, x-unit: "rad", description: "rad across its picture" }
+  nozzles:
+    description: "An engine's exits: nodes of its own model, each at a share of its thrust (shares sum to 1). Where and which way each points is the node's (local -Z the exhaust); fitted, they sit where the slot's mount_<slot> frame puts the model."
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required: [node, share]
+      properties:
+        node: { type: string, description: "The exit node in the product's model, by name (nozzle_<name>)" }
+        share: { type: number, exclusiveMinimum: 0, maximum: 1, x-unit: "1", description: "Its share of the product's thrust" }
   ports: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/port" }, description: "Its ins and outs and where it bears, each built to an interface (SFO 26): what it takes and gives, at what duty, through which mating face." }
   internal: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/internal" }, description: "How its ports are joined inside it (a bus bar, breakers, a converter's input to its output); ports not listed are joined to nothing." }
   motion: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/motion" }, description: "How it, or a part of it, moves in service." }

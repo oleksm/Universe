@@ -619,23 +619,23 @@
 - { record: equipment.drive.torch.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "0a14cdeedce12f70" }
 - { record: equipment.drive.torch.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "26fafb39c8701a53" }
 - { record: equipment.drive.torch.s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "24c9d3643266e805" }
-- { record: equipment.engine.ca.s1, at: "2026-10-24T23:31:22Z", status: draft, summary: "changed: fits, ports", sha: "c6d22a4d8aa0b31f" }
-- { record: equipment.engine.cg.outboard-s1, at: "2026-10-24T23:31:22Z", status: draft, summary: "changed: fits, ports", sha: "a4508f59e24d0064" }
-- { record: equipment.engine.cg.s1, at: "2026-10-24T23:31:22Z", status: draft, summary: "changed: fits, ports", sha: "b1771b21fd9d03ba" }
-- { record: equipment.engine.cg.s2, at: "2026-10-24T23:31:22Z", status: draft, summary: "changed: fits, ports", sha: "9217cd18b9ffdd7b" }
-- { record: equipment.engine.ch.s1, at: "2026-10-24T23:31:22Z", status: draft, summary: "changed: fits, ports", sha: "2766a7b6f3246f46" }
-- { record: equipment.engine.ch.s2, at: "2026-10-23T00:34:57Z", status: draft, summary: "changed: function, basis", sha: "28e7c78e8cadef0f" }
-- { record: equipment.engine.ch.s3, at: "2026-10-23T00:34:57Z", status: draft, summary: "changed: function, basis", sha: "cceeff5cd621e5ac" }
-- { record: equipment.engine.ch.s4, at: "2026-10-23T00:34:57Z", status: draft, summary: "changed: function, basis", sha: "578d866ab62101f6" }
+- { record: equipment.engine.ca.s1, at: "2026-10-25T00:37:48Z", status: draft, summary: "changed: nozzles", sha: "cbceaf78b325ccd7" }
+- { record: equipment.engine.cg.outboard-s1, at: "2026-10-25T00:37:48Z", status: draft, summary: "changed: nozzles", sha: "ed03fb3f1024bcee" }
+- { record: equipment.engine.cg.s1, at: "2026-10-25T00:37:48Z", status: draft, summary: "changed: nozzles", sha: "105797615f9e7a63" }
+- { record: equipment.engine.cg.s2, at: "2026-10-25T00:37:48Z", status: draft, summary: "changed: nozzles", sha: "2e265e1bc9f5f40b" }
+- { record: equipment.engine.ch.s1, at: "2026-10-25T00:37:48Z", status: draft, summary: "changed: nozzles", sha: "ca1aee6ac8393f86" }
+- { record: equipment.engine.ch.s2, at: "2026-10-25T00:37:48Z", status: draft, summary: "changed: nozzles", sha: "367da0a35db130f8" }
+- { record: equipment.engine.ch.s3, at: "2026-10-25T00:37:48Z", status: draft, summary: "changed: nozzles", sha: "bd9464293a9d96c8" }
+- { record: equipment.engine.ch.s4, at: "2026-10-25T00:37:48Z", status: draft, summary: "changed: nozzles", sha: "6d726471207c4b2f" }
 - { record: equipment.engine.fan.s1, at: "2026-10-24T23:31:22Z", status: draft, summary: "changed: fits, ports", sha: "a2a4f29174b6ebd6" }
 - { record: equipment.engine.fan.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "2541fb14913bf787" }
 - { record: equipment.engine.fan.s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "24e903208b9ea540" }
-- { record: equipment.engine.ft.s1, at: "2026-10-18T20:04:33Z", status: draft, summary: "changed: ports", sha: "74b672354e588408" }
-- { record: equipment.engine.ft.s2, at: "2026-10-18T20:04:33Z", status: draft, summary: "changed: ports", sha: "c3ee9ba5f6a877f8" }
-- { record: equipment.engine.ft.s3, at: "2026-10-18T20:04:33Z", status: draft, summary: "changed: ports", sha: "bcc54619c847fcc9" }
-- { record: equipment.engine.nt.s1, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "79d29bfd7a8f204c" }
-- { record: equipment.engine.nt.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "a4b220ef9868b4ad" }
-- { record: equipment.engine.nt.s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "3184d645a005e925" }
+- { record: equipment.engine.ft.s1, at: "2026-10-25T00:37:48Z", status: draft, summary: "changed: nozzles", sha: "061b5806eed544f8" }
+- { record: equipment.engine.ft.s2, at: "2026-10-25T00:37:48Z", status: draft, summary: "changed: nozzles", sha: "d9794f008f33e232" }
+- { record: equipment.engine.ft.s3, at: "2026-10-25T00:37:48Z", status: draft, summary: "changed: nozzles", sha: "18594ac4a935e1ea" }
+- { record: equipment.engine.nt.s1, at: "2026-10-25T00:37:48Z", status: draft, summary: "changed: nozzles", sha: "ed3187d9c80a43a7" }
+- { record: equipment.engine.nt.s2, at: "2026-10-25T00:37:48Z", status: draft, summary: "changed: nozzles", sha: "c4a9a2ca1b6bb9d9" }
+- { record: equipment.engine.nt.s3, at: "2026-10-25T00:37:48Z", status: draft, summary: "changed: nozzles", sha: "e81f583928f80f87" }
 - { record: equipment.engine.swivel.s1, at: "2026-10-24T23:31:22Z", status: draft, summary: "changed: fits, ports", sha: "50363f496a0184e3" }
 - { record: equipment.engine.swivel.s2, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "5815cf14a64ca8ec" }
 - { record: equipment.engine.swivel.s3, at: "2026-10-18T17:53:40Z", status: draft, summary: "changed: ports", sha: "3a1061b3e5b1d220" }
@@ -1043,7 +1043,7 @@
 - { record: ground-vocabulary.pattern, at: "2026-10-17T15:44:28Z", status: "", summary: "changed", sha: "45bab9119969759f" }
 - { record: ground-vocabulary.rock, at: "2026-10-10T22:11:43Z", status: "", summary: "first tracked", sha: "7d3835cbcfa04d13" }
 - { record: hull.drover, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "43e4088fcb8c1351" }
-- { record: hull.explorer-study, at: "2026-10-24T23:55:46Z", status: draft, summary: "changed: model_sha256, slots, basis", sha: "9c607eb5689ffc60" }
+- { record: hull.explorer-study, at: "2026-10-25T00:37:48Z", status: draft, summary: "changed: slots, spec", sha: "8d50e37a785dd924" }
 - { record: hull.hauler, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "bb65478e558da977" }
 - { record: hull.interceptor, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "51cc059564d57a1f" }
 - { record: hull.mc-07, at: "2026-10-11T02:11:58Z", status: draft, summary: "changed: revision", sha: "30f561cfaeeb31c5" }
@@ -3429,6 +3429,7 @@
 - { record: ship-check.release, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "8e44bacc56de8691" }
 - { record: ship-check.requirements, at: "2026-10-22T00:31:15Z", status: "", summary: "changed: method", sha: "bbbc7c2900be7193" }
 - { record: ship-check.runtime, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "f64d017484fa3abe" }
+- { record: ship-check.shipyard-fit, at: "2026-10-25T00:37:48Z", status: "", summary: "first tracked", sha: "5e7fb96dd31a74d6" }
 - { record: ship-check.socket-qualification, at: "2026-10-24T23:24:09Z", status: "", summary: "first tracked", sha: "f9a28cf5a5ec0d1e" }
 - { record: ship-decision.autonomy, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "9321abdc1cef3af7" }
 - { record: ship-decision.budgets, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "45c194c39189f5d0" }

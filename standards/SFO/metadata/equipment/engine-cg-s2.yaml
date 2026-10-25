@@ -48,6 +48,11 @@ basis:
   - { of: [function, physical], tier: invented, review: true, note: "Scaled from the half-kilonewton block. From memory; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
+nozzles:
+- {node: nozzle_nx, share: 0.25}
+- {node: nozzle_ny, share: 0.25}
+- {node: nozzle_px, share: 0.25}
+- {node: nozzle_py, share: 0.25}
 # ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m10, half: male, make: bolted, mass: 10.0, force: 625.0, at: [0.594, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s1c''s socket of the same id, bolted through'}

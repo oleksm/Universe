@@ -154,14 +154,14 @@ slots:
 - {name: transponder, kind: transponder, size: 1, mount: mount.transponder-s1c}
 - {name: thermal_int_1, kind: thermal, size: 1, mount: mount.thermal-s1c}
 - {name: thermal_int_2, kind: thermal, size: 1, mount: mount.thermal-s1c}
-- {name: main_port, kind: engine, size: 1, mount: mount.engine-s1c}
-- {name: lift_port, kind: engine, size: 1, mount: mount.engine-s1c}
-- {name: rcs_fore_port, kind: engine, size: 1, mount: mount.engine-s1c}
-- {name: rcs_aft_port, kind: engine, size: 1, mount: mount.engine-s1c}
-- {name: main_starboard, kind: engine, size: 1, mount: mount.engine-s1c}
-- {name: lift_starboard, kind: engine, size: 1, mount: mount.engine-s1c}
-- {name: rcs_fore_starboard, kind: engine, size: 1, mount: mount.engine-s1c}
-- {name: rcs_aft_starboard, kind: engine, size: 1, mount: mount.engine-s1c}
+- {name: main_port, kind: engine, size: 1, mount: mount.engine-s1c, role: main, spec: [{of: nozzles, min: 1}, {of: function.cycle, one_of: [chemical, nuclear_thermal, fusion_thermal], note: 'a jet that is not pressure-fed; airless moon, no ducted fan'}, {of: push, axis: [0, 0, -1], within: 30, note: along the nose}]}
+- {name: lift_port, kind: engine, size: 1, mount: mount.engine-s1c, role: lift, spec: [{of: nozzles, min: 1}, {of: function.cycle, one_of: [chemical, nuclear_thermal, fusion_thermal], note: 'a jet that is not pressure-fed; airless moon, no ducted fan'}, {of: push, axis: [0, 1, 0], within: 30, note: up}]}
+- {name: rcs_fore_port, kind: engine, size: 1, mount: mount.engine-s1c, role: attitude, spec: [{of: nozzles, min: 1}, {of: function.cycle, one_of: [cold_gas], note: pressure-fed}]}
+- {name: rcs_aft_port, kind: engine, size: 1, mount: mount.engine-s1c, role: attitude, spec: [{of: nozzles, min: 1}, {of: function.cycle, one_of: [cold_gas], note: pressure-fed}]}
+- {name: main_starboard, kind: engine, size: 1, mount: mount.engine-s1c, role: main, spec: [{of: nozzles, min: 1}, {of: function.cycle, one_of: [chemical, nuclear_thermal, fusion_thermal], note: 'a jet that is not pressure-fed; airless moon, no ducted fan'}, {of: push, axis: [0, 0, -1], within: 30, note: along the nose}]}
+- {name: lift_starboard, kind: engine, size: 1, mount: mount.engine-s1c, role: lift, spec: [{of: nozzles, min: 1}, {of: function.cycle, one_of: [chemical, nuclear_thermal, fusion_thermal], note: 'a jet that is not pressure-fed; airless moon, no ducted fan'}, {of: push, axis: [0, 1, 0], within: 30, note: up}]}
+- {name: rcs_fore_starboard, kind: engine, size: 1, mount: mount.engine-s1c, role: attitude, spec: [{of: nozzles, min: 1}, {of: function.cycle, one_of: [cold_gas], note: pressure-fed}]}
+- {name: rcs_aft_starboard, kind: engine, size: 1, mount: mount.engine-s1c, role: attitude, spec: [{of: nozzles, min: 1}, {of: function.cycle, one_of: [cold_gas], note: pressure-fed}]}
 - {name: sensor_belly_1, kind: sensors, size: 1, mount: mount.sensors-s1c}
 - {name: sensor_belly_2, kind: sensors, size: 1, mount: mount.sensors-s1c}
 - {name: thermal_ext_1, kind: thermal, size: 1, mount: mount.thermal-s1c}
@@ -173,6 +173,11 @@ slots:
 - {name: tank_2, kind: tank, size: 1, mount: mount.tank-s1c}
 fit: []
 thrusters: []
+spec:
+- {of: ship.lift_to_weight, min: 1.0, gravity: 1.281, note: 'lifts off at Port Sirnendis (body.treistun.treistun-d-i, 1.281 m/s2); 1.0 is rising at all, any margin above it is the owner''s'}
+- {of: ship.attitude_axes, min: 6, note: turns both ways about all three axes}
+- {of: ship.power_margin, min: 0, note: plants and battery rate cover every draw}
+- {of: ship.unfed_engines, max: 0, note: every fitted engine's propellant held by a fitted tank}
 flight:
   frame_material: material.aluminium-alloy-6061
 open_questions:

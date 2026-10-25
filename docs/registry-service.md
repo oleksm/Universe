@@ -10,12 +10,14 @@ what the CLI can tell you. Add `--json` for machine-readable output.
 |---|---|
 | What a ship must carry to fly, what is optional | `python3 $S requirements` |
 | Sockets (mounts) a size class offers, which fit a hull | `python3 $S sockets --class=1 [--kind=engine] [--hull=hull.x \| --dims=L,W,H]` |
-| Products that fit a socket, a mount or a kind | `python3 $S modules --socket=hull.x:slot` / `--mount=mount.engine-s1c` / `--kind=tank --class=1` |
+| A slot's spec: every parameter a product there must meet (min, max, one of, push direction), and where each comes from | `python3 $S spec hull.x:slot` |
+| Products that fit a socket (judged on its whole spec), a mount or a kind | `python3 $S modules --socket=hull.x:slot [--all]` / `--mount=mount.engine-s1c` / `--kind=tank --class=1` |
 | One product's sheet: size, mass, power, ports and pins, mount, holder, model | `python3 $S product equipment.sensors.camera.s1` |
 | Any record: material (density), cable/wire run (OD, bend, amps), connector, interface, rule | `python3 $S get material.ptfe` |
 | Find a key | `python3 $S find shell 25` |
 | A hull's class, sockets, required blocks offered/filled, readiness | `python3 $S classify hull.x [--candidate=fit.json]` |
 | Validate a hull, a candidate fit or an export before install | `python3 $S validate hull.x [--candidate=record-candidate.json] [--model=export.glb]` (exit 1 on fault) |
+| The ship as fitted, from its fitted products: each against its slot's spec, required blocks filled, the hull's spec (lift_to_weight, power_margin, attitude_axes, unfed_engines) | `python3 $S shipyard hull.x --candidate=fit.json` (exit 1 on fault) |
 | The registry's design decisions for a ship | `python3 $S decisions explorer` |
 | A model against its record (size, nodes, budget) | `python3 ~/git/universe-fso/tools/standards/precheck_model.py ...` (existing) |
 

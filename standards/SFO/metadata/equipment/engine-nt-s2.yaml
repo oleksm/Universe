@@ -65,6 +65,8 @@ basis:
   - { of: [function.chamber], tier: derived, review: true, note: "Same 4 MPa chamber as the S1. The 1.0 m exit is the most the 1.8 m width allows with the swing, so the expansion is 50, not the S1's 108, and the ideal vacuum thrust coefficient (gamma 1.4) is 1.73, not 1.75. The throat is 110 kN / (1.73 x 4 MPa) = 0.0159 m2, 142 mm across (the modeller's 141 mm used 1.75). Holding 9 km/s then needs c* of 5,200 m/s, about 3,070 K at the core exit, 70 K hotter than the S1. The bell is 1.65 m. chamber_diameter is the vessel's 1.33 m. Review." }
   - { of: [built_of.list, function.gimbal], tier: derived, review: true, note: "Layout, with the modeller's S2 blockout (v01). The shield is fixed at the face, Y -0.45 to -1.0: graphite at 1,800 kg/m3, 1.65 m across and 0.55 m thick, 2,117 kg, 2,250 kg cased. From the core centre 1 m behind it, it shades a cone of about 40 degrees half-angle. The core is centred 2 m aft (reaction_offset), the throat at about 3.35 m and the exit at 5 m. At 0.1 rad the exit edge reaches 0.886 m from the axis, inside the 0.9 m half-width with 14 mm to spare. The other part boxes are cube-root placeholders. Review." }
   - { of: [life], rule: rule.life-ship-system }
+nozzles:
+- {node: nozzle, share: 1.0}
 # ports and internal: written by tools/standards/equipment_ports.py, change them there.
 ports:
 - {id: foot-1, flow: out, medium: load, interface: interface.insert-m42, half: male, make: bolted, mass: 1125.0, force: 13750.0, at: [1.98, 0.0, 0.0], facing: [0.0, 0.0, -1.0], note: 'on mount.engine-s2''s socket of the same id, bolted through'}

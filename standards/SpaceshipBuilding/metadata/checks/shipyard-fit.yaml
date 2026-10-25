@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../schema/ship-check.schema.yaml
+identity:
+  key: ship-check.shipyard-fit
+  name: Shipyard fit
+  about: The criteria a fitted ship must meet, judged from its fitted products against its slots' specs and its hull's
+    spec (common.schema.yaml spec_limit); run by tools/standards/ship.py shipyard; this record defines the check, not a
+    result.
+status: draft
+implementation: existing
+owner: registry
+sources:
+- document: docs/spaceship-building-workflow-proposal.md
+  section: 6.1 Use a complete evidence checklist
+  note: 'Owner, 2026-10-24: every slot is a spec (mins, maxes, requirements, every parameter) and the base of validation;
+    the ship is validated from its installed modules, not its slots. Audit docs/reports/2026-10-24-slots-fit-shipyard-audit.md.'
+method:
+- 'Y1 each fitted product meets every limit of its slot''s spec: kind, size class, a mount of its kind, envelope sides,
+  mass and thrust within what the mount bears, power within what it feeds, the mount''s and the slot''s own limits
+  (min, max, one of, present), and push: each of its nozzles (equipment nozzles, nodes of its own model placed at the
+  slot''s mount_<slot> frame, local -Z the exhaust) pointing within the slot''s cone.'
+- 'Y2 every required block of ship-rule.base-blocks is filled by a working product; an engine slot''s role (main,
+  attitude) stands in for main propulsion or attitude.'
+- 'Y3 the ship as fitted meets every limit of its hull''s spec: ship.mass, ship.main_thrust, ship.lift_thrust,
+  ship.main_to_weight and ship.lift_to_weight at the limit''s gravity, ship.power_margin (plants and battery rate less
+  every draw), ship.attitude_axes (turning senses its attitude nozzles give about the centre of mass), ship.unfed_engines
+  (engines no fitted tank holds the propellant of).'
+evidence:
+- Per fit the faults by criterion, the ship's values, and what could not be judged (no product model or no hull frame
+  is unchecked, never a pass).
+failure: A fault refuses that fit.
+scope: export
+artifacts:
+- ship-artifact.interfaces
+coverage: Centre of mass from the hull's origin and each product at its slot's frame; nozzle thrust as rated, without
+  plume impingement or gimbal.

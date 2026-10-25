@@ -11,8 +11,16 @@
         --candidate replaces the record's slots/fit/thrusters; --model reads markers and nozzles from an export
         before it is installed.
 
-    python3 tools/standards/ship.py modules (--mount=<key> | --socket=<hull>:<slot> | --kind=<kind> [--class=N]) [--json]
+    python3 tools/standards/ship.py spec <hull>:<slot> [--json]
+        The slot's spec: every parameter a product fitted there must meet (min, max, one of, direction), each with
+        where it comes from (slot kind and size, its mount's envelope/bears/feeds/spec, the slot's own spec).
+    python3 tools/standards/ship.py modules (--mount=<key> | --socket=<hull>:<slot> | --kind=<kind> [--class=N]) [--all] [--json]
         The products that fit: key, size, mass, power, thrust, mount, revision, whether an installed model exists.
+        --socket judges each against the slot's whole spec; --all also lists the rejected ones and why.
+    python3 tools/standards/ship.py shipyard <hull> [--candidate=fit.json] [--json]
+        The ship as fitted, from its fitted products only: each fitted product against its slot's spec, every
+        required block filled, and the hull's spec (ship.lift_to_weight, power_margin, attitude_axes, ...). Exit 1
+        on any fault.
     python3 tools/standards/ship.py product <equipment-key> [--json]
         One product's sheet: physical, needs, function, fits mount (envelope, holder), ports (connectors and pins),
         model package path and manifest sha, revision and confidence.
@@ -34,6 +42,7 @@ import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ship_qualify import ROOT, load, qualify  # noqa: E402
+import slot_spec  # noqa: E402
 
 RULE = os.path.join(ROOT, "standards/SpaceshipBuilding/metadata/rules/base-blocks.yaml")
 
@@ -188,12 +197,21 @@ def modules(opt):
         kind, cls = mounts[target]["identity"]["slot"], mounts[target]["identity"]["size_class"]
     else:
         kind, cls = opt.get("--kind"), int(opt.get("--class", 4))
-    rows = []
-    from ship_qualify import qualify
+    rows, rejected, spec_lims, frame = [], [], None, None
+    if opt.get("--socket"):
+        spec_lims = slot_spec.limits(s, mounts)
+        hf = slot_spec.hull_frames(hulls[hk])
+        frame = hf.get(f"mount_{sn}") if hf else None
     for k, q in sorted(eq.items()):
         if q["identity"].get("slot") != kind or (q.get("size_class") or 1) > cls:
             continue
-        if target:   # the game's own rule, through the qualification code
+        if spec_lims is not None:
+            res = slot_spec.judge(q, spec_lims, frame)
+            bad = [f"{L['of']}: {why}" for L, _, ok, why in res if ok is False]
+            if bad:
+                rejected.append((k, bad))
+                continue
+        elif target:   # the game's own rule, through the qualification code
             probe = {"identity": {"key": "probe"}, "physical": {"mass": 1, "length": 1e3, "width": 1e3, "height": 1e3},
                      "slots": [{"name": "s", "kind": kind, "size": cls, "mount": target}], "fit": [{"slot": "s", "item": k}]}
             if any(c == "F3" for c, _ in qualify(probe, mounts, eq)[0]):
@@ -208,8 +226,83 @@ def modules(opt):
     print(f"{'product':44}{'mass kg':>9}{'power W':>9}  {'function':16}{'mount':26}{'rev':10}model")
     for r in rows:
         print(f"{r['key']:44}{r['mass_kg'] or 0:>9g}{r['power_W'] or 0:>9g}  {str(r['function']):16}{str(r['fits']):26}{str(r['revision']):10}{'yes' if r['model'] else 'NO'}")
+    if opt.get("--all"):
+        for k, bad in rejected:
+            print(f"  no  {k:40} " + "; ".join(bad))
     if not rows:
         print(_hint(f"a {kind} product of class {cls}" + (f" for {target}" if target else "")))
+
+
+def spec(ref, opt):
+    hulls, mounts = load("hulls"), load("mounts")
+    hk, sn = ref.split(":", 1)
+    s = next((x for x in (hulls.get(hk) or {}).get("slots") or [] if x["name"] == sn), None)
+    if not s:
+        sys.exit(f"no socket {sn} on {hk}")
+    lims = slot_spec.limits(s, mounts)
+    if opt.get("--json"):
+        return print(json.dumps({"hull": hk, "slot": sn, "kind": s["kind"], "role": s.get("role"), "limits": lims}, indent=1))
+    print(f"{hk}:{sn}  {s['kind']} size {s['size']}" + (f", role {s['role']}" if s.get("role") else "") + f", mount {s.get('mount')}")
+    for L in lims:
+        cond = ", ".join(f"{k} {L[k]}" for k in ("min", "max", "one_of", "present", "axis", "within", "gravity") if k in L)
+        print(f"  {L['of']:18} {cond[:90]:92} {L['from']}" + (f"  ({L['note']})" if L.get("note") else ""))
+
+
+def shipyard(key, opt):
+    hulls, mounts, eq = load("hulls"), load("mounts"), load("equipment")
+    if key not in hulls:
+        sys.exit(f"ship.py: no hull {key}")
+    h = dict(hulls[key])
+    if opt.get("--candidate"):
+        h.update(json.load(open(opt["--candidate"])))
+    slots = {x["name"]: x for x in h.get("slots") or []}
+    hf = slot_spec.hull_frames(h)
+    faults, notes, fit = [], [], h.get("fit") or []
+    for f in fit:
+        s, q = slots.get(f["slot"]), eq.get(f["item"])
+        if not s or not q:
+            faults.append(("Y1", f"fit {f['item']} in {f['slot']}: no such " + ("slot" if not s else "product")))
+            continue
+        for L, v, ok, why in slot_spec.judge(q, slot_spec.limits(s, mounts), hf.get(f"mount_{s['name']}") if hf else None):
+            if ok is False:
+                faults.append(("Y1", f"{f['slot']} <- {f['item']}: {L['of']} {why} [{L['from']}]"))
+            elif ok is None:
+                notes.append(f"{f['slot']}: {L['of']} unchecked ({why})")
+    kinds = {}
+    for f in fit:
+        q, s = eq.get(f["item"]), slots.get(f["slot"])
+        if q and s and (q.get("function") or {}).get("kind") != "inert":
+            kinds.setdefault(s["kind"], []).append((s, q))
+    for b in blocks():
+        if not b["required"]:
+            continue
+        have = any(k in kinds for k in b["kinds"])
+        if not have and b.get("also_by"):
+            role = "attitude" if b["also_by"] == "cold_gas_engine" else "main"
+            have = any(s.get("role") == role or (s.get("role") is None and ((q.get("function") or {}).get("cycle") == "cold_gas") == (role == "attitude"))
+                       for s, q in kinds.get("engine", []))
+        if not have:
+            faults.append(("Y2", f"{b['need']} not fitted"))
+    vals = slot_spec.ship_values(h, slots, fit, eq, hf)
+    for L, v, ok, why in slot_spec.judge_ship(h, vals):
+        if ok is False:
+            faults.append(("Y3", f"{L['of']} {why}" + (f" at {L['gravity']} m/s2" if L.get("gravity") else "")))
+    if hf is None and fit:
+        notes.append("no hull model matching model_sha256: nozzle placement unchecked")
+    shown = {k: (v(9.80665) if callable(v) else v) for k, v in vals.items()}
+    if opt.get("--quiet"):
+        return faults
+    if opt.get("--json"):
+        print(json.dumps({"hull": key, "pass": not faults, "faults": [{"criterion": c, "message": m} for c, m in faults],
+                          "ship": {k: round(float(v), 4) for k, v in shown.items()}, "unchecked": notes}, indent=1))
+        return faults
+    print(f"{key}: {len(fit)} fitted of {len(slots)} slots - {'PASS' if not faults else f'{len(faults)} fault(s)'}")
+    print("  ship: " + ", ".join(f"{k[5:]} {float(v):.4g}" for k, v in shown.items()) + " (to_weight at 1 g here; the spec's own gravity in its check)")
+    for c, m in faults:
+        print(f"  {c} {m}")
+    for n in notes[:10]:
+        print(f"  unchecked {n}")
+    return faults
 
 
 def product(key, opt):
@@ -320,6 +413,10 @@ def main(argv):
         print("req: yes = a required block; alt = an engine socket, which stands in for main propulsion or attitude") if not opt.get("--json") else None
     elif cmd == "validate" and args:
         sys.exit(1 if validate(args[0], opt) else 0)
+    elif cmd == "spec" and args:
+        spec(args[0], opt)
+    elif cmd == "shipyard" and args:
+        sys.exit(1 if shipyard(args[0], opt) else 0)
     elif cmd == "modules":
         modules(opt)
     elif cmd == "product" and args:
