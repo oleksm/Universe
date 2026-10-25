@@ -52,6 +52,7 @@ table.dsm { border-collapse: separate; border-spacing: 0; font: 10.5px var(--mon
 .dsm thead tr.cols th { top: 22px; height: 150px; vertical-align: bottom; border-bottom: 1px solid var(--line); }
 .dsm thead tr.cols th div { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; padding: 4px 0; width: 20px; text-align: left; cursor: pointer; color: var(--fg); }
 .dsm th.corner { position: sticky; left: 0; top: 0; z-index: 4; background: var(--panel); min-width: 210px; max-width: 210px; text-align: left; font: 400 11px/1.45 var(--sans); color: var(--muted); padding: 8px; vertical-align: bottom; white-space: normal; }
+.dsm thead tr.areas th.corner { white-space: normal; overflow: visible; max-width: 210px; border-bottom: 1px solid var(--line); }
 .dsm tbody th { position: sticky; left: 0; z-index: 1; background: var(--panel); text-align: left; white-space: nowrap; padding: 0 8px 0 6px; height: 20px; border-left: 4px solid; cursor: pointer; font-weight: 400; color: var(--fg); }
 .dsm td { width: 20px; height: 20px; min-width: 20px; text-align: center; border-right: 1px solid var(--grid); border-bottom: 1px solid var(--grid); color: var(--fg); font-variant-numeric: tabular-nums; }
 .dsm td.n { cursor: pointer; font-weight: 500; }
@@ -88,9 +89,33 @@ path.edge.book { stroke-dasharray: 2 3; }
 .zoom button { font: 500 12px var(--sans); width: 30px; height: 28px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--fg); cursor: pointer; }
 .zoom button.wide { width: auto; padding: 0 9px; }
 
-/* Schema tree (left) */
+/* Left: all kinds (browse) and the schema of the selected one */
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: -4px -14px 6px; padding: 0 14px; }
+.tabs [role=tab] { font: 600 12px var(--sans); background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); padding: 8px 8px 7px; cursor: pointer; }
+.tabs [role=tab][aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+.tabs [role=tab]:disabled { opacity: .4; cursor: default; }
+.tabs .hide { margin-left: auto; font: 500 11.5px var(--sans); background: none; border: 0; color: var(--muted); cursor: pointer; }
+#pane-list, #pane-schema { display: flex; flex-direction: column; gap: 8px; }
+#pane-list[hidden], #pane-schema[hidden] { display: none; }
+.listbar { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); }
+.listbar button, .grp summary button { font: 500 11px var(--sans); color: var(--accent); background: none; border: 1px solid var(--line); border-radius: 5px; padding: 2px 7px; cursor: pointer; }
+.grp { border-top: 1px solid var(--soft); }
+.grp summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 7px 0; font: 600 12px var(--sans); }
+.grp summary::-webkit-details-marker { display: none; }
+.grp summary::before { content: "▸"; color: var(--muted); width: 10px; }
+.grp[open] summary::before { content: "▾"; }
+.grp summary .n { color: var(--muted); font-weight: 400; font-variant-numeric: tabular-nums; }
+.grp summary button { margin-left: auto; }
+.grp summary i, .krow i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; }
+.krow { display: grid; grid-template-columns: 10px 1fr auto; gap: 8px; align-items: center; width: 100%; text-align: left; background: none; border: 0; border-radius: 5px; padding: 4px 6px; cursor: pointer; color: var(--fg); font: 12px var(--mono); }
+.krow:hover, .krow.sel { background: var(--soft); }
+.krow .c { color: var(--muted); font-size: 10.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.krow .m { grid-column: 2 / 4; color: var(--muted); font-size: 10.5px; word-break: break-all; }
+.reopen { position: absolute; left: 8px; top: 8px; z-index: 6; font: 500 12px var(--sans); background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+main { position: relative; }
+
 nav#tree { width: 380px; flex: none; border-right: 1px solid var(--line); background: var(--panel); overflow-y: auto; padding: 14px 14px 24px; display: flex; flex-direction: column; gap: 8px; }
-nav#tree[hidden] { display: none; }
+nav#tree[hidden], .reopen[hidden] { display: none; }
 .treehead { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .treehead h2 { font: 600 15px var(--mono); margin: 0; word-break: break-word; }
 .treehead button, .treetools button { font: 500 11.5px var(--sans); color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 5px; padding: 3px 8px; cursor: pointer; }
@@ -163,12 +188,22 @@ table.dep button { font: inherit; color: var(--accent); background: none; border
   <div class="row" id="areas" aria-label="Areas"><span class="lbl">Areas</span></div>
 </header>
 <main>
-  <nav id="tree" aria-label="Schema of the selected kind" hidden>
-    <div class="treehead"><h2 id="tree-title"></h2><button id="tree-close" aria-label="Close schema">Close</button></div>
-    <p class="hint" id="tree-file"></p>
-    <div class="treetools"><input type="search" id="tree-q" placeholder="Filter fields" aria-label="Filter fields"><button id="tree-open">Expand all</button><button id="tree-shut">Collapse</button></div>
-    <div id="tree-body"></div>
+  <nav id="tree" aria-label="Kinds and schema">
+    <div class="tabs" role="tablist"><button role="tab" id="tab-list" aria-selected="true">All kinds</button><button role="tab" id="tab-schema" aria-selected="false" disabled>Schema</button><button id="tree-close" aria-label="Hide this panel" class="hide">Hide</button></div>
+    <section id="pane-list">
+      <div class="treetools"><input type="search" id="list-q" placeholder="Filter: name, area, root or field" aria-label="Filter kinds"></div>
+      <div class="row"><span class="lbl">Group by</span><div class="seg" role="group" aria-label="Group by"><button id="g-root" aria-pressed="true">Root</button><button id="g-area" aria-pressed="false">Area</button><button id="g-none" aria-pressed="false">None</button></div></div>
+      <div class="listbar"><span id="list-count"></span><button id="list-draw">Draw these</button></div>
+      <div id="list-body"></div>
+    </section>
+    <section id="pane-schema" hidden>
+      <div class="treehead"><h2 id="tree-title"></h2></div>
+      <p class="hint" id="tree-file"></p>
+      <div class="treetools"><input type="search" id="tree-q" placeholder="Filter fields" aria-label="Filter fields"><button id="tree-open">Expand all</button><button id="tree-shut">Collapse</button></div>
+      <div id="tree-body"></div>
+    </section>
   </nav>
+  <button id="tree-show" class="reopen" hidden>Kinds</button>
   <div id="stage">
     <div id="matrix"></div>
     <div id="focus" hidden>
@@ -193,9 +228,9 @@ const byKey = Object.fromEntries(DATA.kinds.map(k => [k.key, k]));
 const refs = DATA.refs.map(r => ({ ...r, real: r.fields.filter(f => !BOOK.test(f)), book: r.fields.filter(f => BOOK.test(f)) }));
 const out = {}, inn = {};
 refs.forEach(r => { (out[r.from] ||= []).push(r); (inn[r.to] ||= []).push(r); });
-const st = { view: "matrix", mode: "near1", book: false, among: false, selected: null, other: null };
+const st = { view: "matrix", mode: "near1", book: false, among: false, selected: null, other: null, custom: null };
 try { Object.assign(st, JSON.parse(localStorage.getItem("registry-map") || "{}")); } catch (e) {}
-st.selected = null; st.other = null;
+st.selected = null; st.other = null; st.custom = null;
 const shown = new Set(areas);
 const fieldsOf = r => st.book ? r.fields : r.real;
 const links = () => refs.filter(r => fieldsOf(r).length);
@@ -270,6 +305,7 @@ function closure(key, dir) {
   return seen;
 }
 function scope(key) {
+  if (st.custom) return new Set(st.custom);
   if (st.mode === "down" || st.mode === "up") return closure(key, st.mode);
   if (st.mode === "area") return new Set(DATA.kinds.filter(k => k.area === byKey[key].area).map(k => k.key));
   const s = new Set([key]);
@@ -300,7 +336,7 @@ async function draw() {
   empty.hidden = true;
   const ticket = ++drawing;
   const S = [...scope(st.selected)].filter(k => shown.has(byKey[k].area) || k === st.selected), inS = new Set(S);
-  const near = st.mode === "near1" || st.mode === "near2";
+  const near = !st.custom && (st.mode === "near1" || st.mode === "near2");
   const drawn_ = r => inS.has(r.to) && (!near || st.among || r.from === st.selected || r.to === st.selected);   // (near: only what touches the kind, unless asked)
   const cards = S.map(k => {
     const rows = [], at = new Map();
@@ -471,11 +507,75 @@ function showTree(k) {
   document.getElementById("tree-file").textContent = `standards/${k.file} · * required · → names another kind's record · dashed: a shared structure`;
   document.getElementById("tree-body").innerHTML = (k.tree.c || []).map(c => treeHTML(c, 0)).join("") || `<p class="none">no properties</p>`;
   document.getElementById("tree-q").value = "";
-  nav.hidden = false;
+  document.getElementById("tab-schema").disabled = false;
+  nav.hidden = false; document.getElementById("tree-show").hidden = true;
   return was;
 }
+function tab(t) {
+  document.getElementById("tab-list").setAttribute("aria-selected", t === "list");
+  document.getElementById("tab-schema").setAttribute("aria-selected", t === "schema");
+  document.getElementById("pane-list").hidden = t !== "list";
+  document.getElementById("pane-schema").hidden = t !== "schema";
+}
+document.getElementById("tab-list").onclick = () => tab("list");
+document.getElementById("tab-schema").onclick = () => tab("schema");
+
+/* All kinds: grouped by root or area, filtered by name, area, root or field */
+let groupBy = "root";
+try { groupBy = localStorage.getItem("registry-map-group") || "root"; } catch (e) {}
+function fieldHits(k, q) {
+  const hits = [];
+  (function walk(n, path) { (n.c || []).forEach(c => { const p = path ? path + "." + c.n : c.n; if (c.n.toLowerCase().includes(q)) hits.push(p); walk(c, p); }); })(k.tree, "");
+  return hits;
+}
+function listed() {
+  const q = document.getElementById("list-q").value.trim().toLowerCase();
+  return DATA.kinds.filter(k => shown.has(k.area)).map(k => {
+    if (!q) return { k };
+    if (k.key.includes(q) || k.title.toLowerCase().includes(q) || k.area.toLowerCase().includes(q) || (k.root || "").includes(q)) return { k };
+    const f = fieldHits(k, q);
+    return f.length ? { k, f } : null;
+  }).filter(Boolean);
+}
+function renderList() {
+  const rows = listed(), groups = new Map();
+  const key = r => groupBy === "root" ? (r.k.root || "derives from no root") : groupBy === "area" ? r.k.area : "all kinds";
+  rows.forEach(r => { const g = key(r); if (!groups.has(g)) groups.set(g, []); groups.get(g).push(r); });
+  const order = [...groups.keys()].sort((a, b) => (a.startsWith("derives from no") ? 1 : 0) - (b.startsWith("derives from no") ? 1 : 0) || a.localeCompare(b));
+  document.getElementById("list-count").textContent = `${rows.length} of ${DATA.kinds.length} kinds`;
+  const nIn = k => (inn[k] || []).filter(r => fieldsOf(r).length).length, nOut = k => (out[k] || []).filter(r => fieldsOf(r).length).length;
+  document.getElementById("list-body").innerHTML = order.map(g => {
+    const rs = groups.get(g).sort((a, b) => a.k.key.localeCompare(b.k.key));
+    const dot = groupBy === "area" ? `<i style="background:var(${areaVar[g]})"></i>` : "";
+    return `<details class="grp" open><summary>${dot}${esc(g)} <span class="n">${rs.length}</span><button data-draw="${esc(rs.map(r => r.k.key).join(","))}">Draw</button></summary>${rs.map(r =>
+      `<button class="krow${r.k.key === st.selected ? " sel" : ""}" data-k="${esc(r.k.key)}"><i style="background:var(${areaVar[r.k.area]})"></i><span>${esc(r.k.key)}</span><span class="c">names ${nOut(r.k.key)} · named by ${nIn(r.k.key)}</span>${r.f ? `<span class="m">${r.f.slice(0, 4).map(esc).join(", ")}${r.f.length > 4 ? ` +${r.f.length - 4}` : ""}</span>` : ""}</button>`).join("")}</details>`;
+  }).join("") || `<p class="none">No kind matches.</p>`;
+}
+document.getElementById("list-q").addEventListener("input", renderList);
+document.getElementById("list-body").addEventListener("click", e => {
+  const d = e.target.closest("button[data-draw]");
+  if (d) { e.preventDefault(); return drawSet(d.dataset.draw.split(",")); }
+  const b = e.target.closest("button.krow");
+  if (b) select(b.dataset.k);
+});
+document.getElementById("list-draw").onclick = () => drawSet(listed().map(r => r.k.key));
+function setGroup(g) {
+  groupBy = g;
+  try { localStorage.setItem("registry-map-group", g); } catch (e) {}
+  ["root", "area", "none"].forEach(x => document.getElementById("g-" + x).setAttribute("aria-pressed", x === g));
+  renderList();
+}
+["root", "area", "none"].forEach(x => document.getElementById("g-" + x).onclick = () => setGroup(x));
+function drawSet(keys) {
+  if (!keys.length) return;
+  st.custom = new Set(keys);
+  if (!st.selected || !st.custom.has(st.selected)) { st.selected = keys[0]; panel(byKey[keys[0]]); markMatrix(); }
+  ["near1", "near2", "down", "up", "area"].forEach(x => document.getElementById("m-" + x).setAttribute("aria-pressed", false));
+  st.view === "focus" ? draw() : setView("focus");
+}
 document.getElementById("tree-body").addEventListener("click", e => { const b = e.target.closest("button[data-k]"); if (b) { e.preventDefault(); select(b.dataset.k); } });
-document.getElementById("tree-close").onclick = () => { document.getElementById("tree").hidden = true; if (st.view === "focus") fit(); };
+document.getElementById("tree-close").onclick = () => { document.getElementById("tree").hidden = true; document.getElementById("tree-show").hidden = false; if (st.view === "focus") fit(); };
+document.getElementById("tree-show").onclick = () => { document.getElementById("tree").hidden = false; document.getElementById("tree-show").hidden = true; if (st.view === "focus") fit(); };
 document.getElementById("tree-open").onclick = () => document.querySelectorAll("#tree-body details").forEach(d => d.open = true);
 document.getElementById("tree-shut").onclick = () => document.querySelectorAll("#tree-body details").forEach(d => d.open = false);
 document.getElementById("tree-q").addEventListener("input", e => {
@@ -495,7 +595,9 @@ function select(key, redraw = true) {
   st.selected = key;
   panel(byKey[key]);
   const opened = showTree(byKey[key]);
-  markMatrix();
+  tab("schema");
+  if (st.custom && !st.custom.has(key)) { st.custom = null; setMode(st.mode, false); }
+  markMatrix(); renderList();
   if (st.view === "focus" && (redraw || opened)) draw();
   if (st.view === "matrix") mx.querySelector(`tr[data-row="${CSS.escape(key)}"] th`)?.scrollIntoView({ block: "nearest", inline: "nearest" });
 }
@@ -509,7 +611,7 @@ function setView(v) {
   if (v === "focus") draw();
 }
 function setMode(m, redraw = true) {
-  st.mode = m; save();
+  st.mode = m; st.custom = null; save();
   ["near1", "near2", "down", "up", "area"].forEach(x => document.getElementById("m-" + x).setAttribute("aria-pressed", x === m));
   if (redraw && st.view === "focus") draw();
 }
@@ -520,13 +622,13 @@ const ta = document.getElementById("t-among");
 ta.onclick = () => { st.among = !st.among; ta.setAttribute("aria-pressed", st.among); save(); if (st.view === "focus") draw(); };
 ta.setAttribute("aria-pressed", st.among);
 const tb = document.getElementById("t-book");
-tb.onclick = () => { st.book = !st.book; tb.setAttribute("aria-pressed", st.book); save(); matrix(); if (st.selected) panel(byKey[st.selected]); if (st.view === "focus") draw(); };
+tb.onclick = () => { st.book = !st.book; tb.setAttribute("aria-pressed", st.book); save(); matrix(); renderList(); if (st.selected) panel(byKey[st.selected]); if (st.view === "focus") draw(); };
 const ar = document.getElementById("areas");
 areas.forEach(a => {
   const b = document.createElement("button");
   b.className = "chip"; b.setAttribute("aria-pressed", "true"); b.id = "area-" + a.replace(/\W/g, "");
   b.innerHTML = `<i style="background:var(${areaVar[a]})"></i>${esc(a)} <span>${DATA.kinds.filter(k => k.area === a).length}</span>`;
-  b.onclick = () => { shown.has(a) ? shown.delete(a) : shown.add(a); b.setAttribute("aria-pressed", shown.has(a)); matrix(); if (st.view === "focus") draw(); };
+  b.onclick = () => { shown.has(a) ? shown.delete(a) : shown.add(a); b.setAttribute("aria-pressed", shown.has(a)); matrix(); renderList(); if (st.view === "focus") draw(); };
   ar.appendChild(b);
 });
 document.getElementById("q").addEventListener("input", e => {
@@ -538,7 +640,7 @@ document.getElementById("q").addEventListener("input", e => {
 addEventListener("resize", () => { if (st.view === "focus") fit(); });
 
 tb.setAttribute("aria-pressed", st.book);
-matrix(); intro(); setMode(st.mode, false); setView(st.view);
+matrix(); intro(); setGroup(groupBy); tab("list"); setMode(st.mode, false); setView(st.view);
 const hash = location.hash.slice(1);
 if (hash && byKey[hash]) select(hash);
 </script>
