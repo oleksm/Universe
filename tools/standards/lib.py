@@ -7,7 +7,7 @@ import atexit, hashlib, json, os
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 TREE = os.path.join(ROOT, "standards")
 JET_KINDS = ("engine", "drive", "lift", "thrusters")
-OLD_HEAT_TO_HULL = 1e-6   # the first guess the old drive, lift and thruster records carry when they say nothing (SFO 22 engines must say)
+OLD_HEAT_TO_HULL = 1e-6
 
 
 def jet_power(fn):
@@ -36,7 +36,7 @@ def device_heat(fn, nozzles=1):
     return plant_waste(fn) + jet_heat(fn, nozzles)
 
 
-q = lambda s: '"' + s.replace('"', '\\"') + '"'   # a YAML double-quoted scalar
+q = lambda s: '"' + s.replace('"', '\\"') + '"'
 
 
 def edit(path, fn):
@@ -50,10 +50,17 @@ def edit(path, fn):
 
 
 def sha(path):
-    return hashlib.sha256(open(path, "rb").read()).hexdigest()
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for b in iter(lambda: f.read(1 << 20), b""):
+            h.update(b)
+    return h.hexdigest()
 
 
-# ---- parts derived from an equipment record's list (SFO 12): one rule for the build, the registry reader and the check.
+def r(x, nd=1):
+    return round(float(x), nd)
+
+
 
 def _num(v):
     return repr(v) if isinstance(v, (int, float)) and not isinstance(v, bool) else str(v)

@@ -38,12 +38,12 @@ def usage():
         used[k] = used.get(k, 0) + n
     for f in glob.glob(os.path.join(TREE, "SFO/metadata/hulls/*.yaml")) + glob.glob(os.path.join(TREE, "SFO/metadata/structures/*.yaml")):
         d = yaml.safe_load(open(f)) or {}
-        if (d.get("revision") or {}).get("priority") == "low":     # (a held hull's fits lend no priority)
+        if (d.get("revision") or {}).get("priority") == "low":
             continue
         for x in d.get("fit") or []:
             add(x.get("item"), x.get("count", 1))
     for f in glob.glob(os.path.join(TREE, "SFO/metadata/stock/*.yaml")) + glob.glob(os.path.join(TREE, "SFO/metadata/mill-stock/*.yaml")):
-        add((yaml.safe_load(open(f)) or {}).get("package"))      # (a package is used by every stock it carries)
+        add((yaml.safe_load(open(f)) or {}).get("package"))
     for f in glob.glob(os.path.join(TREE, "LocalAdministration/**/*.yaml"), recursive=True):
         d = yaml.safe_load(open(f)) or {}
         for x in d.get("modules") or []:
@@ -57,7 +57,7 @@ def usage():
     for f in glob.glob(os.path.join(TREE, "SFO/metadata/arrangements/*.yaml")):
         d = yaml.safe_load(open(f)) or {}
         arr[d["identity"]["key"]] = [x["unit"] for x in d.get("items") or []]
-    for f in glob.glob(os.path.join(TREE, "SFO/metadata/layouts/*.yaml")):       # (a building's pieces: every room's arrangement, as often as the building stands)
+    for f in glob.glob(os.path.join(TREE, "SFO/metadata/layouts/*.yaml")):
         d = yaml.safe_load(open(f)) or {}
         n = used.get(d.get("stands_for"), 0)
         for room in d.get("rooms") or []:
@@ -65,7 +65,7 @@ def usage():
                 add(u, n)
         for p_ in (d.get("frame") or {}).get("panels") or []:
             add(p_["panel"], n * p_["count"])
-    for folder in ("panels", "runs", "connectors", "adapters"):      # (a template is used wherever its members are)
+    for folder in ("panels", "runs", "connectors", "adapters"):
         for f in glob.glob(os.path.join(TREE, f"SFO/metadata/{folder}/*.yaml")):
             d = yaml.safe_load(open(f)) or {}
             if d.get("template"):
@@ -85,11 +85,11 @@ def tier(kind, key, used):
     modules and buildings after (their vision is still being settled); hulls last (they are the ships session's)."""
     if kind == "equipment" and used.get(key):
         return 0
-    if kind == "package":      # (stock is drawn as its packages: the user, 2026-10-10)
+    if kind == "package":
         return 0
     if kind == "equipment":
         return 1
-    if kind in ("structure", "gate", "unit", "run", "connector", "template"):      # (works units and their kit: the owner, 2026-10-15; kit templates)
+    if kind in ("structure", "gate", "unit", "run", "connector", "template"):
         return 2
     if kind == "module":
         return 3
@@ -117,7 +117,7 @@ def brief(kind, key, path, r, used):
          "package": f"{store()}/models/{tail(key)}/v<N>/"}
     fn = r.get("function") or {}
     if fn:
-        b["function"] = {k: v for k, v in fn.items() if not isinstance(v, list)}   # (a rocket's chamber design comes with it)
+        b["function"] = {k: v for k, v in fn.items() if not isinstance(v, list)}
     if kind == "unit" and r.get("fits"):
         m = yaml.safe_load(open(os.path.join(TREE, "SFO/metadata/plant-mounts", r["fits"].split(".", 1)[1] + ".yaml")))
         b["mount"] = {"key": r["fits"], "footprint_m": m.get("footprint")}
@@ -126,7 +126,7 @@ def brief(kind, key, path, r, used):
         b["mount"] = {"key": r["fits"], "envelope_m": m.get("envelope"), "attachment": m.get("attachment")}
     lst = (r.get("built_of") or {}).get("list") or [] if not isinstance(r.get("built_of"), list) else []
     if isinstance(r.get("built_of"), list):
-        b["made_of"] = [{"what": p.get("what", p["item"]), "of": p["item"], "mass_kg": p.get("mass", p.get("quantity")), "note": p.get("note")} for p in r["built_of"]]   # (older records list {item, quantity})
+        b["made_of"] = [{"what": p.get("what", p["item"]), "of": p["item"], "mass_kg": p.get("mass", p.get("quantity")), "note": p.get("note")} for p in r["built_of"]]
     if kind == "layout":
         b["layout"] = {k: r.get(k) for k in ("site", "bays", "mobile", "links", "frame", "ground")}
         b["model_notes"] = "a layout is assembled from its units' models placed at their bays (x along, y across, z up, metres from its middle at ground level) on the frame and ground works it names; model the frame and the links, place the units"
@@ -166,11 +166,11 @@ def brief(kind, key, path, r, used):
 def queue(hulls=False):
     used = usage()
     q = [(kind, key, path, r) for kind, key, path, r in records()
-         if not r.get("visual") and not r.get("looks_as") and not r.get("template") and not r.get("model_of") and stage(r) != "retired" and (r.get("revision") or {}).get("status") != "deprecated" and (hulls or kind != "hull")      # (a kit record its family template draws, or a template an installed model serves, wants none of its own)
+         if not r.get("visual") and not r.get("looks_as") and not r.get("template") and not r.get("model_of") and stage(r) != "retired" and (r.get("revision") or {}).get("status") != "deprecated" and (hulls or kind != "hull")
          and not (kind == "template" and r.get("draws") == "sweep")
-         and kind not in ("module", "layout")]      # (no monolith works models: the owner, 2026-10-15; a works is units and runs snapped together)
-    low = lambda r: (r.get("revision") or {}).get("priority") == "low"     # (a hold the user set: last of all)
-    ds = designs()      # (the experimental designs' equipment ahead of the rest: the user, 2026-10-11)
+         and kind not in ("module", "layout")]
+    low = lambda r: (r.get("revision") or {}).get("priority") == "low"
+    ds = designs()
     q.sort(key=lambda x: (low(x[3]), x[1] not in ds, tuple(-n for n in ds.get(x[1], (0, 0))), tier(x[0], x[1], used),
                           stage(x[3]) == "outdated", -used.get(x[1], 0), x[1]))
     return q, used

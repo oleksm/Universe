@@ -14,7 +14,7 @@ STEEL, SS, AL, PE, SILICA, CONC, CI = ("material.structural-steel-a36", "materia
                                        "material.polyethylene-uhmw", "material.fused-silica", "good.concrete", "material.cast-iron-grey")
 BLENDER = "blender's model (2026-10-17)"
 
-FURNITURE = {  # name: (title, description, (length, width, height), [(what, item, kg)], source)
+FURNITURE = {
     "table": ("Table", "A table for four, 1.1 m square.", (1.1, 1.1, 0.75), [("Frame", AL, 9.9), ("Top", PE, 22.7)], "blender's dining set: four tables 39.7 kg of aluminium, 20 mm tops"),
     "chair": ("Chair", "A plain chair with a seat and back.", (0.45, 0.5, 0.85), [("Frame", AL, 2.6), ("Seat and back", PE, 3.5)], "blender's dining set: sixteen chairs 41.2 kg of aluminium, 10 mm seats"),
     "desk": ("Desk", "A desk 1.6 m by 0.8 m.", (1.6, 0.8, 0.75), [("Frame", STEEL, 22.0), ("Top", PE, 13.0)], None),
@@ -68,7 +68,7 @@ def grid(piece, n, cols, x0, y0, dx, dy, turn=0.0):
     return out
 
 
-ARRANGEMENTS = {  # name: (title, [(piece, x, y, turn)], people served or seated, staff at work)
+ARRANGEMENTS = {
     "dining": ("Dining room", sum(([("table", x, y, 0)] + [("chair", x + a, y + b, t) for a, b, t in ((-0.8, 0, 90), (0.8, 0, 270), (0, -0.8, 0), (0, 0.8, 180))] for x in (-1.5, 1.5) for y in (-1.5, 1.5)), []), 16, 0),
     "sales-floor": ("Sales floor", grid("shelf", 6, 2, -1.5, -2.4, 3.0, 1.9) , 12, 0),
     "counter": ("Counter", [("counter", x, -0.6, 0) for x in (-1.8, 0.0, 1.8)] + [("back-shelf", x, 1.2, 180) for x in (-1.8, 0.0, 1.8)] + [("till", -1.8, -0.6, 0), ("till", 1.8, -0.6, 0)], 6, 2),

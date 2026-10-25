@@ -13,7 +13,6 @@ import yaml
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 T = os.path.join(ROOT, "standards")
 
-# Code 128: the 107 symbol patterns (bar and space widths in modules), value 0..106; 106 is the stop (with its bar).
 C128 = ("212222 222122 222221 121223 121322 131222 122213 122312 132212 221213 221312 231212 112232 122132 122231 113222 "
         "123122 123221 223211 221132 221231 213212 223112 312131 311222 321122 321221 312212 322112 322211 212123 212321 "
         "232121 111323 131123 131321 112313 132113 132311 211313 231113 231311 112133 112331 132131 113123 113321 133121 "
@@ -59,7 +58,6 @@ def render(label, out, px=1024):
     prim, acc = rgb(brand.get("primary", [0.2, 0.2, 0.2])), rgb(brand.get("accent", [0.85, 0.85, 0.85]))
     img = Image.new("RGB", (W, H), (250, 250, 246)); d = ImageDraw.Draw(img)
     font = lambda size, bold=False: ImageFont.truetype("/usr/share/fonts/noto/NotoSansMono-" + ("Bold" if bold else "Regular") + ".ttf", size)
-    # band: logo and brand
     band = H // 4
     d.rectangle([0, 0, W, band], fill=prim)
     logo = brand.get("logo")
@@ -69,7 +67,6 @@ def render(label, out, px=1024):
     else:
         d.rectangle([8, 6, band - 6, band - 6], fill=acc); d.text((band // 2, band // 2), org.get("ticker", "?"), fill=prim, font=font(band // 4, True), anchor="mm")
     d.text((band + 10, band // 2), brand.get("name", org.get("identity", {}).get("name", label["brand"])).upper(), fill=(255, 255, 255), font=font(band // 3, True), anchor="lm")
-    # what, where, when
     y = band + 10; f1, f2 = font(H // 14, True), font(H // 20)
     d.text((14, y), (stock.get("identity") or {}).get("name", label["product"]), fill=(20, 20, 20), font=f1); y += H // 11
     lines = [f"LOT {label['lot']}   SERIAL {label['serial']}",
@@ -80,7 +77,6 @@ def render(label, out, px=1024):
     lines.append(f"STACK {stack} HIGH" + (f"   KEEP {keeps.upper()}" if keeps else ""))
     for ln in lines:
         d.text((14, y), ln, fill=(40, 40, 40), font=f2); y += H // 17
-    # barcode: the serial, Code 128 B, with its text under it
     mods = code128_modules(label["serial"]); total = sum(w for _, w in mods) + 20
     unit = max(1, (W - 28) // total); x = 14 + 10 * unit; top, bot = H - H // 5, H - H // 16
     for bar, w in mods:

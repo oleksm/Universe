@@ -89,7 +89,6 @@ class PatternPreferences(unittest.TestCase):
             p['factors'][0]['signal'] = {'features': ['planet-feature.water-gap'], 'radius_m': 25000}
         for signature in ({}, {'factors': {'TEST': 1}}, {'fields': {'test': 10}}, {'landmarks': []}):
             self.assertEqual([x['score'] for x in lod.match(r, signature)], [0, 0])
-        # A known override field is evaluated instead of global TEST/field.test.
         for p in r['planet-pattern'].values():
             p['factors'][0]['signal'] = {'field': 'planet-field.other', 'from': 0, 'to': 10}
         self.assertEqual(lod.match(r, {'factors': {'TEST': 1}, 'fields': {'other': 0}})[0]['key'], 'low')
@@ -189,7 +188,6 @@ class PatternPreferences(unittest.TestCase):
         self.assertTrue(self.faults(record({'want': 'high', 'required': True})))
 
     def test_generated_matcher_executes_same_band_and_missing_semantics(self):
-        # Generate in memory, rather than depending on a previously built module.
         generated = {}
         exec(compile(planet_lod_module.render(), '<generated planet module>', 'exec'), generated)
         r = self.registry()

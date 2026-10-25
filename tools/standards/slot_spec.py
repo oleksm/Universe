@@ -118,18 +118,18 @@ def solid(path):
                 continue
             v = acc(prim["attributes"]["POSITION"]).astype(float) @ M[:3, :3].T + M[:3, 3]
             idx = acc(prim["indices"]).reshape(-1).astype(np.int64) if "indices" in prim else np.arange(len(v))
-            t = v[idx.reshape(-1, 3)]                                   # (m, 3 corners, xyz)
+            t = v[idx.reshape(-1, 3)]
             det = np.einsum("ij,ij->i", t[:, 0], np.cross(t[:, 1], t[:, 2]))
             vol += det.sum() / 6.0
             mom += (det[:, None] * t.sum(axis=1)).sum(axis=0) / 24.0
-            cov += np.einsum("m,mai,ab,mbj->ij", det, t, canon, t)         # (the tetrahedron's second moment, origin corner)
+            cov += np.einsum("m,mai,ab,mbj->ij", det, t, canon, t)
             lo, hi = np.minimum(lo, v.min(axis=0)), np.maximum(hi, v.max(axis=0))
     if not np.isfinite(lo).all() or vol <= 1e-9:
         _SOLID[path] = None if not np.isfinite(lo).all() else (0.0, (lo + hi) / 2, None, hi - lo)
         return _SOLID[path]
     c = mom / vol
-    cov_c = cov - vol * np.outer(c, c)                                  # about the centroid
-    inertia = (np.eye(3) * np.trace(cov_c) - cov_c) / vol               # per kg
+    cov_c = cov - vol * np.outer(c, c)
+    inertia = (np.eye(3) * np.trace(cov_c) - cov_c) / vol
     _SOLID[path] = (vol, c, inertia, hi - lo)
     return _SOLID[path]
 
@@ -275,7 +275,7 @@ def ship_values(hull, slots, fit, eq, hf):
             supply += float(fn.get("rate") or 0)
         if fn.get("kind") == "tank" and fn.get("holds"):
             held.add(fn["holds"])
-            pts.append((float(fn.get("capacity") or 0), at))           # (full)
+            pts.append((float(fn.get("capacity") or 0), at))
         if fn.get("kind") == "engine":
             engines.append(fn)
             for node, share, nat, push in (nozzles(q, frame) or []) if frame is not None else []:
@@ -298,7 +298,7 @@ def ship_values(hull, slots, fit, eq, hf):
         if Iinv is None or not att:
             return 0.0
         from scipy.optimize import linprog
-        A = np.array([Iinv @ tq for _, tq in att]).T          # 3 x n: each nozzle at full, its turn acceleration
+        A = np.array([Iinv @ tq for _, tq in att]).T
         best = np.inf
         for i in range(3):
             for sgn in (1, -1):
@@ -317,11 +317,10 @@ def ship_values(hull, slots, fit, eq, hf):
         if not full or Iinv is None:
             return 0.0
         from scipy.optimize import linprog
-        A_role = Iinv @ sum(x[1] for x in own)                 # its turn acceleration at full
+        A_role = Iinv @ sum(x[1] for x in own)
         A_att = np.array([Iinv @ tq for _, tq in att]).T if att else np.zeros((3, 0))
         tol = figure("straight") * turn
         n = A_att.shape[1]
-        # variables: k (share of full), u (attitude nozzles); |A_role k + A_att u| <= tol per axis; maximise k
         c = np.r_[-1.0, np.zeros(n)]
         M = np.c_[A_role.reshape(3, 1), A_att]
         r = linprog(c, A_ub=np.r_[M, -M], b_ub=np.full(6, tol), bounds=[(0, 1)] + [(0, 1)] * n, method="highs")

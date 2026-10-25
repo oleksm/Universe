@@ -20,7 +20,7 @@ S = "standards/SFO/"; E = S + "metadata/equipment/"; P = S + "metadata/parts/"; 
 LIFE = 473364000
 LIFE_NOTE = "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life."
 SRC = "standards/sources/research_ship_equipment.json"
-OMEGA = 0.05   # the hull's share of the sphere round the reaction, for the default heat_to_hull (a hull-mounted engine; the studio computes the design's own)
+OMEGA = 0.05
 
 
 def schemas():
@@ -157,7 +157,6 @@ def h2h(iso, eff, shield, soak=1e-4):
 
 
 def engines():
-    # Fusion thermal: Discovery II anchors the S3; the smaller two scale down at its specific power (optimistic: the one small design, DFD, is ten times heavier for its jet).
     FT = [(1, 1000.0, 30000, 6.0, 3.0, 3.0, "FTE1", "a tenth of a Discovery II's jet in a thirtieth of its mass: optimistic scaling (the Princeton Direct Fusion Drive, 2 MW, is 2.8 t: 0.7 kW/kg); review"),
           (2, 5000.0, 90000, 10.0, 4.0, 4.0, "FTE2", "scaled from Discovery II at a little under its specific power; review"),
           (3, 27800.0, 361000, 24.0, 8.0, 8.0, "FTE3", "Discovery II itself: reactor 310 t (first wall 14, coils 206, shield 90), nozzle 3, power conversion 30, coolant 11, heating 5, refrigeration 2")]
@@ -171,7 +170,6 @@ def engines():
                    ("[physical]", "derived", SRC, scale),
                    ("[function.isotropic_loss, function.shield_pass, function.heat_to_hull]", "invented", None, f"D-He3 with side D-D reactions: about 5% of the fusion power in neutrons and about 20% in X-rays leave the plasma in every direction; a half-metre carbon-graphite shadow shield (Discovery II's 90 t) passes about a hundredth toward the ship. heat_to_hull = 0.25 / 0.61 x 0.05 x 0.01 + 1e-4 soak-back = {h2h(0.25, 0.61, 0.01):g} of the jet, for a hull taking a twentieth of the sphere: {jet * h2h(0.25, 0.61, 0.01) / 1e6:.2g} MW aboard at full thrust. From memory of the physics; the figures want a source. Review."),
                    ("[function.throttle, function.gimbal]", "invented", None, "Deep throttling by fuel rate (a fifth); a magnetic nozzle steers the jet a few degrees. Chosen.")])
-    # Nuclear thermal: NERVA-class, from memory.
     NT = [(1, 25000.0, 3500, 3.0, 1.2, 1.2, "NTE1"), (2, 110000.0, 9000, 5.0, 1.8, 1.8, "NTE2"), (3, 330000.0, 18000, 7.0, 2.5, 2.5, "NTE3")]
     for cls, thrust, mass, L, W, H, code in NT:
         jet = 0.5 * thrust * 9000
@@ -182,7 +180,6 @@ def engines():
                   [("[function.exhaust, function.thrust, physical.mass]", "invented", None, "NERVA-class, from memory: the NERVA XE gave about 250 kN at 7 km/s from about 18 t with its shield; 9 km/s is the advanced solid-core figure (Isp about 900 s). The classes scale by thrust. No source looked up. Review."),
                    ("[function.isotropic_loss, function.shield_pass, function.heat_to_hull]", "invented", None, f"About a twentieth of the reactor's power leaks as neutrons and gamma in every direction; a shadow shield passes a hundredth toward the ship: {h2h(0.05, 0.95, 0.01):g} of the jet aboard at a twentieth of the sphere. From memory; review."),
                    ("[function.throttle, function.gimbal]", "invented", None, "A solid core throttles to about a third; a gimballed nozzle gives about six degrees. Chosen.")])
-    # Chemical: RL10 (sourced) and Raptor-class (from memory).
     CH = [(1, "hydrolox", 25000.0, 4400, 80, 1.2, 0.6, 0.6, 0.2, 0.07, "CHE1", "scaled from the RL10 by thrust; review"),
           (2, "hydrolox", 110000.0, 4400, 300, 2.3, 1.5, 1.5, 0.2, 0.07, "CHE2", "the RL10: about 110 kN, 300 kg, hydrogen and oxygen; its extendable nozzle is carbon-carbon"),
           (3, "methalox", 500000.0, 3600, 600, 2.5, 1.2, 1.2, 0.4, 0.26, "CHE3", "between the RL10 and a Raptor by thrust, at a Raptor's weight per thrust; review"),
@@ -196,7 +193,6 @@ def engines():
                   [("[function.exhaust, function.thrust, physical.mass, function.throttle, function.gimbal]", "sourced" if cls == 2 else "invented", SRC if cls == 2 else None, scale),
                    ("[function.efficiency]", "derived", None, f"Half the exhaust speed squared ({0.5 * ve * ve / 1e6:.1f} MJ/kg) over the blend's {energy / 1e6:g} MJ/kg: {eff}."),
                    ("[function.heat_to_hull]", "invented", None, "A chemical engine's heat is its own, carried off by its propellant; a ten-thousandth of the jet soaks back into the mount. Chosen.")])
-    # Cold gas and small chemical attitude blocks.
     equipment("engine-cg-s1", "equipment.engine.cg.s1", "Cold gas block, 0.5 kN", "engine", 1, 15, 0.4, 0.4, 0.4, 50,
               {"kind": "engine", "cycle": "cold_gas", "thrust": 500.0, "exhaust": 700, "efficiency": 1.0, "burns": "material.nitrogen", "throttle": 0.0, "gimbal": 0.0, "isotropic_loss": 0.0, "shield_pass": 1.0, "reaction_offset": 0.0, "heat_to_hull": 0.0},
               [("Nozzles and valves", "Four nozzles facing out, fast valves.", 0.6, ST, MC), ("Regulator and manifold", "", 0.3, ST, MC), ("Controller", "", 0.1, EL, AS)], "CGE1",
@@ -212,7 +208,6 @@ def engines():
               [("Thrusters", "Four pressure-fed chambers facing out.", 0.6, ST, MC), ("Valves and manifold", "", 0.3, ST, MC), ("Controller", "", 0.1, EL, AS)], "CAE1",
               "Four small pressure-fed methalox thrusters, 5 kN in all at 3 km/s: ten times the impulse of cold gas for the same propellant, with a flame. Pulsed.",
               [("[function, physical]", "invented", None, "Small pressure-fed bipropellant thrusters, as a spacecraft's reaction control: about 3 km/s, kilonewtons, tens of kilograms. From memory; review.")])
-    # Swivels by thrust class.
     for cls, bears, mass, L, W, H, pw, code in [(1, 30000.0, 70, 0.8, 0.8, 0.4, 2000, "SWV1"), (2, 120000.0, 160, 1.2, 1.2, 0.5, 4000, "SWV2"), (3, 500000.0, 450, 1.8, 1.8, 0.7, 12000, "SWV3"), (4, 2500000.0, 1800, 3.0, 3.0, 1.0, 50000, "SWV4")]:
         equipment(f"swivel-s{cls}", f"equipment.swivel.s{cls}", f"Engine swivel S{cls}", "engine", cls, mass, L, W, H, pw,
                   {"kind": "swivel", "turns": 1.571, "bears": bears, "slew": 0.1},
@@ -255,7 +250,6 @@ made_from:
 basis:
   - {{ of: [identity], tier: invented, review: true, note: {q(note + " Added 2026-10-06 for the engine family (SFO 22).")} }}
 ''')
-    # tanks: the deuterium tanks' envelopes, filled with each propellant
     for prop, dens, frac, note in [("methalox", 830, 0.06, "a low-pressure liquid tank at 6% of its contents"), ("hydrolox", 320, 0.12, "insulated for liquid hydrogen and oxygen, 12% of its contents"), ("hydrogen", 71, 0.4, "a cryogenic tank at 20 K with its insulation and boil-off plant: 40% of its light contents")]:
         for cls, vol, L in [(1, 49.0, 4.6), (2, 92.0, 5.6)]:
             slug = f"tank-{prop}-s{cls}"; cap = round(vol * dens, -2); mass = round(cap * frac, -1)
@@ -267,7 +261,6 @@ basis:
               {"kind": "tank", "capacity": 300, "holds": "material.nitrogen"},
               [("Composite pressure vessel", "", 0.8, "stock.cfc-pl-3", WB), ("Valves and regulator", "", 0.2, ST, MC)], "TKN1",
               "A composite bottle holding 300 kg of nitrogen at 300 bar: ten minutes of a 0.5 kN block at full.", [("[physical, function]", "invented", None, "A composite overwrapped pressure vessel at about half a kilogram a kilogram of gas. From memory; review.")], maker="org.hadley")
-    # the plant
     p = S + "metadata/modules/propellant-plant.yaml"
     if not os.path.exists(p):
         open(p, "w").write('''# yaml-language-server: $schema=../../schema/module.schema.yaml
@@ -319,7 +312,6 @@ basis:
   - { of: [physical, recipes.rate, staff], tier: invented, review: true, note: "A port's propellant plant: a tonne of hydrolox in three hours. Chosen." }
   - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
 ''')
-    # a line wherever the deuterium plant stands, else at the Trethi power station
     hosts = [f for f in glob.glob("standards/LocalAdministration/metadata/administrations/**/facilities/*.yaml", recursive=True) if "module.deuterium-plant" in open(f).read()]
     hosts = hosts or ["standards/LocalAdministration/metadata/administrations/treistun/port-trethi/facilities/trethi-power-station.yaml"]
     for f in hosts:

@@ -85,11 +85,10 @@ def main(argv):
         die("not installed:\n  - " + "\n  - ".join(bad))
     print("  1. checks: size, nodes and budget fit")
 
-    # 2. the package
     base = os.path.join(store(), "models", tail(key))
     gsha = sha(glb)
     versions = sorted(int(d[1:]) for d in os.listdir(base) if re.fullmatch(r"v\d+", d)) if os.path.isdir(base) else []
-    def installed(v):     # (the same model with the same account: that version again)
+    def installed(v):
         d = os.path.join(base, f"v{v}")
         try:
             mf = os.path.join(d, "motion.json")
@@ -134,10 +133,9 @@ def main(argv):
         json.dump(manifest, open(os.path.join(dest, "manifest.json"), "w"), indent=1)
     msha = sha(os.path.join(dest, "manifest.json"))
 
-    # 3. the record
     text = open(rec_path, encoding="utf-8").read()
     block = f'visual:\n  format: "{FORMAT}"\n  path: "{rel}"\n  manifest_sha256: "{msha}"\n  version: {version}\n  triangles: {info["triangles"]}\n'
-    text = re.sub(r"^visual: \{.*\}\n", "", text, flags=re.M)   # a one-line visual (plants.py writes them) goes; the block below takes its place
+    text = re.sub(r"^visual: \{.*\}\n", "", text, flags=re.M)
     if re.search(r"^visual:\n", text, flags=re.M):
         new = re.sub(r"^visual:\n(?:  .*\n)+", block, text, count=1, flags=re.M)
     elif re.search(r"^life:", text, flags=re.M):

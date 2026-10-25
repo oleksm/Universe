@@ -17,13 +17,12 @@ import lib  # noqa: E402
 S = "standards/SFO/metadata/"
 REC = S + "structures/spaceport.yaml"
 G = 9.81
-CELL, NX, NY, NZ, ROOF = 3.0, 32, 52, 12, 4      # 96 x 156 x 36 m, the top four layers the roof (12 m deep, span/8; 6 m was too shallow)
-DOOR_I, DOOR_K = range(8, 24), range(0, 8)        # x -24 to 24, z 0 to 24, in the north face (j = NY - 1)
-SNOW_WIND = 1000.0                                # Pa: snow and wind on the roof, invented
-CLAD = 0.002                                      # m of 6061 sheet
+CELL, NX, NY, NZ, ROOF = 3.0, 32, 52, 12, 4
+DOOR_I, DOOR_K = range(8, 24), range(0, 8)
+SNOW_WIND = 1000.0
+CLAD = 0.002
 SECTIONS = sorted([f[:-11].lower() for f in os.listdir(S + "mill-stock") if f.startswith("ST4340-TB-") and f.endswith("-S3000.yaml")])
 
-# Measured on blender's model (structure-spaceport candidate v01, quantities.json, 2026-10-14), m3.
 MEASURED = {
     "Pads": ("good.concrete", 71020.8, "16 pads 90 m square, 0.6 m of reinforced concrete, less their trenches"),
     "Pad bases": ("good.aggregate", 59184.0, "0.5 m of crushed stone under the pads"),
@@ -35,7 +34,7 @@ MEASURED = {
     "Terminal hardstand": ("good.concrete", 230.4, "24 m square at (200, -450), for the fitted ground terminal"),
     "Hangar slab": ("good.concrete", 5990.4, "0.4 m under the hangar, 96 x 156 m"),
 }
-GRATES = 10.75                                    # m3 of steel in the ditch grates, measured on the same model
+GRATES = 10.75
 
 
 def r(x):
@@ -79,16 +78,16 @@ def main():
     al = mats["material.aluminium-alloy-6061"]["mass"]["density"]
     span, depth = NX * CELL, ROOF * CELL
     n = frames.lattice_count(cells(), {"wall": 1, "roof": 2})
-    frame_kg_m2 = 40.0                                     # first guess, then from the count
+    frame_kg_m2 = 40.0
     for _ in range(3):
         q = (CLAD * al + frame_kg_m2) * G + SNOW_WIND
-        chord = q * CELL * span ** 2 / 8 / depth           # a 3 m strip of the roof, simply supported over the span
-        wall = q * CELL * span / 2                         # its end on a wall's vertical
-        web = wall / (ROOF * math.sin(math.pi / 4))         # the end shear, shared by the diagonals of the strip's ROOF layers
+        chord = q * CELL * span ** 2 / 8 / depth
+        wall = q * CELL * span / 2
+        web = wall / (ROOF * math.sin(math.pi / 4))
         sec = {"chord": lightest(chord), "web": lightest(web), "wall": lightest(wall)}
         mass = {}
         for g, (ns, nd, nn) in n.items():
-            if g == "roof":                                 # chords: the span-wise members of the top and bottom planes; the rest web
+            if g == "roof":
                 nc = 2 * NX * (NY + 1)
                 c, w = stock(f"stock.{sec['chord']}-s3000"), stock(f"stock.{sec['web']}-s3000")
                 wd = stock(f"stock.{sec['web']}-d3000")
@@ -111,7 +110,7 @@ def main():
             txt = f"{where[g]}: {ns:,} straight struts {s_['identity']['key']} ({s_['physical']['mass']} kg) and {nd:,} diagonals {d_['identity']['key']} ({d_['physical']['mass']} kg)"
         built.append({"what": f"Hangar {g}: struts", "item": s_["identity"]["key"], "mass": r(m), "note": txt})
         built.append({"what": f"Hangar {g}: nodes", "item": node["identity"]["key"], "mass": r(mn), "note": f"{nn:,} nodes"})
-    clad_a = 2 * (span * 156 + 156 * NZ * CELL + span * NZ * CELL) - span * 156 - 48 * 24   # walls and roof, no floor, less the door
+    clad_a = 2 * (span * 156 + 156 * NZ * CELL + span * NZ * CELL) - span * 156 - 48 * 24
     built.append({"what": "Hangar cladding", "item": "stock.al6061-sh-2", "mass": r(clad_a * CLAD * al), "note": f"2 mm 6061 sheet, {clad_a:,.0f} m2 over the walls and roof (blender's model has 58 m3, the same, and 15 m3 of seam strips not counted)"})
     built.append({"what": "Hangar door", "item": "stock.al6061-sh-2", "mass": r(45 * 24 * (2 * CLAD * al + 20.0)), "note": "three leaves, 45 x 24 m in all: 2 mm skins both sides on a frame of about 20 kg/m2 (from memory)"})
     built.append({"what": "Ditch grates", "item": "material.structural-steel-a36", "mass": r(GRATES * 7850), "note": f"{GRATES} m3 of steel grating where the taxiways cross the ditches, measured on blender's model"})

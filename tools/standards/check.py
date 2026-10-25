@@ -83,7 +83,7 @@ def flatten(node, here):
 
 read = functools.cache(lambda uri: Resource.from_contents(flatten(_load(urllib.request.url2pathname(uri.removeprefix("file:"))), urllib.request.url2pathname(uri.removeprefix("file:")))))
 SCHEMAS = Registry(retrieve=read)
-checker = functools.cache(lambda uri: Draft7Validator({"$ref": uri}, registry=SCHEMAS))       # (one for each schema, not each record)
+checker = functools.cache(lambda uri: Draft7Validator({"$ref": uri}, registry=SCHEMAS))
 GENERATED = {TREE / "changes.yaml", TREE / "game-keys.yaml"}
 
 

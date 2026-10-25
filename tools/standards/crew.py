@@ -21,14 +21,12 @@ LIFE_NOTE = "Fifteen years of service for a ship's system, as a ship's machinery
 
 
 def schemas():
-    # the slot kind
     def dic(s):
         if "command," in s or ", command" in s: return s
         s = s.replace("enum: [power, drive, thrusters, lift, tank, cargo, hyperdrive, capacitor, computer, transponder, sensors, comm, life_support, hardpoint, utility, avionics, access, handling, thermal, gear, gate]",
                       "enum: [power, drive, thrusters, lift, tank, cargo, hyperdrive, capacitor, computer, transponder, sensors, comm, life_support, hardpoint, utility, avionics, access, handling, thermal, gear, gate, command]")
         return s.replace('      gate: "A gate ring\'s, not a hull\'s."\n', '      gate: "A gate ring\'s, not a hull\'s."\n      command: "The command station\'s: where the ship is flown from; on the bridge, inside the pressurised space."\n')
     edit("standards/dictionary.schema.yaml", dic)
-    # the equipment kinds
     def eq(s):
         if "const: command_station" in s: return s
         new = '''      - description: "Where the ship is flown from: seats, controls and displays for its pilots. On the bridge, inside the pressurised space. Not in the game yet."
@@ -194,7 +192,6 @@ WB, MC, AS, CT = "module.welding-bay", "module.machining-centre", "module.assemb
 
 def records():
     G = 9.80665
-    # 2. the command station
     for cls, slug, name, mass, L, W, H, pw, persons, g, code, note in [
         (1, "command-s1", "Pilot's station", 180, 1.2, 1.0, 1.5, 1500, 1, 9 * G, "CMD1", "One pilot: a seat rated to 9 g eyeballs-in (a fighter's seat and harness, 40 kg), a console of controls (60 kg) and its displays, computers and frame (80 kg); 1.5 kW of displays and computers. An airliner's flight deck seat is about 35 kg. From memory; chosen."),
         (2, "command-s2", "Pilot and co-pilot's station", 340, 2.2, 1.2, 1.5, 2500, 2, 9 * G, "CMD2", "Two seats side by side, each as the pilot's station, with a shared console between (an airliner's pedestal). From memory; chosen."),
@@ -202,7 +199,6 @@ def records():
         equipment(slug, f"equipment.command.s{cls}", name, "command", cls, mass, L, W, H, pw, {"kind": "command_station", "persons": persons, "g_rating": round(g, 1), "facing": "thrust"},
                   [("Seats and harnesses", "Rated to the station's g.", 0.22, AL, MC), ("Consoles and frame", "Controls, pedestal and the structure they stand on.", 0.33, AL, MC), ("Displays and computers", "", 0.35, EL, AS), ("Wiring and linings", "", 0.10, MLI, AS)], code,
                   "Where the ship is flown from: seats, controls and displays for its pilots. On the bridge, inside the pressurised space.", note)
-    # 3. berths, galley, head, food store
     for persons, mass, L, W, H in [(2, 260, 2.0, 1.0, 2.0), (4, 520, 2.0, 2.0, 2.0), (6, 780, 3.0, 2.0, 2.0)]:
         equipment(f"berths-{persons}", f"equipment.berths.{persons}", f"Crew berths {persons}", "cargo", 1 if persons < 6 else 2, mass, L, W, H, 50 * persons, {"kind": "berths", "persons": persons},
                   [("Bunks and lockers", "A bunk, a locker and a reading light a head.", 0.45, AL, MC), ("Partition and door", "The wall round them.", 0.40, SH, WB), ("Linings, bedding, lights", "", 0.15, MLI, AS)], f"BRT{persons}",
@@ -219,7 +215,6 @@ def records():
               [("Racks and bins", "Shelving and sealed bins.", 0.6, AL, MC), ("Chilled section", "A chiller for what must be kept cold.", 0.3, HP, AS), ("Fittings", "", 0.1, ST, MC)], "FST1",
               "A larder: racks and sealed bins holding a tonne of food of any kind sold as food (market.food), part of it chilled. 1,000 kg is 667 person-days at need.food's 1.5 kg a day.",
               "A tonne of packed food at about 350 kg/m3 (from memory of packaged provisions) in 3.6 m3 of racks, a tenth of it chilled; the racks and bins 150 kg. Chosen.")
-    # 5. landing aids
     equipment("altimeter", "equipment.sensors.altimeter.s1", "Landing altimeter", "sensors", 1, 8, 0.3, 0.2, 0.15, 40, {"kind": "altimeter", "range": 5000, "accuracy": 0.1},
               [("Laser head and optics", "", 0.5, EL, AS), ("Housing", "", 0.3, AL, MC), ("Electronics", "", 0.2, EL, AS)], "ALT1",
               "A laser rangefinder looking down: the ground's distance from 5 km to touchdown, to a tenth of a metre. What the pilot lands by in the last hundred metres; the radar's 500 km is not for that.",
@@ -228,7 +223,6 @@ def records():
               [("Lens and sensor", "", 0.6, EL, AS), ("Housing and heater", "", 0.4, AL, MC)], "CAM1",
               "A camera the pilot sees by where there is no window: 90 degrees across, under the ship for the pads or aft for docking. Fit one for each view the pilot needs.",
               "A ruggedised camera head of 2 kg with a heater, 90 degrees across, 10 W. From memory; chosen.")
-    # 6. safety
     equipment("fire-unit", "equipment.utility.fire.s1", "Fire unit", "utility", 1, 25, 0.5, 0.3, 0.3, 20, {"kind": "fire_unit", "protects": 50},
               [("Agent bottle and nozzles", "", 0.6, ST, MC), ("Detectors and controller", "Smoke and heat detectors, the valve's electronics.", 0.4, EL, AS)], "FIR1",
               "Smoke and heat detectors and a bottle of agent for one pressurised room of up to 50 m3. One in each pressurised room.",

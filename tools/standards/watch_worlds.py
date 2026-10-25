@@ -45,7 +45,6 @@ def install(rel, before, commit):
     v = run(sys.executable, os.path.join("tools", "standards", "validate.py")); print(v.strip().splitlines()[-1])
     run("uv", "run", "-q", "--no-project", "--with", "jsonschema", "--with", "pyyaml", "python3", os.path.join("tools", "standards", "check.py"))
     b = run(sys.executable, os.path.join("tools", "standards", "build.py")); print(b.strip().splitlines()[0][:80])
-    # the release log, for the review
     lines = [f"\n## {time.strftime('%Y-%m-%d %H:%M')} — store index of {rel.get('updated', '?')}\n"]
     for wid in sorted(new):
         w = next(x for x in rel["worlds"] if x["world_id"] == wid)

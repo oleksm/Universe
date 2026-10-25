@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from assets import LOW, HIGH, ROOT, TREE, records, required_nodes, size_of, store, tail  # noqa: E402
 
 RANK = {"rebuild": 5, "rig": 4, "review": 3, "measure": 2, "optimise": 1, "none": 0}
-NO_MODEL = ("layout", "module")     # (no monolith works models: the owner, 2026-10-15; their old models are reference pictures only)
+NO_MODEL = ("layout", "module")
 FROM_MODEL = ("measured on blender", "measured on the model", "measured on model", "on blender's model")
 
 
@@ -96,10 +96,9 @@ def gap(kind, key, path, r):
     now = spec(kind, r)
     m = manifest(r) or {}
     old, source = installed_spec(kind, path, r)
-    # Size: the model as measured at install, against the record now (the installer's own rule).
-    ok = lambda x, y: LOW * y <= x <= HIGH * y or abs(x - y) <= 0.03          # (a thin piece: 3 cm either way)
+    ok = lambda x, y: LOW * y <= x <= HIGH * y or abs(x - y) <= 0.03
     pieces = {p["name"]: [p["length"], p["width"], p["height"]] for p in r.get("pieces", []) if all(p.get(k) for k in ("length", "width", "height"))} if kind == "template" else {}
-    if pieces:         # (a run's template: each sized piece alone, as the installer held it; none kept before piece_sizes_m: the installer held it then)
+    if pieces:
         for name, got in (m.get("piece_sizes_m") or {}).items():
             if name in pieces:
                 off = [f"{x:.2f} m against {y:.2f}" for x, y in zip(sorted(got), sorted(pieces[name])) if not ok(x, y)]
@@ -108,9 +107,9 @@ def gap(kind, key, path, r):
     elif now["size"] and m.get("size_m"):
         a, b = sorted(m["size_m"]), sorted(now["size"])
         off = [f"{x:.2f} m against {y:.2f}" for x, y in zip(a, b) if y and not ok(x, y)]
-        if off and m.get("bounds_m"):                                              # (a record's box centred on the model's origin, round a lopsided body)
+        if off and m.get("bounds_m"):
             lo, hi = m["bounds_m"]
-            c = sorted([2 * max(abs(lo[0]), abs(hi[0])), hi[1] - lo[1], 2 * max(abs(lo[2]), abs(hi[2]))])     # (glTF y is up: from the ground, not centred)
+            c = sorted([2 * max(abs(lo[0]), abs(hi[0])), hi[1] - lo[1], 2 * max(abs(lo[2]), abs(hi[2]))])
             if all(ok(x, y) for x, y in zip(c, b)):
                 off = []
         if off:
@@ -128,20 +127,19 @@ def gap(kind, key, path, r):
         added = [p["id"] for p in now["ports"] if p["id"] not in po]
         if moved or added:
             add("none", "ports", f"ports {'moved: ' + ', '.join(moved) if moved else ''}{'; ' if moved and added else ''}{'added: ' + ', '.join(added) if added else ''}. No model work: the game draws the joint at each port (rule 1, 2026-10-16); a port standing off the body is the registry's to fix")
-    # Motion: a moving part wants its pivot and a motion file in the package.
     pkg = os.path.join(store(), (r.get("visual") or {}).get("path", ""))
-    parts_move = [x for x in now["motion"] if not str((x.get("moves") or [""])[0]).startswith("the whole")]     # (a unit travelling whole needs no pivot)
+    parts_move = [x for x in now["motion"] if not str((x.get("moves") or [""])[0]).startswith("the whole")]
     if parts_move and not os.path.exists(os.path.join(pkg, "motion.json")):
         add("rig", "motion", "parts of it move (" + "; ".join(f"{x['id']}: {x['kind']} of {', '.join(x.get('moves') or [])}" for x in parts_move) + ") and the package has no motion.json: separate those parts, pivot them on the record's axes, install with --motion")
     have = set(m.get("nodes") or [])
     lacking = [n for n in now["nodes"] if not any(h.startswith(n) for h in have)]
     if m and lacking:
         add("rig", "nodes", "the record wants nodes the model lacks: " + ", ".join(n + "*" for n in lacking))
-    if kind == "unit" and not now["envelope"] and not now["shells"] and not key.startswith(("unit.fitout-", "unit.furniture-")):      # (furniture: no runs pass through it, its box is enough)
+    if kind == "unit" and not now["envelope"] and not now["shells"] and not key.startswith(("unit.fitout-", "unit.furniture-")):
         add("measure", "envelope", "no envelope boxes: measure them from the installed model (model_measure.py)")
     if now["budget"] and m.get("triangles", 0) > now["budget"]:
         add("optimise", "triangles", f"{m['triangles']:,} triangles against a budget of {now['budget']:,}")
-    if any(q["work"] == "keep" for q in open_requests(r)):          # (a review found the model right: its review gaps close)
+    if any(q["work"] == "keep" for q in open_requests(r)):
         out = [x for x in out if x["verdict"] != "review"]
     for q in open_requests(r):
         if q["work"] == "keep":

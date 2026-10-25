@@ -67,7 +67,7 @@ def tree(sch, here, name="", req=False, stack=frozenset(), depth=0):
         if k in sch:
             out.setdefault("m", {})[k] = sch[k]
     props, required = {}, set(sch.get("required") or [])
-    for part in sch.get("allOf") or []:                     # (allOf is derivation: what it derives from comes first)
+    for part in sch.get("allOf") or []:
         if isinstance(part, dict) and "$ref" in part:
             node, target, shared, sig = _resolve(part["$ref"], here)
             if isinstance(node, dict) and sig not in stack:
@@ -122,7 +122,7 @@ def model():
 
         def walk(n, at, here, stack):
             if isinstance(n, dict):
-                if "$ref" in n:                       # (a shared structure: follow it, so what it names counts too)
+                if "$ref" in n:
                     file, _, ptr = n["$ref"].partition("#")
                     target = os.path.normpath(os.path.join(os.path.dirname(here), file)) if file else here
                     name = ptr.split("/")[-1]

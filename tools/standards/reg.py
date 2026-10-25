@@ -88,7 +88,7 @@ def schema_for(kind):
 def cmd_new(kind, slug, opt):
     spath, sch = schema_for(kind)
     folder = opt.get("folder")
-    m = re.match(r"standards/([^<]+?)/<", sch.get("description", ""))      # (the schema says where its records lie)
+    m = re.match(r"standards/([^<]+?)/<", sch.get("description", ""))
     home = os.path.join(TREE, m.group(1)) if m else None
     if not folder:
         f = next((f for k, _, f, _ in records() if k.split(".")[0] == kind), None)
@@ -96,9 +96,9 @@ def cmd_new(kind, slug, opt):
         if not folder:
             sys.exit(f"no {kind} record yet to tell its folder: pass --folder=<dir>")
     elif os.path.isdir(os.path.join(TREE, folder.split("/")[0])) and folder.split("/")[0][:1].isupper():
-        folder = os.path.join(TREE, folder)        # (a path from a root: PlanetSim/metadata/...)
+        folder = os.path.join(TREE, folder)
     elif home:
-        folder = os.path.join(home, folder)        # (a subfolder of the kind's own: hydrology)
+        folder = os.path.join(home, folder)
     else:
         sys.exit(f"--folder={folder}: give it from a root (PlanetSim/metadata/...)")
     path = os.path.join(folder, slug + ".yaml")
@@ -127,7 +127,7 @@ def cmd_set(key, dotted, value):
     parts = dotted.split(".")
     for p_ in parts[:-1]:
         node = node[int(p_)] if isinstance(node, list) else node.setdefault(p_, {})
-    if isinstance(node, list) and parts[-1] == "+":      # (a path ending in + appends to the list)
+    if isinstance(node, list) and parts[-1] == "+":
         old = None
         node.append(v)
     elif isinstance(node, list):
@@ -170,9 +170,9 @@ def cmd_check(opt, pages):
              ("stock chains", [sys.executable, "tools/standards/production_chain.py"], None),
              ("ports", [sys.executable, "tools/standards/equipment_ports.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
              ("mounts", [sys.executable, "tools/standards/mounting.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
-             ("ship qualification", [sys.executable, "tools/standards/ship_qualify.py"], None),   # ship-check.socket-qualification; reported, gate with --check once MC-07 has its mount markers
-             ("ship tests", f"cd tools/standards && {sys.executable} -m unittest -q test_ship_workflow test_ship_qualify test_ship_cli test_slot_spec test_schema_audit", None),   # (the conformance cases too)
-             ("schema map", [sys.executable, "tools/standards/schema_diagram.py"], None)]   # docs/schema-map/: roots.svg, references.svg, index.html (interactive)
+             ("ship qualification", [sys.executable, "tools/standards/ship_qualify.py"], None),
+             ("ship tests", f"cd tools/standards && {sys.executable} -m unittest -q test_ship_workflow test_ship_qualify test_ship_cli test_slot_spec test_schema_audit", None),
+             ("schema map", [sys.executable, "tools/standards/schema_diagram.py"], None)]
     failed = 0
     for name, cmd, ok in steps:
         r = sh(cmd)

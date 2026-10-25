@@ -24,8 +24,8 @@ NAMES = {"power": "power plant", "drive": "main drive", "thrusters": "thruster",
 PATTERN = {"drive": ("ring", 8), "thrusters": ("ring", 4), "lift": ("ring", 6), "tank": ("saddles", 4), "gear": ("trunnion", 3), "hardpoint": ("ring", 4), "access": ("ring", 8), "thermal": ("corners", 4), "engine": ("ring", 8)}
 M, DESIGN_G = 1.25, 3 * 9.80665
 CARRIES = ("tank", "rack", "ore_bay", "store")
-COMPACT_SIDE, COMPACT_MASS = 2.0, 250.0   # a class-1 piece at most 2 m a side and 250 kg dry gets a compact mount (rule.mounts-margin)
-compact = lambda d: d.get("size_class") == 1 and max(d["physical"].get(k) or 0 for k in ("length", "width", "height")) <= COMPACT_SIDE and d["physical"]["mass"] <= COMPACT_MASS   # kinds whose capacity is kg they hold: the mount bears the thing full
+COMPACT_SIDE, COMPACT_MASS = 2.0, 250.0
+compact = lambda d: d.get("size_class") == 1 and max(d["physical"].get(k) or 0 for k in ("length", "width", "height")) <= COMPACT_SIDE and d["physical"]["mass"] <= COMPACT_MASS
 
 
 def main():
@@ -53,7 +53,7 @@ def main():
             return None, 1.0, None
         g = lambda fn: max(fn(d) for d in base)
         fnk = lambda d: d["function"]
-        heat = lambda d: device_heat(fnk(d))   # (one rule: lib.device_heat, SFO 22)
+        heat = lambda d: device_heat(fnk(d))
         burn = lambda d: fnk(d)["output"] / fnk(d)["efficiency"] / 3.45e14 if fnk(d)["kind"] == "power_plant" else (fnk(d)["thrust"] / fnk(d)["exhaust"] if "thrust" in fnk(d) else 0)
         return {"L": g(lambda d: d["physical"]["length"]) * k ** (1 / 3), "W": g(lambda d: d["physical"]["width"]) * k ** (1 / 3), "H": g(lambda d: d["physical"]["height"]) * k ** (1 / 3),
                 "mass": g(lambda d: d["physical"]["mass"] + (fnk(d).get("capacity", 0) if fnk(d)["kind"] in CARRIES else 0)) * k, "power": g(lambda d: (d.get("needs") or {}).get("power", 0)) * k,
@@ -80,7 +80,7 @@ def main():
         if fig.get("moment"): s += f"  moment: {r(fig['moment'] * M)!r}\n"
         pattern, pts = PATTERN.get(kind, ("corners", 4 if fig["mass"] < 2000 else 8))
         per = (fig["mass"] * DESIGN_G + fig["thrust"] + fig["landing"] + fig["recoil"] + fig.get("hold", 0)) * M / pts
-        per += fig.get("moment", 0) * M / (0.8 * fig["W"] * pts / 2)   # a moment: half the points pull, across four fifths of the width
+        per += fig.get("moment", 0) * M / (0.8 * fig["W"] * pts / 2)
         s += f"attachment:\n  points: {pts}\n  pattern: {pattern}\n  each:\n    tension: {r(per)!r}\n    compression: {r(per)!r}\n    shear: {r(max(per / 2, fig["thrust"] * M / pts) if kind == "thrusters" else per / 2)!r}\n"
         feeds = []
         if fig["power"]: feeds.append(f"  power: {r(fig['power'] * M)!r}\n")
@@ -88,10 +88,9 @@ def main():
         if fig["burn"]: feeds.append(f"  fuel: {r(fig['burn'] * M)!r}\n")
         if feeds: s += "feeds:\n" + "".join(feeds)
         if fig["thrust"]: s += f"nozzle:\n  diameter: {r(fig['W'] * 0.8)!r}\n"
-        s += "basis:\n" + f"  - {{ of: [envelope, bears, attachment{', feeds' if feeds else ''}{', nozzle' if fig['thrust'] else ''}], rule: rule.mounts-margin }}\n"   # (the rule, stated once)
+        s += "basis:\n" + f"  - {{ of: [envelope, bears, attachment{', feeds' if feeds else ''}{', nozzle' if fig['thrust'] else ''}], rule: rule.mounts-margin }}\n"
         yaml.safe_load(s)
         open(MT + slug + ".yaml", "w").write(s); n += 1
-    # equipment fits a mount; a hull's slots offer one
     for f in sorted(glob.glob(E + "*.yaml")):
         s = open(f).read(); d = yaml.safe_load(s); i = d["identity"]
         if not i.get("slot") or not d.get("size_class"):
@@ -99,7 +98,7 @@ def main():
         base = f"mount.{i['slot'].replace('_', '-')}-s{d['size_class']}"
         key = base + "c" if compact(d) else base
         if "\nfits:" in s:
-            if d.get("fits") in (base, base + "c") and d["fits"] != key:   # only the generator's own choice moves
+            if d.get("fits") in (base, base + "c") and d["fits"] != key:
                 s = re.sub(r"^fits: .*$", f"fits: {key}", s, count=1, flags=re.M)
                 yaml.safe_load(s); open(f, "w").write(s)
             continue

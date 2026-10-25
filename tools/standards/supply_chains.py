@@ -82,9 +82,6 @@ def build():
     mw = lambda **f: sum(atoms[k] * n for k, n in f.items())
     methanol, water, hydrogen = mw(c=1, h=4, o=1), mw(h=2, o=1), mw(h=2)
 
-    # Ideal overall balance from the registry's established methanol carbon chain.
-    # Internal monomer synthesis is deliberately stated, not hidden as a claim
-    # that methanol is directly polymerised into every one of these materials.
     def organic(c, h, n=0, o=0, share=1):
         mass = mw(c=c, h=h, n=n, o=o)
         ins = {"good.methanol": c * methanol / mass * share}
@@ -102,8 +99,6 @@ def build():
         return out
 
     chem = []
-    # HF from fluorspar; calcium sulphate is explicitly hydrated to the existing
-    # gypsum good, so its two waters are not mistaken for anhydrous CaSO4.
     hf = mw(h=1, f=1)
     chem.append(recipe("good.hydrogen-fluoride", "Digest fluorspar with sulphuric acid, distil HF, and hydrate the calcium sulphate to gypsum. Ideal pure-feed balance; ore beneficiation is internal and not yet sized.",
                         {"good.fluorspar": mw(ca=1, f=2)/(2*hf), "good.sulphuric-acid": mw(h=2,s=1,o=4)/(2*hf), "good.water": 2*water/(2*hf)},
@@ -131,7 +126,6 @@ def build():
     chem.append(recipe("stock.chem-silica-aerogel", "Dissolve silica in caustic, acidify sodium silicate with HCl, wash, exchange solvent and dry the gel. Ideal silica/salt/water balance plus chosen 0.05 kg solvent makeup lost to chemical waste per kg; recovery and hydrophobisation unqualified.",
                         {"good.silica-sand": 1, "good.caustic-soda": 2*mw(na=1,o=1,h=1)/silica, "good.hydrogen-chloride": 2*mw(h=1,cl=1)/silica, "good.methanol": .05},
                         {"good.salt": 2*mw(na=1,cl=1)/silica, "good.water": 2*water/silica, "good.chemical-waste": .05}))
-    # Use the magnesite record's actual Mg grade, not pure MgCO3 ore.
     mg_share = recs["good.magnesite-ore"]["composition"][0]["share"]
     ore = .9*atoms["mg"]/mw(mg=1,o=1)/mg_share
     carbonate = .9*mw(mg=1,c=1,o=3)/mw(mg=1,o=1)
@@ -161,7 +155,6 @@ def build():
     put("goods", "packaging-waste", "good", wd)
     stock("packaging-waste-bulk", "Spent packaging, in bulk", "good.packaging-waste", "skip")
 
-    # Shares of each package's existing empty mass, not its payload.
     steel, ss, al, pe, board, paper = "stock.sta36-pl-8", "stock.st304-pl-3", "stock.al6061-pl-5", "good.polyethylene", "good.fibreboard", "good.paper"
     compositions = {
         "bale": {"good.cotton-cloth": 1}, "bar-bundle": {board:.6, steel:.4},
@@ -177,15 +170,11 @@ def build():
     for slug, shares in compositions.items():
         package = recs["package."+slug]; mass = package["physical"]["mass"]
         key = "stock.pkg-"+slug
-        # Made_from is a material identity for the stock view; the complete
-        # manufacturing inputs are the module recipe, never inferred from it.
         stock("pkg-"+slug, package["identity"]["name"]+", empty" if slug != "bale" else "Bale bindings, one set", next(iter(shares)), None, mass, "package."+slug, shares, package["physical"])
         pack_recipes.append(recipe(key, "Form, join and inspect one empty handling unit (bindings only for a bale). Draft material shares of its existing tare; no payload is manufactured here.", shares, rate=.5, power=1000000))
     packaging = module("packaging-works", "Packaging works", "Make empty handling units. Sheet fabrication, tank and crate assembly, plastics moulding and bag/carton conversion; draft material budgets.", (120,60,15), pack_recipes)
     put("modules", "packaging-works", "module", packaging)
 
-    # Coarse construction parts for each works, with the final assembly itself
-    # a recipe. No settlement, maker allocation or plant layout is invented.
     import kit_works
     works = {slug: (data[0], data[3]) for slug, data in kit_works.WORKS.items()}
     works.update({"specialty-chemical-works": ("Specialty chemical works", (180,80,25)), "packaging-works": ("Packaging works", (120,60,15)), "factory-works": ("Factory works", (120,60,20))})
@@ -194,8 +183,8 @@ def build():
              "building-panel-works": 6, "cradle-shop": 7, "conveyor-shop": 8, "specialty-chemical-works": 9,
              "packaging-works": 10, "factory-works": 11}
     for slug, (name, size) in works.items():
-        idx = codes[slug]           # stable component codes if the works dictionary is reordered
-        total = size[0]*size[1]*40       # chosen machinery kg / allocated m2, not a measured engineering estimate
+        idx = codes[slug]
+        total = size[0]*size[1]*40
         construction_masses[slug] = total
         inputs = {}
         for j, (pn, feed, share, maker) in enumerate((("Frames and guards", "stock.sta36-pl-20-panel", .4, "module.welding-bay"), ("Process machinery", "stock.st4340-fg", .45, "module.machining-centre"), ("Drives", "good.electric-motors", .1, "module.assembly-shop"), ("Controls", "good.electronics", .05, "module.assembly-shop")), 1):

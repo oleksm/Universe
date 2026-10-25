@@ -22,11 +22,9 @@ G = 9.80665; A = 3 * G; ORE = 2000; A_DOOR = 0.3 * G
 A36, S4340, AL = 7800, 7850, 2700
 SIG_A36, SIG_4340, SIG_AL = 250e6 / 1.5, 1300e6 / 1.5, 270e6 / 1.5
 T, T_LINER, T_DOOR = 0.008, 0.003, 0.005
-CUT = 1.15   # stock bought for a part cut from it (rule.cut-loss)
-TUBES = [(60, 2), (80, 3), (100, 5), (120, 10), (150, 10), (200, 15), (250, 20), (300, 30), (400, 30)]   # 4340 tube stock, mm
+CUT = 1.15
+TUBES = [(60, 2), (80, 3), (100, 5), (120, 10), (150, 10), (200, 15), (250, 20), (300, 30), (400, 30)]
 
-# The families' sections: outer square, clear width, slot width, clear height (a 45 degree V to the slot under straight sides),
-# and how far the gate runs below the shell to clear its webs (measured in the models: 100 t v3, 10 t v2 and the 20 t rebuild).
 SECTIONS = {3.15: (2.75, 0.5, 2.7, 0.11), 2.25: (1.93, 0.3, 1.95, 0.065), 1.72: (1.4, 0.3, 1.42, 0.045)}
 
 
@@ -49,15 +47,12 @@ def up(x, step):
 def work(rec):
     cap = rec["function"]["capacity"]; vol = rec["function"]["volume"]
     L, W = rec["physical"]["length"], rec["physical"]["width"]
-    # A bay whose chords stand proud of its section (the 300 t's 200 mm tubes) is wider than the section it is built round.
     c, s, H, ds = SECTIONS[max(k for k in SECTIONS if k <= W + 1e-9)]
     d = (c - s) / 2; hs = H - d; leg = d * math.sqrt(2)
     P = 2 * hs + 2 * leg; sec = c * hs + (c + s) / 2 * d
     Lt = vol / sec
     p = ORE * A * H
-    # Plate between ribs, held at the ribs: stress p b^2 / (2 t^2); the spacing the 8 mm plate allows, down to 5 cm.
     b = math.floor(T / math.sqrt(p / (2 * SIG_A36)) / 0.05) * 0.05
-    # Ribs: 8 mm webs welded to the plate (the plate their flange, Z about t h^2 / 3), each leg a beam held at both ends.
     span = max(hs, leg); M = p * b * span ** 2 / 12
     h = up(math.sqrt(3 * (M / SIG_A36) / T), 0.01)
     area = P * Lt + 2 * sec
@@ -65,27 +60,16 @@ def work(rec):
     n = math.floor(Lt / b) + 1
     ribs = (n * P + 2 * (math.ceil(c / b) - 1) * 0.8 * H) * h * T * A36
     liners = area * T_LINER * S4340
-    # Doors: 5 mm plate, ribbed at the spacing the reverse load allows, each leaf a beam from hinge to latch; 10% hinges.
-    # The door ribs hang between the roof ties when shut, so their pitch is a whole number of rib spacings.
     pd = ORE * A_DOOR * H
     bd = min(max(math.floor(T_DOOR / math.sqrt(pd / (2 * SIG_AL)) / b + 1e-9), 1) * b, Lt)
     hd = up(math.sqrt(3 * (pd * bd * (c / 2) ** 2 / 8 / SIG_AL) / T_DOOR), 0.01)
-    # Hinges, pins, locks and drives a quarter of the leaves; the steel coaming round the opening they shut on, 8 mm and
-    # 50 mm deeper than the door ribs.
     doors = (c * Lt * T_DOOR + (math.floor(Lt / bd) + 1) * c * hd * T_DOOR) * AL * 1.25 + 2 * (Lt + c) * (hd + 0.05) * T * A36
-    # Gate: 8 mm plate over the slot and 60 mm onto each bed, ribbed at b across the slot; two 100 mm bearing strips.
     gw = s + 0.12
     hg = up(math.sqrt(3 * (p * b * s ** 2 / 8 / SIG_A36) / T), 0.01)
-    # The gate runs below the shell's webs (ds, by section), the slot carried down to it by two skirts, each a cantilever
-    # from the slot's edge under the full pressure: 8 mm holds it.
     assert math.sqrt(3 * p * ds ** 2 / SIG_A36) <= T, ds
-    # The gate's load to the frame: at every rib a pair of webs as deep as the ribs from the beds out half the V's half-width,
-    # and along each side a seat and a guide, 8 mm and 20 mm deeper than the ribs.
     gate = (gw * Lt + n * gw * hg + 2 * Lt * 0.1 + 2 * Lt * ds + 2 * n * h * (c - s) / 4 + 4 * Lt * (h + 0.02)) * T * A36
-    # The hopper's load to the frame: every rib carried on down from the V's mid-slope to the bottom chords, two legs a rib.
     ribs += 2 * n * h * T * A36 * (d / 2 + ds + hg)
     ties = n * c * tube(60, 2)[1]
-    # Frame: held at its eight corners, the loaded bay bends as a beam over its length; the top chords take the compression.
     m = shell + ribs + liners + doors + gate + ties
     for _ in range(30):
         F = (m + cap) * A * L / 8 / W / 2

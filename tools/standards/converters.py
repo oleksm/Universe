@@ -18,7 +18,7 @@ HEAD = "# yaml-language-server: $schema=../../schema/equipment.schema.yaml\n"
 KEEP = ("visual", "model_requests")
 MEMORY = "From memory of aerospace and traction DC-DC converters (isolated SiC stages, liquid-cooled); to be sourced."
 
-CONVERTERS = [  # (output V, kW, efficiency, kW/kg, kW/litre)
+CONVERTERS = [
     (28, 1, 0.93, 0.5, 0.5), (28, 3, 0.93, 0.6, 0.5), (28, 5, 0.93, 0.6, 0.5),
     (270, 10, 0.97, 1.6, 2.0), (270, 40, 0.97, 2.0, 2.0), (270, 100, 0.97, 2.2, 2.0)]
 SHARES = [("Power stages and controls", "good.electronics", 0.3, "module.electronics-works", "silicon carbide switches, gate drives, the controller"),
@@ -74,7 +74,7 @@ def wiring(v, kw, eff, rec):
     return pts, internal
 
 
-BOARDS = [  # (V, ways of shell 17, of shell 25, of shell 33, kg, length, width, height)
+BOARDS = [
     (28, 12, 4, 0, 6.0, 0.45, 0.12, 0.3), (270, 0, 8, 2, 11.0, 0.5, 0.15, 0.35)]
 BOARD_SHARES = [("Enclosure and rails", "stock.al6061-pl-5", 0.45, "module.machining-centre", "a folded aluminium box, its DIN-style rails and the gland plates"),
                 ("Bus bars", "stock.cu-wire-2", 0.2, "module.electronics-works", "copper bars, plus and minus, and their insulators"),
@@ -122,8 +122,8 @@ def record(v, kw, eff, kwkg, kwl):
     p = kw * 1000.0
     amps, out, cool = ports(v, kw, eff)
     mass = r(kw / kwkg, 1)
-    vol = kw / kwl / 1000.0                       # m3
-    l = r((vol * 4) ** (1 / 3) * 1.0, 3)          # a flat box about 2 : 1 : 0.5
+    vol = kw / kwl / 1000.0
+    l = r((vol * 4) ** (1 / 3) * 1.0, 3)
     w, h = r(l / 2, 3), r(vol / (l * l / 2), 3)
     loss = p * (1 / eff - 1)
     slug = f"power-converter-{v}v-{kw}kw"
@@ -152,7 +152,7 @@ def main():
         if os.path.exists(path):
             old = yaml.safe_load(open(path)) or {}
             d = dict(d, **{k: old[k] for k in KEEP if k in old and k not in d})
-        if c in BOARDS:          # (an installed model's empties, named by port id, give the places)
+        if c in BOARDS:
             em = ep.empties(d)
             for q in d["ports"]:
                 if q["id"] in em:
@@ -161,7 +161,7 @@ def main():
             pts, internal = wiring(c[0], c[1], c[2], d)
             d["ports"], d["internal"] = pts, internal
             d["basis"].insert(1, {"of": ["ports"], "tier": "derived", "note": "Places from the installed model's empties where it has them (each port's note says); connectors by current (ports() here); docs/proposals/equipment-ports.md."})
-        d["ports"] = ep.feet(d) + d["ports"]           # (its feet on the deck track: docs/proposals/physical-mounts.md)
+        d["ports"] = ep.feet(d) + d["ports"]
         text = HEAD + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
         lib.own(path, "tools/standards/converters.py")
         if not os.path.exists(path) or open(path).read() != text:

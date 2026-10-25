@@ -70,7 +70,7 @@ def main(argv):
         sys.exit(__doc__)
     sim, run = pos[0], pos[1]
     tools = opt.get("tools") if isinstance(opt.get("tools"), str) else None
-    if not tools:          # (the run's repository: <repo>/out/planet/<run>)
+    if not tools:
         repo = os.path.abspath(os.path.join(run, "..", "..", ".."))
         tools = os.path.join(repo, "tools")
     package = opt.get("package") if isinstance(opt.get("package"), str) else os.path.expanduser(f"~/planet-data/packages/{os.path.basename(os.path.normpath(run))}")
@@ -81,7 +81,6 @@ def main(argv):
     lack = lambda what, word, where: found["lacks"].append({"what": what, "word": word, "where": where})
     differ = lambda what, detail: found["disagrees"].append({"what": what, "detail": detail})
 
-    # Landmark types: the strings the sim writes records with, and its aging tables.
     types = calls_with_string(stages, {"add_mark", "_record", "_volcanoes"}, {"add_mark": 2, "_record": 3, "_volcanoes": 3})
     K = constants(stages)
     aging = {}
@@ -105,7 +104,6 @@ def main(argv):
         if s not in types:
             found["unused"].append({"key": k, "why": "no landmark of this type is written by the sim's stages"})
 
-    # Events the sim logs, against the dictionary's geological events.
     dic = yaml.safe_load(open(os.path.join(TREE, "dictionary.schema.yaml")))["definitions"]["geological_event"]["enum"]
     evs = calls_with_string(stages, {"event"}, {"event": 0})
     found["seen"]["events"] = sorted(evs)
@@ -114,7 +112,6 @@ def main(argv):
         if e not in dic and e not in words:
             lack("event", e, "the sim's event log (S.event): a planet-event record maps it")
 
-    # Constants a record names: present in the sim, and the figure where the record carries it.
     for kind in ("planet-line", "planet-handler"):
         for k, d in R.get(kind, {}).items():
             for c in d.get("constants") or []:
@@ -135,14 +132,13 @@ def main(argv):
                 differ(rec, f"threshold {thr[0]['value']:g} m3/s, sim {c} {K[c]['value']:g} m3/yr = {K[c]['value'] * q:g} m3/s")
     found["seen"]["constants"] = {k: v["value"] for k, v in K.items() if isinstance(v["value"], (int, float))}
 
-    # The run's files: every array key, against the fields that claim them.
     cks = sorted(glob.glob(os.path.join(run, "ck_*_ctx.npz")))
     claimed = {}
     for k, d in R.get("planet-field", {}).items():
         for pr in [d.get("producer") or {}] + (d.get("also_from") or []):
             if pr.get("key"):
                 claimed[(pr.get("file"), pr["key"])] = k
-    for d in R.get("planet-file", {}).values():          # (a file's bookkeeping arrays: known, not words)
+    for d in R.get("planet-file", {}).values():
         for b in d.get("bookkeeping") or []:
             claimed.setdefault((d.get("source"), b["key"]), d["identity"]["key"])
     if cks:
@@ -168,7 +164,6 @@ def main(argv):
         d = json.load(open(fj))
         found["seen"]["features.json"] = sorted(d) if isinstance(d, dict) else f"a list of {len(d)}"
 
-    # Layer classes: the tools' tables against the frozen ids.
     T = constants(tool_files)
     lay = R.get("planet-layer", {})
     for tab, key in (("CLIMATE", "planet-layer.climate"), ("COVER", "planet-layer.cover")):
@@ -181,7 +176,6 @@ def main(argv):
                     lack(f"{key} class", n, T[tab]["file"])
                 elif not (n.startswith(c.get("source") or c["name"]) or (c.get("source") or c["name"]).startswith(n.split(" (")[0])):
                     found["moved"].append({"layer": key, "id": i, "registry": c.get("source") or c["name"], "sim": n, "table": T[tab]["file"]})
-    # Vocabularies against their sources.
     df = os.path.join(os.path.dirname(tools), "docs", "landforms", "deciding_factors.json")
     voc = os.path.join(TREE, "Celestial", "metadata", "ground-vocabularies", "pattern.yaml")
     if os.path.exists(df) and os.path.exists(voc):

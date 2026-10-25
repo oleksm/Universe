@@ -39,7 +39,6 @@ def goods():
     return out
 
 
-# Where the rules would pick wrong: powders that go in bags whatever their density, things made by the piece, valuables.
 OVERRIDES = {"cement": "bulk-bag", "lime": "bulk-bag", "alumina": "bulk-bag", "gypsum": "bulk-bag", "salt": "bulk-bag",
              "silica-sand": "bulk-bag", "dust": "bulk-bag", "soda-ash": "bulk-bag", "potash": "bulk-bag",
              "phosphate-fertiliser": "bulk-bag", "fertiliser": "bulk-bag", "brick": "crate-heavy",
@@ -54,7 +53,7 @@ OVERRIDES["packaging-waste"] = "skip"
 
 def package_for(d, g):
     if (d.get("supplies") or {}).get("item", "").startswith("package."):
-        return None          # The empty handling unit itself, not a load inside another unit.
+        return None
     i = d["identity"]; form = i.get("form"); market = i.get("traded_as", "")
     item = ((d.get("made_from") or [{}])[0]).get("item", "")
     name = item.split(".", 1)[-1]
@@ -63,7 +62,7 @@ def package_for(d, g):
         return OVERRIDES[name]
     if form in FORMS:
         return FORMS[form]
-    if form == "fluid":      # (by the stock's own key: -gas a gas, -liq a cryogenic liquid)
+    if form == "fluid":
         key = i["key"]
         return "gas-rack" if key.endswith("-gas") or name in GASES else ("cryo-dewar" if key.endswith("-liq") else "tote")
     if name in GASES:

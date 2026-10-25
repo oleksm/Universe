@@ -12,7 +12,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 TREE = ROOT / "standards"
-STRICT = False  # Switch only after Planets completes the catalogue migration.
+STRICT = False
 NAMES = ("10000-km", "1000-km", "100-km", "10-km", "1-km", "100-m", "10-m", "1-m")
 LEVELS = tuple("planet-level." + name for name in NAMES)
 VIEWS = tuple(10.0 ** power for power in range(7, -1, -1))
@@ -21,11 +21,7 @@ CHECKS = ("size and band ladder", "expansion graph", "examples and built geometr
 
 
 def derived_ladder(across):
-    """Inclusive thresholds: largest >= 10 pixels; smallest fits the finest view.
-
-    Ranges below 1 cm or wholly larger than the planet view have no valid ladder.
-    Oversized largest members are allowed when smaller members fit a view.
-    """
+    """Inclusive thresholds: largest >= 10 pixels; smallest fits the finest view."""
     low, high = across
     if not all(isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x) and x > 0 for x in across) or low > high:
         raise ValueError("size range must be finite, positive and ordered")
@@ -85,7 +81,6 @@ def audit(records, emitted):
         if not rec or rec.get("span") != view or rec.get("spacing") != [view / 1000, view / 1000]:
             gap(key, 1, "level must match its decade view and view/1000 ground pixel")
     for key, rec in sorted(features.items()):
-        # 1. Sizes define the draw interval; context `levels` is not a substitute.
         for field in ("size", "ladder", "description", "shape"):
             if not rec.get(field):
                 gap(key, 1, f"missing {field}")
@@ -104,8 +99,6 @@ def audit(records, emitted):
         if rec["identity"].get("about", "").startswith(("A relief feature of the ", "A relief landmark of the ")):
             gap(key, 1, "identity.about is the old placeholder")
 
-        # 2. Both directions describe the same parent -> child graph. Growth edges
-        # participate too; reciprocal declarations do not create a false cycle.
         edges = [(key, child) for child in rec.get("children", [])]
         edges += [(parent, key) for parent in rec.get("parent_kinds", [])]
         edges += [(key, item["kind"]) for item in rec.get("grows_into", [])]
@@ -118,7 +111,6 @@ def audit(records, emitted):
             if pl and cl and pl[0] in LEVELS and cl[0] in LEVELS and LEVELS.index(cl[0]) < LEVELS.index(pl[0]):
                 gap(key, 2, f"child {child} starts coarser than {parent}")
 
-        # 3. A point still needs its declared dimensions/spans, not an empty list.
         if (rec.get("built") or rec.get("register") == "landmark" or rec.get("landmark")) and not rec.get("examples"):
             gap(key, 3, "built/landmark kind needs a measured example")
         if rec.get("built"):
@@ -129,14 +121,12 @@ def audit(records, emitted):
         for message in example_sources(rec):
             gap(key, 3, message)
 
-        # 5. A non-water level blend must explicitly declare its flat floor.
         shape = rec.get("shape") or {}
         if shape.get("blend") == "material" and rec.get("register") != "cover":
             gap(key, 5, "material blend is only for cover")
         if shape.get("blend") == "level" and rec.get("register") != "water" and not shape.get("flat_floor"):
             gap(key, 5, "level blend requires water or an explicit flat_floor")
 
-        # 6. Check all declared geometry/meaning pairs, not only the two mandatory pairs.
         for line in rec.get("line_kinds", []):
             if line not in records or key not in records[line].get("feature_kinds", []):
                 gap(key, 6, f"line {line} needs reciprocal feature_kinds")
@@ -157,7 +147,6 @@ def audit(records, emitted):
 
     for key in sorted(graph):
         visit(key)
-    # 4. Simulator manifest and/or observed run kinds must be registered.
     for key in sorted(set(emitted)):
         if key not in features:
             gap(key, 4, "simulator emits an unregistered kind")

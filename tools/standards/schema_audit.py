@@ -122,7 +122,7 @@ def schema_rules():
             if typed and t is None and not any(k in n for k in ("$ref", "properties", "enum", "const", "allOf", "oneOf", "anyOf")):
                 faults.append((rel, f"{at}: no type"))
             for k, v in (n.get("properties") or {}).items():
-                walk(v, f"{at}.{k}", not overlay, overlay)   # (an allOf overlay only adds to what it derives from)
+                walk(v, f"{at}.{k}", not overlay, overlay)
             if isinstance(n.get("items"), dict):
                 walk(n["items"], f"{at}[]", True)
             for k, v in (n.get("definitions") or {}).items():

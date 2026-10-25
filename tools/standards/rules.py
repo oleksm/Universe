@@ -81,7 +81,6 @@ PLANT_KEYS = {"alumina-refinery": "08_alumina_refinery_bayer", "arc-furnace": "0
               "pellet-plant": "02_iron_ore_pellet_plant", "piercing-mill": "15_seamless_tube_plant", "potline": "09_aluminium_potline", "reheat-furnace": "11_reheat_furnace_walking_beam", "shaft-furnace": "04_direct_reduction_shaft_furnace",
               "tank-farm": "22_warehouse_tanks_pumps", "welding-bay": "18_welding_gantries_and_cranes", "ingot-yard": "07_ingot_casting", "loading-dock": "23_port_cranes"}
 
-# note text -> (rule, a function of (path, entry) giving the record's own note, or None)
 MATCH = [
     (re.compile(r"^Fifteen years of service for a ship's system.*everything made has a life\.$"), "life-ship-system", None),
     (re.compile(r"^Twenty-five years for industrial plant.*everything made has a life\.$"), "life-plant", None),

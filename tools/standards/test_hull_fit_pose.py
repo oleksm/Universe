@@ -37,7 +37,7 @@ class HullFitPose(unittest.TestCase):
         self.hull['fit'].append({'slot': 'engine_starboard', 'item': 'equipment.engine.test'})
         self.assertEqual(self.errors(), [])
         del self.hull['fit'][0]['pose']
-        self.equipment.clear()  # no package read when no opt-in exists
+        self.equipment.clear()
         self.assertEqual(self.errors(), [])
 
     def test_static_visual_cannot_be_opted_in(self):

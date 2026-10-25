@@ -34,6 +34,7 @@ import yaml
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import set_ground  # noqa: E402
+from lib import sha  # noqa: E402
 
 FORMAT = "planet-unfold-tiles/1"
 CLIMATE = ("mean_temperature", "temperature_low", "temperature_high", "rain")
@@ -43,20 +44,11 @@ def die(msg):
     sys.exit(f"install_world: {msg}")
 
 
-def sha(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for b in iter(lambda: f.read(1 << 20), b""):
-            h.update(b)
-    return h.hexdigest()
-
-
 def store():
     p = os.environ.get("UNIVERSE_WORLDS") or os.path.expanduser("~/git/planet-sim/out")
     return p if os.path.isdir(p) else die("no worlds store (set UNIVERSE_WORLDS)")
 
 
-# ---- the line files and the engine's reader
 
 def read_lines(path):
     """A PTL2 file's header and the set of line kinds it carries, read without keeping the vertices."""
@@ -90,7 +82,6 @@ def engine_reader(path):
     return path, version, kinds
 
 
-# ---- the record
 
 def body_file(name):
     for f in glob.glob(os.path.join(ROOT, "standards/Celestial/metadata/systems/*/bodies/*.yaml")):
@@ -134,7 +125,6 @@ def main(argv):
     survey_world = opt.get("survey") or (world if os.path.isdir(os.path.join(store(), "worlds", world, "survey")) else None)
     print(f"install_world: {name} as {key} (world {world}){' [dry run]' if not apply else ''}")
 
-    # 1. the kinds the files carry, against the engine's reader
     epath, ever, ekinds = engine_reader(opt.get("engine"))
     infos = {os.path.basename(f): read_lines(f) for f in [root] + depth}
     for fname, info in infos.items():
@@ -147,7 +137,6 @@ def main(argv):
     r = infos[os.path.basename(root)]
     print(f"  1. kinds: {', '.join(f'{ekinds[k]} {n:,}' for k, n in sorted(r['kinds'].items()))} ({r['lines']:,} lines): all read by the engine ({os.path.relpath(epath, os.path.expanduser('~'))})")
 
-    # 2. the snapshot
     rel = f"worlds/{world}/ground/{snap}"
     dest = os.path.join(store(), rel)
     files = {"L0_0_0.lines": root, **{os.path.basename(f): f for f in depth}}
@@ -167,7 +156,6 @@ def main(argv):
             shutil.copyfile(src, os.path.join(dest, n))
         json.dump(manifest, open(os.path.join(dest, "manifest.json"), "w"), indent=1)
 
-    # 3. the record
     text = open(rec_path).read(); rec = yaml.safe_load(text)
     cur_survey = (rec.get("survey") or {}).get("world_id"); cur_ground = (rec.get("ground") or {}).get("path")
     msha = sha(os.path.join(dest, "manifest.json")) if os.path.exists(os.path.join(dest, "manifest.json")) and (same or apply) else None
@@ -189,7 +177,6 @@ def main(argv):
             restore_climate(rec_path, before)
         os.chdir(ROOT)
         set_ground.main(key, rel, opt["note"] if isinstance(opt.get("note"), str) else None)
-        # 4. validators and the build
         for cmd in ([sys.executable, "tools/standards/validate.py"], [sys.executable, "tools/standards/build.py"]):
             out = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
             if out.returncode:
@@ -200,7 +187,6 @@ def main(argv):
         if survey_world and survey_world != cur_survey:
             shutil.rmtree(os.path.join(ROOT, "standards", "Celestial", "surveys", survey_world), ignore_errors=True)
         die(f"{e}\nthe record is put back as it was")
-    # 5. commit and push
     if push:
         if git("branch", "--show-current") != "fso":
             die("--push commits on fso only")

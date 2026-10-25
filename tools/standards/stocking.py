@@ -2,7 +2,6 @@
 administration's compulsory reserve; derives every warehouse's day-0 stock from them. Idempotent. Run from the repository root."""
 import yaml, glob, os, re
 LA = "standards/LocalAdministration/metadata/administrations/treistun/"; DAY = 86400.0
-# 1. schema: the law on an administration; a settlement's resupply
 p = "standards/organisation.schema.yaml"; s = open(p).read()
 if "compulsory_stock:" not in s:
     old = "  zoning:\n    description: Its zoning code, what each kind of zone permits.\n"
@@ -49,7 +48,6 @@ if "  resupply:" not in s:
       interval: { type: number, x-unit: "s", description: "s between deliveries, on the usual run" }
 ''' + old, 1)
     open(p, "w").write(s)
-# 2. the law, on Treistun
 p = LA[:-1] + ".yaml"; s = open(p).read()
 if "compulsory_stock:" not in s:
     s = s.replace("zoning:\n", '''compulsory_stock:
@@ -60,7 +58,6 @@ if "compulsory_stock:" not in s:
 zoning:
 ''', 1)
     yaml.safe_load(s); open(p, "w").write(s)
-# 3. each settlement's resupply: from Port Eikir (the granary) or Port Trethi (the mill), at an interval by how far it is (chosen)
 RESUPPLY = {"port-eikir": None, "port-sirnendis": ("port-eikir", 3), "port-nacaubun": ("port-eikir", 7), "treistun-e-station": ("port-eikir", 7),
             "port-zaudalein": ("port-eikir", 20), "port-lisaur": ("port-eikir", 20), "port-fabindum": ("port-eikir", 20), "port-seiwiti": ("port-eikir", 20),
             "port-trethi": ("port-eikir", 30), "port-aipika": ("port-eikir", 60), "port-weisonum": ("port-eikir", 60)}
@@ -70,11 +67,10 @@ for slug, rs in RESUPPLY.items():
     frm, days = rs
     s = re.sub(r"^(population: .*\n)", lambda m: m.group(1) + f"resupply: {{ from: settlement.treistun.{frm}, interval: {days * DAY:g} }}\n", s, count=1, flags=re.M)
     assert "resupply:" in s, slug; yaml.safe_load(s); open(p, "w").write(s)
-# 4. day-0 warehouse stock from the layers
 needs = {yaml.safe_load(open(f))["identity"]["key"]: yaml.safe_load(open(f)) for f in glob.glob("standards/People/metadata/needs/*.yaml")}
 BASKET = {"stock.flour-bulk": .25, "stock.potatoes-bulk": .20, "stock.cabbage-bulk": .05, "stock.carrots-bulk": .05, "stock.onions-bulk": .05, "stock.apples-bulk": .10, "stock.cheese-bulk": .05, "stock.beef-bulk": .05, "stock.pork-bulk": .05, "stock.chicken-bulk": .05, "stock.sugar-bulk": .05, "stock.vegetable-oil-bulk": .05}
 ITEMS = {"need.food": BASKET, "need.medicine": {"stock.medicines-bulk": 1}, "need.clothes": {"stock.clothes-bulk": 1}, "need.tools": {"stock.tools-bulk": 1}, "need.company": None}
-def takes(need):  # item -> kg/s a person
+def takes(need):
     return {t["item"]: t["rate"] for t in needs[need].get("takes", [])}
 adm = yaml.safe_load(open(LA[:-1] + ".yaml")); law = adm["compulsory_stock"]; cover = law.get("warehouse_cover", 1.5)
 setts = {}
@@ -82,7 +78,7 @@ for f in glob.glob(LA + "*.yaml"):
     d = yaml.safe_load(open(f))
     if d.get("population"): setts[d["identity"]["key"]] = d
 total = sum(d["population"] for d in setts.values())
-WORKING = 7 * DAY   # the granary's own warehouse: a store's week
+WORKING = 7 * DAY
 for key, d in setts.items():
     slug = key.split(".")[-1]; wh = [f_ for f_ in glob.glob(LA + f"{slug}/facilities/*.yaml") if (yaml.safe_load(open(f_)) or {}).get("kind") == "warehouse"]
     if not wh: print("no warehouse:", slug); continue
@@ -90,7 +86,7 @@ for key, d in setts.items():
     stock = {}
     for need, items in ITEMS.items():
         per = takes(need)
-        if items is None:   # company: beer and wine by their own items
+        if items is None:
             for it, rate in per.items(): stock[f"stock.{it.split('.')[1]}-bulk"] = pop * rate * interval * cover
             continue
         rate = sum(per.values())
@@ -101,7 +97,6 @@ for key, d in setts.items():
             rate = sum(takes(rsv["need"]).values())
             for it, share in ITEMS[rsv["need"]].items(): stock[it] = stock.get(it, 0) + total * rate * rsv["lasts"] * h["share"] * share
     path = wh[0]; s = open(path).read()
-    # strip the old food/medicine/clothes/tools/drink lines and their comments; keep fuel, oxygen, water and the rest
     s = re.sub(r"^# Thirty days of food.*\n", "", s, flags=re.M)
     s = re.sub(r"^# Ninety days of medicine.*\n", "", s, flags=re.M)
     s = re.sub(r"^# (Thirty|Ninety) days.*\n", "", s, flags=re.M)

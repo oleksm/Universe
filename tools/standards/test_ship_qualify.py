@@ -65,7 +65,7 @@ class SocketQualification(unittest.TestCase):
             glb(old, [])
             pin = glb(new, ["mount_rcs_1", "n1", "n2"])
             saved = ship_qualify.ROOT, ship_qualify.GAME
-            ship_qualify.ROOT, ship_qualify.GAME = old, new     # stale copy first, as fso before a sync
+            ship_qualify.ROOT, ship_qualify.GAME = old, new
             try:
                 self.assertNotIn("S5", crit(hull(model="m/h.glb", model_sha256=pin)))
                 faults, unchecked = qualify(hull(model="m/h.glb", model_sha256="0" * 64), MOUNTS, EQ)

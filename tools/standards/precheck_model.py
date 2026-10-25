@@ -45,7 +45,6 @@ def main(argv):
     if not key or not glb:
         sys.exit("precheck_model: the delivery record needs `asset` and `export`")
 
-    # 1. hashes
     bad = []
     for rel, want in (d.get("hashes") or {}).items():
         f = os.path.join(base, rel)
@@ -55,7 +54,6 @@ def main(argv):
     steps.append(("hashes", not bad, "\n".join(bad) or f"{len(d.get('hashes') or {})} files match"))
     ok &= not bad
 
-    # 2. previews (the user's rule: every item can be previewed): both named in the record, both fit
     from assets import PREVIEWS, check_png  # noqa: E402
     pv = []
     for n, side in PREVIEWS.items():
@@ -64,23 +62,21 @@ def main(argv):
     steps.append(("previews", not pv, "\n".join(pv) or "thumb 512 px and icon 128 px, square, with alpha"))
     ok &= not pv
 
-    # 3. installer dry run
     cmd = [sys.executable, "tools/standards/install_model.py", glb, f"--as={key}"]
     cmd += [f"--source={source}"] if source else []
     cmd += [f"--about={about}"] if about else []
     cmd += [f"--motion={motion}"] if motion else []
     cmd += [f"--{n}={at(n)}" for n in ("thumb", "icon") if at(n)]
-    env_store = os.path.join("/tmp", f"precheck-store-{os.getpid()}")      # (a dry run writes nothing; the store is never touched)
+    env_store = os.path.join("/tmp", f"precheck-store-{os.getpid()}")
     code, out = run(["env", f"UNIVERSE_ASSETS={env_store}", *cmd])
     steps.append(("installer dry run", code == 0, out))
     ok &= code == 0
 
-    # 4. the game's CPU consumer
     plain = motion and "gimbal" not in json.load(open(motion, encoding="utf-8"))
-    if plain:      # (plain axes only, a plant unit: the engine has no consumer yet; it builds one when units go in)
+    if plain:
         steps.append(("game CPU consumer", True, "none yet for plain axes (engine, 2026-10-18); the installer's axis checks stand"))
     elif motion:
-        capped = [os.path.expanduser("~/bin/capped")] if os.path.exists(os.path.expanduser("~/bin/capped")) else []   # (heavy builds under the memory cap)
+        capped = [os.path.expanduser("~/bin/capped")] if os.path.exists(os.path.expanduser("~/bin/capped")) else []
         code, out = run([*capped, "cargo", "run", "-q", "--release", "-p", "universe-engine", "--example", "ch_s2_fixture", "--", motion, glb])
         passed = code == 0 and "PASS" in out
         steps.append(("game CPU consumer (engine's ch_s2_fixture)", passed, out[-3000:]))

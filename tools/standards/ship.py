@@ -247,7 +247,7 @@ def modules(opt):
             if bad:
                 rejected.append((k, bad))
                 continue
-        elif target:   # the game's own rule, through the qualification code
+        elif target:
             probe = {"identity": {"key": "probe"}, "physical": {"mass": 1, "length": 1e3, "width": 1e3, "height": 1e3},
                      "slots": [{"name": "s", "kind": kind, "size": cls, "mount": target}], "fit": [{"slot": "s", "item": k}]}
             if any(c == "F3" for c, _ in qualify(probe, mounts, eq)[0]):
@@ -317,7 +317,6 @@ def shipyard(key, opt):
     for b in blocks():
         if b["required"] and not filled(pairs, b):
             faults.append(("Y2", f"{b['need']} not fitted"))
-    # (The physics is the game's one calculator, hull_report, on these records; only what it does not give is summed here.)
     fitfile = None
     if opt.get("--candidate"):
         fitfile = os.path.abspath(opt["--candidate"])

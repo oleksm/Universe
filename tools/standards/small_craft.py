@@ -63,7 +63,7 @@ def schemas():
 def val(v):
     if isinstance(v, bool): return str(v).lower()
     if isinstance(v, str): return q(v) if (" " in v or ":" in v) else v
-    return repr(v) if isinstance(v, float) else str(v)   # (repr: 30000000.0, never 3e+07, which YAML reads as text)
+    return repr(v) if isinstance(v, float) else str(v)
 
 
 def rec(fn, key, name, slot, cls, mass, L, W, H, power, function, parts, code, desc, notes, maker="org.hadley"):
@@ -114,7 +114,7 @@ def records():
                 f"A {vol:.1f} m3 ball holding {cap:,} kg of {prop}: a small craft's propellant.",
                 [("[physical, function]", "invented", None, f"{prop} at {dens} kg/m3: {vol:.1f} m3 as a ball {d:.2f} m across; the tank {frac:.0%} of its contents, more than a big tank's share since a small one's wall and insulation do not shrink with it. Chosen; review.")])
     for cap, tag in [(50, "50kg"), (100, "100kg")]:
-        rec(f"tank-nitrogen-{tag}", f"equipment.tank.nitrogen.{tag}", f"Nitrogen bottle {cap} kg", "tank", 1, round(cap * 0.6), round(0.5 + cap / 200, 2), 0.6, 0.6, 0,   # (its box holds the gas at 330 kg/m3: the game checks)
+        rec(f"tank-nitrogen-{tag}", f"equipment.tank.nitrogen.{tag}", f"Nitrogen bottle {cap} kg", "tank", 1, round(cap * 0.6), round(0.5 + cap / 200, 2), 0.6, 0.6, 0,
             {"kind": "tank", "capacity": float(cap), "holds": "material.nitrogen"},
             [("Composite pressure vessel", "", 0.8, CFC, WB), ("Valve and regulator", "", 0.2, ST, MC)], f"TKN{tag.upper()}",
             f"A composite bottle of {cap} kg of nitrogen at 300 bar for cold-gas thrusters: {cap / 0.714:.0f} s of a 0.5 kN block at full.",
@@ -136,14 +136,12 @@ def records():
         [("Lithium hydroxide canister", "", 0.6, ST, MC), ("Fan and housing", "", 0.4, AL, MC)], "LSC1",
         "A lithium hydroxide canister with a fan: takes up two people's carbon dioxide for twelve hours, then is swapped. No oxygen of its own: fit a bottle (tank.oxygen) for the air they breathe.",
         [("[function, physical, needs]", "invented", None, "Two people give off 2.2 kg of carbon dioxide a day (need.air); 1.3 kg of lithium hydroxide takes up twelve hours of it; with its canister and fan, 20 kg. Apollo's canisters, from memory. Review.")])
-    # VTOL packs: high-rate cells, 4 kW/kg at 0.5 MJ/kg (eVTOL packs of the 2020s, from memory: about 3 to 5 kW/kg, 140 to 170 Wh/kg at the pack)
     for cls, mass, code in [(0, 150, "BATV0"), (1, 500, "BATV1"), (2, 1500, "BATV2")]:
         rec(f"power-battery-vtol-s{cls}", f"equipment.power.battery-vtol.s{cls}", f"VTOL pack S{cls}", "power", 1 if cls < 2 else 2, mass, 0.6 + 0.3 * cls, 0.5 + 0.2 * cls, 0.4 + 0.1 * cls, 0,
             {"kind": "battery", "stores": float(mass * 500000), "rate": float(mass * 4000), "cycles": 1500, "efficiency": 0.94},
             [("High-rate cells", "", 0.7, EL, AS), ("Cooling plates and housing", "", 0.2, AL, MC), ("Management and contactors", "", 0.1, EL, AS)], code,
             f"A pack built for a landing, not a voyage: {mass * 4 / 1000:g} MW out for {mass * 0.5 / (mass * 4) * 1000:.0f} s from {mass * 0.5:g} MJ; about 1,500 full cycles. Lighter per kilowatt than the S0 and S1, heavier per joule.",
             [("[function, physical]", "invented", None, "4 kW/kg and 0.5 MJ/kg (140 Wh/kg) at the pack, with cooling plates: the high-rate lithium packs of electric VTOL craft of the 2020s, from memory; 1,500 cycles to 80%. Review.")])
-    # kilowatt thermal, for a craft that makes tens of kilowatts of heat, not megawatts
     rec("thermal-radiator-s0", "equipment.thermal.radiator.s0", "Radiator S0", "thermal", 1, 40, 2.0, 1.0, 0.05, 0,
         {"kind": "radiator", "rejects": 2400.0, "temperature": 330, "area": 2.0},
         [("Panel", "", 0.6, AL, MC), ("Tubes and manifold", "", 0.3, ST, WB), ("Fittings", "", 0.1, ST, MC)], "RAD0",

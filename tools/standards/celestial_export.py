@@ -19,14 +19,12 @@ dry = "--dry" in sys.argv
 raw = open(args[0]).read() if args else subprocess.run(["cargo", "run", "-q", "-p", "universe-world", "--example", "celestial_export"], cwd=ROOT, capture_output=True, text=True, check=True).stdout
 data = json.loads(raw)
 slug = lambda name: re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
-# (A field's rocks: the game names their class by its label; the record names the rock class by its key.)
 _RC = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "standards", "Celestial", "metadata", "rock-classes")
 ROCK = {i["label"].lower(): i["key"] for i in (yaml.safe_load(open(os.path.join(_RC, f)))["identity"] for f in sorted(os.listdir(_RC))) if i.get("label")}
 r = lambda v, n=4: float(f"{v:.{n}g}")
 NATURAL = {"star", "rocky planet", "gas giant", "ice giant", "moon", "asteroid"}
 wrote = kept = 0
 seen = set()
-# (Records are in SI. Each value is rounded as it reads (km, days, hours, light years), then written in SI.)
 def law(name):
     """A law's value, from the Dogma registry (standards/Dogma), by its file name."""
     import glob as _g
@@ -45,7 +43,6 @@ def put(path, schema, rec):
     if was.get("provenance") in ("curated", "frozen"):
         kept += 1
         return
-    # (What a person wrote about it stays with it: the seed has nothing to say there.)
     for k in ("about", "story"):
         if k in (was.get("identity") or {}):
             rec["identity"][k] = was["identity"][k]
@@ -65,7 +62,6 @@ for s in data["systems"]:
         "position": {"from_home": [si(round(v, 3) * LY) for v in s["from_home_ly"]], "distance": si(round(d, 3) * LY)},
     })
     for b in s["bodies"]:
-        # (Small bodies, marked by the export, go to small-bodies/: the engine seeds them, so they are the game's own.)
         if b.get("small"):
             o = b["orbit"]
             back = o["inclination"] > 90
@@ -77,7 +73,7 @@ for s in data["systems"]:
             rec = {"provenance": "seeded", "identity": {"key": f"body.{slug(s['name'])}.{slug(b['name'])}", "name": b["name"], "kind": b["kind"], "parent": f"body.{slug(s['name'])}.{slug(b['parent'])}", "about": about},
                    "orbit": {"semi_major_axis": si(r(o["semi_major_axis"] / 1000, 6) * 1000), "eccentricity": r(o["eccentricity"]), "period": si(r(o["period"] / 86400, 6) * 86400), "inclination": round(o["inclination"], 3)},
                    "physical": {"mass": r(b["mass"], 5), "radius": si(r(b["radius"] / 1000, 6) * 1000), "density": round(b["rock"]["density"]) if "rock" in b else round(b["mass"] / (4.18879 * b["radius"] ** 3)), "day": si(r(b["day"] / 3600, 5) * 3600)}}
-            if "rock" in b:      # (a round one is not of a rock class: its density is its mass over its size)
+            if "rock" in b:
                 rec["rock"] = {"class": ROCK[b["rock"]["class"].lower()], "structure": b["rock"]["structure"].lower()}
             put(os.path.join(OUT, slug(s["name"]), "small-bodies", slug(b["name"]) + ".yaml"), "../../../../schema/body.schema.yaml", rec)
             continue
@@ -122,7 +118,6 @@ for s in data["systems"]:
             "identity": {"key": f"population.{slug(s['name'])}.{slug(f['name'])}", "name": f["name"], "kind": kind, "anchor": f"body.{slug(s['name'])}.{slug(f['anchor'])}"},
             "rocks": {"class": ROCK[f["class"].lower()], "count": f["count"], "extent": si(r(f["extent"] / 1000) * 1000)},
         })
-# (A small body the seed no longer makes goes, unless a person has taken it over: the engine's are the game's own.)
 for dp, _, fns in os.walk(OUT):
     if os.path.basename(dp) == "small-bodies":
         for fn in fns:

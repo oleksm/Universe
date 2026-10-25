@@ -134,14 +134,14 @@ def qualify(hull, mounts, equipment, model=None):
         if bears.get("thrust") and fn.get("kind") == "engine" and fn.get("thrust", 0) > bears["thrust"] * 1.0001:
             f("F3", f"slot {sn}: {key} thrust past what {mk} bears")
     share, seen = {}, set()
-    for t in hull.get("thrusters") or []:      # as the game's import.rs bind_engines
+    for t in hull.get("thrusters") or []:
         if t["slot"] not in slots:
             f("T1", f"thruster {t['nozzle']} names no slot {t['slot']}")
             continue
         if nodes is not None and t["nozzle"] not in nodes:
             f("T2", f"model has no nozzle node {t['nozzle']}")
         if slots[t["slot"]]["kind"] != "engine":
-            continue                         # other kinds bind by the game's name rule
+            continue
         if not 0 < t["share"] <= 1:
             f("T3", f"thruster {t['nozzle']}: share {t['share']} not over 0 and up to 1")
         if t["nozzle"] in seen:

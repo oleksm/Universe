@@ -28,7 +28,6 @@ def num(v):
     return t if "e" not in t else (t if "." in t.split("e")[0] else t.replace("e", ".0e"))
 
 
-# The simulation's key for a type, and the registry's name for its record.
 TYPE = {"porphyry": "porphyry", "epithermal": "epithermal", "vms": "massive-sulphide", "orogenic_gold": "orogenic-gold", "tin_tungsten": "tin-tungsten", "nickel_sulphide": "nickel-sulphide",
         "chromite": "chromite", "iron_formation": "iron-formation", "mvt": "carbonate-zinc-lead", "sedex": "shale-zinc-lead", "sediment_copper": "sediment-copper", "diamond": "kimberlite",
         "layered_cr_pge": "layered-intrusion", "layered_vti": "magnetite-seams", "sed_manganese": "sedimentary-manganese", "magnesite": "magnesite", "volcanic_sulphur": "volcanic-sulphur",
@@ -40,15 +39,12 @@ TYPE = {"porphyry": "porphyry", "epithermal": "epithermal", "vms": "massive-sulp
 UNIT = {"basement": "gneiss-basement", "arc_plutonic": "granodiorite", "carbonate": "limestone", "arc_volcanic": "andesite", "granite": "granite", "clastic": "sandstone-shale", "flood_basalt": "flood-basalt",
         "schist": "schist", "ophiolite": "ophiolite", "rift": "rift-basalt", "greenstone": "greenstone", "iron_formation": "iron-formation", "morb": "ocean-floor-basalt",
         "primary_crust": "primary-crust", "intercrater_plains": "intercrater-plains", "high_ti_basalt": "high-titanium-basalt", "impact_melt": "impact-melt", "impact_breccia": "impact-breccia", "anorthosite": "anorthosite", "kreep": "kreep-basalt"}
-# A unit the registry had not met: what it is, and what lays it down.
 NEW_UNIT = {"greenstone": ("Old lavas of a young, hot mantle, squeezed and turned green.", ["arc"]), "iron-formation": ("Banded iron laid down in seas before the air held oxygen.", ["sea"]),
             "ocean-floor-basalt": ("The floor of the oceans, made at the ridges.", ["ridge"]),
             "primary-crust": ("The first crust an airless world froze, pocked by four billion years of craters.", ["craton", "impact"]), "intercrater-plains": ("Old lava that flooded between the craters, cratered again since.", ["plume", "impact"]),
             "high-titanium-basalt": ("Lava rich in ilmenite: titanium and iron, and oxygen to be had from it.", ["plume"]), "impact-melt": ("Rock melted by a great impact and frozen in the crater's floor.", ["impact"]),
             "impact-breccia": ("Broken rock thrown out of craters and fallen back, loose and jumbled.", ["impact"]), "anorthosite": ("The pale highlands: feldspar that floated to the top of a magma ocean.", ["craton"]),
             "kreep-basalt": ("Lava rich in potassium, rare earths, phosphorus, thorium and uranium: the last of a magma ocean to freeze.", ["plume"])}
-# The simulation's commodity, as the registry has it: the item, and what to multiply its figure by to
-# get kg of that item in each kg of ore (an oxide's share that is the element; % and g/t to a share).
 PCT, GT = 1e-2, 1e-6
 ITEM = {"Cu %": ("element.cu", PCT), "Mo %": ("element.mo", PCT), "Au g/t": ("element.au", GT), "Ag g/t": ("element.ag", GT), "Zn %": ("element.zn", PCT), "Pb %": ("element.pb", PCT),
         "Ni %": ("element.ni", PCT), "Co %": ("element.co", PCT), "Sn %": ("element.sn", PCT), "W %": ("element.w", PCT), "Fe %": ("element.fe", PCT), "Mn %": ("element.mn", PCT),
@@ -83,11 +79,11 @@ for t in voc["deposit_types"]:
     s += f"sim: {{ key: {t['key']}, code: {t['code']} }}\nformed_by: {old['formed_by']}\ncarries:\n"
     split = t.get("pge_split") or {}
     for said, v in t["grades_typical"].items():
-        if said == "PGE g/t":       # (the platinum metals, each by its share of them; all as platinum where the simulation gives no split)
+        if said == "PGE g/t":
             for el, share in (split or {"Pt": 1.0}).items():
                 s += f"  - {{ item: element.{el.lower()}, grade: {num(v * GT * share)}, said_as: {q('PGE g/t, ' + el + ' ' + format(share, '.0%') if split else 'PGE g/t')} }}\n"
             continue
-        if said == "REO %" and t.get("ree_split"):       # (the rare earths, each by its share of their oxides; "others" is left out)
+        if said == "REO %" and t.get("ree_split"):
             for el, share in t["ree_split"].items():
                 if el != "others":
                     s += f"  - {{ item: element.{el.lower()}, grade: {num(v * PCT * 0.83 * share)}, said_as: {q('REO %, ' + el + ' ' + format(share, '.1%'))} }}\n"

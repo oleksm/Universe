@@ -13,9 +13,10 @@ otherwise; every record says so.
 """
 import glob, math, os, sys
 import yaml
-import lib  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import r  # noqa: E402
+import lib  # noqa: E402
 import plant_kit as pk  # noqa: E402
 from packages import FORMS as PACKAGE_OF  # noqa: E402
 
@@ -27,10 +28,6 @@ A36, SS, AL, CU, RUB, PE, BR = ("material.structural-steel-a36", "material.stain
                                "material.copper", "material.epdm-rubber", "material.polyethylene-uhmw", "material.bearing-bronze-c93200")
 RHO = {A36: 7850, SS: 7900, AL: 2700, CU: 8960, RUB: 1150, PE: 940}
 MEMORY = "From memory of makers' catalogues; to be sourced."
-
-
-def r(x, nd=1):
-    return round(float(x), nd)
 
 
 def tag(x):
@@ -48,7 +45,7 @@ def tube_mass(od, t, rho):
     return math.pi * (od - t) * t * rho
 
 
-OUT = []          # (folder, slug, record)
+OUT = []
 IFS = {}
 
 
@@ -71,15 +68,14 @@ def conn(slug, d, iface):
             i["envelope"][k] = max(i["envelope"].get(k, 0), v)
     if iface.get("standard"):
         i["standard"] = iface["standard"]
-    for k in ("keys", "contacts"):         # (what a wire's snap checks: a port's key and its pins' contacts)
+    for k in ("keys", "contacts"):
         if iface.get(k):
             i[k] = iface[k]
     i["basis"] = [{"of": ["envelope", "face"], "tier": "derived", "note": "The most the products built to it are rated for, and their joint's outside."}]
 
 
-# ------------------------------------------------------------------ hoses and their couplings
-CAM = {0.025: 0.6, 0.05: 1.27, 0.1: 3.6, 0.15: 7.5}            # kg a cam-lock pair (A and D): DN 50 as blender modelled it (1.166 kg of cast aluminium, about 0.1 kg of pins and gasket, 2026-10-17), the others scaled by it from memory
-CAM_P = {0.025: 1.7e6, 0.05: 1.7e6, 0.1: 1.0e6, 0.15: 0.7e6}   # Pa they are rated for (EN 14420-7, falling with size; from memory)
+CAM = {0.025: 0.6, 0.05: 1.27, 0.1: 3.6, 0.15: 7.5}
+CAM_P = {0.025: 1.7e6, 0.05: 1.7e6, 0.1: 1.0e6, 0.15: 0.7e6}
 for dn in (0.025, 0.05, 0.1, 0.15):
     t = {0.025: 0.006, 0.05: 0.008, 0.1: 0.012, 0.15: 0.015}[dn]
     od = dn + 2 * t
@@ -104,8 +100,8 @@ for dn in (0.025, 0.05, 0.1, 0.15):
         "basis": [{"of": ["physical", "rating"], "tier": "invented", "review": True, "note": MEMORY}]},
         {"slug": ck, "name": f"Cam-lock DN {tag(dn)}", "domain": "fluid", "kind": "quick-coupling", "media": ["gas", "liquid"], "halves": "male-female", "make": "manual", "standard": "EN 14420-7 (cam-lock) sizes"})
 
-FF = {0.00635: (0.15, 34.5e6), 0.0127: (0.42, 31.5e6), 0.01905: (0.95, 27.5e6), 0.0254: (1.8, 25.0e6)}   # kg a pair, Pa (ISO 16028; from memory)
-FF_STEEL = 0.8225       # blender's DN 12.7 model (2026-10-17): the halves in stainless; the seals an allowance on top; the others scaled by the old ratios to it
+FF = {0.00635: (0.15, 34.5e6), 0.0127: (0.42, 31.5e6), 0.01905: (0.95, 27.5e6), 0.0254: (1.8, 25.0e6)}
+FF_STEEL = 0.8225
 FF_SEALS = 0.013
 FF_NOTE = "From blender's model (2026-10-17): 51.2 x 51.2 x 121 mm, 12.7 mm bore, 36 mm body and hex, 51 mm release sleeve over a 36.4 mm cavity, 0.8225 kg of stainless; seals, springs and balls an allowance. No pressure qualification claimed."
 for dn, (mass, p) in FF.items():
@@ -133,7 +129,7 @@ for dn, (mass, p) in FF.items():
 
 for dn in (0.025, 0.05, 0.1, 0.2):
     od = dn * 1.32 + 0.006
-    corr = tube_mass(dn * 1.15, 0.0004 * (1 if dn < 0.1 else 1.5), RHO[SS]) * 2.6        # (the corrugation's developed length about 2.6 times)
+    corr = tube_mass(dn * 1.15, 0.0004 * (1 if dn < 0.1 else 1.5), RHO[SS]) * 2.6
     braid = corr * 0.9
     run(f"hose-metal-dn{tag(dn)}", {
         "identity": {"key": f"run.hose-metal-dn{tag(dn)}", "name": f"Metal hose, DN {tag(dn)}, PN 25", "description": "A corrugated stainless hose in a stainless braid: where rubber will not do (hot, cold, vacuum, airless ground, gas that rubber lets through). Its ends weld-neck flanges."},
@@ -143,7 +139,7 @@ for dn in (0.025, 0.05, 0.1, 0.2):
         "connector": f"connector.flange-dn{tag(dn)}-pn25-ss" if dn >= 0.1 else f"connector.hose-union-dn{tag(dn)}",
         "carries": "gas", "template": "template.hose-metal",
         "basis": [{"of": ["per_m", "elbow"], "tier": "invented", "review": True, "note": f"0.4 mm stainless corrugation (0.6 mm from DN 100) and a braid of nine tenths its weight; least bend radius five outsides for a hose that flexes now and then (static: about two); {MEMORY}"}]})
-UNION_KG = 1.375         # blender's DN 25 model (2026-10-18): 304, captive hex nut, metal cone seat; the DN 50 scaled by the old ratio
+UNION_KG = 1.375
 for dn in (0.025, 0.05):
     m = round({0.025: 0.6, 0.05: 1.8}[dn] * UNION_KG / 0.6, 2)
     ck = f"hose-union-dn{tag(dn)}"
@@ -154,15 +150,14 @@ for dn in (0.025, 0.05):
         "built_of": [part("Union nut, tail and seat", SS, m)], "provides": "both", "template": "template.union",
         "basis": [{"of": ["physical"], "tier": "derived" if dn == 0.025 else "invented", "review": True, "note": "From blender's model (2026-10-18): 73.6 mm hex across flats (85 across corners) x 90 mm, round DN 25 bore, captive nut and metal cone seat, 1.375 kg of 304." if dn == 0.025 else f"Scaled from the DN 25's measured {UNION_KG:g} kg by the old ratio; {MEMORY}"}]},
         {"slug": ck, "name": f"Union DN {tag(dn)}", "domain": "fluid", "kind": "union", "media": ["gas", "liquid"], "halves": "male-female", "make": "bolted"})
-for dn in (0.1, 0.2):          # (PN 25 stainless flanges for the bigger metal hoses, as the plant kit makes its own)
+for dn in (0.1, 0.2):
     key = pk.flange(dn, 25, item=pk.SS, temp=823.0)
     d = dict(pk._recs[key], template="template.flange")
     i = pk.interface_key(key)
     d["provides"] = "both"
     conn(key.split(".", 1)[1], d, {"slug": i.split(".", 1)[1], "name": d["identity"]["name"].replace(", stainless", ""), "domain": "fluid", "kind": "flange", "media": ["gas", "liquid"], "halves": "androgynous", "make": "bolted", "standard": pk.STANDARD["flange"]})
 
-# ------------------------------------------------------------------ flexible cable, plugs, feeds to moving things
-FLEX = [  # (slug, volts, cores, mm2, amps in air, outside m, connector)
+FLEX = [
     ("690v-4x16", 690, 4, 16, 80, 0.026, "plug-iec60309-125a"),
     ("690v-4x35", 690, 4, 35, 125, 0.034, "plug-iec60309-125a"),
     ("690v-4x95", 690, 4, 95, 240, 0.05, "powerlock-400a"),
@@ -180,7 +175,6 @@ for slug, v, n, mm2, amps, od, ck in FLEX:
         "connector": f"connector.{ck}", "carries": "power", "template": "template.cable-flexible",
         "basis": [{"of": ["per_m", "rating", "outside"], "tier": "invented", "review": True, "note": f"Reeling cable figures; least bend 7.5 outsides on a reel; {MEMORY}"}]})
 
-# ------------------------------------------------------------------ small wiring: a building's circuits, a ship's harness
 PTFE = "material.ptfe"
 RHO[PTFE] = 2200
 conn("wiring-box-lv", {
@@ -191,7 +185,7 @@ conn("wiring-box-lv", {
     "provides": "both", "template": "template.wiring-box",
     "basis": [{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": MEMORY}]},
     {"slug": "wiring-box-lv", "name": "Wiring box, low voltage", "domain": "power", "kind": "termination", "media": ["power"], "halves": "male-female", "make": "bolted"})
-INSTALL = [  # (volts, cores, mm2, amps clipped in air)
+INSTALL = [
     (230, 3, 1.5, 16), (230, 3, 2.5, 20), (230, 3, 4, 27), (230, 3, 6, 34), (230, 3, 10, 46),
     (400, 5, 2.5, 18), (400, 5, 6, 30), (400, 5, 16, 57)]
 for v, n, mm2, amps in INSTALL:
@@ -201,7 +195,7 @@ for v, n, mm2, amps in INSTALL:
     core = dc + 2 * ti
     od = core * (2.15 if n == 3 else 2.7) + 2 * 0.0012
     cu = n * a * RHO[CU]
-    pe = (math.pi / 4 * od ** 2 - n * math.pi / 4 * dc ** 2) * RHO[PE] * 0.85      # (insulation, filler and sheath: the section less the copper, 15% voids)
+    pe = (math.pi / 4 * od ** 2 - n * math.pi / 4 * dc ** 2) * RHO[PE] * 0.85
     slug = f"cable-installation-{v}v-{n}x{tag(mm2 / 1000) if mm2 >= 1 and mm2 == int(mm2) else str(mm2).replace('.', 'p')}"
     run(slug, {
         "identity": {"key": f"run.{slug}", "name": f"Installation cable, {v} V, {n} x {mm2:g} mm2",
@@ -212,10 +206,10 @@ for v, n, mm2, amps in INSTALL:
         "elbow": {"radius": r(od * 4, 3), "mass": r((cu + pe) * od * 4 * math.pi / 2, 4)},
         "connector": "connector.wiring-box-lv", "carries": "power", "template": "template.cable-installation",
         "basis": [{"of": ["per_m", "rating", "outside"], "tier": "invented", "review": True, "note": f"Wiring regulations' clipped-direct ratings and usual insulation thicknesses; least bend 4 outsides; {MEMORY}"}]})
-CIRC = [  # (shell, outside m, mated length m, kg a pair, contacts, mm2 a contact at most)
+CIRC = [
     (11, 0.022, 0.05, 0.05, 7, 1.0), (17, 0.03, 0.06, 0.1, 7, 2.5), (25, 0.04, 0.075, 0.2, 4, 16), (33, 0.052, 0.095, 0.4, 2, 50)]
-CIRC_IDS = "ABCD"       # contact ids: the seven-contact inserts numbered 1 to 7 (6 on the circle, 7 at the centre), the others lettered (invented)
-CIRC_KG = (17, 0.06268, 0.04627, 0.00703, 0.00938)     # blender's shell 17 (2026-10-18): kg in all, aluminium, copper, inserts and seals; the other shells scaled by the old ratio to it
+CIRC_IDS = "ABCD"
+CIRC_KG = (17, 0.06268, 0.04627, 0.00703, 0.00938)
 for sh, od, ll, kg, nc, mm2 in CIRC:
     ref = next(k for s_, _o, _l, k, *_r in CIRC if s_ == CIRC_KG[0])
     split = [x * kg / ref for x in CIRC_KG[2:]]
@@ -230,12 +224,12 @@ for sh, od, ll, kg, nc, mm2 in CIRC:
                   {"of": ["rating"], "tier": "invented", "review": True, "note": f"Of the order of military circular connectors (MIL-DTL-38999 class); {MEMORY}"}]},
         {"slug": f"circular-shell-{sh}", "name": f"Circular shell {sh}", "domain": "power", "kind": "plug-socket", "media": ["power"], "halves": "male-female", "make": "manual",
          "contacts": [{"id": c, "size": mm2 * 1e-6} for c in (CIRC_IDS[:nc] if nc != 7 else [str(j) for j in range(1, 8)])]})
-WIRE = [  # (mm2, amps single in vacuum, connector shell, amps single in free air at 40 C)
+WIRE = [
     (0.5, 5, 11, 11), (1.0, 8, 11, 16), (2.5, 15, 17, 30), (6.0, 28, 25, 55), (16.0, 55, 25, 105), (50.0, 120, 33, 220)]
-BUNDLE = 0.7            # a bundle of up to six in free air carries this share each (invented, of the order of wiring rules' grouping factors)
+BUNDLE = 0.7
 for mm2, amps, sh, amps_air in WIRE:
     a = mm2 * 1e-6
-    dc = 1.2 * math.sqrt(4 * a / math.pi)          # (stranded)
+    dc = 1.2 * math.sqrt(4 * a / math.pi)
     ti = 0.0003 if mm2 <= 1 else 0.0005 if mm2 <= 6 else 0.0008
     od = dc + 2 * ti
     cu = a * RHO[CU]
@@ -251,10 +245,10 @@ for mm2, amps, sh, amps_air in WIRE:
         "connector": f"connector.circular-shell-{sh}", "carries": "power", "template": "template.wire",
         "basis": [{"of": ["per_m", "rating", "outside"], "tier": "invented", "review": True, "note": f"Of the order of aerospace hook-up wire (SAE AS22759 class): `current` a single wire's in vacuum, radiation only; `current_air` alone in free air at 40 deg C, a bundle's at {BUNDLE:g} of it; least bend 10 outsides; {MEMORY}"}]})
 
-MULTI = [  # (mm2 a core, cores, connector shell): a harness cable for one low-bus way (ships, 2026-10-18: a laid wire fills a socket once, so one cable carries the way's every contact)
+MULTI = [
     (1.0, 3, 11), (2.5, 3, 17), (6.0, 3, 25), (16.0, 3, 25), (50.0, 2, 33)]
-MULTI_SHARE = 0.8        # a core of a multicore carries this share of a single wire's amps (invented: three cores in one jacket run warmer)
-JACKET = 0.0003          # m of FEP jacket over the laid-up cores (invented)
+MULTI_SHARE = 0.8
+JACKET = 0.0003
 WIRE_AMPS = {mm2: (amps, air) for mm2, amps, _sh, air in WIRE}
 
 
@@ -286,12 +280,11 @@ for mm2, n, sh in MULTI:
         "connector": f"connector.circular-shell-{sh}", "carries": "power", "template": "template.wire",
         "basis": [{"of": ["per_m", "outside"], "tier": "derived", "note": "Each core as the hook-up wire of its size, laid up in a circle, the jacket round them: calculated, not a single wire's mass multiplied."},
                   {"of": ["rating"], "tier": "invented", "review": True, "note": f"A core at {MULTI_SHARE:g} of a single wire's amps in vacuum and at the bundle factor {BUNDLE:g} in air (the cores share one jacket); {MEMORY}"}]})
-# a CAN-class data cable: a twisted pair, a return, a braid screen
 a = 0.5e-6
 dc = 1.2 * math.sqrt(4 * a / math.pi)
 ti = 0.0003
 od, jkt = jacketed([(dc, ti)] * 3)
-braid = math.pi * od * 0.0001 * RHO[CU] * 0.6        # a 0.1 mm braid, 60% cover
+braid = math.pi * od * 0.0001 * RHO[CU] * 0.6
 od += 0.0004
 cu = 3 * a * RHO[CU]
 ins = 3 * math.pi * (dc + ti) * ti * RHO[PTFE]
@@ -305,11 +298,10 @@ run("cable-data-can", {
     "connector": "connector.circular-shell-11", "carries": "signal", "template": "template.wire",
     "basis": [{"of": ["per_m", "outside", "rating"], "tier": "invented", "review": True, "note": f"Of the order of aerospace CAN and data-bus cable; {MEMORY}"}]})
 
-# ------------------------------------------------------------------ a ship's high-voltage DC bus (ships, 2026-10-18: 3 kV DC from the plants and batteries to fans, drives and lasers)
-J_VAC = 2.5e6           # A/m2: copper in vacuum, radiation only (as plant_kit.J_VACUUM)
-HVDC_POLE = [  # (amps, outside m, mated length m, kg a pair, mm2 at most)
+J_VAC = 2.5e6
+HVDC_POLE = [
     (150, 0.04, 0.12, 0.4, 50), (400, 0.055, 0.16, 1.0, 150), (650, 0.07, 0.2, 1.8, 240), (1000, 0.085, 0.24, 3.0, 400)]
-HVDC_KG = (400, 0.30575, 0.13510, 0.24021)       # blender's 400 A pole (2026-10-18): kg of aluminium, copper and PTFE; the other sizes scaled by the old ratio to it
+HVDC_KG = (400, 0.30575, 0.13510, 0.24021)
 for amps, od, ll, kg, mm2 in HVDC_POLE:
     ref = next(k for a_, _o, _l, k, _m in HVDC_POLE if a_ == HVDC_KG[0])
     split = [x * kg / ref for x in HVDC_KG[1:]]
@@ -324,17 +316,17 @@ for amps, od, ll, kg, mm2 in HVDC_POLE:
                   {"of": ["rating"], "tier": "invented", "review": True, "note": f"Of the order of single-pole high-voltage DC connectors for electric vehicles and aircraft; {MEMORY}"}]},
         {"slug": f"hvdc-pole-{amps}a", "name": f"HV DC pole {amps} A", "domain": "power", "kind": "plug-socket", "media": ["power"], "halves": "male-female", "make": "manual",
          "keys": ["plus", "minus"], "contacts": [{"id": "1", "size": mm2 * 1e-6}]})
-AIR_240 = 800.0          # A: a 240 mm2 copper core in PTFE alone in free air at 40 deg C (the conductor to about 150 deg C); others by area^0.625 (invented, of the order of cable tables)
-RHO_E = {CU: 1.72e-8, AL: 2.82e-8}      # ohm m at 20 deg C
+AIR_240 = 800.0
+RHO_E = {CU: 1.72e-8, AL: 2.82e-8}
 FEEDERS = [(CU, mm2) for mm2 in (25, 50, 95, 150, 240)] + [(AL, mm2) for mm2 in (50, 95, 150, 240, 400)]
 for metal, mm2 in FEEDERS:
     a = mm2 * 1e-6
-    k = (RHO_E[CU] / RHO_E[metal]) ** 0.5          # (the same heat a metre from the same section: aluminium carries 1/1.28 of copper's amps)
+    k = (RHO_E[CU] / RHO_E[metal]) ** 0.5
     dc = 1.15 * math.sqrt(4 * a / math.pi)
-    ti, tj = 0.002, 0.0005           # m: 2 mm of PTFE for 3 kV DC with margin for vacuum's partial discharge, a 0.5 mm braid-and-jacket
+    ti, tj = 0.002, 0.0005
     od = dc + 2 * (ti + tj)
     cond = a * RHO[metal]
-    ins = math.pi * (dc + ti) * ti * RHO[PTFE] + math.pi * (od - tj) * tj * 2500     # (the jacket a tinned copper braid in FEP, about 2,500 kg/m3 together)
+    ins = math.pi * (dc + ti) * ti * RHO[PTFE] + math.pi * (od - tj) * tj * 2500
     amps = round(a * J_VAC * k)
     air = round(AIR_240 * (mm2 / 240) ** 0.625 * k)
     ck = next(f"hvdc-pole-{x}a" for x, *_r, m in HVDC_POLE if m >= mm2 and x >= amps)
@@ -353,19 +345,19 @@ for metal, mm2 in FEEDERS:
                   {"of": ["rating.current"], "tier": "derived", "note": f"{J_VAC / 1e6:g} A/mm2 in copper, radiation only (plant_kit.J_VACUUM), aluminium at sqrt of the resistivities' ratio of it (the same heat a metre): one core alone; a pair laid together runs warmer."},
                   {"of": ["rating.current_air", "rating.current_air_bundle"], "tier": "invented", "review": True, "note": f"{AIR_240:g} A for 240 mm2 copper alone in free air at 40 deg C, others by area^0.625, aluminium as above; a bundle of up to six at {BUNDLE:g}; {MEMORY}"}]})
 
-PLUGS = [  # (slug, name, amps, volts, pins, kg a pair, l, w, h, interface name, standard)
+PLUGS = [
     ("plug-iec60309-16a", "Plug and socket, 16 A, 400 V", 16, 400, 5, 0.45, 0.095, 0.095, 0.19, "IEC 60309 16 A 5-pin", "IEC 60309-2"),
     ("plug-iec60309-32a", "Plug and socket, 32 A, 400 V", 32, 400, 5, 0.65, 0.11, 0.11, 0.21, "IEC 60309 32 A 5-pin", "IEC 60309-2"),
     ("plug-iec60309-63a", "Plug and socket, 63 A, 400 V", 63, 400, 5, 1.9, 0.14, 0.14, 0.28, "IEC 60309 63 A 5-pin", "IEC 60309-2"),
     ("plug-iec60309-125a", "Plug and socket, 125 A, 690 V", 125, 690, 5, 3.6, 0.17, 0.17, 0.33, "IEC 60309 125 A 5-pin", "IEC 60309-2"),
     ("powerlock-400a", "Single-pole connectors, 400 A, set of five", 400, 1000, 5, 6.5, 0.3, 0.12, 0.25, "Single-pole 400 A", "single-pole 400 A connectors (the registry's; of the order of the Powerlock family)"),
     ("coupler-11kv-400a", "Coupler, 11 kV, 400 A", 400, 11000, 3, 28.0, 0.22, 0.22, 0.6, "Coupler 11 kV 400 A", "a mining-type 11 kV plug coupler (the registry's)")]
-BOUND = {  # blender's measured parts, where the model changed what it is made of
+BOUND = {
     "coupler-11kv-400a": ([("Contacts", CU, 4.86, "pins and sockets"), ("Body", RUB, 14.95, "EPDM-moulded body"), ("Shroud, coupling ring and bolts", A36, 3.33, None)],
                           "blender's model (2026-10-17): EPDM body, three phase pins on a 90 mm circle, pilot and earth at the centre, steel shroud and ring"),
     "powerlock-400a": ([("Contacts", CU, 1.421, "16 mm pins, 22 mm socket sleeves; silver-plated brass, as copper here"), ("Bodies, glands and bands", RUB, 2.005, "rubber-moulded body")],
                        "blender's model (2026-10-18): five bored pairs, the 5 mm steel panel plate; hidden cable terminations not drawn")}
-PANEL = {"powerlock-400a": round((0.3 * 0.12 - 5 * math.pi * 0.025 ** 2) * 0.005 * RHO[A36], 2)}   # the receivers' common plate: 5 mm steel (invented), five 50 mm cut-outs
+PANEL = {"powerlock-400a": round((0.3 * 0.12 - 5 * math.pi * 0.025 ** 2) * 0.005 * RHO[A36], 2)}
 for slug, name, amps, v, pins, kg, l, w, h, iname, std in PLUGS:
     cu = min(kg * 0.3, pins * amps * 4e-6 * 0.08 * RHO[CU] + 0.05)
     if slug in BOUND:
@@ -382,7 +374,7 @@ for slug, name, amps, v, pins, kg, l, w, h, iname, std in PLUGS:
          **({"keys": ["L1", "L2", "L3", "N", "PE"], "contacts": [{"id": "1"}]} if slug.startswith("powerlock") else
             {"contacts": [{"id": c} for c in (["L1", "L2", "L3", "N", "PE"] if pins == 5 else ["L1", "L2", "L3"])]})})
 
-RAILS = [(100, 25, 2.6), (250, 60, 4.3), (500, 125, 7.1), (1000, 250, 12.6)]     # (A, mm2 copper a pole, kg/m)
+RAILS = [(100, 25, 2.6), (250, 60, 4.3), (500, 125, 7.1), (1000, 250, 12.6)]
 for amps, mm2, kgm in RAILS:
     cu = 4 * mm2 * 1e-6 * RHO[CU]
     ck = f"collector-{amps}a"
@@ -422,7 +414,7 @@ for slug, v, n, mm2, amps, od, ck in FLEX[1:]:
     D = math.sqrt(d0 * d0 + 4 * L * od / math.pi)
     cu = n * mm2 * 1e-6 * RHO[CU]
     cable = (cu + math.pi / 4 * od * od * RHO[RUB] * 0.55) * L
-    frame = 150 + 52.5 * D * D          # (blender's 690 V 4 x 95 reel, 2026-10-17: 786 kg of cheeks, core, A-frames, shaft and stiffeners on a 3.87 m drum; 150 kg of drive, bearings and slip rings invented)
+    frame = 150 + 52.5 * D * D
     rk = f"cable-reel-{slug}-{L}m"
     conn(rk, {
         "identity": {"key": f"connector.{rk}", "name": f"Cable reel, {n} x {mm2} mm2, {L} m", "description": f"A motor-driven monospiral reel on a moving machine, holding {L} m of its flexible cable: it pays out and winds in as the machine travels, its slip rings passing the power from the turning drum. For long travels."},
@@ -433,8 +425,7 @@ for slug, v, n, mm2, amps, od, ck in FLEX[1:]:
         "basis": [{"of": ["physical"], "tier": "derived", "review": True, "note": f"A monospiral drum: D^2 = core^2 + 4 L outside / pi; core thirty cable outsides, at least 1 m; structure 52.5 kg/m2 of D^2 (blender's measured reel), drive, bearings and slip rings 150 kg (invented)."}]},
         {"slug": f"cable-reel-{slug}", "name": f"Reel feed {n} x {mm2} mm2", "description": "The fixed feed point a cable reel's cable is plugged into at the travel's centre.", "domain": "power", "kind": "cable-reel", "media": ["power"], "halves": "male-female", "make": "bolted"})
 
-# ------------------------------------------------------------------ valves and expansion joints (between the plant kit's PN 10 flanges)
-VALVES = [  # (type, DN, kg, face to face m, height m, what)
+VALVES = [
     ("ball", 0.05, 9.0, 0.15, 0.2, "a bored ball turned a quarter by its lever"),
     ("ball", 0.1, 28.0, 0.23, 0.3, "a bored ball turned a quarter by its gearbox"),
     ("butterfly", 0.15, 12.0, 0.056, 0.42, "a disc on a shaft across the bore, a quarter turn"),
@@ -447,7 +438,7 @@ VALVES = [  # (type, DN, kg, face to face m, height m, what)
     ("check", 0.3, 220.0, 0.5, 0.55, "a swing disc that lets flow one way only"),
     ("relief", 0.05, 20.0, 0.25, 0.45, "a spring-held disc that lifts when the pressure passes its set"),
     ("relief", 0.1, 60.0, 0.35, 0.75, "a spring-held disc that lifts when the pressure passes its set")]
-FL_OD = {0.05: 0.165, 0.1: 0.22, 0.15: 0.285, 0.3: 0.445, 0.6: 0.78, 1.0: 1.23}       # m, PN 10 flange outsides (EN 1092-1; from memory)
+FL_OD = {0.05: 0.165, 0.1: 0.22, 0.15: 0.285, 0.3: 0.445, 0.6: 0.78, 1.0: 1.23}
 
 
 def fl_od(dn):
@@ -456,8 +447,8 @@ def fl_od(dn):
     return float(yaml.safe_load(open(f))["face"]["length"]) if os.path.exists(f) else FL_OD[dn]
 
 
-ROD_LUGS = 0.06     # m the limit rods' lugs stand out past the flanges, both sides together (invented)
-VALVE_BOUND = {  # blender's measured references: (DN, A36, 304, EPDM kg, note); the type's other sizes scaled by the old ratio
+ROD_LUGS = 0.06
+VALVE_BOUND = {
     "ball": (0.05, 16.786, 1.084, 0.019, "blender's model (2026-10-18): the kit's 216 x 20 mm flanges, 8 M16 on 168 mm, a 110 mm body round an 80 mm chamber, bored 304 ball and stem, EPDM seats, A36 lever"),
     "check": (0.1, 48.260, 2.449, 0.011, "blender's model (2026-10-18): the kit's 266 x 20 mm end rings, 8 M16 on 218 mm, a 220 mm body round a 190 mm chamber, bolted bonnet, closed 304 swing disc"),
     "relief": (0.05, 26.997, 0.830, 0.0, "blender's model (2026-10-18): the kit's flanges, inline chambers meeting only at an 18 mm-radius seat, a closed 304 poppet, stem, spring and cap adjuster; metal-seated, no elastomer")}
@@ -472,12 +463,12 @@ for vt, dn, kg, ff, h, what in VALVES:
     conn(slug, {
         "identity": {"key": f"connector.{slug}", "name": f"{vt.capitalize()} valve, DN {tag(dn)}, PN 10", "description": f"A flanged {vt} valve set in a line between two flange joints: {what}."},
         "kind": "valve", "size": dn, "valve": vt, "rating": {"pressure": 1.0e6, "temperature": 473.0},
-        "physical": {"length": fl_od(dn), "width": r(fl_od(dn) / 2 + max(h, fl_od(dn) / 2), 3), "height": r(ff, 3), "mass": kg},     # (width: from the flange's far rim to the actuator's top, off the axis along +Z)
+        "physical": {"length": fl_od(dn), "width": r(fl_od(dn) / 2 + max(h, fl_od(dn) / 2), 3), "height": r(ff, 3), "mass": kg},
         "built_of": [part("Body, bonnet and flanges", A36, parts[0], "cast carbon steel, with its lever or hinge"), part("Trim", SS, parts[1], "stainless ball, disc and stem"), part("Seats", RUB, parts[2])][:3 if parts[2] else 2] if vb else [part("Body and bonnet", A36, kg * 0.75, "cast carbon steel"), part("Trim", SS, kg * 0.2, "stainless seats, stem, disc or ball"), part("Packing and seats", RUB if vt != "gate" else SS, kg * 0.05)],
         "provides": "both", "template": f"template.valve-{vt}",
         "basis": [{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": f"From {vb[4]}."} if vb and dn == vb[0] else {"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": f"Scaled from the DN {tag(vb[0])}'s measured mass by the old ratio; {MEMORY}"} if vb else {"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": f"Face to face as the EN 558 series run (from memory); its height along the line; the lever, gearbox or actuator out to {h} m from the axis along +Z, inside its width; {MEMORY}"}]},
         {"slug": f"flange-dn{tag(dn)}-pn10", "name": f"Flange DN {tag(dn)} PN 10", "domain": "fluid", "kind": "flange", "media": ["gas", "liquid"], "halves": "androgynous", "make": "bolted", "standard": "EN 1092-1 bores and pressure classes (its faces and bolting the registry's)"})
-EJ_KG = {0.3: 49.48}       # blender's DN 300 model (2026-10-17): 36.15 kg A36, 13.34 kg 304; the others scaled by the old catalogue's ratios to it
+EJ_KG = {0.3: 49.48}
 EJ_SS = 13.34 / 49.48
 EJ_NOTE = "From blender's model (2026-10-17): 526 x 526 x 350 mm, six formed convolutions of 3 mm multi-ply 304 on a 300 mm bore, A36 flanges at the kit's 466 mm, limit rods stopping 40 mm each way."
 for dn, kg, ll, mv in ((0.1, 15.0, 0.25, 0.025), (0.3, 70.0, 0.35, 0.04), (0.6, 220.0, 0.45, 0.06), (1.0, 560.0, 0.55, 0.08)):
@@ -492,7 +483,6 @@ for dn, kg, ll, mv in ((0.1, 15.0, 0.25, 0.025), (0.3, 70.0, 0.35, 0.04), (0.6, 
         "basis": [{"of": ["physical", "built_of"], "tier": "derived" if dn == 0.3 else "invented", "review": True, "note": EJ_NOTE if dn == 0.3 else f"Scaled from the DN 300's measured {EJ_KG[0.3]:g} kg by the old catalogue ratios; {MEMORY}"}, {"of": ["movement"], "tier": "invented", "review": True, "note": MEMORY}]},
         {"slug": f"flange-dn{tag(dn)}-pn10", "name": f"Flange DN {tag(dn)} PN 10", "domain": "fluid", "kind": "flange", "media": ["gas", "liquid"], "halves": "androgynous", "make": "bolted", "standard": "EN 1092-1 bores and pressure classes (its faces and bolting the registry's)"})
 
-# ------------------------------------------------------------------ container locks
 TL = {"slug": "twistlock-iso1161", "name": "ISO 1161 corner", "description": "A container's corner: the ISO 1161 corner casting's oval hole and the twistlock turned a quarter in it. How containers stack and lock to trucks, trains, ships and pads.",
       "domain": "load", "kind": "twistlock", "media": ["load"], "halves": "male-female", "make": "manual", "standard": "ISO 1161 corner fittings; twistlocks as ISO 3874"}
 conn("corner-casting-iso1161", {
@@ -504,11 +494,10 @@ conn("corner-casting-iso1161", {
 conn("twistlock-iso1161", {
     "identity": {"key": "connector.twistlock-iso1161", "name": "Twistlock, ISO 1161", "description": "The cone a quarter turn locks into a corner casting's hole, by hand lever or by itself as the box comes down: what holds a container to the next."},
     "kind": "twistlock", "size": 0.178, "rating": {"force": 250000.0},
-    "physical": {"length": 0.16, "width": 0.15, "height": 0.2, "mass": 6.46},     # an inter-box lock: 160 x 90 mm spacer, the lever out to +Z (invented)
+    "physical": {"length": 0.16, "width": 0.15, "height": 0.2, "mass": 6.46},
     "built_of": [part("Cones, shaft and lever", "material.high-strength-steel-4340", 6.46, "forged steel; a double-ended inter-box lock")], "provides": "male", "template": "template.twistlock",
     "basis": [{"of": ["physical"], "tier": "derived", "review": True, "note": "From blender's model (2026-10-18): solid 160 x 90 x 28 mm spacer with bearing and lever slot, 36 mm shaft, 118 x 58 mm tapered heads, 12 mm lever; turns 0 to 90 degrees in the casting clear."}, {"of": ["rating"], "tier": "invented", "review": True, "note": MEMORY}]}, TL)
 
-# ------------------------------------------------------------------ templates
 TEMPLATES = {
     "hose": ("hose", "sweep", "a round rubber hose of the record's outside", ["outside"], "Rubber hoses, PN 16"),
     "hose-hydraulic": ("hose", "sweep", "a round hose of the record's outside, its ferrules at the ends", ["outside"], "Two-braid hydraulic hoses"),
@@ -557,10 +546,10 @@ def templates():
             d["profile"] = profile
         if draws == "sweep-and-pieces":
             d["pieces"] = [{"name": "support", "how": "at each support.spacing along the run, scaled to its outside"}]
-        if fam == "conductor-rail":   # hung from above: the head clasps the housing, the game stretches the rod up to the ceiling
+        if fam == "conductor-rail":
             d["pieces"] = [{"name": "support_head", "how": "a hanger clasping the housing at each support.spacing, the slot underneath clear; its child leg_top is the rod's seat above, envelope at the reference rail (invented)", "length": 0.06, "width": 0.11, "height": 0.2, "mass": 1.2},
                            {"name": "support_leg", "how": "a threaded rod 1 m long from leg_top up to y = 1; the game stretches it to the ceiling (support.per_m_height)"}]
-        if fam == "festoon":          # the same 40 x 40 C-track for every member: its pieces drawn at their own size, never by outside (its height is the loops' depth)
+        if fam == "festoon":
             d["pieces"] = [{"name": "support_head", "how": "a bracket clasping the C-track from above at each support.spacing, the slot underneath clear; its child leg_top is the rod's seat above (blender's model)", "length": 0.08, "width": 0.12, "height": 0.1, "mass": 1.02},
                            {"name": "support_leg", "how": "a rod 1 m long from leg_top up to y = 1; the game stretches it to the ceiling (support.per_m_height)"},
                            {"name": "trolley", "how": "every 1.5 m along the track, four wheels inside it, a neck down through the slot to a cable saddle; its child cable_anchor is where the game hangs each loop's end (invented)", "length": 0.12, "width": 0.1, "height": 0.15, "mass": 2.1}]
@@ -568,7 +557,6 @@ def templates():
         yield "templates", t, d
 
 
-# ------------------------------------------------------------------ stock: how every kit item is sold and hauled
 COIL_KINDS = {"hose", "cable", "festoon"}
 
 
@@ -616,7 +604,7 @@ def kit_stock():
         yield "mill-stock", code, st
 
 
-KEEP = ("visual", "model_requests")      # (what the model installer and the asset tools write into a record: kept across a rerun)
+KEEP = ("visual", "model_requests")
 
 
 def write(folder, slug, d, schema):
@@ -634,14 +622,14 @@ def write(folder, slug, d, schema):
 
 def main():
     n = 0
-    from mounting import hold      # (how each run is held: rule.run-support)
+    from mounting import hold
     for folder, slug, d in OUT:
         if folder == "runs":
             d = dict(d, hold=hold(d))
         n += write(folder, slug, d, {"runs": "run", "connectors": "connector"}[folder])
     for slug, d in IFS.items():
         if os.path.exists(os.path.join(M, "interfaces", slug + ".yaml")) and "kit_catalogue" not in open(os.path.join(M, "interfaces", slug + ".yaml")).read():
-            continue        # (an interface the plant kit already writes: a flange's)
+            continue
         n += write("interfaces", slug, d, "interface")
     for folder, slug, d in templates():
         n += write(folder, slug, d, "template")

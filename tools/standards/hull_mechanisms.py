@@ -6,7 +6,7 @@ def errors(hull):
     found = []
     mechanisms, exits = hull.get('mechanisms', []), hull.get('exits', [])
     if not isinstance(mechanisms, list) or not isinstance(exits, list):
-        return found  # malformed collections are schema errors
+        return found
     if mechanisms or exits:
         if not isinstance(hull.get('model'), str) or not hull['model'].strip():
             found.append('mechanisms/exits require a model path')

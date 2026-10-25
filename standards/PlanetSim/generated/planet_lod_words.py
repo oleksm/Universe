@@ -73,8 +73,6 @@ def strength(R, factor, sig, missing=0.0, signal=None):
         value = _finite(given[d["source"]])
         return max(0.0, min(1.0, value)) if value is not None else missing
     s = signal if signal is not None else (d.get("signal") or {})
-    # The offline signature has no spatial feature census: do not reuse a global or landmark score.
-    # Spatial evidence is evaluated by planet-forge against exact checkpoint geometry/provenance.
     if s.get("features"):
         return missing
     if s.get("field"):
@@ -158,11 +156,7 @@ def entry_score(R, entry, sig):
 
 
 def match(R, sig, top=10, family=None):
-    """Rank only evidence-backed scores. Required unknowns are visible with score zero.
-
-    Recognition trigger rules and gate-only patterns never become placements from scores.
-    Optional missing terms retain their weight (score zero), without satisfying low wants.
-    """
+    """Rank only evidence-backed scores. Required unknowns are visible with score zero."""
     out = []
     for k, p in R["planet-pattern"].items():
         if family and p["family"] != family:

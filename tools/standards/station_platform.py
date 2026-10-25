@@ -17,11 +17,11 @@ import lib  # noqa: E402
 S = "standards/SFO/metadata/"
 REC = S + "structures/platform.yaml"
 CELL = 3.0
-X0, Y0, Z0 = -300.0, -151.0, -375.0          # grid origin: x across, y up (deck top at -100 = j 17), z along
-LINES_X = [0, 50, 100, 150, 199]             # truss cells along z at x -300, -150, 0, 150, 300
-LINES_Z = [50, 100, 150, 200, 249]           # truss cells along x at z -225, -75, 75, 225, 375
+X0, Y0, Z0 = -300.0, -151.0, -375.0
+LINES_X = [0, 50, 100, 150, 199]
+LINES_Z = [50, 100, 150, 200, 249]
 PAD_X, PAD_Z = [-225, -75, 75, 225], [-150, 0, 150, 300]
-PAD_SIDE = 90.0                              # square plates (blender): the 45 m capture radius fits inside
+PAD_SIDE = 90.0
 SECTION = {"truss": "al6061-tb-160x5", "deck": "al6061-tb-100x3", "hall": "al6061-tb-100x3"}
 RANK = {"truss": 2, "deck": 1, "hall": 1}
 
@@ -37,14 +37,14 @@ def cells():
             out[c] = g
     for i in range(200):
         for k in range(50, 250):
-            put((i, 16, k), "deck")                       # the deck's lattice, y -103 to -100
+            put((i, 16, k), "deck")
             if i in LINES_X or k in LINES_Z:
-                for j in range(1, 16):                    # trusses, y -148 to -103: 45 m deep
+                for j in range(1, 16):
                     put((i, j, k), "truss")
-    door_i, door_j = range(83, 117), range(17, 37)       # 102 x 60 m, y -100 to -40, on the hall's deck face
+    door_i, door_j = range(83, 117), range(17, 37)
     for i in range(200):
-        for j in range(1, 100):                           # hall, y -148 to 149
-            for k in range(0, 50):                        # z -375 to -225
+        for j in range(1, 100):
+            for k in range(0, 50):
                 if not (i in (0, 199) or j in (1, 99) or k in (0, 49)):
                     continue
                 if k == 49 and i in door_i and j in door_j:
@@ -79,7 +79,6 @@ def main():
                       "note": f"{where[g]}: {ns:,} straight struts {ks} ({s_['physical']['mass']} kg) and {nd:,} diagonals {kd} ({d_['physical']['mass']} kg), one in every square face"})
         built.append({"what": f"{names[g]}: nodes", "item": s_["kit"]["node"], "mass": r(mn), "note": f"{nn:,} nodes"})
         frame_m += m + mn
-    # Pad plates: aluminium honeycomb sandwich, 2 mm faces on a 50 mm core.
     hc = mats["material.aluminium-honeycomb"]["mass"]["density"]
     al = mats["material.aluminium-alloy-6061"]["mass"]["density"]
     sand = 2 * 0.002 * al + 0.05 * hc
@@ -87,7 +86,7 @@ def main():
     built.append({"what": "Pad plates", "item": "material.aluminium-honeycomb", "mass": r(plates),
                   "note": f"16 square plates {PAD_SIDE:.0f} m a side on the deck lattice at x {PAD_X} and z {PAD_Z}: 2 mm 6061 faces on a 50 mm honeycomb core, {sand:.1f} kg/m2 (faces counted with the core here)"})
     built.append({"what": "Berthing clamps", "item": "good.electric-motors", "mass": 16 * 4 * 500.0, "note": "four recessed clamps at each pad's edges, 500 kg each with their drives, from memory"})
-    spur = 150 / 2 - PAD_SIDE / 2 - 1.5           # from a pad's edge to the walkway's side over the next truss (blender)
+    spur = 150 / 2 - PAD_SIDE / 2 - 1.5
     walk = (len(LINES_X) + len(LINES_Z)) * 600.0 * 3.0 + 16 * 3.0 * spur
     grate = walk * 10.0
     built.append({"what": "Walkway grating", "item": "material.aluminium-alloy-6061", "mass": r(grate), "note": f"3 m walkways over the ten trusses and a {spur:.1f} m spur from each pad's edge to the nearest, {walk:,.0f} m2 at about 10 kg/m2 (from memory); the rest of the deck is open lattice"})
@@ -95,7 +94,6 @@ def main():
     clad = clad_a * 0.002 * al
     built.append({"what": "Hall cladding", "item": "stock.al6061-sh-2", "mass": r(clad), "note": f"2 mm 6061 sheet over the hall's six faces, {clad_a:,.0f} m2, against sun and debris; the closed hangar door's leaves the same"})
     total = sum(b["mass"] for b in built)
-    # Berthing: in free fall the deck takes only the ships' berthing.
     ship, v, stop = 150e3, 0.3, 0.5
     F = ship * v ** 2 / (2 * stop)
     rec = yaml.safe_load(open(REC, encoding="utf-8"))

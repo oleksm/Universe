@@ -42,8 +42,8 @@ from lib import edit, q  # noqa: E402
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 S = os.path.join(ROOT, "standards/SFO/metadata")
 STEELS = {"material.high-strength-steel-4340", "material.structural-steel-a36", "material.stainless-steel-304"}
-ISO = [10, 12, 16, 20, 24, 30, 36, 42, 48, 56, 64, 72, 80, 90, 100]      # metric bolt sizes, mm
-END_EXTRA = [400]                                                       # box widths a pinned box end needs an END for
+ISO = [10, 12, 16, 20, 24, 30, 36, 42, 48, 56, 64, 72, 80, 90, 100]
+END_EXTRA = [400]
 TUBE_MILL, BOX_MILL = 6.0, 12.0
 SHEETS = {"metal plate": (6.0, 2.0), "metal sheet": (2.5, 1.25), "composite": (3.0, 1.5)}
 CLIP_STRIP, CLIP_TABS, CLIP_GAUGE, CLIP_EVERY = 0.06, 0.08, 0.005, 0.5
@@ -51,7 +51,7 @@ SLEEVE, NODE_TOL, DECK_TOL = 0.3, 0.001, 0.02
 STRAIGHT, SQUARES = [0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0], [0.5, 1.0, 1.5, 2.0, 3.0, 4.0]
 KIT_MATERIALS = {"material.high-strength-steel-4340", "material.aluminium-alloy-6061", "material.carbon-fibre-composite", "material.titanium-alloy-ti-6al-4v"}
 KIT_MAX_WIDTH, KIT_SLENDER = 0.25, 200
-NODE_WALL, NODE_ANGLE = 1.25, math.pi / 4      # a bolted node's wall in bolt diameters; the tightest angle members meet at
+NODE_WALL, NODE_ANGLE = 1.25, math.pi / 4
 
 
 def kit_node(w):
@@ -120,10 +120,9 @@ def end_mass(d):
 
 def bolt_mass(d_mm):
     d = d_mm / 1000
-    return round(math.pi / 4 * d * d * 4 * d * 7850 * 1.3, 4)        # shank 4 d long, and 30% for the head and nut
+    return round(math.pi / 4 * d * d * 4 * d * 7850 * 1.3, 4)
 
 
-# ---- stock
 
 def sheet_size(stock, mats):
     form, mat = stock["identity"]["form"], stock["made_from"][0]["item"]
@@ -167,7 +166,6 @@ def stock():
             lines = [f"  length: {L}"] + ([] if form == "box" else [f"  width: {W}"])
             edit(f, lambda t: add_size(t, lines, note))
             added += 1
-    # (The END fittings, one for each tube and bar width and the boxes' that need one; their bolts; and the deck clips' M10.)
     ends = sorted(diameters | {w / 1000 for w in END_EXTRA})
     bolts = sorted({bolt_for(d) for d in ends} | {10})
     made = []
@@ -248,7 +246,6 @@ def fmt(v):
 def struts():
     """Write the standard struts and their recipes in the welding bay. Idempotent: rewrites every strut record."""
     stocks, mats = load("mill-stock"), materials()
-    # (The bolted hollow nodes the struts meet, with their recipes in the forging press.)
     widths = sorted({round(d["size"]["diameter"], 3) for k, (f, d) in stocks.items() if d["identity"]["form"] in ("tube", "bar")
                      and d["made_from"][0]["item"] in KIT_MATERIALS and d["size"]["diameter"] <= KIT_MAX_WIDTH + 1e-9})
     bolted = {}
@@ -386,7 +383,6 @@ def misfits(rec, stocks):
     return out
 
 
-# ---- assemblies
 
 def near(p, q_):
     return math.dist(p, q_) <= NODE_TOL

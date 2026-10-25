@@ -41,7 +41,7 @@ def plan():
         if family and family.startswith(slot + "-"): family = family[len(slot) + 1:]
         if family == slot or family is None: family = ""
         key = f"equipment.{slot}." + (f"{family}." if family else "") + variant
-        new_fn = key[len("equipment."):].replace(".", "-")   # (file name = the key's tail)
+        new_fn = key[len("equipment."):].replace(".", "-")
         out[fn] = (d["identity"]["key"], key, new_fn, (d.get("built_of") or {}).get("parts"))
     return out
 
@@ -54,7 +54,6 @@ def main(write):
     for fn, (old, new, nf, folder) in sorted(m.items()):
         if old != new or fn != nf: print(f"  {old:<40} -> {new:<44} {fn} -> {nf}")
     if not write: return
-    # 1. the references, whole keys only, longest first
     rx = re.compile("|".join(re.escape(k) for k in sorted(changes, key=len, reverse=True)) + r"(?![a-z0-9-]|\.[a-z])")
     paths = [f for f in glob.glob("standards/**/*.yaml", recursive=True) if not f.startswith("standards/changes.yaml")] + glob.glob("docs/**/*.md", recursive=True) + ["content/base/prices.ron", "standards/game-keys.yaml", "crates/core/sim/src/operator.rs", "crates/core/world/src/belts.rs", "crates/game/src/dev.rs", "tools/standards/build.py", "tools/standards/crew.py", "tools/standards/propulsion.py", "tools/standards/mounts.py"]
     touched = 0
@@ -62,15 +61,12 @@ def main(write):
         if not os.path.exists(f): continue
         s = open(f, encoding="utf-8").read(); t = rx.sub(lambda mm: changes[mm.group(0)], s)
         if t != s: open(f, "w", encoding="utf-8").write(t); touched += 1
-    # 2. the files and the parts folders
     for fn, (old, new, nf, folder) in m.items():
         if fn != nf:
             os.rename(E + fn + ".yaml", E + nf + ".yaml")
         if folder and folder != nf and os.path.isdir(P + folder) and not os.path.isdir(P + nf):
             os.rename(P + folder, P + nf)
             s = open(E + nf + ".yaml", encoding="utf-8").read().replace(f"  parts: {folder}\n", f"  parts: {nf}\n", 1); open(E + nf + ".yaml", "w", encoding="utf-8").write(s)
-    # 3. (The game's aliases are standards/renames.yaml itself since 2026-10-07: content/base/aliases.ron is not written here.)
-    # 4. the registry's own list of every rename, for anything that saved a key and is not the game
     p = "standards/renames.yaml"; s = open(p).read()
     for old, new in sorted(changes.items()):
         if f"was: {old}," not in s:

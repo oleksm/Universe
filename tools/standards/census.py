@@ -17,8 +17,8 @@ LA = os.path.join(ROOT, "standards", "LocalAdministration", "metadata", "adminis
 SFO = os.path.join(ROOT, "standards", "SFO", "metadata")
 CEL = os.path.join(ROOT, "standards", "Celestial", "metadata", "systems")
 DAY = 86400.0
-CRUISE = 1.0            # m/s2, a hauler's cruise acceleration, chosen: a tenth of a g, fuel in mind (docs/registry-people.md)
-TURNAROUND = 1.0 * DAY  # at each end: dock, unload, load
+CRUISE = 1.0
+TURNAROUND = 1.0 * DAY
 HAULER = "hull.hauler"
 FREIGHT_ORG = "org.treistun-freight"
 
@@ -74,10 +74,10 @@ def hop(a, b):
 def flight(a, b):
     """s one way between bodies a and b: a torchship's brachistochrone at CRUISE over their typical separation."""
     ra, pa = star_orbit(a); rb, pb = star_orbit(b)
-    if pa["identity"]["key"] == pb["identity"]["key"]:    # the same planet (a moon and its world): the moon's orbit
+    if pa["identity"]["key"] == pb["identity"]["key"]:
         d = (bodies[a].get("orbit") or bodies[b].get("orbit") or {}).get("semi_major_axis", 1e8)
     else:
-        d = math.sqrt(ra * ra + rb * rb)                     # the root-mean-square separation over their phases
+        d = math.sqrt(ra * ra + rb * rb)
     return 2.0 * math.sqrt(d / CRUISE)
 
 
@@ -88,7 +88,6 @@ def derive():
         d = load(f)
         if d.get("population"):
             setts[d["identity"]["key"]] = (f, d)
-    # ---- census
     for key, (f, d) in setts.items():
         pop = d["population"]; count = {}
         folder = f[:-5]
@@ -98,14 +97,12 @@ def derive():
             for mk, n in mods:
                 for st in modules.get(mk, {}).get("staff", []):
                     count[st["profession"]] = count.get(st["profession"], 0) + st["count"] * n
-        # the buildings where the service trades work, by the population: their staff (the needs' service ratios are theirs)
         blds = buildings_of(pop)
         for bk, n in blds.items():
             for st in buildings[bk].get("staff", []):
                 count[st["profession"]] = count.get(st["profession"], 0) + st["count"] * n
         d["_buildings"] = blds
         d["_works"] = sum(count.values()); d["_census"] = count
-    # ---- traffic: routes to each supplied settlement
     routes = []
     for key, (f, d) in setts.items():
         rs = d.get("resupply")
@@ -119,7 +116,6 @@ def derive():
         ships = max(1, math.ceil(tonnes * (round_trip / DAY) / hold))
         interval = max(DAY, round_trip / ships)
         routes.append({"to": key, "from": rs["from"], "tonnes_day": tonnes, "one_way": one_way, "round_trip": round_trip, "ships": ships, "interval": interval})
-    # ---- industrial flows: each works' inputs a day that its settlement does not make, hauled from where they are made, or from the gate
     made_at = {}
     for key, (f, d) in setts.items():
         for ff in glob.glob(os.path.join(f[:-5], "facilities", "*.yaml")):
@@ -128,7 +124,7 @@ def derive():
                     made_at.setdefault(it, set()).add(key)
                     if it and it.startswith("good."):
                         made_at.setdefault("stock." + it[5:] + "-bulk", set()).add(key)
-    given = {g["item"] for n_ in needs.values() for g in n_.get("gives", [])}    # what people give off where they live: never hauled
+    given = {g["item"] for n_ in needs.values() for g in n_.get("gives", [])}
     gate_body = next((d["at"] for k_, (f_, d) in setts.items() if k_ == "settlement.treistun.port-nacaubun"), None)
     flows = {}
     for key, (f, d) in setts.items():
@@ -149,7 +145,7 @@ def derive():
                         src = min(srcs, key=lambda k_: flight(d["at"], setts[k_][1]["at"]) if setts[k_][1]["at"] != d["at"] else 0) if srcs else "gate"
                         flows[(src, key)] = flows.get((src, key), 0) + i["quantity"] * r["rate"] * m["count"] * DAY
     for (src, dst), t in sorted(flows.items(), key=lambda kv: -kv[1]):
-        if t < 100.0:        # (under 100 kg a day rides with the supply run)
+        if t < 100.0:
             continue
         d = setts[dst][1]
         from_body = setts[src][1]["at"] if src != "gate" else gate_body
@@ -163,7 +159,6 @@ def derive():
 
 def main():
     setts, routes = derive()
-    # ---- write: census, intervals
     freight = 0
     for key, (f, d) in setts.items():
         s = open(f, encoding="utf-8").read()
@@ -172,7 +167,6 @@ def main():
         if r_:
             s = re.sub(r"^resupply: \{ from: ([^,]+), interval: [0-9.e+]+ \}", lambda m: f"resupply: {{ from: {m.group(1)}, interval: {r_['interval']:.0f} }}", s, flags=re.M)
             s = re.sub(r"^# Supplied from .*\n", "", s, flags=re.M)
-        # pilots: two to a ship of every fleet based here (org.*.fleet), the freight line's counted from the routes
         pilots = sum(2 * r["ships"] for r in routes if r["from"] == key)
         for of in glob.glob(os.path.join(ROOT, "standards", "**", "*.yaml"), recursive=True):
             if os.sep + "makers" + os.sep in of or of.endswith(os.sep + "treistun.yaml"):
@@ -191,7 +185,6 @@ def main():
         if dependants < 0:
             print(f"{key}: {works:,} at work for {pop:,} people")
         freight += sum(r["ships"] for r in routes if r["from"] == key)
-    # ---- independents: the target less every fleet, spread over the settlements by population
     seeding = load(os.path.join(ROOT, "standards", "Celestial", "metadata", "seeding", "traffic.yaml"))["traffic"]
     fleets = 0
     for of in glob.glob(os.path.join(ROOT, "standards", "**", "*.yaml"), recursive=True):
@@ -216,7 +209,6 @@ def main():
         s_ = write_block(s_, "independents", lines) if lines else re.sub(r"^independents:\n(?:  .*\n)*", "", re.sub(r"^# independents: .*\n", "", s_, flags=re.M), flags=re.M)
         yaml.safe_load(s_); open(f, "w", encoding="utf-8").write(s_)
     print(f"ships: {freight_total} freight + {fleets} other fleets + {spare} independents = {freight_total + fleets + spare} of {seeding['ships']}")
-    # ---- fleets: the freight company's haulers at the granary; the administration's patrol; the band's raiders
     for r in routes:
         print(f"{'ind ' if r.get('industrial') else 'sup '}{r['from'].split('.')[-1]:>14} -> {r['to'].split('.')[-1]:<20} {r['tonnes_day'] / 1000:8.1f} t/day  {r['one_way'] / DAY:5.1f} d one way  {r['ships']:3d} hauler(s)  every {r['interval'] / DAY:4.1f} d")
     freight = sum(r["ships"] for r in routes)

@@ -10,25 +10,24 @@ flanges by a simple bolt-and-ring rule, not to a flange code; supports from the 
 """
 
 import math
+import os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import r  # noqa: E402
 
 G = 9.80665
 DN = [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.6, 4.0]
 PN = {1: 1.0e5, 10: 1.0e6, 16: 1.6e6, 25: 2.5e6}
-AREAS = [16, 25, 35, 50, 70, 95, 120, 150, 185, 240, 300, 400, 500, 630]      # mm2, cable conductors
-BOLTS = [0.016, 0.020, 0.024, 0.027, 0.030, 0.036, 0.042, 0.048, 0.056, 0.064]   # m, bolt diameters
+AREAS = [16, 25, 35, 50, 70, 95, 120, 150, 185, 240, 300, 400, 500, 630]
+BOLTS = [0.016, 0.020, 0.024, 0.027, 0.030, 0.036, 0.042, 0.048, 0.056, 0.064]
 A36, SS, BOLT, CU, AL = "material.structural-steel-a36", "material.stainless-steel-304", "material.high-strength-steel-4340", "material.copper", "material.aluminium-alloy-6061"
 REF, MLI, PE, RUBBER, SILICA = "good.refractory-brick", "material.multi-layer-insulation", "material.polyethylene-uhmw", "material.silicone-rubber", "material.silica-aerogel"
 RHO = {A36: 7850, SS: 7900, BOLT: 7850, CU: 8960, AL: 2700, REF: 3000, MLI: 50, PE: 940, RUBBER: 1075, SILICA: 250}
-STRESS = {A36: 133e6, SS: 115e6}        # Pa allowable (B31.3, A36 and 304 to about 340 deg C; from memory)
+STRESS = {A36: 133e6, SS: 115e6}
 E_WELD = 0.85
-TRANSFER_DROP = 0.5                     # m: a belt's head over the belt it drops onto, in a hood (SFO 25 `onto:` ends)
-J_VACUUM = 2.5e6                        # A/m2 in a cable's copper on airless ground: radiation only, about half what air allows (from memory)
+TRANSFER_DROP = 0.5
+J_VACUUM = 2.5e6
 
 _recs = {}
-
-
-def r(x, nd=1):
-    return round(float(x), nd)
 
 
 def dn_for(d):
@@ -59,7 +58,6 @@ def wall(dn, p, item, temp=None):
     return math.ceil(t * 2000) / 2000
 
 
-# ---------------------------------------------------------------- connectors
 
 def flange(dn, pn, item=A36, sealing="single", temp=373.0):
     """A bolted flange pair on a pipe of nominal bore dn, class pn: bolts carry 1.5 times the end force on the gasket
@@ -67,7 +65,7 @@ def flange(dn, pn, item=A36, sealing="single", temp=373.0):
     key = f"connector.flange-dn{_tag(dn)}-pn{pn}" + ("-ss" if item == SS else "") + ("-double" if sealing == "double" else "")
     if key in _recs:
         rt = _recs[key]["rating"]
-        rt["temperature"] = max(rt["temperature"], temp)       # (rated for the hottest line that asks for it, whoever asks first)
+        rt["temperature"] = max(rt["temperature"], temp)
         return key
     p = PN[pn]
     dg = dn + 0.05
@@ -83,7 +81,7 @@ def flange(dn, pn, item=A36, sealing="single", temp=373.0):
     t = math.ceil(t * 500) / 500
     D = k + 3 * db
     wp = wall(dn, p, item)
-    ri, ro, rh = dn / 2, dn / 2 + wp, dn / 2 + 4 * wp                     # (the neck: a hub one ring thick, tapering from 4 walls to the pipe's)
+    ri, ro, rh = dn / 2, dn / 2 + wp, dn / 2 + 4 * wp
     neck = math.pi * t * ((rh * rh + rh * ro + ro * ro) / 3 - ri * ri)
     ring = 2 * (math.pi / 4 * (D ** 2 - dn ** 2) * t + neck) * RHO[item]
     lb = 2 * t + 0.006 + 2 * db
@@ -91,7 +89,7 @@ def flange(dn, pn, item=A36, sealing="single", temp=373.0):
     gw = 0.015 + 0.01 * dn
     gasket = (2 if sealing == "double" else 1) * math.pi * dg * gw * 0.0045 * 0.6 * RHO[SS]
     ring_note = f"two weld-neck rings {D:.3f} m across, {t * 1000:.0f} mm thick, their necks tapering over {t * 1000:.0f} mm from {4 * wp * 1000:.0f} mm to the pipe's wall; along the pipe the joint is {(2 * t + 0.006 + max(4 * db, 2 * t)) * 1000:.0f} mm with the necks and the bolts' and nuts' ends"
-    if key in FLANGE_MEASURED:          # (a joint whose pipe is not the pipe rule's: a gallery's 4 mm tube)
+    if key in FLANGE_MEASURED:
         ring, ring_note = FLANGE_MEASURED[key]
     built = [_part("Flanges", item, ring, ring_note),
              _part("Bolts and nuts", BOLT, bolts, f"{n} of M{db * 1000:.0f}, {lb * 1000:.0f} mm, on a {k:.3f} m circle"),
@@ -110,7 +108,7 @@ def lined_flange(dn, pn, temp=473.0, sealing="single"):
         return key
     had = set(_recs)
     plain = flange(dn, pn, A36, sealing, temp)
-    base = _recs[plain] if plain in had else _recs.pop(plain)  # the plain pair is its base, not a record unless asked for
+    base = _recs[plain] if plain in had else _recs.pop(plain)
     pack = math.pi * (dn - 0.2) * 0.2 * 0.05 * RHO[SILICA]
     built = [dict(b) for b in base["built_of"]] + [_part("Lining joint", SILICA, pack, "the refractory's joint packed with 50 mm of silica fibre; silica aerogel stands for it")]
     _recs[key] = {"identity": {"key": key, "name": f"Lined flange DN {dn * 1000:.0f} PN {pn}" + (", double seal" if sealing == "double" else ""), "description": f"The flange pair of a refractory-lined hot gas duct whose steel shell is {dn * 1000:.0f} mm nominal bore, the lining's joint packed; the shell kept cool by the lining."},
@@ -130,7 +128,7 @@ def chute(dn, item=SS):
     D = dn + 0.2
     ring = 2 * math.pi / 4 * (D ** 2 - dn ** 2) * t * RHO[item]
     n = max(8, math.ceil(math.pi * (dn + 0.1) / 0.15 / 4) * 4)
-    bolts = n * 0.185          # kg an M16 bolt and nut, measured on blender's DN 800 chute (20 of them, 3.7 kg)
+    bolts = n * 0.185
     built = [_part("Flanges", item, ring, f"two plate rings {D:.2f} m across, 20 mm"), _part("Bolts", BOLT, bolts, f"{n} of M16"),
              _part("Gasket", "material.fused-silica", math.pi * (dn + 0.05) * 0.03 * 0.006 * 2200.0, "a 6 mm silica-fibre dust gasket, for the sponge iron's 700 deg C (rubber would not take it); fused silica stands for it")]
     _recs[key] = {"identity": {"key": key, "name": f"Chute flange DN {dn * 1000:.0f}", "description": f"A sealed bolted flange where bulk falls through a {dn * 1000:.0f} mm chute into a closed conveyor."},
@@ -140,7 +138,7 @@ def chute(dn, item=SS):
     return key
 
 
-HOOD_WATER_MEASURED = {2.0: 261.36}     # kg in a hood's ring and plenum, measured on blender's DN 2000 hood (2026-10-16)
+HOOD_WATER_MEASURED = {2.0: 261.36}
 
 
 def hood(dn):
@@ -161,12 +159,12 @@ def hood(dn):
     return key
 
 
-GAP_HOOD = 0.15                  # m between a moving outlet's mouth and the hood facing it (from memory of arc furnace ducts)
-HOOD_STROKE = 1.0                # m the hood's sleeve is drawn back before the outlet moves (invented)
+GAP_HOOD = 0.15
+HOOD_STROKE = 1.0
 
 
-CLAMP_JAWS_MEASURED = {1.2: 173.0}       # kg of a clamp coupling's C jaws, measured on blender's DN 1200 (2026-10-16)
-CLAMP_LINING_MEASURED = {1.2: 167.6}     # kg of its spool's refractory taper, 1.2 to 0.8 m clear
+CLAMP_JAWS_MEASURED = {1.2: 173.0}
+CLAMP_LINING_MEASURED = {1.2: 167.6}
 
 
 def clamp_coupling(dn):
@@ -193,8 +191,8 @@ def clamp_coupling(dn):
 
 
 FLANGE_MEASURED = {"connector.flange-dn3000-pn1-double": (333.18, "two weld-neck rings 3.196 m across, 20 mm thick, their necks tapering over 20 mm from 16 mm to the gallery's 4 mm wall at 3 m outside, 2.992 m clear; measured on blender's model v1")}
-SEALED_TRANSFER_MEASURED = {0.8: (806.35, 59.02), 1.0: (948.71, 70.05)}     # kg of steel and liner, the sealed transfers measured
-TRANSFER_MEASURED = {1.2: (1652.31, 146.40), 1.0: (1395.23, 123.10), 0.8: (1176.03, 103.72), 0.65: (959.32, 84.67)}     # kg of plate and liner, by belt width (blender's models)
+SEALED_TRANSFER_MEASURED = {0.8: (806.35, 59.02), 1.0: (948.71, 70.05)}
+TRANSFER_MEASURED = {1.2: (1652.31, 146.40), 1.0: (1395.23, 123.10), 0.8: (1176.03, 103.72), 0.65: (959.32, 84.67)}
 
 
 def _by_width(table, width):
@@ -218,7 +216,7 @@ def belt_transfer(width, sealed=False):
     src = f"measured on blender's model v1 of the {width * 1000:.0f} mm transfer" if width in TRANSFER_MEASURED else "between the measured transfers, by the chute's width"
     built = [_part("Hood, drop chute and mounting tabs", A36, steel, f"a hood over the belt's head and a chute {b:.1f} m square, 3 m down, 10 mm plate, on four 12 mm tabs seated on the head frame's rails (not hung from the pulley's bearings); {src}"),
              _part("Wear liner", PE, liner, f"10 mm UHMW polyethylene; {src}")]
-    if sealed:          # (no hood: the head box is the hood; a straight closed chute from its floor down to the port)
+    if sealed:
         h_ = 3.0 - 1.525
         built = [_part("Chute", A36, 4 * b * h_ * 0.010 * RHO[A36], f"a straight chute {b:.1f} m square, {h_:.3f} m long, 10 mm plate"),
                  _part("Wear liner", PE, 4 * b * h_ * 0.010 * RHO[PE], "10 mm UHMW polyethylene"),
@@ -246,7 +244,7 @@ def termination(v, area_mm2):
     R = max(0.3, 15 * od)
     fan = math.sqrt(4 * R * 0.04 - 0.04 ** 2)
     lugs = 3 * a * 0.12 * RHO[CU] * 1.5
-    if v > 36000:          # (high voltage: three screened plug-in terminations into sockets in the unit's box, not open lugs)
+    if v > 36000:
         phase = 0.5
         fan = math.sqrt(4 * R * (phase - max(0.06, od + 0.017)) - (phase - max(0.06, od + 0.017)) ** 2)
         built = [_part("Plug-in terminations", "material.fused-silica", 3 * 30.0, "three screened plug-in terminations, 0.7 m into the box's sockets, their epoxy insulators 30 kg each; fused silica stands for filled epoxy (from memory)"),
@@ -270,7 +268,6 @@ def termination(v, area_mm2):
     return key
 
 
-# ---------------------------------------------------------------- runs
 
 def _span(do, di, w):
     """m between supports, from deflection (2.5 mm at mid span, 1 g, full) and stress (a third of yield), 3 to 12 m."""
@@ -281,7 +278,7 @@ def _span(do, di, w):
     return max(3.0, min(12.0, by_defl, by_stress))
 
 
-PIPE_SUPPORT_MEASURED = {"run.pipe-dn150-pn25-mli": 29.19}     # kg a stand's head (its split saddle and base, the silica pad apart), measured on blender's kits (2026-10-16)
+PIPE_SUPPORT_MEASURED = {"run.pipe-dn150-pn25-mli": 29.19}
 
 
 def pipe(dn, pn, item=A36, lagged=False, liquid=False, temp=373.0, sealing="single"):
@@ -317,7 +314,7 @@ def pipe(dn, pn, item=A36, lagged=False, liquid=False, temp=373.0, sealing="sing
     return key
 
 
-LINED_SUPPORT_MEASURED = {1.2: (84.85, 42.42)}     # kg a stand's head and kg a metre of its legs, measured on blender's DN 1200 kit (2026-10-16)
+LINED_SUPPORT_MEASURED = {1.2: (84.85, 42.42)}
 
 
 def lined_duct(dn, pn, lining=0.2, temp=1173.0, sealing="single"):
@@ -347,7 +344,7 @@ def lined_duct(dn, pn, lining=0.2, temp=1173.0, sealing="single"):
     return key
 
 
-BELT_HEIGHT_MEASURED = {0.65: 0.91}     # m: an open belt's full height about its axis, the rigid return roll under it included (0.454 below, 0.426 above), measured on blender's 650 kit (2026-10-16)
+BELT_HEIGHT_MEASURED = {0.65: 0.91}
 
 
 def jacketed_duct(dn, heat, temp=1873.0):
@@ -368,7 +365,7 @@ def jacketed_duct(dn, heat, temp=1873.0):
     do = dn + 2 * t + 2 * gap + 2 * to
     span = _span(do, dn, per_m * G)
     R = 1.0 * dn
-    stub = dn_for(math.sqrt(4 * heat / (4186 * 10) / 1000 / 2.5 / math.pi))     # (the jacket's water pipes' bore, at 2.5 m/s)
+    stub = dn_for(math.sqrt(4 * heat / (4186 * 10) / 1000 / 2.5 / math.pi))
     _recs[key] = {"identity": {"key": key, "name": f"Water-jacketed duct DN {dn * 1000:.0f}", "description": f"A {dn * 1000:.0f} mm duct for a furnace's hot gas at about 1 bar, its steel kept cool by water in a {gap * 1000:.0f} mm jacket round it; the jacket's water comes and goes by pipes ending on it. Its bends are mitred, one bore in radius."},
                   "kind": "jacketed-duct", "size": dn, "bore": dn, "outside": [r(do, 3), r(do, 3)], "rating": {"pressure": 1.0e5, "temperature": temp},
                   "per_m": {"mass": r(per_m), "built_of": built},
@@ -388,7 +385,7 @@ def belt(width, rate, sealed=False):
     """An open troughed belt; sealed: in a gallery tube 3 m across that holds a hall's gas round it (green balls or
     ore taken through vacuum from one sealed space to another)."""
     key = f"run.belt-{_tag(width)}" + ("-sealed" if sealed else "")
-    if key in _recs:            # (rated for the most any layout asks of it)
+    if key in _recs:
         _recs[key]["rating"]["rate"] = max(_recs[key]["rating"]["rate"], r(rate))
         return key
     built = [_part("Belt", RUBBER, 2 * width * 0.018 * RHO[RUBBER], "both runs, 18 mm; a vacuum-rated belt, silicone rubber standing for it"),
@@ -399,8 +396,8 @@ def belt(width, rate, sealed=False):
                   _part("Gallery rings", A36, 66.5 / 3.0, "an inside stiffening ring every 3 m, 90 x 6 mm, with the stringers' seats, 66.5 kg (a repeated piece; measured), its share a metre"),
                   _part("Insulation", MLI, math.pi * 3.0 * 0.025 * RHO[MLI], "25 mm of multilayer foil over the tube, against the lunar day and night")]
     per_m = sum(b["mass"] for b in built)
-    BOX = 4069.5          # kg: a gallery's sealed head or tail box, 6 mm plate on 150 x 75 x 6 mm ribs at 0.5 m, its throat, posts and feet; measured on blender's 0.8 m candidate (the tube's the same for every width)
-    out = [3.05, 3.05] if sealed else [r(width + 0.6, 2), BELT_HEIGHT_MEASURED.get(width, r(max(0.8, width), 2))]     # (a belt's height by its width: 1.2 m for the 1.2 m belt; a gallery's tube with its foil)
+    BOX = 4069.5
+    out = [3.05, 3.05] if sealed else [r(width + 0.6, 2), BELT_HEIGHT_MEASURED.get(width, r(max(0.8, width), 2))]
     _recs[key] = {"identity": {"key": key, "name": f"Belt conveyor, {width * 1000:.0f} mm" + (", in a sealed gallery" if sealed else ""), "description": f"An open troughed belt {width * 1000:.0f} mm wide on idlers and stringers, carried on trestles; it runs straight (a turn is a transfer to another belt). Its drive is at its head." + (" It runs in a sealed gallery tube 3 m across, its axis the tube's, at the hall's gas pressure; where the tube meets a hall's nozzle the joint is the nozzle's flange." if sealed else "")},
                   "kind": "belt", "size": width, "outside": out, "rating": {"rate": r(rate)},
                   "per_m": {"mass": r(per_m), "built_of": built},
@@ -466,9 +463,9 @@ def cable(v, area_mm2):
     return key
 
 
-J_BUS = 4.0e6                           # A/m2 in a water-cooled copper bus (from memory: 3 to 6)
-RHO_E_CU = 2.0e-8                       # ohm m, copper at about 60 deg C
-TUBE = (0.060, 0.010)                   # m: the bus's hollow conductor, outside diameter and wall (from memory)
+J_BUS = 4.0e6
+RHO_E_CU = 2.0e-8
+TUBE = (0.060, 0.010)
 
 
 def _bus(amps):
@@ -480,7 +477,7 @@ def _bus(amps):
     return n, a, rows, 4 * od + 3 * 0.02, rows * od + (rows - 1) * 0.02
 
 
-BUS_PLATES_MEASURED = {"connector.bus-joint-ac-27ka": 106.16}     # kg of a joint's copper plates, holes cut, measured on blender's family generator (2026-10-16)
+BUS_PLATES_MEASURED = {"connector.bus-joint-ac-27ka": 106.16}
 
 
 def bus_joint(v, amps, phases=2):
@@ -490,8 +487,8 @@ def bus_joint(v, amps, phases=2):
     if key in _recs:
         return key
     n, a, rows, w, h = _bus(amps)
-    ph = h + 0.11                                   # the plate's height: two rows of M20 at 50 mm from the tubes' centres, 35 mm in from its edges
-    pw = w + 0.04                                   # and wide enough for the outer bolt columns' 30 mm edge distance
+    ph = h + 0.11
+    pw = w + 0.04
     plate = pw * ph * 0.03 * RHO[CU]
     pole = "phase" if ac else "pole"
     plates = BUS_PLATES_MEASURED.get(key, phases * 2 * plate)
@@ -506,7 +503,7 @@ def bus_joint(v, amps, phases=2):
                   "physical": {"length": 0.3, "width": r(phases * w + (phases - 1) * 0.3 + 0.1, 3), "height": r(ph + 0.01, 3), "mass": r(sum(x["mass"] for x in built))}, "built_of": built,
                   "basis": [{"of": ["built_of", "physical"], "tier": "invented", "review": True, "note": "Plates, bolting and hoses from memory of electrolysis and furnace bus joints; the bolts' edge distance 35 mm (1.6 bolt diameters)."}]}
     if ac and phases * n > 14:
-        _recs[key]["triangle_budget"] = 22000       # (three phases of brazed tubes and their bolting; blender, 2026-10-16)
+        _recs[key]["triangle_budget"] = 22000
     return key
 
 
@@ -528,7 +525,7 @@ def busbar(v, amps, phases=2):
              _part("Clamps and spacers", A36, phases * rows * 6.0, "a clamp a row every metre, from memory")]
     per_m = sum(b["mass"] for b in built)
     R = R_RISE = 0.6
-    if ac:          # (the least tube's bend 0.6 m: the axis's radius is that plus the outermost tube's offset; blender, 2026-10-16)
+    if ac:
         R = 0.6 + (phases - 1) / 2 * (w + 0.3) + (w - od) / 2
         R_RISE = 0.6 + (h - od) / 2
     what = (f"A three-phase alternating current bus, its phases' centres {w + 0.3:g} m apart (0.3 m clear), each {n} hollow copper tubes {od * 1000:.0f} mm across, water-cooled, on post insulators: {amps / 1000:.1f} kA a phase at {v:g} V. The tubes' {t * 1000:.0f} mm wall is about the skin depth of copper at 50 Hz, so the current fills it" if ac else
@@ -543,7 +540,7 @@ def busbar(v, amps, phases=2):
                   "basis": [{"of": ["per_m"], "tier": "derived", "review": True, "note": f"Copper at {J_BUS / 1e6:g} A/mm2 water-cooled (from memory); its loss by its resistance at 60 deg C" + (" (the AC resistance taken as the DC's: the wall is about one skin depth)." if ac else ".")},
                             {"of": ["elbow", "riser", "support"], "tier": "invented", "review": True, "note": ("Each tube bent at 0.6 m or more, so the bus's axis bends at that plus its outermost tube's offset; a steel post with three insulators, one a phase, every 3 m (from memory)." if ac else "Bent tubes at 0.6 m; a steel post with two insulators every 3 m (from memory).")}]}
     if ac and phases * n > 14:
-        _recs[key]["triangle_budget"] = 28000       # (three phases of tubes: 12-sided tubes and their bends need it; blender, 2026-10-16)
+        _recs[key]["triangle_budget"] = 28000
     return key
 
 
@@ -551,7 +548,6 @@ def area_for(amps):
     return next(a for a in AREAS if a * 1e-6 * J_VACUUM >= amps)
 
 
-# ---------------------------------------------------------------- laying a run
 
 def cap(dn, p, item, conn_key):
     """A blind end: a flat plate welded into the pipe's end (runs are welded; no flange, nothing to leak), clamped at its
@@ -583,7 +579,7 @@ def lay(run_key, pts, count=1, tees=0, taps=(), port_ends=0, caps=0):
     n_elb = len(cs)
     el = rec.get("elbow")
     m_elb = 0.0
-    if el:          # a bend of angle a weighs its share of the 90 degree elbow, less the straight it replaces (2R tan a/2)
+    if el:
         m_elb = sum(el["mass"] * ang / 90.0 - rec["per_m"]["mass"] * 2 * el["radius"] * math.tan(math.radians(ang) / 2) for _, ang in cs)
     sup = rec.get("support")
     n_sup, m_sup = 0, 0.0
@@ -619,9 +615,8 @@ def reducer(run_key, conn_key):
     return r(cone + c["physical"]["mass"] - _recs[rec["connector"]]["physical"]["mass"], 1), r(L, 2)
 
 
-# ---------------------------------------------------------------- interfaces (SFO 26)
 
-IFACE = {    # connector kind: (domain, halves, make, sealing by default)
+IFACE = {
     "flange": ("fluid", "androgynous", "bolted", "air"), "lined-flange": ("fluid", "androgynous", "bolted", "air"),
     "chute": ("bulk", "androgynous", "bolted", "air"), "belt-transfer": ("bulk", "male-female", "open", "open"),
     "termination": ("power", "male-female", "bolted", "air"), "bus-joint": ("power", "androgynous", "bolted", "open"),
@@ -647,8 +642,8 @@ def half(conn_key, flow):
     if kind == "belt-transfer":
         return "female" if flow == "in" else "male"
     if kind == "termination":
-        return "female"            # (the unit's box and terminals; the cable brings its lugs)
-    return "male"                  # (a hood serves the outlet's mouth, which is the port)
+        return "female"
+    return "male"
 
 
 def interfaces():
@@ -707,7 +702,7 @@ def records():
         kind, slug = key.split(".", 1)
         d = dict(d, template=template_of(key, d))
         if kind == "run":
-            from mounting import hold      # (how each run is held: rule.run-support)
+            from mounting import hold
             d["hold"] = hold(d)
         yield {"connector": "connectors", "run": "runs"}[kind], slug, d
     for key, d in sorted(ifs.items()):

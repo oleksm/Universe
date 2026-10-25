@@ -12,7 +12,7 @@ import yaml
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 TREE = os.path.join(ROOT, "standards")
 _schemas = {}
-KEYS = {}            # every record's key, and the file that has it (filled by check_all)
+KEYS = {}
 
 
 def schema(path):
@@ -231,7 +231,7 @@ def validate(v, sch, here, at=""):
         if key in sch and not any(not validate(v, s, here, at) for s in sch[key]):
             out.append(f"{where}: fits none of its alternatives")
     if not isinstance(v, dict):
-        for s in sch.get("allOf") or []:        # (what it derives from: it must fit each)
+        for s in sch.get("allOf") or []:
             out += validate(v, s, here, at)
     return out
 
@@ -250,7 +250,6 @@ def flattened(sch, here):
         p2, r2 = flattened(shape, path)
         for k, (pv, where) in p2.items():
             if k in props:
-                # (A shape that tightens a property the object has: its required list applies to the nested object.)
                 if isinstance(pv, dict) and pv.get("required") and isinstance(props[k][0], dict) and not pv.get("type") and not pv.get("$ref"):
                     base, bpath = props[k]
                     if "$ref" in base:
@@ -282,8 +281,6 @@ def units(sch, at=""):
             yield from units(x, at)
 
 
-# What a schema must be for the engine's generator to make a type of it (the integrator's rules,
-# 2026-10-04). A standard's three text-or-number unions are known and wait on the engine.
 WAITING = {("standard.schema.yaml", "oneOf")}
 
 
@@ -301,7 +298,7 @@ def lint(sch, name, at="", unit=False, top=True):
             if (name, "oneOf") not in WAITING and not (isinstance(a, dict) and "const" in ((a.get("properties") or {}).get("kind") or {})):
                 yield at, f"{key}: each shape must have a `kind` that is a constant"
                 break
-    unit = unit or "x-unit" in sch or "x-unit-from" in sch      # (x-unit-from: a sibling field names its unit, as a field's or a measure's `unit` does)
+    unit = unit or "x-unit" in sch or "x-unit-from" in sch
     numeric = t == "number" or (isinstance(t, list) and "number" in t) or str(sch.get("$ref", "")).endswith("number_or_null")
     if numeric and not unit and name not in ("standard.schema.yaml", "law.schema.yaml") and not at.endswith("#number_or_null"):
         yield at, "a number with no x-unit (a pure number says x-unit: \"1\")"
@@ -325,7 +322,6 @@ def refs(v, sch, here, at=""):
         yield from refs(v, target, path, at)
         return
     for key in ("oneOf", "anyOf"):
-        # (One of several shapes: the one it fits.)
         alt = next((a for a in sch.get(key) or [] if not validate(v, a, here)), None)
         if alt is not None:
             yield from refs(v, alt, here, at)
@@ -336,7 +332,7 @@ def refs(v, sch, here, at=""):
             else:
                 yield from refs(x, sch["items"], here, f"{at}[{i}]")
     if isinstance(v, dict):
-        flat, _ = flattened(sch, here)      # (the properties with those of the shapes it derives from, each with its file)
+        flat, _ = flattened(sch, here)
         for k, x in v.items():
             s, h = flat.get(k, (None, here))
             if isinstance(s, dict) and "$ref" in s:
@@ -366,7 +362,7 @@ def key_of(rel, rec):
     p = rel.split(os.sep)
     root, stem = p[0], p[-1][:-5]
     low = stem.lower()
-    if len(p) == 3 and p[1] == "metadata" and stem == root and root != "SFO":       # (a root's own record; the SFO's is the body itself, an organisation)
+    if len(p) == 3 and p[1] == "metadata" and stem == root and root != "SFO":
         return "root."
     if root == "SFO":
         if len(p) == 3:
@@ -387,7 +383,7 @@ def key_of(rel, rec):
         return {"scheduling": "clock."}[p[2]] + low
     if root == "Dogma":
         return ("dogma." if len(p) == 3 else "law.") + low
-    if root == "PlanetSim" and len(p) == 5 and p[2] == "objects":      # (objects/<core|generator>/<name>.yaml)
+    if root == "PlanetSim" and len(p) == 5 and p[2] == "objects":
         return "planet-object." + low
     if root == "Celestial":
         if p[2] == "seeding":
@@ -414,7 +410,7 @@ def key_in(rec):
     return (rec.get("identity") or {}).get("key") if isinstance(rec.get("identity"), dict) else rec.get("key")
 
 
-SEEN = []      # (every record the last check_all read: its key, file, content and schema)
+SEEN = []
 
 
 def motion_interlocks(rec):
@@ -443,12 +439,7 @@ def motion_interlocks(rec):
 
 
 def workflow_dependencies(records):
-    """Definition prerequisites must form a DAG; related/check links are not prerequisites.
-
-    Ship instances and evidence state live outside this root. Only explicit depends_on
-    edges of stage/artifact definitions participate, so consuming and producing the
-    same authoring artifact at different gates does not invent a dependency cycle.
-    """
+    """Definition prerequisites must form a DAG; related/check links are not prerequisites."""
     nodes = {key: (path, rec) for key, path, rec, _ in records
              if key.split(".")[0] in ("ship-stage", "ship-artifact")}
     found, active, done = [], [], set()
@@ -466,7 +457,7 @@ def workflow_dependencies(records):
         if not isinstance(deps, list) or any(not isinstance(d, str) for d in deps):
             active.pop()
             done.add(key)
-            return  # the schema reports malformed prerequisites
+            return
         if len(deps) != len(set(deps)):
             found.append((path, "depends_on: duplicate prerequisite"))
         for dep in deps:
@@ -493,13 +484,13 @@ def hull_fit_poses(records, assets_home=None):
             continue
         fits = hull.get("fit") or []
         if not isinstance(fits, list):
-            continue  # schema reports malformed fit collections
+            continue
         for i, fit in enumerate(fits):
             if not isinstance(fit, dict) or "pose" not in fit:
                 continue
             where = f"fit[{i}].pose"
             if fit["pose"] != "rest":
-                continue  # schema reports unsupported values
+                continue
             visual = (equipment.get(fit.get("item"), {}).get("visual") or {})
             try:
                 folder = (home / visual["path"]).resolve()
@@ -545,7 +536,6 @@ def check_all():
             rel = os.path.relpath(full, TREE)
             if os.sep not in rel or fn.endswith(".schema.yaml"):
                 continue
-            # (No record without a schema, ever: it names its own on its first line.)
             sp = schema_named(full)
             if sp is None or not os.path.exists(sp):
                 unheld.append(rel)
@@ -563,7 +553,6 @@ def check_all():
                 if (rec.get("identity") or {}).get("key", "").startswith("planet-factor."):
                     found.extend((full, e) for e in feature_factor_signals(rec))
                 found.extend((full, e) for e in feature_trigger_parameters(rec))
-            # (Its key: there, of its kind, as its file says, and no other record's.)
             key, want = key_in(rec), key_of(rel, rec)
             if not isinstance(key, str) or not KEY.match(key):
                 found.append((full, f"key: {key!r} is not <kind>.<name> in lower case, words joined by -"))
@@ -588,7 +577,6 @@ def check_all():
             found.append((path, f"{at}: x-unit {unit!r} is not an SI unit (or deg)"))
         for at, what in lint(sch, os.path.basename(path)):
             found.append((path, f"{at}: {what}"))
-    # (What each record names: a record's key, of a kind the property takes.)
     for full, at, key, kinds in named:
         if key not in KEYS:
             found.append((full, f"{at}: {key!r} is no record's key"))
@@ -599,7 +587,6 @@ def check_all():
     found += hull_fit_poses(SEEN)
     from hull_mechanisms import check_records as hull_mechanism_checks
     found += hull_mechanism_checks(SEEN)
-    # (A record the tracker holds as complete may not have changed: standards/changes.yaml.)
     import tracker
     found += list(tracker.check(SEEN))
     return found, unheld

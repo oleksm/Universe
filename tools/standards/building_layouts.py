@@ -16,10 +16,11 @@ Services (power, water, drains) are not laid yet: the kit has no low-voltage cab
 """
 import glob, math, os, sys
 import yaml
-import lib  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+from lib import r  # noqa: E402
+import lib  # noqa: E402
 import frames  # noqa: E402
 import furniture  # noqa: E402
 
@@ -29,10 +30,6 @@ G = 9.80665
 CELL, BAY = 3.0, 6.0
 STEEL, SS, AL, PE, GLASS, SILICA, RUB, CONC = ("material.structural-steel-a36", "material.stainless-steel-304", "material.aluminium-alloy-6061",
                                                "material.polyethylene-uhmw", "material.soda-lime-glass", "material.fused-silica", "material.epdm-rubber", "good.concrete")
-
-
-def r(x, nd=1):
-    return round(float(x), nd)
 
 
 def load(path):
@@ -46,8 +43,7 @@ def pmass(slug):
     return PANELS[slug]["physical"]["mass"]
 
 
-# ------------------------------------------------------------------ fit-out units: furnished 6 m bays
-FITOUT = {  # slug: (name, description, [(what, item, kg, note)], people it serves or seats, staff it needs)
+FITOUT = {
     "sales-floor": ("Sales floor bay", "A 6 m bay of shelving gondolas and their aisles: stock laid out for people to take.", [("Gondolas", STEEL, 820, "six double-sided runs 1.8 m high"), ("Shelf edges and signs", PE, 80, "")], 12, 0),
     "counter": ("Counter bay", "A serving counter with its tills, back shelving and a queue's room.", [("Counter and back shelving", STEEL, 426.9, "hollow frame and 2 mm cabinet and shelf sheet: blender's model (2026-10-17)"), ("Worktop", PE, 96.4, "24 mm: blender's model"), ("Tills", AL, 40, "two")], 6, 2),
     "store": ("Store bay", "Pallet racking three levels high and its forklift aisle: the stock room.", [("Racking", STEEL, 1250, "two runs, three beam levels")], 0, 0),
@@ -72,7 +68,7 @@ FITOUT = {  # slug: (name, description, [(what, item, kg, note)], people it serv
 }
 
 
-EXTENT = {"cell": (6.0, 4.0), "counter": (5.4, 2.375), "court": (5.67, 5.63)}       # m the fitted unit covers, where it is less than its 6 m bay (the rest is the bay's free floor): blender's models
+EXTENT = {"cell": (6.0, 4.0), "counter": (5.4, 2.375), "court": (5.67, 5.63)}
 
 
 def fitout_records():
@@ -89,8 +85,7 @@ def fitout_records():
                        "note": f"A furnished 6 m bay (its size is what is fitted; the bay, plant-mount.bay-s1, is what it is given): {people} people served or seated, {staff} at work in it; masses from memory of such furniture, to be sourced."}]}
 
 
-# ------------------------------------------------------------------ what each building type is laid of
-MIX = {  # building: (storey height m, {bay: share of the bays}, front, back door kind, partitions a bay)
+MIX = {
     "shop": (3.0, {"sales-floor": 0.6, "counter": 0.1, "store": 0.2, "washroom": 0.1}, "shopfront", "door", 0.5),
     "tavern": (3.0, {"dining": 0.6, "counter": 0.1, "kitchen": 0.2, "washroom": 0.1}, "shopfront", "door", 0.5),
     "inn": (3.0, {"dining": 0.2, "kitchen": 0.1, "counter": 0.05, "flat": 0.55, "washroom": 0.1}, "double-door", "door", 1.5),
@@ -190,7 +185,7 @@ def layout(slug, b):
     rec = {"identity": {"key": f"layout.building-{slug}", "name": f"{name}, world with air",
                         "description": f"{b['identity']['description']} Laid of the kit: a strut frame on the 3 m grid, panels, and {bays_n} rooms of 6 m furnished piece by piece ({', '.join(f'{n} {furniture.ARRANGEMENTS[k][0].lower()}' for k, n in mixc.items())})."},
            "stands_for": b["identity"]["key"], "site": {"atmosphere": "air", "gravity": [8.0, 11.0]}}
-    if sh is None:          # (a park: ground, no frame)
+    if sh is None:
         ground = [{"what": "Paths and beds", "item": CONC, "volume": r(L * W * 0.05 * 0.5), "mass": r(L * W * 0.05 * 0.5 * 2400), "note": "paving on half the park's ground, 50 mm"}]
         total = fit_mass + ground[0]["mass"]
         rec.update({"physical": {"length": L, "width": W, "height": 2.2, "mass": r(total)}, "bays": bays, "rooms": rooms, "ground": ground,
@@ -199,9 +194,8 @@ def layout(slug, b):
                     "basis": [{"of": ["bays"], "tier": "invented", "review": True, "note": "A park is its ground and gardens: no frame or panels."}]})
         return rec
     H = sh * storeys
-    nx, ny, rows = round(L / CELL), round(W / CELL), round(sh / CELL * 2) / 2      # (rows: panel rows a storey, 3 m panels, a 1.5 m row as 3 x 1.5)
+    nx, ny, rows = round(L / CELL), round(W / CELL), round(sh / CELL * 2) / 2
     nz = round(H / CELL)
-    # Panels: the perimeter faces a storey, by side
     full_rows, half_row = int(rows), rows - int(rows) > 0
     per_side = {"front": nx, "back": nx, "side": 2 * ny}
     panels = {}
@@ -241,14 +235,13 @@ def layout(slug, b):
     add("partition-3x3", nparts * full_rows - round(part_per_bay * bays_n))
     add("partition-door-3x3", round(part_per_bay * bays_n))
     panel_mass = sum(pmass(k) * n for k, n in panels.items())
-    # Frame: columns at every grid node, beams on every cell edge at each floor and the roof, half the outside faces braced
     nodes_plan = (nx + 1) * (ny + 1)
     columns = nodes_plan * nz
     levels = storeys
     beams = (nx * (ny + 1) + ny * (nx + 1)) * levels
     braces = (2 * (nx + ny) * nz) // 2
     nodes = nodes_plan * (nz + 1)
-    dead = (pmass("floor-3x3") / 9.0 + 25.0) * G         # Pa: a floor panel and services, fittings and partitions (25 kg/m2, invented)
+    dead = (pmass("floor-3x3") / 9.0 + 25.0) * G
     live = 5000.0 if slug not in ("dwelling-block", "bunkhouse", "inn", "care-home") else 2000.0
     roof = (pmass("roof-3x3") / 9.0) * G + 1000.0
     col_force = CELL * CELL * ((storeys - 1) * (dead + live) + roof) + CELL * sh * storeys * (pmass("wall-insulated-3x3") / 9.0) * G
@@ -293,7 +286,7 @@ def layout(slug, b):
     return rec
 
 
-KEEP = ("visual", "model_requests")      # (what the model installer and the asset tools write into a record: kept across a rerun)
+KEEP = ("visual", "model_requests")
 
 
 def write(folder, slug, d, schema):
@@ -311,7 +304,7 @@ def write(folder, slug, d, schema):
 
 def main():
     n = 0
-    for slug, d in fitout_records():          # (the furnished-bay units, retired: one model a piece now)
+    for slug, d in fitout_records():
         d["revision"] = {"status": "deprecated", "owner": "registry", "on_conflict": "propose", "replaced_by": f"arrangement.{slug}",
                          "because": "The owner, 2026-10-17: one model a piece (a table, a chair); the layout places pieces by an arrangement, never a furnished set as one model."}
         n += write("units", f"fitout-{slug}", d, "unit")

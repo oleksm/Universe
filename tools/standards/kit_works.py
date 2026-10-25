@@ -17,7 +17,6 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 M = os.path.join(ROOT, "standards/SFO/metadata")
 KEEP = ("visual", "model_requests")
 
-# material -> what the other works make of it (stock or good); a material with no maker anywhere is taken as itself
 FEED = {"material.structural-steel-a36": "stock.sta36-pl-8", "material.stainless-steel-304": "stock.st304-pl-3",
         "material.aluminium-alloy-6061": "stock.al6061-pl-5", "material.high-strength-steel-4340": "stock.st4340-bar-120",
         "material.polyethylene-uhmw": "good.polyethylene", "material.multi-layer-insulation": "stock.mli-fl",
@@ -25,13 +24,13 @@ FEED = {"material.structural-steel-a36": "stock.sta36-pl-8", "material.stainless
         "good.concrete": "good.concrete", "good.water": "good.water", "good.refractory-brick": "good.refractory-brick"}
 FEED.update({"material." + slug: "stock.chem-" + slug for slug in
              ("ptfe", "epdm-rubber", "silicone-rubber", "pir-foam", "polyimide-film", "silica-aerogel")})
-COPPER = "material.copper"          # (drawn wire for a cable's or a wire's cores; an ingot for cast and machined fittings)
+COPPER = "material.copper"
 SCRAP = {"stock.sta36-pl-8": "stock.sta36-scrap", "stock.st304-pl-3": "stock.st304-scrap", "stock.al6061-pl-5": "stock.al6061-scrap",
          "stock.st4340-bar-120": "stock.st4340-scrap", "stock.cu-ingot": "stock.cu-scrap", "stock.cu-wire-2": "stock.cu-scrap"}
-CUT = 0.03          # of the cut metal lost as scrap (invented)
+CUT = 0.03
 
 STAFF = lambda *p: [{"profession": f"profession.{n}", "count": c} for n, c in p]
-WORKS = {  # slug: (name, step, description, (l, w, h), rate kg/s, power W, staff, does)
+WORKS = {
     "cable-works": ("Cable works", "Make cable and wire", "Strands drawn copper wire into cores, extrudes their insulation and sheaths, lays the cores up and winds the cable onto drums: power cables, flexible cables, installation cables and hook-up wire.",
                     (240, 40, 15), 1.5, 4.5e6, STAFF(("plant-operator", 6), ("machinist", 2), ("technician", 2)),
                     "Copper wire is stranded into cores, insulated and sheathed by extrusion, laid up and wound onto drums."),

@@ -32,9 +32,9 @@ KEEP = ("visual", "model_requests")
 sys.path.insert(0, HERE)
 from packages import FORMS as PACKAGE_OF  # noqa: E402
 
-FACTOR = 1.5                # ultimate factor (invented, review)
+FACTOR = 1.5
 PROOF, TENSILE, E_STEEL = 830e6, 1040e6, 200e9
-AS = {10: 58.0, 16: 157.0, 20: 245.0, 30: 561.0, 42: 1120.0, 56: 2030.0, 64: 2680.0, 80: 4340.0, 100: 6990.0}   # mm2 tensile stress area (ISO 898-1), the sizes the frames stock
+AS = {10: 58.0, 16: 157.0, 20: 245.0, 30: 561.0, 42: 1120.0, 56: 2030.0, 64: 2680.0, 80: 4340.0, 100: 6990.0}
 PRELOAD, MU = 0.7, 0.3
 KIT_D = [0.06, 0.08, 0.1, 0.12, 0.15, 0.16, 0.2, 0.25]
 TRACK_PITCH, RAIL_GAP = 0.0254, 0.25
@@ -44,7 +44,7 @@ DECKS = [(0.5, 0.5), (1.0, 0.5), (1.0, 1.0), (2.0, 1.0)]
 AL, ST = "material.aluminium-alloy-6061", "material.high-strength-steel-4340"
 RHO = {AL: 2700.0, ST: 7850.0}
 YIELD = {AL: 270e6, ST: 1300e6}
-DRY = "--check" in sys.argv        # (check only: count what is out of date, write nothing)
+DRY = "--check" in sys.argv
 REVIEW = "Review-pending (docs/proposals/physical-mounts.md): chosen, not approved."
 
 
@@ -75,7 +75,6 @@ def write(folder, slug, d, schema):
     return 0
 
 
-# ------------------------------------------------------------------ bolts and joints
 def bolt_caps(d):
     a = AS[d] * 1e-6
     return PROOF * a, 0.6 * TENSILE * a
@@ -110,7 +109,7 @@ def clamp(D):
     pre = PRELOAD * bolt_caps(b)[0]
     ring = math.pi * (D + t) * t * L * RHO[AL]
     lugs = 2 * 2 * (3 * b / 1000) * (2 * b / 1000) * L * RHO[AL]
-    holder = 0.1 * 0.1 * 0.01 * RHO[AL]                        # the holder's lug plate the collar bolts to
+    holder = 0.1 * 0.1 * 0.01 * RHO[AL]
     bolts = 2 * bolt_mass(b)
     mm = round(D * 1000)
     k = bolt_k(b)
@@ -128,7 +127,6 @@ def clamp(D):
     return rec, b
 
 
-# ------------------------------------------------------------------ mounts: sockets and holder
 def rect_points(n, a, b):
     corners = [(-a, -b), (a, -b), (a, b), (-a, b)]
     if n <= 4:
@@ -138,7 +136,7 @@ def rect_points(n, a, b):
         return corners + mids
     if n == 8:
         return corners + [(0.0, -b), (a, 0.0), (0.0, b), (-a, 0.0)]
-    per, pts = 4 * (a + b), []                 # (any other count: evenly round the rectangle from a corner)
+    per, pts = 4 * (a + b), []
     for i in range(n):
         s = per * i / n
         for (x0, y0), (x1, y1) in zip(corners, corners[1:] + corners[:1]):
@@ -201,7 +199,6 @@ def set_mount(path, holder, socks):
     return 0
 
 
-# ------------------------------------------------------------------ tubes and cradles
 def tubes():
     out = []
     for f, d in load("mill-stock").values():
@@ -259,8 +256,6 @@ def cradle(slot, m, socks, d, tl):
             break
     else:
         return None
-    # End ties are redundant when they overlap a socket-bearing cross tube.
-    # Keep socket rows fixed; removing unloaded end ties does not alter size().
     socket_x = sorted({round(x, 3) for x in xs})
     cross_x = sorted(set(socket_x) | {end for end in (-Xb, Xb)
                                    if all(abs(end - x) >= tc["D"] for x in socket_x)})
@@ -278,8 +273,6 @@ def cradle(slot, m, socks, d, tl):
              {"what": "Socket pads and inserts", "item": ST, "mass": r(n * pad, 2), "note": f"{n} 4340 pads, each an M{d} insert; pad thickness {d / 1000:g} m, crosses lowered by that thickness with fishmouth seats to retain socket face z {h:g}; joints unqualified"},
              {"what": "Fixing lugs", "item": AL, "mass": r(nfix * lug, 2), "note": f"{nfix} 6061 lugs, a strut clamp bolted to each"}]
     if slot == "access-s1":
-        # Measured reference only; do not spread its cuts across differently sized cradles.
-        # Blender cradle/candidate-v01/review/mass-review.json, 2026-10-19.
         assert (n, nfix, cross_x, tb["D"], tc["D"], d) == (8, 6, [-1.485, -1.05, 0.0, 1.05, 1.485], 0.2, 0.25, 42)
         measured = [143.46569443534898, 703.4717793548417, 28.123396788736326, 3.66273821116026]
         notes = [
@@ -316,7 +309,6 @@ def cradle(slot, m, socks, d, tl):
                       {"of": ["rating"], "tier": "derived", "note": f"The mount's {n} points ({m['identity']['key']})."}]}
 
 
-# ------------------------------------------------------------------ shared deck support
 DECK_INSET = 0.04
 
 
@@ -345,7 +337,6 @@ def deck_support_shoe():
                        "note": "Trial geometry only, no strength rating. Screening cases: 27 kN factored per panel, 54 kN both, 1080 N m single-seat offset. Gross/net crossbar stress 202.5/231.4 MPa against the existing 270 MPa rule. These are not complete service envelopes: resolve asymmetric shear/tension and moments including the 60 mm offset. Thread stripping, concentrations, bearing, welds, fatigue and clamp compliance remain unqualified."}]}
 
 
-# ------------------------------------------------------------------ deck panels
 def deck(L, W):
     tag = f"{L:g}x{W:g}".replace(".", "p")
     area = L * W
@@ -359,8 +350,6 @@ def deck(L, W):
              {"what": "Seat track", "item": AL, "mass": r(rails, 2), "note": f"{nr} rails, 0.6 kg/m extruded 6061"},
              {"what": "Edge lugs", "item": AL, "mass": r(lugs, 2), "note": f"{segs} recessed inboard lugs for shared support shoes; inherited 0.15 kg each allowance, final panel cut masses pending"}]
     if (L, W) == (1.0, 1.0):
-        # Reference cut volumes only: deck/candidate-v01/review/final-panel-mass.json,
-        # Blender 2026-10-19. Other panel sizes retain their calculated allowances.
         assert nr == 4 and segs == 8 and DECK_INSET == 0.04
         measured = [4.941059824257454, 1.140257672632459, 2.3992502916082934, 1.0165064488375128]
         notes = ["two 1 mm 6061 skins after rail recesses, lug seats and access bores",
@@ -393,16 +382,15 @@ def deck(L, W):
                             "note": f"An aircraft-style sandwich floor and seat track, from memory; 10 kPa and a stud's 18 kN pressed chosen. {REVIEW}"}]}
 
 
-# ------------------------------------------------------------------ run clips and support spacing
-CLIP_BANDS = [0.010, 0.016, 0.025, 0.040, 0.063, 0.100, 0.160, 0.250, 0.400]     # m, the largest run outside each clip takes
-PIPE_SPAN = [(0.034, 2.1), (0.060, 3.0), (0.114, 4.3), (0.168, 5.1), (0.219, 5.8), (0.324, 7.0), (0.406, 7.6), (0.610, 9.1)]   # (outside m, span m): water-filled steel at 1 g, the suggested spans of ASME B31.1 from memory
-SHIP = {"cable": 0.6, "hose": 0.6}          # m: aircraft practice, wire bundles clamped every 24 in at most (FAA AC 43.13-1B, from memory)
+CLIP_BANDS = [0.010, 0.016, 0.025, 0.040, 0.063, 0.100, 0.160, 0.250, 0.400]
+PIPE_SPAN = [(0.034, 2.1), (0.060, 3.0), (0.114, 4.3), (0.168, 5.1), (0.219, 5.8), (0.324, 7.0), (0.406, 7.6), (0.610, 9.1)]
+SHIP = {"cable": 0.6, "hose": 0.6}
 OWN = {"belt": (1.2, "its idler frames"), "drag-conveyor": (3.0, "its casing's supports"), "busbar": (2.0, "its insulator supports"),
        "conductor-rail": (1.5, "its brackets"), "festoon": (1.0, "its trolleys on their track"), "lined-duct": (6.0, "its own steel"), "jacketed-duct": (6.0, "its own steel")}
 
 
-AF = {10: 0.016, 16: 0.024, 20: 0.030, 30: 0.046, 42: 0.065, 56: 0.085, 64: 0.095, 80: 0.120, 100: 0.150}   # m, a nut across flats (ISO 4032 to M64; M80 and M100 by 1.5 d, invented)
-BORE = {10: 0.011, 16: 0.0175, 20: 0.022, 30: 0.033, 42: 0.045, 56: 0.062, 64: 0.070, 80: 0.086, 100: 0.107}   # m, the medium clearance hole (ISO 273 to M64; beyond, d + 7 %, invented)
+AF = {10: 0.016, 16: 0.024, 20: 0.030, 30: 0.046, 42: 0.065, 56: 0.085, 64: 0.095, 80: 0.120, 100: 0.150}
+BORE = {10: 0.011, 16: 0.0175, 20: 0.022, 30: 0.033, 42: 0.045, 56: 0.062, 64: 0.070, 80: 0.086, 100: 0.107}
 
 
 def run_clip(band):
@@ -414,15 +402,15 @@ def run_clip(band):
     mm = round(band * 1000)
     t = max(0.0015, 0.02 * band)
     w, b = max(0.012, 0.25 * band), 10
-    for _ in range(4):                          # (a wider strap holds more, which may ask a bigger bolt: settle it)
+    for _ in range(4):
         hold = 2 * w * t * YIELD[AL]
         b = bolt_for(hold, MU * hold) or max(AS)
         w2 = max(w, AF[b] + 0.004)
         if w2 == w:
             break
         w = w2
-    tab = max(0.02 + band / 4, AF[b] + 0.01)   # the tab, both strap ends lying together, the bore at its middle
-    ro = (band + 0.004) / 2 + t                # the loop's outside radius: the band, its 2 mm cushion, the strap
+    tab = max(0.02 + band / 4, AF[b] + 0.01)
+    ro = (band + 0.004) / 2 + t
     loop = math.pi * (band + 0.004) + 2 * tab
     strap = w * t * loop * RHO[AL]
     cushion = math.pi * (band + 0.002) * 0.002 * w * 1100.0
@@ -492,7 +480,6 @@ def stock_for(code, rec, form):
             "physical": {"mass": ph["mass"]}, "basis": [{"of": ["size", "physical.mass"], "tier": "derived", "note": f"One {rec['identity']['key']}, as made."}]}
 
 
-# ------------------------------------------------------------------ main
 def build():
     faults, n = [], 0
     for d in AS:
@@ -526,7 +513,6 @@ def build():
                                          "tier": "invented", "source": "FAA AC 43.13-1B (wire clamps 24 in); ASME B31.1 suggested pipe spans; both from memory", "review": True}, "rule")
     shoe = deck_support_shoe()
     n += write("connectors", "deck-support-shoe", shoe, "connector")
-    # (its stock KIT-DECK-SUPPORT-SHOE is kit_catalogue.py's, as every connector's)
     tl = tubes()
     cradles, decks = [], []
     for slug, (path, m) in load("mounts").items():

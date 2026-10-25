@@ -26,23 +26,22 @@ M = os.path.join(ROOT, "standards/SFO/metadata/equipment")
 ASSETS = os.environ.get("UNIVERSE_ASSETS", os.path.expanduser("~/git/freefall-assets"))
 TOOL = "tools/standards/equipment_ports.py"
 
-BUSES = [(1000.0, 28.0, "dc-28v"), (30000.0, 270.0, "dc-270v"), (math.inf, 3000.0, "dc-3kv")]     # (W at most, V, channel): ships' limits
+BUSES = [(1000.0, 28.0, "dc-28v"), (30000.0, 270.0, "dc-270v"), (math.inf, 3000.0, "dc-3kv")]
 HV = 3000.0
-POLES = [150, 400, 650, 1000]          # A: the HV DC pole connectors (kit_catalogue.py)
-SHELLS = [(15, 17), (55, 25), (120, 33)]   # (A, shell) for a low-bus way
-PAIR_MAX = 500.0                       # A a pole pair carries where a load needs more than one pair: an air-bundled 400 mm2 aluminium feeder's (invented)
-DATA = "can-a"                         # the ship's one control bus (invented: a CAN-class two-wire bus, daisy-chained)
-FACE = {11: 0.022, 17: 0.03, 25: 0.04, 33: 0.052, 150: 0.04, 400: 0.055, 650: 0.07, 1000: 0.085}    # m across a mated connector
-GAP = 0.015                            # m between neighbouring receptacles (invented)
+POLES = [150, 400, 650, 1000]
+SHELLS = [(15, 17), (55, 25), (120, 33)]
+PAIR_MAX = 500.0
+DATA = "can-a"
+FACE = {11: 0.022, 17: 0.03, 25: 0.04, 33: 0.052, 150: 0.04, 400: 0.055, 650: 0.07, 1000: 0.085}
+GAP = 0.015
 
 SOURCES = {"battery": "both", "power_plant": "out"}
 
 
 def r(x, nd=3):
-    return round(float(x), nd) + 0.0      # (no -0.0)
+    return round(float(x), nd) + 0.0
 
 
-# ------------------------------------------------------------------ the model's empties
 def _quat_rot(q, v):
     x, y, z, w = q
     tx, ty, tz = 2 * (y * v[2] - z * v[1]), 2 * (z * v[0] - x * v[2]), 2 * (x * v[1] - y * v[0])
@@ -84,7 +83,6 @@ def empties(rec):
     return out
 
 
-# ------------------------------------------------------------------ connectors and their pins
 def pole(amps):
     return next(a for a in POLES if a >= amps)
 
@@ -144,7 +142,6 @@ def feed(base, flow, half, power):
     return out, ch
 
 
-# ------------------------------------------------------------------ places
 def _perp(f):
     """A direction across a face facing f to lay a row along: horizontal where it can be."""
     if abs(f[2]) > 0.9:
@@ -190,7 +187,7 @@ def end_face(rec):
 INVENTED = "place invented (the model has no empty for it): on its -x end face, for review"
 
 
-FRONT = "place invented (no model yet): a grid on its -y broad face, for review"           # (blender, 2026-10-18: the end face is too small for a board)
+FRONT = "place invented (no model yet): a grid on its -y broad face, for review"
 
 
 def place(rec, items, at=None, name=None, front=False):
@@ -204,7 +201,6 @@ def place(rec, items, at=None, name=None, front=False):
     return lay(items, c, f, w, INVENTED)
 
 
-# ------------------------------------------------------------------ what each kind gets
 def build(rec):
     """(ports, internal) for a hand-written record, or None when it takes no electrical ports here."""
     fn = rec.get("function") or {}
@@ -258,8 +254,7 @@ def switchgear(rec, em):
                    {"kind": "joined", "ports": ["data-1", "data-2"], "note": "the control bus passes through"}]
 
 
-# ------------------------------------------------------------------ writing
-TRACK_PITCH, RAIL_GAP = 0.0254, 0.25         # (mounting.py's deck track)
+TRACK_PITCH, RAIL_GAP = 0.0254, 0.25
 
 
 def feet(rec):
@@ -371,7 +366,7 @@ def main(check=False):
             continue
         rec = yaml.safe_load(text)
         base = strip(text, f)
-        if "\nports:" in base or base.startswith("ports:"):      # (hand-written ports: kept as written, only its feet rewritten)
+        if "\nports:" in base or base.startswith("ports:"):
             new = with_feet(text, rec)
             done += 1
             if new != text:

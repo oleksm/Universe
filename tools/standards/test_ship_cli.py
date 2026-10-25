@@ -11,8 +11,8 @@ class ShipCli(unittest.TestCase):
         if not GAME.is_file():
             self.skipTest("no game checkout")
         src = GAME.read_text()
-        self.assertIn('"ship-rule.base-blocks"', src)                     # modules::base_blocks() reads the record
-        self.assertNotRegex(src, r"BASE_BLOCKS: \[SlotKind")            # no second list to drift from it
+        self.assertIn('"ship-rule.base-blocks"', src)
+        self.assertNotRegex(src, r"BASE_BLOCKS: \[SlotKind")
         self.assertTrue(any(b["required"] for b in ship.blocks()))
 
     def test_every_block_kind_is_a_slot_kind_once(self):
@@ -34,7 +34,7 @@ class ServiceCommands(unittest.TestCase):
             ship.modules({"--mount": "mount.engine-s1c", "--json": True})
         keys = {r["key"] for r in json.loads(out.getvalue())}
         self.assertIn("equipment.engine.cg.s1", keys)
-        self.assertNotIn("equipment.engine.ft.s1", keys)   # 30 t, 6 m: past the compact envelope
+        self.assertNotIn("equipment.engine.ft.s1", keys)
 
     def test_missing_prints_one_request(self):
         import io, contextlib

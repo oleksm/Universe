@@ -24,7 +24,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 SURVEYS = os.path.join(ROOT, "standards", "Celestial", "surveys")
 FILES = ("manifest.json", "summary.json", "deposits.geojson", "districts.json", "bulk_rock.json", "geology.png", "rock_units.png")
 FORMAT = "planet-sim-survey/1"
-LARGE = 20 * 1024 * 1024    # bytes: a survey file over this is not copied into the registry; it stays in the worlds store
+LARGE = 20 * 1024 * 1024
 
 
 def sha(path):
@@ -70,9 +70,6 @@ def place(folder, world_id):
             return dest
         sys.exit(f"a different survey already sits at {dest}: a new run is a new world id")
     os.makedirs(dest, exist_ok=True)
-    # Files over LARGE stay in the worlds store (an airless world's impacts.json is over 100 MB): the manifest, copied,
-    # carries their hashes, and the record lists them as in the store. The files read-only, the folder not: the energy
-    # and surface packages are placed beside them.
     for f in sorted(os.listdir(folder)):
         src = os.path.join(folder, f)
         if os.path.isfile(src) and os.path.getsize(src) <= LARGE:
@@ -109,7 +106,6 @@ def packages(text, folder, dest, world_id):
                    + f"  coal_in_place: {float(f'{es['coal_mt'] * 1e9:.4g}')}\n")
         print(f"energy: {es.get('oil_fields')} oil and {es.get('gas_fields')} gas fields, {es.get('coalfields')} coalfields, copied to {os.path.relpath(edest, ROOT)}")
     sf = os.path.join(world, "surface")
-    # (A body whose ground the planet-unfold renderer draws has a `ground` pointer and no bake: its surface package is not installed.)
     has_ground = bool((yaml.safe_load(text) or {}).get("ground"))
     if has_ground:
         print("surface: skipped, the body's ground is a planet-unfold package (its `ground` pointer)")
@@ -179,8 +175,6 @@ def install_store(root, replace):
     index = os.path.join(root, "releases.json")
     done = 0
     if os.path.isfile(index):
-        # (planet-sim-releases/1: every world with its body, status and packages; only current worlds with a body are installed,
-        # superseded ones stay history: their IDs were issued.)
         rel = json.load(open(index, encoding="utf-8"))
         if rel.get("format") != "planet-sim-releases/1":
             sys.exit(f"releases.json: format {rel.get('format')!r}")
@@ -199,7 +193,6 @@ def install_store(root, replace):
             main(["world_install.py", w] + (["--replace"] if replace else []))
             done += 1
     print(f"{done} world(s) installed from {root}")
-    # what the registry holds now, at a glance
     for f in sorted(glob.glob(os.path.join(ROOT, "standards", "Celestial", "metadata", "systems", "*", "bodies", "*.yaml"))):
         b = yaml.safe_load(open(f, encoding="utf-8")) or {}
         if b.get("survey"):
@@ -214,7 +207,7 @@ def main(argv):
         return install_store(argv[argv.index("--store") + 1], "--replace" in argv)
     args = [a for a in argv[1:] if not a.startswith("--")]
     folder = args[0]
-    if os.path.isdir(os.path.join(folder, "survey")):      # the world's folder: its survey is inside
+    if os.path.isdir(os.path.join(folder, "survey")):
         folder = os.path.join(folder, "survey")
     m, summary = check(folder)
     key = args[1] if len(args) > 1 else summary.get("body")
@@ -228,8 +221,6 @@ def main(argv):
     rec = yaml.safe_load(text)
     radius = (rec.get("physical") or {}).get("radius")
     ground_r = (rec.get("ground") or {}).get("radius")
-    # (A body whose ground is a planet-unfold package grown at another radius takes that world's survey too, scaled the same:
-    # positions are latitude and longitude, tonnages and grades don't depend on the radius.)
     if ground_r and abs(summary["radius_m"] - ground_r) <= 0.01 * ground_r:
         print(f"survey radius {summary['radius_m']:,.0f} m is the ground's, scaled to the record's {radius:,.0f} m as the ground is")
     elif radius and abs(summary["radius_m"] - radius) > 0.01 * radius:
@@ -244,7 +235,6 @@ def main(argv):
     large = [f for f in sorted(m["files"]) if m["files"][f]["bytes"] > LARGE]
     if large:
         survey["in_store"] = large
-    # The record: provenance, the survey block, and the seed's guesses for derived figures dropped.
     text = re.sub(r"^provenance: .*\n", "provenance: baked\n", text, count=1, flags=re.M)
     text = re.sub(r"^survey:\n(?:  .*\n)*", "", text, flags=re.M)
     text = re.sub(r"^# (Curated|Baked): .*\n", "", text, flags=re.M)

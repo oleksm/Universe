@@ -22,19 +22,18 @@ def law(name):
     return float(yaml.safe_load(open(_g.glob(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "standards", "Dogma", "metadata", "*", name + ".yaml"))[0]))["value"])
 
 
-AU, G, SUN = law("astronomical-unit") / 1000, law("gravitation"), law("sun-mass")          # km, SI, kg
+AU, G, SUN = law("astronomical-unit") / 1000, law("gravitation"), law("sun-mass")
 SUN_W = law("sun-luminosity")
-si = lambda v: float(f"{v:.15g}")       # (records are in SI; this works in km, days and AU, and writes each value in SI)
+si = lambda v: float(f"{v:.15g}")
 galaxy = yaml.safe_load(open(os.path.join(CEL, "seeding", "galaxy.yaml")))["galaxy"]
 laws = yaml.safe_load(open(os.path.join(CEL, "seeding", "asteroids.yaml")))
 for _b in ("main_belt", "outer_belt"):
     for _e in ("inner_edge", "outer_edge"):
-        laws[_b][_e] = float(f"{laws[_b][_e] / (AU * 1000):.12g}")          # (m, to AU)
+        laws[_b][_e] = float(f"{laws[_b][_e] / (AU * 1000):.12g}")
 classes = {f[:-5]: yaml.safe_load(open(os.path.join(CEL, "rock-classes", f))) for f in os.listdir(os.path.join(CEL, "rock-classes"))}
 slug = lambda name: re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
 r3 = lambda v, n=4: float(f"{v:.{n}g}")
 
-# (Names: the game's own syllables, crates/core/world/src/names.rs.)
 ONSETS = ["", "", "", "b", "br", "c", "d", "dr", "f", "g", "h", "k", "kr", "l", "m", "n", "p", "r", "s", "sh", "st", "t", "th", "tr", "v", "w", "y", "z"]
 VOWELS = ["a", "a", "e", "e", "i", "i", "o", "o", "u", "ai", "au", "ei"]
 CODAS = ["", "", "", "", "", "l", "m", "n", "n", "r", "r", "s", "th", "k", "nd", "rn"]
@@ -112,7 +111,7 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
     star = {"mass": sun["physical"]["mass"] / SUN, "luminosity": float(f"{sun['star']['luminosity'] / SUN_W:.12g}")}
     bodies = [b for b in bodies if b["identity"]["kind"] != "star"]
     for b in bodies:
-        b["orbit"]["semi_major_axis"] = float(f"{b['orbit']['semi_major_axis'] / 1000:.12g}")       # (m, to km)
+        b["orbit"]["semi_major_axis"] = float(f"{b['orbit']['semi_major_axis'] / 1000:.12g}")
     mu = G * star["mass"] * SUN
     used.update(b["identity"]["name"] for b in bodies)
     planets = sorted((b for b in bodies if b["identity"]["parent"] == f"body.{SYS}.{slug(sname)}" and b["identity"]["kind"] != "asteroid"), key=lambda b: b["orbit"]["semi_major_axis"])
@@ -129,14 +128,10 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
     share = ring(*belt) / ring(mb["inner_edge"], mb["outer_edge"])
     pick = lambda r, zone: r.choices(list(classes), weights=[(c.get("found") or {}).get(zone, 0) for c in classes.values()])[0]
 
-    # (The small bodies themselves are the engine's now: celestial_export.py writes them from its export.
-    # Here, only the regions the game does not make. A returning comet is one of the records, on an orbit
-    # that does not reach the far cloud.)
     small = os.path.join(sysdir, "small-bodies")
     recs = [yaml.safe_load(open(os.path.join(small, f))) for f in sorted(os.listdir(small))] if os.path.isdir(small) else []
     comets = [(c["identity"]["name"], c["orbit"]["semi_major_axis"] / 1000 / AU * (1 - c["orbit"]["eccentricity"]), c["orbit"]["semi_major_axis"] / 1000 / AU * (1 + c["orbit"]["eccentricity"]))
               for c in recs if c["identity"]["kind"] == "comet" and c["orbit"]["semi_major_axis"] / 1000 / AU < 1000]
-    # (A stream whose comet is gone goes with it, unless a person has taken it over.)
     regions = os.path.join(sysdir, "regions")
     for f in sorted(os.listdir(regions)) if os.path.isdir(regions) else []:
         was = yaml.safe_load(open(os.path.join(regions, f))) or {}
@@ -145,7 +140,6 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
             if not dry:
                 os.remove(os.path.join(regions, f))
 
-    # Regions.
     def region(kind, nm, lo, hi, about, why, parent=None):
         rec = {"provenance": "seeded", "in_game": "not made", "identity": {"key": f"population.{SYS}.{slug(nm)}", "name": nm, "kind": kind, "about": about}, "extent": {"inner": si(r3(lo) * AU * 1000), "outer": si(r3(hi) * AU * 1000)}}
         if parent:

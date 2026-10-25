@@ -18,7 +18,7 @@ import yaml
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from assets import ROOT, records, store  # noqa: E402
 
-DRAWN = {"module", "building", "structure", "gate"}     # (what the game draws as models today: main 364a539e)
+DRAWN = {"module", "building", "structure", "gate"}
 
 
 def main(argv):

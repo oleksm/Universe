@@ -16,7 +16,7 @@ from lib import edit  # noqa: E402
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 S = os.path.join(ROOT, "standards/SFO/metadata")
 
-KEYWORDS = [   # (a word, or words, in the item or material key, sRGB)
+KEYWORDS = [
     ("carbon-dioxide", (0.85, 0.87, 0.90)), ("natural-gas", (0.80, 0.84, 0.88)), ("sandwich", (0.70, 0.70, 0.68)), ("honeycomb", (0.80, 0.80, 0.70)),
     ("stainless", (0.72, 0.73, 0.75)), ("st304", (0.72, 0.73, 0.75)), ("304", (0.72, 0.73, 0.75)),
     ("titanium", (0.56, 0.56, 0.59)), ("ti64", (0.56, 0.56, 0.59)), ("ti-6al", (0.56, 0.56, 0.59)),
@@ -65,7 +65,7 @@ MARKETS = {"market.ores": (0.42, 0.38, 0.34), "market.minerals": (0.70, 0.68, 0.
 
 def tint_for(d):
     words = " ".join([d["identity"]["key"]] + [x.get("item", "") for x in d.get("made_from") or []])
-    for w, c in KEYWORDS:     # (whole words: a key's words are split by dots and hyphens)
+    for w, c in KEYWORDS:
         if re.search(r"(^|[.\- ])" + re.escape(w) + r"($|[.\- ])", words):
             return c, "word " + w
     return MARKETS.get(d["identity"].get("traded_as"), (0.6, 0.6, 0.6)), "market"

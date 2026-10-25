@@ -122,7 +122,7 @@ class HullMechanisms(unittest.TestCase):
         self.assertTrue(any('distinct' in x for x in errors(self.hull)))
         del exit['foot']
         self.assertTrue(any('requires foot' in x for x in errors(self.hull)))
-        exit['kind'] = 'walk'  # walk requires an entry marker, not an invented teleport foot
+        exit['kind'] = 'walk'
         self.assertEqual(errors(self.hull), [])
         del exit['top']
         self.assertTrue(self.schema_errors())

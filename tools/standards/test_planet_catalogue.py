@@ -45,7 +45,7 @@ class PlanetCatalogue(unittest.TestCase):
 
     def test_context_includes_intermediate_ladder_levels(self):
         recs = records()
-        recs["planet-feature.parent"]["levels"] = [LEVELS[6]]  # obsolete context hint
+        recs["planet-feature.parent"]["levels"] = [LEVELS[6]]
         grouped = {kind: {k: r for k, r in recs.items() if k.startswith(kind + ".")}
                    for kind in ("planet-level", "planet-feature", "planet-line")}
         self.assertIn("planet-feature.parent", context(grouped, "1-km")["records"]["planet-feature"])

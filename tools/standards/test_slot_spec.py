@@ -20,7 +20,7 @@ def engine(**over):
 class SlotSpec(unittest.TestCase):
     def setUp(self):
         self.saved = slot_spec.product_frames
-        slot_spec.product_frames = lambda q: {"nozzle_a": np.eye(4)}   # exhaust along the product's -Z
+        slot_spec.product_frames = lambda q: {"nozzle_a": np.eye(4)}
 
     def tearDown(self):
         slot_spec.product_frames = self.saved
@@ -31,8 +31,8 @@ class SlotSpec(unittest.TestCase):
 
     def test_a_product_is_judged_on_every_limit(self):
         bad = lambda q, f: {L["of"] for L, _, ok, _ in slot_spec.judge(q, slot_spec.limits(SLOT, MOUNTS), f) if ok is False}
-        flip = np.diag([1.0, 1, -1, 1])                      # the slot turned round: the exhaust goes forward
-        self.assertEqual(bad(engine(), flip), set())          # pushes along -Z, the nose
+        flip = np.diag([1.0, 1, -1, 1])
+        self.assertEqual(bad(engine(), flip), set())
         self.assertIn("push", bad(engine(), np.eye(4)))
         self.assertIn("physical.mass", bad(engine(physical={"mass": 500, "length": 0.5, "width": 0.5, "height": 0.5}), flip))
         self.assertIn("nozzles", bad(engine(nozzles=None), flip))

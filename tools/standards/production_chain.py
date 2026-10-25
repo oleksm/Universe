@@ -31,7 +31,6 @@ def audit(records):
         if key.startswith("module."):
             for r in d.get("recipes") or []:
                 ins = {i["item"] for i in r.get("inputs") or [] if i.get("from", "stock") != "place" and i.get("quantity", 0) > 0}
-                # Empty or zero-input recipes are faults, not sources of matter.
                 if not any(i.get("quantity", 0) > 0 for i in r.get("inputs") or []):
                     continue
                 outs = {r["makes"]} | {o["item"] for o in r.get("outputs") or [] if o.get("quantity", 0) > 0}
@@ -48,8 +47,6 @@ def audit(records):
             if target:
                 supplied[target].append(key)
             parts = d.get("made_from") or []
-            # A homogeneous raw/bulk stock wraps its good. A compound kit that
-            # contains PTFE does not manufacture PTFE or any of its other parts.
             if len(parts) == 1 and not target:
                 item = parts[0]["item"]
                 if (d.get("identity") or {}).get("form") in ("bulk", "fluid"):
@@ -57,9 +54,6 @@ def audit(records):
                 if item.startswith("material."):
                     aliases.append((key, item))
 
-    # Opening/disposal is an inventory transformation, not a factory recipe:
-    # it turns manufactured tare into the same mass of mixed waste. It cannot
-    # bootstrap manufacturing, and does not recover virgin materials for free.
     operation_sources = defaultdict(set)
     for key, d in records.items():
         if not key.startswith("package.") or not (waste := d.get("waste_stock")):
@@ -76,8 +70,6 @@ def audit(records):
             sources[out].add("Opening/disposal of " + key)
             operation_sources[out].add(key)
 
-    # Element supply is the existing registry boundary pending world composition.
-    # Natural sources likewise identify a resource, not a placed, operating mine.
     boundary = {k for k, d in records.items() if (k.startswith("element.") and k not in sources) or (k.startswith("good.") and (d.get("source") or {}).get("occurs"))}
     available = set(boundary)
     while True:
@@ -122,8 +114,6 @@ def audit(records):
             issues.extend(f"{key}: {m}" for m in missing)
         rows.append({"key": key, "name": d["identity"]["name"], "mass": (d.get("physical") or {}).get("mass"), "sources": sorted(sources.get(key, [])), "package": pkg, "empty_stock": packers[0] if len(packers) == 1 else None, "issues": missing})
 
-    # Keep the factories-make-factories check scoped to the works used by kit
-    # production and the newly introduced supply chain, not unrelated old gaps.
     kit_makers = {owner for owner, _, outs in recipes if any(k.startswith(("stock.kit-", "stock.chem-", "stock.pkg-")) for k in outs)}
     kit_makers |= {"module.factory-works"} & records.keys()
     for maker in sorted(kit_makers):

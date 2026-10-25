@@ -12,6 +12,8 @@ which sets its line to `review`; the record's own revision is then changed with 
 """
 import datetime, hashlib, os, subprocess, sys
 import yaml
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import lib  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
@@ -21,8 +23,7 @@ HEADER = ""
 
 
 def sha(full):
-    with open(full, "rb") as f:
-        return hashlib.sha256(f.read()).hexdigest()[:16]
+    return lib.sha(full)[:16]
 
 
 def status_of(rec, sch):
