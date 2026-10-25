@@ -8,10 +8,8 @@ status: draft
 implementation: existing
 owner: registry
 sources:
-- document: docs/spaceship-building-workflow-proposal.md
-  section: 6.1 Use a complete evidence checklist
-  note: 'Owner, 2026-10-24: qualification criteria live in the registry so any ship can run them; the game reads the
-    registry. F3 and T1-T3 mirror the game''s mount_fit (crates/core/world/src/ship.rs) and bind_engines (import.rs).'
+- document: docs/reports/2026-10-24-slots-fit-shipyard-audit.md
+  section: Stage by stage
 method:
 - 'H1 whole mass: physical.mass, or a parts folder the mass is worked out from.'
 - 'S1 slot names unique.'
@@ -30,7 +28,5 @@ evidence:
 - Per hull the faults by criterion and what could not be judged (no model to read is unchecked, never a pass).
 failure: A fault blocks the hull's adoption of those slots or that fit. Records marked outdated are reported, not gated.
 scope: export
-artifacts:
-- ship-artifact.interfaces
 coverage: Geometric containment uses bounding sides and box volume, not exact shapes; overlap between sockets, load paths
   and receiver bearing (rule.joint-bearing-evidence) are separate evidence.

@@ -9,10 +9,8 @@ status: draft
 implementation: existing
 owner: registry
 sources:
-- document: docs/spaceship-building-workflow-proposal.md
-  section: 6.1 Use a complete evidence checklist
-  note: 'Owner, 2026-10-24: every slot is a spec (mins, maxes, requirements, every parameter) and the base of validation;
-    the ship is validated from its installed modules, not its slots. Audit docs/reports/2026-10-24-slots-fit-shipyard-audit.md.'
+- document: docs/reports/2026-10-24-slots-fit-shipyard-audit.md
+  section: What the registry must add, as records
 method:
 - 'Y1 each fitted product meets every limit of its slot''s spec: kind, size class, a mount of its kind, envelope sides,
   mass and thrust within what the mount bears, power within what it feeds, the mount''s and the slot''s own limits
@@ -30,7 +28,5 @@ evidence:
   is unchecked, never a pass).
 failure: A fault refuses that fit.
 scope: export
-artifacts:
-- ship-artifact.interfaces
 coverage: Centre of mass from the hull's origin and each product at its slot's frame; nozzle thrust as rated, without
   plume impingement or gimbal.

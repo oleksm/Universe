@@ -480,7 +480,7 @@ const workflowProse = text => String(text).split(/(```[\s\S]*?```)/g).map(part =
     return `<div class="workflow-prose">${workflowInline(block)}</div>`;
   }).join("");
 }).join("");
-const ROOT_NAMES = { PlanetSim: "Planet Simulator", PlanetLOD: "Planet LOD", SpaceshipBuilding: "Spaceship Building" };     // (roots shown as trees of their own)
+const ROOT_NAMES = { PlanetSim: "Planet Simulator", PlanetLOD: "Planet LOD" };     // (roots shown as trees of their own)
 let current = decodeURIComponent(location.hash.slice(1));
 const stdOf = k => k.startsWith("s:") ? byId[k.slice(2).split("@")[0]] : null;
 // (Open the way to a standard: its body.)

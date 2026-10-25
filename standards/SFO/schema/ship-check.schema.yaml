@@ -1,9 +1,8 @@
 $schema: http://json-schema.org/draft-07/schema#
-title: Ship Workflow Stage
+title: Ship check
 x-kind:
-- ship-stage
-description: 'standards/SpaceshipBuilding/metadata/stages/<name>.yaml: reusable workflow
-  definitions, never ship instances or runtime state.'
+- ship-check
+description: "standards/SFO/metadata/ship-checks/<name>.yaml: a check a hull or ship must pass (socket qualification, shipyard fit), its method and what it covers."
 type: object
 additionalProperties: false
 required:
@@ -12,12 +11,10 @@ required:
 - implementation
 - owner
 - sources
-- entry
-- exit
+- method
+- evidence
 - failure
-- inputs
-- outputs
-- checks
+- scope
 properties:
   identity:
     type: object
@@ -93,56 +90,41 @@ properties:
       type: string
       x-ref:
       - ship-rule
-  order:
-    type: integer
-    minimum: 0
-    description: Display order; depends_on defines prerequisites.
-  depends_on:
-    type: array
-    items:
-      type: string
-      x-ref:
-      - ship-stage
-  entry:
+  method:
     type: array
     minItems: 1
     items:
       type: string
       minLength: 1
-    description: Conditions before starting; carry existing authorization forward.
-  exit:
+    description: How to perform the check; implementation may remain proposed.
+  evidence:
     type: array
     minItems: 1
     items:
       type: string
       minLength: 1
-    description: Evidence and decision required to leave this gate.
+    description: What proves the result for exact candidate inputs.
   failure:
-    type: array
-    minItems: 1
-    items:
-      type: string
-      minLength: 1
-    description: Rollback and recovery; preserve the last good candidate.
-  inputs:
-    type: array
-    items:
-      type: string
-      x-ref:
-      - ship-artifact
-  outputs:
-    type: array
-    items:
-      type: string
-      x-ref:
-      - ship-artifact
-  checks:
-    type: array
-    items:
-      type: string
-      x-ref:
-      - ship-check
-  decision:
     type: string
     minLength: 1
-    description: Decision authority and when an identity or scope change reopens review.
+    description: What a failing or unavailable check blocks; how to retain witnesses.
+  scope:
+    enum:
+    - requirements
+    - visual
+    - geometry
+    - inhabitation
+    - construction
+    - motion
+    - materials
+    - export
+    - assembly
+    - runtime
+    - release
+    - recovery
+    - dependencies
+  coverage:
+    type: string
+    minLength: 1
+    description: Coverage, sampling and qualification limits; never infer a stronger
+      claim.

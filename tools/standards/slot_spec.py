@@ -227,8 +227,8 @@ def judge(q, lims, slot_frame=None):
     return res
 
 
-RULE = os.path.join(ROOT, "standards/SpaceshipBuilding/metadata/rules/mass-properties.yaml")
-ALLOC = os.path.join(ROOT, "standards/SpaceshipBuilding/metadata/rules/flight-allocation.yaml")
+RULE = os.path.join(ROOT, "standards/SFO/metadata/ship-rules/mass-properties.yaml")
+ALLOC = os.path.join(ROOT, "standards/SFO/metadata/ship-rules/flight-allocation.yaml")
 
 
 def figure(name):

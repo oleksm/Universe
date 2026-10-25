@@ -47,7 +47,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ship_qualify import ROOT, load, qualify  # noqa: E402
 import slot_spec  # noqa: E402
 
-RULE = os.path.join(ROOT, "standards/SpaceshipBuilding/metadata/rules/base-blocks.yaml")
+RULE = os.path.join(ROOT, "standards/SFO/metadata/ship-rules/base-blocks.yaml")
 
 
 def blocks():

@@ -372,9 +372,7 @@ def key_of(rel, rec):
             return "element." + str((rec.get("identity") or {}).get("symbol", "")).lower()
         if kind in ("equipment", "gates"):
             return {"equipment": "equipment.", "gates": "gate."}[kind]
-        return {"materials": "material.", "processes": "process.", "modules": "module.", "goods": "good.", "hulls": "hull.", "mill-stock": "stock.", "stock": "stock.", "assemblies": "assembly.", "parts": "part.", "structures": "structure.", "markets": "market.", "buildings": "building.", "mounts": "mount.", "plant-mounts": "plant-mount.", "units": "unit.", "layouts": "layout.", "connectors": "connector.", "runs": "run.", "products": "product.", "interfaces": "interface.", "sights": "sight.", "rules": "rule.", "packages": "package.", "templates": "template.", "panels": "panel.", "arrangements": "arrangement.", "adapters": "adapter.", "ships": "ship."}[kind] + low
-    if root == "SpaceshipBuilding":
-        return {"stages": "ship-stage.", "artifacts": "ship-artifact.", "checks": "ship-check.", "rules": "ship-rule.", "decisions": "ship-decision."}[p[2]] + low
+        return {"materials": "material.", "processes": "process.", "modules": "module.", "goods": "good.", "hulls": "hull.", "mill-stock": "stock.", "stock": "stock.", "assemblies": "assembly.", "parts": "part.", "structures": "structure.", "markets": "market.", "buildings": "building.", "mounts": "mount.", "plant-mounts": "plant-mount.", "units": "unit.", "layouts": "layout.", "connectors": "connector.", "runs": "run.", "products": "product.", "interfaces": "interface.", "sights": "sight.", "rules": "rule.", "packages": "package.", "templates": "template.", "panels": "panel.", "arrangements": "arrangement.", "adapters": "adapter.", "ships": "ship.", "ship-rules": "ship-rule.", "ship-checks": "ship-check."}[kind] + low
     if root == "MakerHouse":
         return "org."
     if root == "People":
@@ -436,39 +434,6 @@ def motion_interlocks(rec):
         elif not bounds[0] <= limited[0] <= limited[1] <= bounds[1]:
             out.append(f"{at}: restricted angle must be ordered and inside normal limits")
     return out
-
-
-def workflow_dependencies(records):
-    """Definition prerequisites must form a DAG; related/check links are not prerequisites."""
-    nodes = {key: (path, rec) for key, path, rec, _ in records
-             if key.split(".")[0] in ("ship-stage", "ship-artifact")}
-    found, active, done = [], [], set()
-
-    def visit(key):
-        if key in active:
-            path, _ = nodes[key]
-            found.append((path, "depends_on: cycle " + " -> ".join(active[active.index(key):] + [key])))
-            return
-        if key in done:
-            return
-        active.append(key)
-        path, rec = nodes[key]
-        deps = rec.get("depends_on", [])
-        if not isinstance(deps, list) or any(not isinstance(d, str) for d in deps):
-            active.pop()
-            done.add(key)
-            return
-        if len(deps) != len(set(deps)):
-            found.append((path, "depends_on: duplicate prerequisite"))
-        for dep in deps:
-            if dep in nodes:
-                visit(dep)
-        active.pop()
-        done.add(key)
-
-    for key in sorted(nodes):
-        visit(key)
-    return found
 
 
 def hull_fit_poses(records, assets_home=None):
@@ -583,7 +548,6 @@ def check_all():
         elif key.split(".")[0] not in kinds:
             found.append((full, f"{at}: {key} is not {' or '.join(('an ' if k[0] in 'aeiou' else 'a ') + k for k in kinds)}"))
     found += planet_rule_references(SEEN)
-    found += workflow_dependencies(SEEN)
     found += hull_fit_poses(SEEN)
     from hull_mechanisms import check_records as hull_mechanism_checks
     found += hull_mechanism_checks(SEEN)

@@ -1,5 +1,6 @@
 """ship.py: requirements the game reads from the record, and validate's requirement criteria."""
 import os, unittest
+import yaml
 from pathlib import Path
 import ship
 
@@ -42,6 +43,18 @@ class ServiceCommands(unittest.TestCase):
         with contextlib.redirect_stdout(out):
             ship.missing("a thing", {"--for": "equipment.x"})
         self.assertIn("agentmsg send registry task", out.getvalue())
+
+
+class ShipRecords(unittest.TestCase):
+    def test_explorer_hull_is_bare(self):
+        """Owner 2026-10-24: the hull is hull and sockets; a workable fit is a ship record."""
+        rec = yaml.safe_load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../standards/SFO/metadata/hulls/explorer-study.yaml")))
+        self.assertEqual(rec.get("fit", []), [])
+        self.assertEqual(rec.get("thrusters", []), [])
+
+    def test_path_defines_key(self):
+        from validate import key_of
+        self.assertEqual(key_of(os.path.join("SFO", "metadata", "ship-checks", "shipyard-fit.yaml"), {}), "ship-check.shipyard-fit")
 
 
 if __name__ == "__main__":

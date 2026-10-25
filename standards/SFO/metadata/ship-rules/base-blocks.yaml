@@ -8,11 +8,8 @@ status: draft
 implementation: existing
 owner: registry
 sources:
-- document: docs/spaceship-building-workflow-proposal.md
-  section: 6.1 Use a complete evidence checklist
-  note: 'The game''s list, crates/core/world/src/modules.rs BASE_BLOCKS and ship.rs build (an engine stands for the drive,
-    cold gas for the thrusters; inert modules do not count). Owner 2026-10-24: requirements live in the registry so any
-    ship can be validated.'
+- document: docs/reports/2026-10-24-slots-fit-shipyard-audit.md
+  section: Stage by stage
 statement: A ship is commissioned (flies) only when every required block below is filled with a working, not inert,
   module; a hull-and-sockets delivery must offer at least one socket for each, empty. Optional blocks add ability and
   are the player's choice.
@@ -47,4 +44,3 @@ limitations:
 - The list is the game's commissioning rule, not a mission requirement; a mission may need more (lift, thermal).
 related:
 - ship-check.socket-qualification
-- ship-rule.scope

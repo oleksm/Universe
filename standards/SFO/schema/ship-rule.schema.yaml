@@ -1,9 +1,8 @@
 $schema: http://json-schema.org/draft-07/schema#
-title: Ship Workflow Rule
+title: Ship rule
 x-kind:
 - ship-rule
-description: 'standards/SpaceshipBuilding/metadata/rules/<name>.yaml: reusable workflow definitions, never ship
-  instances or runtime state.'
+description: "standards/SFO/metadata/ship-rules/<name>.yaml: a rule every ship is held to or computed by (its blocks, its mass properties, its flight allocation), with its figures and conformance cases."
 type: object
 additionalProperties: false
 required:
@@ -113,10 +112,7 @@ properties:
       type: string
       x-ref:
       - ship-rule
-      - ship-stage
-      - ship-artifact
       - ship-check
-      - ship-decision
   blocks:
     type: array
     description: 'Structured requirements a tool reads: one need each, the slot kinds that meet it, whether a ship

@@ -88,18 +88,13 @@ digraph registry {
     "rule" [label="rule", color="#9c755f", penwidth=1, tooltip="SFO/schema/rule.schema.yaml"];
     "run" [label="run", color="#9c755f", penwidth=1, tooltip="SFO/schema/run.schema.yaml"];
     "ship" [label="ship", color="#9c755f", penwidth=1, tooltip="SFO/schema/ship.schema.yaml"];
+    "ship-check" [label="ship-check", color="#9c755f", penwidth=1, tooltip="SFO/schema/ship-check.schema.yaml"];
+    "ship-rule" [label="ship-rule", color="#9c755f", penwidth=1, tooltip="SFO/schema/ship-rule.schema.yaml"];
     "standard" [label="standard", color="#9c755f", penwidth=1, tooltip="SFO/schema/standard.schema.yaml"];
     "stock" [label="stock", color="#9c755f", penwidth=1, tooltip="SFO/schema/mill-stock.schema.yaml"];
     "structure" [label="structure", color="#9c755f", penwidth=1, tooltip="SFO/schema/structure.schema.yaml"];
     "template" [label="template", color="#9c755f", penwidth=1, tooltip="SFO/schema/template.schema.yaml"];
     "unit" [label="unit", color="#9c755f", penwidth=2, tooltip="SFO/schema/unit.schema.yaml"];
-  }
-  subgraph "cluster_SpaceshipBuilding" { label="SpaceshipBuilding"; color="#bab0ac"; fontcolor="#bab0ac"; style="rounded";
-    "ship-artifact" [label="ship-artifact", color="#bab0ac", penwidth=1, tooltip="SpaceshipBuilding/schema/ship-artifact.schema.yaml"];
-    "ship-check" [label="ship-check", color="#bab0ac", penwidth=1, tooltip="SpaceshipBuilding/schema/ship-check.schema.yaml"];
-    "ship-decision" [label="ship-decision", color="#bab0ac", penwidth=1, tooltip="SpaceshipBuilding/schema/ship-decision.schema.yaml"];
-    "ship-rule" [label="ship-rule", color="#bab0ac", penwidth=1, tooltip="SpaceshipBuilding/schema/ship-rule.schema.yaml"];
-    "ship-stage" [label="ship-stage", color="#bab0ac", penwidth=1, tooltip="SpaceshipBuilding/schema/ship-stage.schema.yaml"];
   }
   "root:physical_object" -> "assembly" [color="#222222", penwidth=1.6, arrowhead=onormal];
   "root:physical_object" -> "body" [color="#222222", penwidth=1.6, arrowhead=onormal];
