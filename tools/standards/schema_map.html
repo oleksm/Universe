@@ -1,0 +1,233 @@
+<title>Freefall Registry Map</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one-screen tool - toolbar on top, graph canvas, detail panel on the right (below on phones). */
+:root {
+  --bg: #f4f6f8; --panel: #ffffff; --fg: #18212b; --muted: #5b6876; --line: #d5dce3;
+  --accent: #1f6feb; --root: #18212b; --root-fg: #ffffff; --edge: #8a96a3; --hl: #d9480f;
+  --a0: #2f6db5; --a1: #c46a12; --a2: #3f8f4a; --a3: #c23b3b; --a4: #2a8f8a; --a5: #a88a12; --a6: #8b5a9e; --a7: #c9577a; --a8: #7a5a43; --a9: #6b7680;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1418; --panel: #161d23; --fg: #e3e9ef; --muted: #93a1ae; --line: #2a343d;
+  --accent: #5b9dff; --root: #e3e9ef; --root-fg: #0f1418; --edge: #5e6b77; --hl: #ff8a4c;
+  --a0: #6aa3ea; --a1: #eb9a4b; --a2: #73c27d; --a3: #ef7474; --a4: #5cc5bf; --a5: #d9bd4a; --a6: #bb8dd0; --a7: #ec8db0; --a8: #c09a7d; --a9: #9aa6b1;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0f1418; --panel: #161d23; --fg: #e3e9ef; --muted: #93a1ae; --line: #2a343d;
+  --accent: #5b9dff; --root: #e3e9ef; --root-fg: #0f1418; --edge: #5e6b77; --hl: #ff8a4c;
+  --a0: #6aa3ea; --a1: #eb9a4b; --a2: #73c27d; --a3: #ef7474; --a4: #5cc5bf; --a5: #d9bd4a; --a6: #bb8dd0; --a7: #ec8db0; --a8: #c09a7d; --a9: #9aa6b1;
+  color-scheme: dark; }
+html, body { height: 100%; }
+@media (min-width: 761px) { body { overflow: hidden; } }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 14px; display: flex; flex-direction: column; }
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
+h1 { font-size: 15px; font-weight: 600; margin: 0; letter-spacing: .01em; }
+h1 small { font-weight: 400; color: var(--muted); font-family: var(--mono); font-size: 12px; margin-left: 6px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.seg button { font: 500 12px var(--sans); background: transparent; color: var(--muted); border: 0; padding: 6px 10px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+input[type=search] { font: 13px var(--mono); padding: 6px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); width: 14rem; max-width: 100%; }
+button:focus-visible, input:focus-visible, .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 11.5px var(--sans); letter-spacing: .02em; display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--fg); cursor: pointer; }
+.chip i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.chip[aria-pressed="false"] { opacity: .45; }
+main { flex: 1; display: flex; min-height: 0; }
+#cy { flex: 1; min-width: 0; }
+aside { width: 340px; flex: none; border-left: 1px solid var(--line); background: var(--panel); overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+aside h2 { font: 600 16px var(--mono); margin: 0; word-break: break-word; }
+.meta { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 12.5px; }
+.meta dt { color: var(--muted); }
+.meta dd { margin: 0; font-family: var(--mono); font-size: 12px; word-break: break-all; }
+.about { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 0; }
+h3 { font: 600 11px var(--sans); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 6px; }
+ul.links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; font: 12px var(--mono); }
+ul.links button { font: inherit; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+ul.links span { color: var(--muted); }
+.fields { font: 12px var(--mono); color: var(--fg); line-height: 1.6; }
+.fields b { font-weight: 500; }
+.hint { color: var(--muted); font-size: 13px; line-height: 1.5; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.legend span::before { content: ""; display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--root); vertical-align: middle; margin-right: 6px; }
+.legend span.ref::before { border-top: 1px solid var(--edge); }
+@media (max-width: 760px) {
+  main { flex-direction: column; }
+  #cy { min-height: 60vh; }
+  aside { width: auto; border-left: 0; border-top: 1px solid var(--line); }
+}
+</style>
+
+<header>
+  <h1>Freefall Registry Map <small id="count"></small></h1>
+  <div class="seg" role="group" aria-label="View">
+    <button id="v-roots" aria-pressed="true">Roots</button>
+    <button id="v-refs" aria-pressed="false">References</button>
+  </div>
+  <input type="search" id="q" placeholder="Find a kind: hull, mount, planet-field" aria-label="Find a kind">
+  <div class="chips" id="areas" aria-label="Areas"></div>
+</header>
+<main>
+  <div id="cy" role="img" aria-label="Graph of record kinds"></div>
+  <aside id="panel">
+    <div>
+      <h3>How to read it</h3>
+      <p class="hint">Each box is a record kind, grouped by its area of the registry. <b>Roots</b> shows the common definitions kinds derive from (a hull is a physical object). <b>References</b> adds every field that names another kind's record by key. Click a kind for its fields and links; click empty space to clear.</p>
+    </div>
+    <div class="legend"><span>derives from</span><span class="ref">references</span></div>
+    <div id="summary"></div>
+  </aside>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+<script>
+const DATA = /*DATA*/null;
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const areas = [...new Set(DATA.kinds.map(k => k.area))].sort();
+const areaVar = Object.fromEntries(areas.map((a, i) => [a, `--a${i % 10}`]));
+const byKey = Object.fromEntries(DATA.kinds.map(k => [k.key, k]));
+const incoming = {};
+DATA.refs.forEach(r => (incoming[r.to] ||= []).push(r));
+let view = "roots", shown = new Set(areas);
+
+document.getElementById("count").textContent = `${DATA.kinds.length} kinds · ${areas.length} areas · ${DATA.refs.length} references`;
+
+function elements() {
+  const els = [];
+  areas.forEach(a => els.push({ data: { id: "area:" + a, label: a, area: a }, classes: "area" }));
+  Object.entries(DATA.roots).forEach(([r, ks]) => els.push({ data: { id: "root:" + r, label: `${r}\n${ks.length} kinds` }, classes: "root" }));
+  DATA.kinds.forEach(k => els.push({ data: { id: k.key, label: k.key, parent: "area:" + k.area, area: k.area }, classes: "kind" + (k.root ? " rooted" : "") }));
+  Object.entries(DATA.roots).forEach(([r, ks]) => ks.forEach(k => els.push({ data: { id: `d:${r}:${k}`, source: "root:" + r, target: k }, classes: "derive" })));
+  DATA.refs.forEach(r => els.push({ data: { id: `r:${r.from}:${r.to}`, source: r.from, target: r.to, n: r.n, area: byKey[r.from].area }, classes: "ref" }));
+  return els;
+}
+
+function style() {
+  return [
+    { selector: "node.kind", style: { "label": "data(label)", "font-family": css("--mono"), "font-size": 10, "color": css("--fg"), "text-valign": "center", "text-halign": "center",
+      "shape": "round-rectangle", "width": 160, "height": 22, "padding": "0px", "text-max-width": 154, "text-overflow-wrap": "anywhere", "background-color": css("--panel"), "border-width": 1,
+      "border-color": e => css(areaVar[e.data("area")]) } },
+    { selector: "node.rooted", style: { "border-width": 2 } },
+    { selector: "node.area", style: { "label": "data(label)", "font-family": css("--sans"), "font-weight": 600, "font-size": 12, "text-valign": "top", "text-halign": "center",
+      "color": e => css(areaVar[e.data("area")]), "background-opacity": 0.06, "background-color": e => css(areaVar[e.data("area")]),
+      "border-width": 1, "border-color": e => css(areaVar[e.data("area")]), "shape": "round-rectangle", "padding": "12px" } },
+    { selector: "node.root", style: { "label": "data(label)", "text-wrap": "wrap", "font-family": css("--mono"), "font-size": 11, "color": css("--root-fg"),
+      "background-color": css("--root"), "shape": "round-rectangle", "width": "label", "height": "label", "padding": "9px", "text-valign": "center" } },
+    { selector: "edge.derive", style: { "width": 1.2, "line-color": css("--root"), "opacity": 0.55, "target-arrow-color": css("--root"), "target-arrow-shape": "triangle-backcurve", "curve-style": "straight", "arrow-scale": 0.7 } },
+    { selector: "edge.ref", style: { "width": e => Math.min(0.6 + 0.35 * e.data("n"), 2.6), "line-color": e => css(areaVar[e.data("area")]), "opacity": 0.45,
+      "target-arrow-shape": "triangle", "target-arrow-color": e => css(areaVar[e.data("area")]), "arrow-scale": 0.6, "curve-style": "unbundled-bezier", "control-point-distances": 40, "control-point-weights": 0.5 } },
+    { selector: ".faded", style: { "opacity": 0.12 } },
+    { selector: "node.kind.hit", style: { "border-color": css("--hl"), "border-width": 3 } },
+    { selector: "edge.hit", style: { "opacity": 1, "width": 2.2, "line-color": css("--hl"), "target-arrow-color": css("--hl"), "z-index": 9 } },
+  ];
+}
+
+const cy = cytoscape({ container: document.getElementById("cy"), elements: elements(), style: style(), wheelSensitivity: 0.25, minZoom: 0.1, maxZoom: 3 });
+
+function apply(relayout) {
+  cy.batch(() => {
+    cy.elements().removeClass("faded hit");
+    cy.nodes(".area").forEach(n => n.style("display", shown.has(n.data("area")) ? "element" : "none"));
+    cy.nodes(".kind").forEach(n => n.style("display", shown.has(n.data("area")) ? "element" : "none"));
+    cy.edges(".ref").forEach(e => e.style("display", view === "refs" && shown.has(e.source().data("area")) && shown.has(e.target().data("area")) ? "element" : "none"));
+    cy.edges(".derive").forEach(e => e.style("display", shown.has(e.target().data("area")) ? "element" : "none"));
+    cy.nodes(".root").forEach(n => n.style("display", n.connectedEdges(".derive").some(e => e.style("display") === "element") ? "element" : "none"));
+  });
+  if (relayout) layout();
+}
+
+function layout() {
+  // Fixed places: each area a grid of its kinds (derived kinds first), areas packed in rows, each root above the area it feeds most.
+  const CW = 178, CH = 40, GAP = 70, ROW = 1500;
+  const order = areas.filter(a => shown.has(a)).sort((a, b) => DATA.kinds.filter(k => k.area === b).length - DATA.kinds.filter(k => k.area === a).length);
+  const pos = {}, boxes = {};
+  let x = 0, y = 120, rowH = 0;
+  order.forEach(a => {
+    const ks = DATA.kinds.filter(k => k.area === a).sort((p, q) => ((p.root || "~") + p.key).localeCompare((q.root || "~") + q.key));
+    const cols = Math.max(1, Math.min(ks.length, Math.ceil(Math.sqrt(ks.length * 1.6))));
+    const w = cols * CW, h = Math.ceil(ks.length / cols) * CH;
+    if (x > 0 && x + w > ROW) { x = 0; y += rowH + GAP + 110; rowH = 0; }
+    ks.forEach((k, i) => pos[k.key] = { x: x + (i % cols) * CW + CW / 2, y: y + Math.floor(i / cols) * CH });
+    boxes[a] = { x: x + w / 2, top: y };
+    x += w + GAP; rowH = Math.max(rowH, h);
+  });
+  Object.entries(DATA.roots).forEach(([r, ks]) => {
+    const tally = {};
+    ks.forEach(k => { if (shown.has(byKey[k].area)) tally[byKey[k].area] = (tally[byKey[k].area] || 0) + 1; });
+    const home = Object.keys(tally).sort((a, b) => tally[b] - tally[a])[0];
+    if (home) pos["root:" + r] = { x: boxes[home].x, y: boxes[home].top - 95 };
+  });
+  cy.nodes().not(".area").forEach(n => { if (pos[n.id()]) n.position(pos[n.id()]); });
+  cy.fit(cy.elements().filter(e => e.style("display") === "element"), 24);
+}
+
+function focus(key) {
+  const n = cy.getElementById(key);
+  if (!n.length) return;
+  cy.batch(() => {
+    cy.elements().addClass("faded").removeClass("hit");
+    const edges = n.connectedEdges().filter(e => e.style("display") === "element");
+    const near = edges.connectedNodes();
+    near.union(n).union(near.parents()).union(n.parents()).removeClass("faded");
+    edges.removeClass("faded").addClass("hit");
+    n.addClass("hit");
+  });
+  cy.animate({ center: { eles: n }, duration: 200 });
+  panel(byKey[key]);
+}
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function panel(k) {
+  const into = incoming[k.key] || [];
+  const links = k.links.map(l => `<li><span>${esc(l.field)} →</span> ${l.to.map(t => byKey[t] ? `<button data-k="${esc(t)}">${esc(t)}</button>` : esc(t)).join(", ")}</li>`).join("");
+  const ins = into.map(r => `<li><button data-k="${esc(r.from)}">${esc(r.from)}</button> <span>${r.n} field${r.n > 1 ? "s" : ""}</span></li>`).join("");
+  document.getElementById("summary").innerHTML = `
+    <h2>${esc(k.key)}</h2>
+    <dl class="meta"><dt>Area</dt><dd>${esc(k.area)}</dd><dt>Root</dt><dd>${k.root ? esc(k.root) : "none"}</dd><dt>Schema</dt><dd>standards/${esc(k.file)}</dd>${k.also.length ? `<dt>Also</dt><dd>${k.also.map(esc).join(", ")}</dd>` : ""}</dl>
+    ${k.about ? `<p class="about">${esc(k.about)}</p>` : ""}
+    <div><h3>Fields (${k.fields.length})</h3><div class="fields">${k.fields.map(f => k.required.includes(f) ? `<b>${esc(f)}</b>` : esc(f)).join(" · ") || "—"}</div></div>
+    <div><h3>Names other kinds (${k.links.length})</h3><ul class="links">${links || "<li><span>none</span></li>"}</ul></div>
+    <div><h3>Named by (${into.length})</h3><ul class="links">${ins || "<li><span>none</span></li>"}</ul></div>`;
+}
+document.getElementById("summary").addEventListener("click", e => { const k = e.target.closest("button[data-k]"); if (k) focus(k.dataset.k); });
+
+cy.on("tap", "node.kind", e => focus(e.target.id()));
+cy.on("tap", e => { if (e.target === cy) { cy.elements().removeClass("faded hit"); document.getElementById("summary").innerHTML = ""; } });
+
+const chips = document.getElementById("areas");
+areas.forEach(a => {
+  const b = document.createElement("button");
+  b.className = "chip"; b.setAttribute("aria-pressed", "true"); b.id = "area-" + a;
+  b.innerHTML = `<i style="background:var(${areaVar[a]})"></i>${esc(a)} <span style="color:var(--muted)">${DATA.kinds.filter(k => k.area === a).length}</span>`;
+  b.onclick = () => { shown.has(a) ? shown.delete(a) : shown.add(a); b.setAttribute("aria-pressed", shown.has(a)); apply(true); };
+  chips.appendChild(b);
+});
+
+function setView(v) {
+  view = v;
+  document.getElementById("v-roots").setAttribute("aria-pressed", v === "roots");
+  document.getElementById("v-refs").setAttribute("aria-pressed", v === "refs");
+  try { localStorage.setItem("registry-map-view", v); } catch (e) {}
+  apply(true);
+}
+document.getElementById("v-roots").onclick = () => setView("roots");
+document.getElementById("v-refs").onclick = () => setView("refs");
+
+document.getElementById("q").addEventListener("input", e => {
+  const q = e.target.value.trim().toLowerCase();
+  if (!q) { cy.elements().removeClass("faded hit"); return; }
+  const hit = DATA.kinds.find(k => k.key === q) || DATA.kinds.find(k => k.key.startsWith(q)) || DATA.kinds.find(k => k.key.includes(q) || k.title.toLowerCase().includes(q));
+  if (hit) { if (!shown.has(hit.area)) document.getElementById("area-" + hit.area).click(); focus(hit.key); }
+});
+
+const restyle = () => cy.style(style());
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", restyle);
+new MutationObserver(restyle).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+let start = "roots";
+try { start = localStorage.getItem("registry-map-view") || "roots"; } catch (e) {}
+setView(start);
+const hash = location.hash.slice(1);
+if (hash && byKey[hash]) focus(hash);
+</script>

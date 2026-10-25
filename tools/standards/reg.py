@@ -166,7 +166,8 @@ def cmd_check(opt, pages):
              ("stock chains", [sys.executable, "tools/standards/production_chain.py"], None),
              ("ports", [sys.executable, "tools/standards/equipment_ports.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
              ("mounts", [sys.executable, "tools/standards/mounting.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
-             ("ship qualification", [sys.executable, "tools/standards/ship_qualify.py"], None)]   # ship-check.socket-qualification; reported, gate with --check once MC-07 has its mount markers
+             ("ship qualification", [sys.executable, "tools/standards/ship_qualify.py"], None),   # ship-check.socket-qualification; reported, gate with --check once MC-07 has its mount markers
+             ("schema map", [sys.executable, "tools/standards/schema_diagram.py"], None)]   # docs/schema-map/: roots.svg, references.svg, index.html (interactive)
     failed = 0
     for name, cmd, ok in steps:
         r = sh(cmd)

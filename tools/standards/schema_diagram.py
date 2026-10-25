@@ -5,9 +5,10 @@
 roots.svg       each record kind under the common definition it derives from (allOf $ref: physical_object,
                 planet_context, ...); kinds that derive from none stand alone, grouped by area
 references.svg  the same kinds and every x-ref between them (a field naming another kind's record by key)
+index.html      the interactive map: search, filter by area, roots or references, click a kind for its fields and links
 Generated: never edit the SVGs, rerun this.
 """
-import collections, glob, os, subprocess
+import collections, glob, json, os, subprocess
 import yaml
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -25,26 +26,39 @@ def model():
         rel = os.path.relpath(p, os.path.join(ROOT, "standards"))
         area = rel.split(os.sep)[0] if os.sep in rel else "(root)"
         k = xk[0]
-        kinds[k] = {"area": area, "file": rel, "title": s.get("title") or k, "also": xk[1:]}
+        desc = str(s.get("description") or "").strip()
+        kinds[k] = {"area": area, "file": rel, "title": s.get("title") or k, "also": xk[1:], "about": desc[:400],
+                    "fields": sorted((s.get("properties") or {}).keys()), "required": s.get("required") or [], "links": []}
         for al in s.get("allOf") or []:
             if isinstance(al, dict) and "$ref" in al and "#/definitions/" in al["$ref"]:
                 derives[al["$ref"].split("/")[-1]].add(k)
         seen = set()
 
-        def walk(n):
+        def walk(n, at):
             if isinstance(n, dict):
                 for key, v in n.items():
                     if key == "x-ref":
-                        seen.update(v if isinstance(v, list) else [v])
-                    walk(v)
+                        ts = v if isinstance(v, list) else [v]
+                        seen.update(ts)
+                        kinds[k]["links"].append({"field": at.strip(".") or "(record)", "to": ts})
+                    elif key == "properties" and isinstance(v, dict):
+                        for pk, pv in v.items():
+                            walk(pv, f"{at}.{pk}")
+                    elif key == "items":
+                        walk(v, at + "[]")
+                    else:
+                        walk(v, at)
             elif isinstance(n, list):
                 for x in n:
-                    walk(x)
-        walk(s)
+                    walk(x, at)
+        walk(s, "")
         for t in seen:
             refs[(k, t)] += 1
     alias = {a: k for k, v in kinds.items() for a in v["also"]}
     refs = collections.Counter({(a, alias.get(b, b)): n for (a, b), n in refs.items() if alias.get(b, b) in kinds and alias.get(b, b) != a})
+    for v in kinds.values():
+        for l in v["links"]:
+            l["to"] = [alias.get(t, t) for t in l["to"]]
     return kinds, derives, refs
 
 
@@ -81,6 +95,12 @@ def main():
         src = dot(kinds, derives, refs, with_refs)
         open(os.path.join(OUT, f"{name}.dot"), "w").write(src)
         subprocess.run(["dot", "-Tsvg", "-o", os.path.join(OUT, f"{name}.svg")], input=src, text=True, check=True)
+    root_of = {k: r for r, ks in derives.items() for k in ks}
+    data = {"kinds": [dict(v, key=k, root=root_of.get(k)) for k, v in sorted(kinds.items())],
+            "roots": {r: sorted(ks) for r, ks in sorted(derives.items())},
+            "refs": [{"from": a, "to": b, "n": n} for (a, b), n in sorted(refs.items())]}
+    page = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "schema_map.html")).read()
+    open(os.path.join(OUT, "index.html"), "w").write(page.replace("/*DATA*/null", json.dumps(data, separators=(",", ":"))))
     print(f"{len(kinds)} kinds in {len({v['area'] for v in kinds.values()})} areas; roots: "
           + ", ".join(f"{r} ({len(k)})" for r, k in sorted(derives.items())) + f"; {len(refs)} references -> {os.path.relpath(OUT, ROOT)}/")
 
