@@ -25,7 +25,7 @@ mechanism enablement is granted by this checkpoint. In particular, hammer
 chisel/well tangency, radiator placement, combined ramp boarding and remaining
 consumer gates stay as documented. The mountain-scenery goal remains unmet.
 
-The six final local-view PNGs/logs are archived in local-views.tar.gz, verified
+The six final local-view PNGs/logs are archived in local-views.tar.gz (out of the tree; `git show 11ef249a4:docs/checkpoints/2026-10-10-engine/local-views.tar.gz`), verified
 against local-views-manifest.json. Full precision camera settings, hash identities,
 visibility screens and independent attribution arithmetic are in
 ../../diagnostics/scenery-local-views-v1/. These are development evidence,
