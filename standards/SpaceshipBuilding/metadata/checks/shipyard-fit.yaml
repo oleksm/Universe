@@ -20,7 +20,8 @@ method:
   slot''s mount_<slot> frame, local -Z the exhaust) pointing within the slot''s cone.'
 - 'Y2 every required block of ship-rule.base-blocks is filled by a working product; an engine slot''s role (main,
   attitude) stands in for main propulsion or attitude.'
-- 'Y3 the ship as fitted meets every limit of its hull''s spec: ship.mass, ship.main_thrust, ship.lift_thrust,
+- 'Y3 the ship as fitted, tanks full, meets every limit of its hull''s spec: ship.mass, ship.main_thrust, ship.lift_thrust,
+  ship.main_balanced and ship.lift_balanced (what of it the attitude nozzles keep straight), ship.attitude_authority,
   ship.main_to_weight and ship.lift_to_weight at the limit''s gravity, ship.power_margin (plants and battery rate less
   every draw), ship.attitude_axes (turning senses its attitude nozzles give about the centre of mass), ship.unfed_engines
   (engines no fitted tank holds the propellant of).'

@@ -314,10 +314,10 @@ def shipyard(key, opt):
         return faults
     if opt.get("--json"):
         print(json.dumps({"hull": key, "pass": not faults, "faults": [{"criterion": c, "message": m} for c, m in faults],
-                          "ship": {k: round(float(v), 4) for k, v in shown.items()}, "unchecked": notes}, indent=1))
+                          "ship": {k: (v if isinstance(v, list) else round(float(v), 4)) for k, v in shown.items()}, "unchecked": notes}, indent=1))
         return faults
     print(f"{key}: {len(fit)} fitted of {len(slots)} slots - {'PASS' if not faults else f'{len(faults)} fault(s)'}")
-    print("  ship: " + ", ".join(f"{k[5:]} {float(v):.4g}" for k, v in shown.items()) + " (to_weight at 1 g here; the spec's own gravity in its check)")
+    print("  ship (tanks full): " + ", ".join(f"{k[5:]} {v}" if isinstance(v, list) else f"{k[5:]} {float(v):.4g}" for k, v in shown.items()) + " (to_weight at 1 g here; the spec's own gravity in its check)")
     for c, m in faults:
         print(f"  {c} {m}")
     for n in notes[:10]:

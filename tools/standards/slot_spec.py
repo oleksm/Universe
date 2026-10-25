@@ -72,6 +72,72 @@ def frames(path):
     return {x.get("name", ""): world(i) for i, x in enumerate(nodes)}
 
 
+def hull_model(hull):
+    """The hull's model file: the copy model_sha256 pins (fso or the game's), else None."""
+    import hashlib
+    rel, sha = hull.get("model"), hull.get("model_sha256")
+    for base in (ROOT, GAME):
+        p = os.path.join(base, rel or "")
+        if rel and os.path.isfile(p) and (not sha or hashlib.sha256(open(p, "rb").read()).hexdigest() == sha):
+            return p
+    return None
+
+
+_SOLID = {}
+
+
+def solid(path):
+    """The model's solid: its centroid (signed-volume, over every mesh at its node) and its box sides, as the game puts the
+    hull's own mass at its shape's centroid. (centroid, sides) or None."""
+    if path in _SOLID:
+        return _SOLID[path]
+    b = open(path, "rb").read()
+    n = struct.unpack("<I", b[12:16])[0]
+    j = json.loads(b[20:20 + n])
+    binoff = 20 + n + 8
+    W = {i: m for i, m in ((i, frames_from(j, i)) for i in range(len(j.get("nodes", []))))}
+    COMP = {5120: ("b", 1), 5121: ("B", 1), 5122: ("h", 2), 5123: ("H", 2), 5125: ("I", 4), 5126: ("f", 4)}
+    def acc(i):
+        a = j["accessors"][i]; bv = j["bufferViews"][a["bufferView"]]
+        code, size = COMP[a["componentType"]]
+        k = {"SCALAR": 1, "VEC3": 3, "VEC2": 2, "VEC4": 4}[a["type"]]
+        start = binoff + bv.get("byteOffset", 0) + a.get("byteOffset", 0)
+        stride = bv.get("byteStride") or size * k
+        arr = np.frombuffer(b, dtype=np.dtype(code).newbyteorder("<"), count=(a["count"] - 1) * stride // size + k, offset=start)
+        return arr.reshape(-1, stride // size)[:, :k] if stride != size * k else arr.reshape(-1, k)
+    vol, mom, lo, hi = 0.0, np.zeros(3), np.full(3, np.inf), np.full(3, -np.inf)
+    for ni, node in enumerate(j.get("nodes", [])):
+        if "mesh" not in node:
+            continue
+        M = W[ni]
+        for prim in j["meshes"][node["mesh"]]["primitives"]:
+            if prim.get("mode", 4) != 4 or "POSITION" not in prim["attributes"]:
+                continue
+            v = acc(prim["attributes"]["POSITION"]).astype(float)
+            v = v @ M[:3, :3].T + M[:3, 3]
+            idx = acc(prim["indices"]).reshape(-1).astype(np.int64) if "indices" in prim else np.arange(len(v))
+            t = v[idx.reshape(-1, 3)]
+            d = np.einsum("ij,ij->i", t[:, 0], np.cross(t[:, 1], t[:, 2])) / 6.0
+            vol += d.sum(); mom += (d[:, None] * (t.sum(axis=1) / 4.0)).sum(axis=0)
+            lo, hi = np.minimum(lo, v.min(axis=0)), np.maximum(hi, v.max(axis=0))
+    if not np.isfinite(lo).all():
+        _SOLID[path] = None
+        return None
+    centroid = mom / vol if vol > 1e-9 else (lo + hi) / 2
+    _SOLID[path] = (centroid, hi - lo)
+    return _SOLID[path]
+
+
+def frames_from(j, i, _cache={}):
+    nodes = j["nodes"]
+    parent = {c: k for k, x in enumerate(nodes) for c in x.get("children", [])}
+    m = _local(nodes[i])
+    while i in parent:
+        i = parent[i]
+        m = _local(nodes[i]) @ m
+    return m
+
+
 def hull_frames(hull):
     from ship_qualify import glb_nodes  # noqa: F401  (same model choice: the copy model_sha256 pins)
     import hashlib
@@ -155,10 +221,20 @@ def judge(q, lims, slot_frame=None):
     return res
 
 
+STRAIGHT = 0.03   # (the game's thrusters::STRAIGHT: the share of its weakest turn a held course may leave unbalanced)
+
+
+def _point(m, r):
+    return m * (np.eye(3) * (r @ r) - np.outer(r, r))
+
+
 def ship_values(hull, slots, fit, eq, hf):
-    """The ship as fitted: mass, thrust by role, to_weight, power margin, attitude senses, unfed engines."""
-    mass = float((hull.get("physical") or {}).get("mass") or 0)
-    pts = [(mass, np.zeros(3))]
+    """The ship as fitted, tanks full (the loaded state): mass, centre of mass, thrust by role and what of it the attitude
+    nozzles can keep balanced, turning authority, power margin, unfed engines."""
+    hmass = float((hull.get("physical") or {}).get("mass") or 0)
+    sol = solid(hull_model(hull)) if hull_model(hull) else None
+    hat = sol[0] if sol else np.zeros(3)
+    pts = [(hmass, hat)]
     supply = draw = 0.0
     held, engines, jets = set(), [], []
     for f in fit:
@@ -167,8 +243,8 @@ def ship_values(hull, slots, fit, eq, hf):
             continue
         fn, m = q.get("function") or {}, float((q.get("physical") or {}).get("mass") or 0)
         frame = hf.get(f"mount_{s['name']}") if hf else None
-        pts.append((m, frame[:3, 3] if frame is not None else np.zeros(3)))
-        mass += m
+        at = frame[:3, 3] if frame is not None else hat
+        pts.append((m, at))
         draw += float((q.get("needs") or {}).get("power") or 0)
         if fn.get("kind") == "power_plant":
             supply += float(fn.get("output") or 0)
@@ -176,25 +252,68 @@ def ship_values(hull, slots, fit, eq, hf):
             supply += float(fn.get("rate") or 0)
         if fn.get("kind") == "tank" and fn.get("holds"):
             held.add(fn["holds"])
+            pts.append((float(fn.get("capacity") or 0), at))           # (full)
         if fn.get("kind") == "engine":
             engines.append(fn)
-            for node, share, at, push in (nozzles(q, frame) or []) if frame is not None else []:
+            for node, share, nat, push in (nozzles(q, frame) or []) if frame is not None else []:
                 if push is not None:
-                    jets.append((s.get("role"), float(fn.get("thrust") or 0) * share, at, push))
+                    jets.append((s.get("role"), float(fn.get("thrust") or 0) * share, nat, push))
+    mass = sum(m for m, _ in pts)
     com = sum(m * p for m, p in pts) / mass if mass else np.zeros(3)
+    I = np.zeros((3, 3))
+    if sol:
+        a, b_, c = sol[1]
+        I += hmass / 12.0 * np.diag([b_ * b_ + c * c, a * a + c * c, a * a + b_ * b_]) + _point(hmass, hat - com)
+    for m, p in pts[1:]:
+        I += _point(m, p - com)
+    Iinv = np.linalg.inv(I) if np.linalg.det(I) > 1e-9 else None
     thrust = lambda role, ax: sum(t * max(0.0, float(p @ np.array(ax))) for r, t, _, p in jets if r == role)
-    senses = set()
-    for r, t, at, p in jets:
-        if r == "attitude":
-            tq = np.cross(at - com, p * t)
-            for i in range(3):
-                if abs(tq[i]) > 1e-6 * max(t, 1):
-                    senses.add((i, tq[i] > 0))
-    unfed = sum(1 for fn in engines if (fn.get("burns") and fn["burns"] not in held) or (fn.get("propellant") and fn["propellant"] not in held))
+    att = [(t, np.cross(at - com, p * t)) for r, t, at, p in jets if r == "attitude"]
+    senses = {(i, tq[i] > 0) for _, tq in att for i in range(3) if abs(tq[i]) > 1e-6 * max(_, 1)}
+
+    def authority():
+        """The least turn acceleration (rad/s2) its attitude nozzles give about any axis, either way, holding the other two."""
+        if Iinv is None or not att:
+            return 0.0
+        from scipy.optimize import linprog
+        A = np.array([Iinv @ tq for _, tq in att]).T          # 3 x n: each nozzle at full, its turn acceleration
+        best = np.inf
+        for i in range(3):
+            for sgn in (1, -1):
+                others = [k for k in range(3) if k != i]
+                r = linprog(-sgn * A[i], A_eq=A[others], b_eq=np.zeros(2), bounds=[(0, 1)] * len(att), method="highs")
+                best = min(best, -r.fun if r.status == 0 else 0.0)
+        return max(best, 0.0)
+
+    turn = authority()
+
+    def balanced(role, ax):
+        """What of a role's thrust along ax it can give while the attitude nozzles keep the turn it leaves under STRAIGHT x
+        the weakest turn rate (the game's thrusters::balanced)."""
+        own = [(t, np.cross(at - com, p * t), t * max(0.0, float(p @ np.array(ax)))) for r, t, at, p in jets if r == role]
+        full = sum(x[2] for x in own)
+        if not full or Iinv is None:
+            return 0.0
+        from scipy.optimize import linprog
+        A_role = Iinv @ sum(x[1] for x in own)                 # its turn acceleration at full
+        A_att = np.array([Iinv @ tq for _, tq in att]).T if att else np.zeros((3, 0))
+        tol = STRAIGHT * turn
+        n = A_att.shape[1]
+        # variables: k (share of full), u (attitude nozzles); |A_role k + A_att u| <= tol per axis; maximise k
+        c = np.r_[-1.0, np.zeros(n)]
+        M = np.c_[A_role.reshape(3, 1), A_att]
+        r = linprog(c, A_ub=np.r_[M, -M], b_ub=np.full(6, tol), bounds=[(0, 1)] + [(0, 1)] * n, method="highs")
+        return full * (r.x[0] if r.status == 0 else 0.0)
+
     main_t, lift_t = thrust("main", [0, 0, -1]), thrust("lift", [0, 1, 0])
+    main_b, lift_b = balanced("main", [0, 0, -1]), balanced("lift", [0, 1, 0])
+    unfed = sum(1 for fn in engines if (fn.get("burns") and fn["burns"] not in held) or (fn.get("propellant") and fn["propellant"] not in held))
+    tw = lambda f: (lambda g: f / (mass * g) if mass else 0.0)
     return {"ship.mass": mass, "ship.main_thrust": main_t, "ship.lift_thrust": lift_t,
-            "ship.main_to_weight": lambda g: main_t / (mass * g) if mass else 0.0,
-            "ship.lift_to_weight": lambda g: lift_t / (mass * g) if mass else 0.0,
+            "ship.main_balanced": main_b, "ship.lift_balanced": lift_b,
+            "ship.main_to_weight": tw(main_t), "ship.lift_to_weight": tw(lift_t),
+            "ship.main_balanced_to_weight": tw(main_b), "ship.lift_balanced_to_weight": tw(lift_b),
+            "ship.attitude_authority": turn, "ship.centre_of_mass": [round(float(x), 3) for x in com],
             "ship.power_margin": supply - draw, "ship.attitude_axes": len(senses), "ship.unfed_engines": unfed}
 
 

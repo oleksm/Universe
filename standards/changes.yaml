@@ -1043,7 +1043,7 @@
 - { record: ground-vocabulary.pattern, at: "2026-10-17T15:44:28Z", status: "", summary: "changed", sha: "45bab9119969759f" }
 - { record: ground-vocabulary.rock, at: "2026-10-10T22:11:43Z", status: "", summary: "first tracked", sha: "7d3835cbcfa04d13" }
 - { record: hull.drover, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "43e4088fcb8c1351" }
-- { record: hull.explorer-study, at: "2026-10-25T00:37:48Z", status: draft, summary: "changed: slots, spec", sha: "8d50e37a785dd924" }
+- { record: hull.explorer-study, at: "2026-10-25T02:49:34Z", status: draft, summary: "changed: spec", sha: "7883823f3e313723" }
 - { record: hull.hauler, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "bb65478e558da977" }
 - { record: hull.interceptor, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "51cc059564d57a1f" }
 - { record: hull.mc-07, at: "2026-10-11T02:11:58Z", status: draft, summary: "changed: revision", sha: "30f561cfaeeb31c5" }
@@ -3430,7 +3430,7 @@
 - { record: ship-check.release, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "8e44bacc56de8691" }
 - { record: ship-check.requirements, at: "2026-10-22T00:31:15Z", status: "", summary: "changed: method", sha: "bbbc7c2900be7193" }
 - { record: ship-check.runtime, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "f64d017484fa3abe" }
-- { record: ship-check.shipyard-fit, at: "2026-10-25T00:37:48Z", status: "", summary: "first tracked", sha: "5e7fb96dd31a74d6" }
+- { record: ship-check.shipyard-fit, at: "2026-10-25T02:49:34Z", status: "", summary: "changed: method", sha: "1b7b696be627472f" }
 - { record: ship-check.socket-qualification, at: "2026-10-24T23:24:09Z", status: "", summary: "first tracked", sha: "f9a28cf5a5ec0d1e" }
 - { record: ship-decision.autonomy, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "9321abdc1cef3af7" }
 - { record: ship-decision.budgets, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "45c194c39189f5d0" }
