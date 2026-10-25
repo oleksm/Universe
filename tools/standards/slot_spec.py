@@ -228,11 +228,12 @@ def judge(q, lims, slot_frame=None):
 
 
 RULE = os.path.join(ROOT, "standards/SpaceshipBuilding/metadata/rules/mass-properties.yaml")
+ALLOC = os.path.join(ROOT, "standards/SpaceshipBuilding/metadata/rules/flight-allocation.yaml")
 
 
 def figure(name):
     import yaml
-    for f in yaml.safe_load(open(RULE)).get("figures") or []:
+    for f in (yaml.safe_load(open(RULE)).get("figures") or []) + (yaml.safe_load(open(ALLOC)).get("figures") or []):
         if f["name"] == name:
             return f["value"]
     raise KeyError(f"ship-rule.mass-properties has no figure {name}")
@@ -337,6 +338,34 @@ def ship_values(hull, slots, fit, eq, hf):
             "ship.attitude_authority": turn, "ship.centre_of_mass": [round(float(x), 4) for x in com],
             "ship.inertia": [round(float(I[i, i]), 1) for i in range(3)],
             "ship.power_margin": supply - draw, "ship.attitude_axes": len(senses), "ship.unfed_engines": unfed}
+
+
+HULL_REPORT = os.environ.get("HULL_REPORT") or os.path.join(GAME, "target/release/examples/hull_report")
+PHYSICS = ("ship.mass", "ship.main_thrust", "ship.lift_thrust", "ship.main_balanced", "ship.lift_balanced",
+           "ship.attitude_authority", "ship.attitude_axes", "ship.power_margin")
+
+
+def game_values(key, fit=None):
+    """The ship.* values from the one calculator, the game's hull_report (ship-rule.mass-properties), run on this
+    registry's records: (values, None) or (None, why not)."""
+    import subprocess
+    if not os.path.isfile(HULL_REPORT):
+        return None, f"no hull_report at {HULL_REPORT} (cargo build --release -p universe-world --example hull_report)"
+    cmd = [HULL_REPORT, key, "--registry", os.path.join(ROOT, "standards")] + (["--fit", fit] if fit else [])
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+        d = json.loads(r.stdout)
+    except (ValueError, subprocess.TimeoutExpired) as e:
+        return None, f"hull_report {key} --registry ... {'--fit ' if fit else ''}did not answer ({(r.stderr.strip().splitlines() or [str(e)])[-1][:160] if 'r' in dir() else e})"
+    if d.get("registry") != os.path.join(ROOT, "standards"):
+        return None, "hull_report judged its build's records, not these (no --registry support yet)"
+    v = dict(d.get("ship") or {})
+    if d.get("loaded_com"):
+        v["ship.centre_of_mass"] = d["loaded_com"]
+    if d.get("loaded_inertia"):
+        m = d["loaded_inertia"]
+        v["ship.inertia"] = [m[0][0], m[1][1], m[2][2]] if isinstance(m[0], list) else [m[0], m[4], m[8]]
+    return v, None
 
 
 def judge_ship(hull, vals):

@@ -3456,12 +3456,13 @@
 - { record: ship-rule.existing-tools, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "c095c6beac2c8d06" }
 - { record: ship-rule.family-type-instance, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "767d304cce262994" }
 - { record: ship-rule.feature-intake, at: "2026-10-22T00:34:36Z", status: "", summary: "changed: statement", sha: "c423febdf6dab55d" }
+- { record: ship-rule.flight-allocation, at: "2026-10-25T03:11:25Z", status: "", summary: "first tracked", sha: "1e127505b577f31e" }
 - { record: ship-rule.hull-sections, at: "2026-10-22T04:04:05Z", status: "", summary: "changed", sha: "52b1c0f137c32393" }
 - { record: ship-rule.immutable-release, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "19ed7960a494fbf2" }
 - { record: ship-rule.implementation-phases, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "74ea8c62778537d5" }
 - { record: ship-rule.lifecycle, at: "2026-10-22T03:59:24Z", status: "", summary: "changed", sha: "9f680c876218cb0b" }
 - { record: ship-rule.local-regeneration, at: "2026-10-23T17:47:48Z", status: "", summary: "changed: sources, verification", sha: "458eaa848c318ced" }
-- { record: ship-rule.mass-properties, at: "2026-10-25T03:00:18Z", status: "", summary: "changed: cases", sha: "7b6f24e0e5f29c78" }
+- { record: ship-rule.mass-properties, at: "2026-10-25T03:11:25Z", status: "", summary: "changed: statement, rules, verification, figures", sha: "bca3e38378a8ee85" }
 - { record: ship-rule.materials-and-surfaces, at: "2026-10-22T04:04:05Z", status: "", summary: "changed", sha: "edd0de5cf4aa68ee" }
 - { record: ship-rule.module-reuse, at: "2026-10-24T22:57:47Z", status: "", summary: "changed: sources, statement, verification", sha: "79719b3cd031eac3" }
 - { record: ship-rule.pilot-scope, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "cafd22baad8b7614" }

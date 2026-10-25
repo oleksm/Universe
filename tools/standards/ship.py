@@ -20,7 +20,8 @@
         --installed: only products with an installed model; --models: each product's model.glb path (to open
         and review its look); --json rows carry it as glb.
     python3 tools/standards/ship.py shipyard <ship|hull> [--candidate=fit.json] [--json]
-        The ship as fitted, from its fitted products only: each fitted product against its slot's spec, every
+        The ship as fitted, from its fitted products only (its physics from the game's hull_report on these records;
+        --reference uses the registry's reference working instead, for checking the cases): each fitted product against its slot's spec, every
         required block filled, and the hull's spec (ship.lift_to_weight, power_margin, attitude_axes, ...). Exit 1
         on any fault.
     python3 tools/standards/ship.py product <equipment-key> [--json]
@@ -316,8 +317,29 @@ def shipyard(key, opt):
     for b in blocks():
         if b["required"] and not filled(pairs, b):
             faults.append(("Y2", f"{b['need']} not fitted"))
-    vals = slot_spec.ship_values(h, slots, fit, eq, hf)
+    # (The physics is the game's one calculator, hull_report, on these records; only what it does not give is summed here.)
+    fitfile = None
+    if opt.get("--candidate"):
+        fitfile = os.path.abspath(opt["--candidate"])
+    game, why = slot_spec.game_values(key, fitfile)
+    vals = slot_spec.ship_values(h, slots, fit, eq, hf) if opt.get("--reference") else {}
+    if game is not None:
+        vals.update(game)
+        mass = game.get("ship.mass") or 0
+        for role in ("main", "lift"):
+            for tag in ("", "_balanced"):
+                f = game.get(f"ship.{role}{'_thrust' if not tag else tag}")
+                if f is not None:
+                    vals[f"ship.{role}{tag}_to_weight"] = (lambda F: (lambda g: F / (mass * g) if mass else 0.0))(f)
+    elif not opt.get("--reference"):
+        notes.append(f"ship values not judged: {why}")
+        vals = {k: v for k, v in slot_spec.ship_values(h, slots, fit, eq, hf).items() if k not in slot_spec.PHYSICS and not k.endswith("to_weight")
+                and k not in ("ship.main_balanced", "ship.lift_balanced", "ship.centre_of_mass", "ship.inertia")}
+    if "ship.unfed_engines" not in vals:
+        vals["ship.unfed_engines"] = slot_spec.ship_values(h, slots, fit, eq, hf)["ship.unfed_engines"]
     for L, v, ok, why in slot_spec.judge_ship(h, vals):
+        if ok is None:
+            notes.append(f"{L['of']} unchecked ({why})")
         if ok is False:
             faults.append(("Y3", f"{L['of']} {why}" + (f" at {L['gravity']} m/s2" if L.get("gravity") else "")))
     if hf is None and fit:
@@ -329,7 +351,8 @@ def shipyard(key, opt):
         print(json.dumps({"hull": key, "pass": not faults, "faults": [{"criterion": c, "message": m} for c, m in faults],
                           "ship": {k: (v if isinstance(v, list) else round(float(v), 4)) for k, v in shown.items()}, "unchecked": notes}, indent=1))
         return faults
-    print(f"{key}: {len(fit)} fitted of {len(slots)} slots - {'PASS' if not faults else f'{len(faults)} fault(s)'}")
+    verdict = f"{len(faults)} fault(s)" if faults else ("PASS" if not notes else f"no fault, {len(notes)} unchecked - not a pass")
+    print(f"{key}: {len(fit)} fitted of {len(slots)} slots - {verdict}")
     print("  ship (tanks full): " + ", ".join(f"{k[5:]} {v}" if isinstance(v, list) else f"{k[5:]} {float(v):.4g}" for k, v in shown.items()) + " (to_weight at 1 g here; the spec's own gravity in its check)")
     for c, m in faults:
         print(f"  {c} {m}")

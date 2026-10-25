@@ -18,14 +18,17 @@ statement: 'The ship is taken loaded, every fitted tank full. The hull''s mass i
   origin when it has no model); a tank''s full contents sit with it. Inertia is about the loaded centre of mass. Turn
   authority is the least turn acceleration the attitude nozzles give about any axis, either way, holding the other two
   axes at none. Balanced thrust (main along -Z, lift along +Y) is the most of a role''s rated thrust it can give while
-  the attitude nozzles, each between off and full, leave a turn acceleration no larger than straight times the turn
-  authority on every axis.'
+  the attitude nozzles, each between off and full, leave a turn acceleration no larger than straight (ship-rule.flight-allocation) times the
+  turn authority on every axis.'
+rules:
+- ship-rule.flight-allocation
 applies_to:
 - ship-check.shipyard-fit Y3 (ship.* values), the game's commissioning and flight authority
 verification:
-- tools/standards/test_slot_spec.py and the game's test both reproduce every case below within its tolerance.
-figures:
-- {name: straight, value: 0.03, unit: '1', note: 'The share of the weakest turn authority a held course may leave unbalanced (the game''s thrusters::STRAIGHT).'}
+- "One calculator, the game's: hull_report <ship key> [--fit fit.json] (crates/core/world/examples/hull_report) prints
+  the ship.* values under these names; tools/standards/ship.py shipyard reads them and computes none itself."
+- Every case below is reproduced by hull_report within its tolerance; the game's test and tools/standards/test_slot_spec.py
+  (which also holds the registry's reference working, tools/standards/slot_spec.py, to the cases) both check it.
 cases:
 - ship: ship.explorer
   note: 'The owner-ordered functional fit, tanks full. Values from tools/standards/slot_spec.py, the reference.'

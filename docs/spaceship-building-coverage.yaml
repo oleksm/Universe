@@ -161,6 +161,7 @@ coverage:
   - ship-check.socket-qualification
   - ship-check.shipyard-fit
   - ship-rule.mass-properties
+  - ship-rule.flight-allocation
   - ship-rule.base-blocks
 - source_section: '6.2'
   source_title: Store enough evidence to reproduce a result

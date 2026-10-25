@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../schema/ship-rule.schema.yaml
+identity:
+  key: ship-rule.flight-allocation
+  name: Flight thrust allocation
+  about: How a ship's nozzles share out what the pilot or autopilot asks for in flight, and the figures that tune it; the
+    game reads these figures from this record and holds none of its own.
+status: draft
+implementation: proposed
+owner: registry
+sources:
+- document: docs/reports/2026-10-24-slots-fit-shipyard-audit.md
+  section: Stage 4 flight
+  note: 'Owner, 2026-10-24: consolidate into a single source of truth. These were constants in the game
+    (thrusters.rs, trim.rs); the flight allocator gave the Explorer 3 kN of lift where the shipyard gave 32 kN.'
+statement: 'Each step the allocator sets every nozzle between off and full to come nearest the push and turn asked for,
+  a turn of 1 rad/s2 weighed as turn_weight m/s2 of push, each nozzle''s use costing fuel_weight of its push squared, in
+  sweeps passes, starting from forget of its last settings. A main nozzle runs at no less than main_share_min of its
+  drive; trim cells take at most trim_share of the fuel aboard. A held course may leave straight of the ship''s weakest
+  turn authority unbalanced. Asked for less than its balanced thrust along a role''s axis (ship-rule.mass-properties),
+  the allocator gives all of it: flight never delivers less than the shipyard approved.'
+applies_to:
+- the game's thrust allocation (thrusters.rs allocate, trim.rs), its commissioning and flight
+verification:
+- The game's hull_report gives, for every ship-rule.mass-properties case, a flight thrust along each role's axis no less
+  than the case's balanced thrust less its tolerance.
+rules:
+- ship-rule.mass-properties
+figures:
+- {name: straight, value: 0.03, unit: '1', note: 'The share of the weakest turn authority a held course may leave unbalanced.'}
+- {name: turn_weight, value: 4.0, unit: 's2/rad', note: 'A rad/s2 of turn error counts as this many m/s2 of push error (unit: m/s2 per rad/s2).'}
+- {name: fuel_weight, value: 0.001, unit: '1', note: 'A nozzle''s use counts this much of its own push squared, so of equal results the one burning least wins.'}
+- {name: sweeps, value: 12, unit: '1', note: 'Solver passes a step.'}
+- {name: forget, value: 0.8, unit: '1', note: 'Each step starts from this share of the last settings.'}
+- {name: main_share_min, value: 0.7, unit: '1', note: 'The least share of its drive a main nozzle can be set to.'}
+- {name: trim_share, value: 0.15, unit: '1', note: 'The most of the fuel aboard the trim cells take together.'}

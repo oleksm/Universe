@@ -63,6 +63,18 @@ class Conformance(unittest.TestCase):
                 got = v[name] if not ax else (v[name]["xyz".index(ax[0])])
                 self.assertLessEqual(abs(got - e["value"]), e["tolerance"], f"{case['ship']} {e['of']}: {got} vs {e['value']}")
 
+    def test_the_game_reproduces_every_case(self):
+        import yaml
+        rule = yaml.safe_load(open(slot_spec.RULE))
+        for case in rule.get("cases") or []:
+            v, why = slot_spec.game_values(case["ship"])
+            if v is None:
+                self.skipTest(f"the game's hull_report cannot judge these records yet: {why}")
+            for e in case["expect"]:
+                name, _, ax = e["of"].rpartition(".") if e["of"].count(".") > 1 else (e["of"], "", "")
+                got = v[name] if not ax else v[name]["xyz".index(ax[0])]
+                self.assertLessEqual(abs(got - e["value"]), e["tolerance"], f"game {case['ship']} {e['of']}: {got} vs {e['value']}")
+
 
 if __name__ == "__main__":
     unittest.main()
