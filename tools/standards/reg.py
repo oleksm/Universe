@@ -167,6 +167,7 @@ def cmd_check(opt, pages):
              ("ports", [sys.executable, "tools/standards/equipment_ports.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
              ("mounts", [sys.executable, "tools/standards/mounting.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
              ("ship qualification", [sys.executable, "tools/standards/ship_qualify.py"], None),   # ship-check.socket-qualification; reported, gate with --check once MC-07 has its mount markers
+             ("ship tests", f"cd tools/standards && {sys.executable} -m unittest -q test_ship_workflow test_ship_qualify test_ship_cli test_slot_spec test_schema_audit", None),   # (the conformance cases too)
              ("schema map", [sys.executable, "tools/standards/schema_diagram.py"], None)]   # docs/schema-map/: roots.svg, references.svg, index.html (interactive)
     failed = 0
     for name, cmd, ok in steps:
