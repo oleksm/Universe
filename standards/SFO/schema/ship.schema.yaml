@@ -26,6 +26,7 @@ properties:
         slot: { type: string, description: "The hull's slot, by its name." }
         item: { type: string, x-ref: [equipment], description: "The product fitted there (SFO 16), by its key." }
         pose: { type: string, enum: [rest], description: "Draw this fitted instance at its motion package's default-scene rest pose, motion held (as a hull fit's pose)." }
+        clock: { type: number, x-unit: rad, description: "Its turn about the slot's mating normal: one the mount, slot and product all allow (SFO 19 mating; absent: 0)." }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"
     default: { status: draft, owner: registry, on_conflict: propose, because: "A fit as proposed, unless its record says otherwise.", ask: docs/registry-ssot-request.md }
