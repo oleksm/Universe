@@ -622,7 +622,7 @@
 - { record: equipment.engine.cg.outboard-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "20f83cd5126251ad" }
 - { record: equipment.engine.cg.s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "143cab82d576f8ed" }
 - { record: equipment.engine.cg.s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "dcad271321cccc11" }
-- { record: equipment.engine.ch.s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "5ee3b704be676555" }
+- { record: equipment.engine.ch.s1, at: "2026-10-25T14:21:12Z", status: draft, summary: "changed: visual", sha: "b05353d949dcf76c" }
 - { record: equipment.engine.ch.s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "2e9dbada8486e99d" }
 - { record: equipment.engine.ch.s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "b3002e268e3ae831" }
 - { record: equipment.engine.ch.s4, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "bdf0d06a01beb6aa" }
