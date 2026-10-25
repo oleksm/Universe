@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.climate-port
+  name: planets, 17 Oct 2026
+  about: planets, 17 Oct 2026
+statement: 'planets, 17 Oct 2026: planet-forge climate port (models/climate, models/ice), read from planet-sim-landform 1df4daf.'
+tier: derived

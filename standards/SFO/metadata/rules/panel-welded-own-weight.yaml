@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.panel-welded-own-weight
+  name: The formed panel it is welded from, at its own weight
+  about: The formed panel it is welded from, at its own weight
+statement: The formed panel it is welded from, at its own weight. What is lost in cutting the panel from its stock (15%, chosen)
+  is the cutting table's.
+tier: invented
+review: true

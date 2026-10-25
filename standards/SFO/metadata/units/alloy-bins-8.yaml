@@ -67,8 +67,6 @@ basis:
   review: true
   note: Eight bins of 17.2 m3 at about 3,500 kg/m3 of ferroalloy lumps (from memory), four fifths full.
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
+  rule: rule.port-duties-power
 - of: [life]
   rule: rule.life-plant

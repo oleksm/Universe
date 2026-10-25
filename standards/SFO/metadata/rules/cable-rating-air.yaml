@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.cable-rating-air
+  name: 800 A for 240 mm2 copper alone in free air at 40 deg C, othe
+  about: 800 A for 240 mm2 copper alone in free air at 40 deg C, others by area^0.625, aluminium as above
+statement: 800 A for 240 mm2 copper alone in free air at 40 deg C, others by area^0.625, aluminium as above; a bundle of up
+  to six at 0.7; From memory of makers' catalogues; to be sourced.
+tier: invented
+review: true

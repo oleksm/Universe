@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.line-record-ages
+  name: planet-sim-landform stages/lines.py ACTIVE_MYR (default 5) a
+  about: planet-sim-landform stages/lines.py ACTIVE_MYR (default 5) and WORN_MYR.
+statement: planet-sim-landform stages/lines.py ACTIVE_MYR (default 5) and WORN_MYR.
+tier: derived

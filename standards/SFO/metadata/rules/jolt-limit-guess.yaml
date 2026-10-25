@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.jolt-limit-guess
+  name: A guess, to be reviewed
+  about: A guess, to be reviewed
+statement: 'A guess, to be reviewed: no source was found for what a jolt does to it.'
+tier: invented
+review: true

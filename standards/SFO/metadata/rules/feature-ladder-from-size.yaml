@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.feature-ladder-from-size
+  name: Derived from the proposed size range using the eight numeric
+  about: Derived from the proposed size range using the eight numeric bands
+statement: Derived from the proposed size range using the eight numeric bands; inherits size review.
+tier: derived
+source: planet-forge 3c40281 docs/catalogue/kinds.py

@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.inventory-surface-python
+  name: planets, 17 Oct 2026
+  about: planets, 17 Oct 2026
+statement: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
+  from the code.'
+tier: derived

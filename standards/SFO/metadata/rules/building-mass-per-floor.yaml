@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.building-mass-per-floor
+  name: 1,103 kg for each m2 of floor, all materials.
+  about: 1,103 kg for each m2 of floor, all materials.
+statement: 1,103 kg for each m2 of floor, all materials.
+tier: derived
+source: standards/sources/research_people_plant.json

@@ -115,8 +115,6 @@ basis:
   review: true
   note: Sizes from memory of waste-heat boilers; the walls' heat flux not checked against the gas's radiation.
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
+  rule: rule.port-duties-power-water
 - of: [life]
   rule: rule.life-plant

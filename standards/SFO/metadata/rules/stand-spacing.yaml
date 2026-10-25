@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.stand-spacing
+  name: Spacing from the span it bears full at 1 g (2.5 mm sag, a th
+  about: Spacing from the span it bears full at 1 g (2.5 mm sag, a third of yield), 3 to 12 m
+statement: 'Spacing from the span it bears full at 1 g (2.5 mm sag, a third of yield), 3 to 12 m: 12.0 m. The stand''s head
+  and its leg by the metre from memory.'
+tier: derived
+review: true

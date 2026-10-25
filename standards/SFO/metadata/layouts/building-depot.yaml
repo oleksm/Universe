@@ -1290,6 +1290,4 @@ basis:
 - of:
   - frame
   - ground
-  tier: derived
-  review: true
-  note: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from the strut, node and panel records.
+  rule: rule.building-grid-count

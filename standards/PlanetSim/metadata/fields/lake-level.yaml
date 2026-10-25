@@ -16,9 +16,7 @@ basis:
   - identity
   - producer
   - unit
-  tier: derived
-  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
-    from the code.'
+  rule: rule.inventory-surface-python
 cautions:
 - 'The coupled step''s lake surface above the sea (one value per lake; NaN off lakes and on playas): what forge''s river-discharge
   writes. planet-field.lake-surface is the checkpoint''s water surface derived from it.'

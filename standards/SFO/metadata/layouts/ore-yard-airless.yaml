@@ -92,14 +92,16 @@ links:
   width: 7.0
 mobile:
 - at: [0.0, 0.0, 0.0]
-  range: &id001
+  range:
   - [-50.33, 0.0, 0.0]
   - [50.33, 0.0, 0.0]
   rides: machine rail
   straddles: [yard belt]
   unit: unit.stacker-reclaimer-1500th
 - at: [0.0, 0.0, 0.0]
-  range: *id001
+  range:
+  - [-50.33, 0.0, 0.0]
+  - [50.33, 0.0, 0.0]
   rides: machine rail
   straddles: [yard belt]
   unit: unit.yard-tripper-1500th

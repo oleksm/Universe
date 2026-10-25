@@ -125,6 +125,4 @@ mass: 228.0
 basis:
 - of:
   - items
-  tier: invented
-  review: true
-  note: Laid out by hand on the 6 m room (tools/standards/furniture.py); each piece is modelled once and placed here.
+  rule: rule.furniture-room-layout

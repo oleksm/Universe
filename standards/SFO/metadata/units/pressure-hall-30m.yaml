@@ -88,8 +88,6 @@ basis:
   tier: derived
   note: A third of the discs' drives (90 + 15 kW each) and 100 kW of crane, lights and fans; the mill's and presses' heat leaves in the filtrate instead.
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
+  rule: rule.port-duties-power-water
 - of: [life]
   rule: rule.life-plant

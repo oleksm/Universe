@@ -22,9 +22,7 @@ applies_to:
 - liquid_water_now
 status: draft
 basis:
-- note: 'planet-trees-pgs2 docs/relief-catalogue.json (tools/relief_catalogue.py, ff4f859), planets, 17 Oct 2026: the canonical
-    feature catalogue.'
-  of:
+- of:
   - identity
   - register
   - family
@@ -35,7 +33,7 @@ basis:
   - overrides
   - wave
   - built
-  tier: derived
+  rule: rule.feature-relief-catalogue
 - of:
   - pinned_to
   - spans
@@ -48,10 +46,7 @@ basis:
   tier: sourced
 - of:
   - layout
-  tier: derived
-  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform
-    9747f0d-c437724. frame and record from: proposed (the schema has no fields for them yet).'
-  review: true
+  rule: rule.relief-tectonic-port
 pinned_to: the downstream end of its reach, on its river's centreline (a child of the floodplain or the river)
 spans:
 - meaning: the reach's valley axis, in cm east/north/up of the pin (the loops are drawn from the layout, seeded by the feature's

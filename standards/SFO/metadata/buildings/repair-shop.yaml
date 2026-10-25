@@ -46,14 +46,10 @@ basis:
   note: Chosen. To be reviewed.
 - of:
   - built_of
-  tier: sourced
-  source: standards/sources/research_people_plant.json
-  note: '1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China.'
+  rule: rule.building-materials-per-floor
 - of:
   - physical.mass
-  tier: derived
-  source: standards/sources/research_people_plant.json
-  note: 1,103 kg for each m2 of floor, all materials.
+  rule: rule.building-mass-per-floor
 - of:
   - life
   rule: rule.life-building

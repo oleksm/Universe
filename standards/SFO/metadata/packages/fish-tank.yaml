@@ -27,5 +27,5 @@ visual:
   version: 2
   triangles: 3564
 basis:
-  - { of: [returns_empty, waste_stock], tier: invented, review: true, note: "Draft opening policy: a complete binding/wrapping unit is spent; an intact returnable container goes back to stock. Damage overrides return; material recovery is separate (rule.packing-stock)." }
+  - { of: [returns_empty, waste_stock], rule: rule.package-opening-policy }
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A live-fish transport tank of the 1,000-litre class, sized by the registry (2026-10-11); fish travel at a fraction of the tank's water (the holds mass counts both)." }

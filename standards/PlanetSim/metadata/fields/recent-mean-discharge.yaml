@@ -20,5 +20,4 @@ basis:
   - identity
   - unit
   - producer
-  tier: derived
-  note: 'planets, 17 Oct 2026: planet-forge surface port (models/surface), read from planet-sim-landform 9747f0d-c437724.'
+  rule: rule.surface-port

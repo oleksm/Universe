@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.deposits-per-test-world
+  name: Deposits in one test world, against about how many are known
+  about: Deposits in one test world, against about how many are known on Earth.
+statement: Deposits in one test world, against about how many are known on Earth.
+tier: sourced
+source: 'the planet simulation: brief ''World Geology'' v0.3 of 2026-10-05; test world E4'
+review: true

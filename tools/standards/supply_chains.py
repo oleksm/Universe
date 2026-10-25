@@ -20,6 +20,7 @@ def put(folder, slug, kind, d):
     path = META / folder / (slug + ".yaml")
     rel = "../" * (len(Path(folder).parts) + 1)
     lib.own(path, "tools/standards/supply_chains.py")
+    d = lib.ruled(d)
     OUT[path] = f"# yaml-language-server: $schema={rel}schema/{kind}.schema.yaml\n" + yaml.safe_dump(d, sort_keys=False, width=150)
 
 

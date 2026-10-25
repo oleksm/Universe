@@ -17,6 +17,5 @@ basis:
   - identity
   - producer
   - said_as
-  tier: derived
-  note: 'planet-trees-pgs2 docs/sim-arrays.md (planets, 17 Oct 2026: checked against the code at aab9f6a, run earth_s25).'
+  rule: rule.sim-arrays
 status: draft

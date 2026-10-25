@@ -8,4 +8,4 @@ takes:
   - { item: market.tools, rate: 1.157e-07 }
 unmet: "Work is slow, or cannot be done."
 basis:
-  - { of: [takes], tier: invented, review: true, note: "A figure from memory, of the right size: no source was looked up. To be reviewed." }
+  - { of: [takes], rule: rule.figure-from-memory }

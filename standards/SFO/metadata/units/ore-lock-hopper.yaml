@@ -91,8 +91,6 @@ basis:
   review: true
   note: From memory; loads at 60% of the lock filled with ore at 2.3 t/m3.
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
+  rule: rule.port-duties-power
 - of: [life]
   rule: rule.life-plant

@@ -58,8 +58,6 @@ basis:
   review: true
   note: '200,000 m3/h, 1.2 m/min through the cloth, the fan at 4 kPa and 75%: from memory. Fan power 296 kW.'
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
+  rule: rule.port-duties-power
 - of: [life]
   rule: rule.life-plant

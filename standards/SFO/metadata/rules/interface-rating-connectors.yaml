@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.interface-rating-connectors
+  name: 'The most the connection products built to it are rated for, '
+  about: The most the connection products built to it are rated for, and their joint's outside (SFO 25's connectors).
+statement: The most the connection products built to it are rated for, and their joint's outside (SFO 25's connectors).
+tier: derived

@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.building-materials-per-floor
+  name: 1,040 kg of concrete and 58 kg of steel for each m2 of floor
+  about: 1,040 kg of concrete and 58 kg of steel for each m2 of floor
+statement: '1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China.'
+tier: sourced
+source: standards/sources/research_people_plant.json

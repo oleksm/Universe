@@ -205,14 +205,11 @@ basis:
   - clock
   - reads
   - writes
-  tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/surface.json), read from
-    the code at planet-sim-landform 9747f0d-c437724.'
+  rule: rule.inventory-surface
 - of:
   - reads
   - writes
   - params
   - invariants
   - clock
-  tier: derived
-  note: 'planets, 17 Oct 2026: planet-forge climate port (models/climate, models/ice), read from planet-sim-landform 1df4daf.'
+  rule: rule.climate-port

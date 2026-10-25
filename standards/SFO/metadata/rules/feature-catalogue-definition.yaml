@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.feature-catalogue-definition
+  name: Transcribed proposed catalogue definition
+  about: Transcribed proposed catalogue definition
+statement: Transcribed proposed catalogue definition; not a claim of simulator implementation.
+tier: sourced
+source: planet-forge 3c40281 docs/catalogue/kinds.py

@@ -52,6 +52,6 @@ basis:
   - { of: [recipes.power], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "1,010 kWh for each tonne of ingot, a fifth of it electricity. Heat is counted as power: there is no fuel to burn." }
   - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }
   - { of: [recipes], tier: sourced, review: true, source: "standards/sources/research_people_plant.json", note: "Melting scrap again: 5% of the 15.37 kWh a kg that making aluminium from ore takes. The 3% lost as dross is a guess." }
-  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [staff], rule: rule.staff-furnace-works }
   - { of: [recipes], tier: invented, review: true, note: "Dross is about four tenths metal; the rest is oxide, which goes to the tailings pile and from there into bricks and concrete. Added 2026-10-06 so that nothing given off is left with no taker (the Takers report); the figures balance by mass and are chosen." }
   - { of: [life], rule: rule.life-plant }

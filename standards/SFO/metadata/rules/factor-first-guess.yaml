@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.factor-first-guess
+  name: The registry's first guess at which of the sim's words a fac
+  about: The registry's first guess at which of the sim's words a factor reads and how its strength ramps (2026-10-17)
+statement: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17):
+  for planets to correct.'
+tier: invented
+review: true

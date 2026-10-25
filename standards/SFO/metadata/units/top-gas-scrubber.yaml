@@ -119,8 +119,6 @@ basis:
   tier: derived
   note: 'The gas cooled from 103 to 40 deg C and 97% of its steam condensed at 2.4 MJ/kg: 76 MW to the tower; its spray water pumped at 3 bar and 75%.'
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
+  rule: rule.port-duties-power-water
 - of: [life]
   rule: rule.life-plant

@@ -275,8 +275,7 @@ basis:
   - clock
   - reads
   - writes
-  tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/plates.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+  rule: rule.inventory-plates
 - note: 'planets, 19 Oct 2026: defer the measured erosion budget to a later continental-sedimentation pass when scheduled this step. Otherwise transfer actual removed volume to the shelf in the coupled era. Record deferred status, shelf
     eligibility and export; never use the uncapped requested sediment sum as the physical budget.'
   of:

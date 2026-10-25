@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.factor-rock-layers
+  name: planet-factor.rock-layers
+  about: planet-factor.rock-layers
+statement: 'planet-factor.rock-layers: Alternating strong/weak beds or caprock require layering contrast; flat/weak does not
+  request absence of layering.'
+tier: derived
+source: Supplied factor why text and PlanetSim factor signal records; semantic correction 2026-10-22
+review: true

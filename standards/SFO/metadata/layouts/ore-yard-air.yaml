@@ -68,14 +68,16 @@ mobile:
 - unit: unit.stacker-reclaimer-1500th
   rides: machine rail
   at: [0.0, 0.0, 0.0]
-  range: &id001
+  range:
   - [-50.33, 0.0, 0.0]
   - [50.33, 0.0, 0.0]
   straddles: [yard belt]
 - unit: unit.yard-tripper-1500th
   rides: machine rail
   at: [0.0, 0.0, 0.0]
-  range: *id001
+  range:
+  - [-50.33, 0.0, 0.0]
+  - [50.33, 0.0, 0.0]
   straddles: [yard belt]
 links:
 - kind: rail

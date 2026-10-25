@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.stored-in-bulk
+  name: As stored or shipped in bulk.
+  about: As stored or shipped in bulk.
+statement: As stored or shipped in bulk.
+tier: sourced
+source: https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html

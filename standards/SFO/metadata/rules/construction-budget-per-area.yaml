@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.construction-budget-per-area
+  name: Coarse construction budget
+  about: Coarse construction budget
+statement: 'Coarse construction budget: 40 kg of machinery per allocated square metre, split 40% frames, 45% process machinery,
+  10% drives, 5% controls. Allocated component envelopes are placeholders, not model geometry or a load-qualified design.
+  No cutting loss assumed in this first budget.'
+tier: invented
+source: standards/sources/production-chains.yaml
+review: true

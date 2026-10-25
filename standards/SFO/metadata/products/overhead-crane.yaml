@@ -16,6 +16,4 @@ options:
 units: [unit.gantry-crane-150t-moon, unit.gantry-crane-20t-moon, unit.hall-crane-20t, unit.ingot-crane-10t, unit.ingot-gantry-10t-moon, unit.ladle-crane-150t, unit.mill-crane-30t, unit.stack-crane-20t, unit.stripper-crane-20t, unit.stripper-gantry-20t-moon]
 basis:
 - of: [kind, params, pieces, options]
-  tier: invented
-  review: true
-  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).
+  rule: rule.products-grouped-from-units

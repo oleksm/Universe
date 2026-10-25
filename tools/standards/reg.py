@@ -172,7 +172,8 @@ def cmd_check(opt, pages):
              ("mounts", [sys.executable, "tools/standards/mounting.py", "--check"], lambda o: not re.search(r"[1-9]\d* fault\(s\)", o)),
              ("ship qualification", [sys.executable, "tools/standards/ship_qualify.py"], None),
              ("ship tests", f"cd tools/standards && {sys.executable} -m unittest -q test_ship_workflow test_ship_qualify test_ship_cli test_slot_spec test_schema_audit", None),
-             ("schema map", [sys.executable, "tools/standards/schema_diagram.py"], None)]
+             ("schema map", [sys.executable, "tools/standards/schema_diagram.py"], None),
+             ("rules", [sys.executable, "tools/standards/rules.py", "--check"], None)]
     failed = 0
     for name, cmd, ok in steps:
         r = sh(cmd)

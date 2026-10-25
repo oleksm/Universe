@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.cable-copper-and-insulation
+  name: Copper from its area
+  about: Copper from its area
+statement: Copper from its area; insulation by the voltage's usual thickness (from memory); the rating at 2.5 A/mm2, radiation
+  only.
+tier: derived
+review: true

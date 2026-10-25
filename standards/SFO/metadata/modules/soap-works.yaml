@@ -35,6 +35,6 @@ life: 788940000
 basis:
   - { of: [recipes.inputs, recipes.outputs], tier: derived, source: "standards/sources/research_chemicals.json", note: "From the chemistry, the fat taken as the commonest in tallow (tristearin): 135 g of caustic soda a kg of fat. Lard is reported to take 137 to 145." }
   - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen. To be reviewed." }
-  - { of: [staff], tier: invented, review: true, note: "Six food workers and an operator. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [staff], rule: rule.staff-food-plant }
   - { of: [recipes], tier: invented, review: true, note: "Scourings are half lanolin; the dirt goes out as tailings. Added 2026-10-06 so that nothing given off is left with no taker (the Takers report); the figures balance by mass and are chosen." }
   - { of: [life], rule: rule.life-plant }

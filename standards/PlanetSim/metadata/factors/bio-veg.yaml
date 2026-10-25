@@ -14,10 +14,7 @@ basis:
   note: planet-trees-pgs2 docs/landforms/deciding_factors_vocab.md.
 - of:
   - signal
-  tier: invented
-  review: true
-  note: 'The registry''s first guess at which of the sim''s words a factor reads and how its strength ramps (2026-10-17):
-    for planets to correct.'
+  rule: rule.factor-first-guess
 - of:
   - reads
   - kind

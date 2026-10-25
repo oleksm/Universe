@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.karst-soluble-lithology
+  name: Soluble lithology is necessary for the named solutional-kars
+  about: Soluble lithology is necessary for the named solutional-karst forms
+statement: Soluble lithology is necessary for the named solutional-karst forms; limestone purity, thickness, groundwater and
+  dissolution history still require separate evidence. Elsewhere it remains a modifier. Unknown evaporites cannot become absence.
+tier: derived
+source: https://www.usgs.gov/publications/subsidence-hazards-due-evaporite-dissolution-united-states

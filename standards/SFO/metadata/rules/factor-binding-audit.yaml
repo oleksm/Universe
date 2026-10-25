@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.factor-binding-audit
+  name: Literal producer/registry audit
+  about: Literal producer/registry audit
+statement: Literal producer/registry audit; unavailable means no valid current binding. This does not source a scientific
+  causal law, calibrate retained ramps, or prove a proxy.
+tier: derived
+source: planet-forge 89d78fc docs/field-inventory-2026-10-24.md; current registry field definitions

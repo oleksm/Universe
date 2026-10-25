@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.superconducting-store-energy
+  name: Chosen
+  about: Chosen
+statement: Chosen. Real superconducting stores hold 4 to 40 kJ a kg.
+tier: derived
+source: standards/sources/research_ship_equipment.json
+review: true

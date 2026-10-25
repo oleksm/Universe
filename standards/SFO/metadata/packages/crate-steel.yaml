@@ -26,7 +26,7 @@ visual:
   version: 1
   triangles: 996
 basis:
-  - { of: [returns_empty, waste_stock], tier: invented, review: true, note: "Draft opening policy: a complete binding/wrapping unit is spent; an intact returnable container goes back to stock. Damage overrides return; material recovery is separate (rule.packing-stock)." }
+  - { of: [returns_empty, waste_stock], rule: rule.package-opening-policy }
   - { of: [physical, holds, handling], tier: derived, review: true, note: "The heavy crate's size; holds.volume the clear box inside the corner angles (blender measured 0.655 m3, gross cavity 0.79)." }
   - { of: [physical.mass], tier: derived, note: "Measured from blender's drawn steel (package-crate-steel candidate-v01, 2026-10-16): 2 mm skins, floor and lid, 40x40x4 angles, 5 floor channels, two welded 6 mm skids; 168.4 kg, up from a 130 kg estimate." }
   - { of: [stack], tier: invented, review: true, note: "Four high: the frame's corner posts take three full crates at 1 g with some to spare (from memory, not checked); on a moon's gravity the same." }

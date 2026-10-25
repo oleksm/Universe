@@ -15,6 +15,4 @@ options:
 units: [unit.ingot-car-40t, unit.ladle-car-80t, unit.mould-car-12, unit.slag-pot-car]
 basis:
 - of: [kind, params, pieces, options]
-  tier: invented
-  review: true
-  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).
+  rule: rule.products-grouped-from-units

@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.inventory-interior-geology
+  name: planets, 17 Oct 2026
+  about: planets, 17 Oct 2026
+statement: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/interior_geology.json),
+  read from the code at planet-sim-landform 9747f0d-c437724.'
+tier: derived

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.port-duties-power-water-2
+  name: Duties by rule where the design gives none (SFO 26)
+  about: Duties by rule where the design gives none (SFO 26)
+statement: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water
+  at 30 deg C in and 40 out; water at the pumps'' 4 bar.'
+tier: invented
+review: true

@@ -56,5 +56,5 @@ life: 788940000
 basis:
   - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "Carcass and meat shares of the live animal. Chicken is the dressed bird (no figure for meat off the bone was found); the lamb figure is weak; fish is the middle of 34 to 50%. What is left over is by balance." }
   - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Its size, how much it puts through and what it draws are chosen. To be reviewed." }
-  - { of: [staff], tier: invented, review: true, note: "Six food workers and an operator. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [staff], rule: rule.staff-food-plant }
   - { of: [life], rule: rule.life-plant }

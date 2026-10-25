@@ -23,8 +23,7 @@ basis:
 - of:
   - draws
   - scales_by
-  tier: derived
-  note: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'
+  rule: rule.template-a-family
 visual:
   format: freefall-model/1
   path: models/conductor-rail/v1

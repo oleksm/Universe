@@ -12,5 +12,4 @@ size: 1.4
 standard: EN 1092-1 bores and pressure classes (its faces and bolting the registry's)
 basis:
 - of: [envelope, face]
-  tier: derived
-  note: The most the connection products built to it are rated for, and their joint's outside (SFO 25's connectors).
+  rule: rule.interface-rating-connectors

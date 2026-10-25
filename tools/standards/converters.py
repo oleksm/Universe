@@ -162,6 +162,7 @@ def main():
             d["ports"], d["internal"] = pts, internal
             d["basis"].insert(1, {"of": ["ports"], "tier": "derived", "note": "Places from the installed model's empties where it has them (each port's note says); connectors by current (ports() here); docs/proposals/equipment-ports.md."})
         d["ports"] = ep.feet(d) + d["ports"]
+        d = lib.ruled(d)
         text = HEAD + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
         lib.own(path, "tools/standards/converters.py")
         if not os.path.exists(path) or open(path).read() != text:

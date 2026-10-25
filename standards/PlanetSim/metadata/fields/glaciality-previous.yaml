@@ -20,5 +20,4 @@ basis:
   - identity
   - unit
   - producer
-  tier: derived
-  note: 'planets, 17 Oct 2026: planet-forge climate port (models/climate, models/ice), read from planet-sim-landform 1df4daf.'
+  rule: rule.climate-port

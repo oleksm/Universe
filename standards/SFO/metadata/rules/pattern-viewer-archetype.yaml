@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.pattern-viewer-archetype
+  name: Draft migration of viewer archetype mapping (including dendr
+  about: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference, corrected
+    to w
+statement: Draft migration of viewer archetype mapping (including dendritic fallback) and preference-word inference, corrected
+  to whole-word tokens and reviewed against supplied why text and existing signal direction. Ambiguous categorical, compound
+  or nonmonotonic factors remain review-required; no band bounds invented. Consumers use explicit fields, never repeat prose/key
+  inference.
+tier: invented
+source: planet-forge 3c40281 crates/viewer/src/rings/formations.rs factor_scores; crates/viewer/src/layers/features.rs arch_of
+review: true

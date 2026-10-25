@@ -146,8 +146,6 @@ basis:
   review: true
   note: The bed lies on the grate by its weight against the gas drawn down through it; not checked below 1 m/s2.
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
+  rule: rule.port-duties-power-water
 - of: [life]
   rule: rule.life-plant

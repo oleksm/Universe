@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.staff-furnace-works
+  name: A furnace or works' watch
+  about: A furnace or works' watch
+statement: 'A furnace or works'' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of
+  plant, not this one; to be reviewed.'
+tier: invented
+review: true

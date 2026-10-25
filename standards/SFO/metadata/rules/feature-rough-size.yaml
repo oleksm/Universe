@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.feature-rough-size
+  name: Supplied rough Earth size range in the catalogue draft
+  about: Supplied rough Earth size range in the catalogue draft
+statement: Supplied rough Earth size range in the catalogue draft; not a measured or validated range.
+tier: invented
+source: planet-forge 3c40281 docs/catalogue/kinds.py
+review: true

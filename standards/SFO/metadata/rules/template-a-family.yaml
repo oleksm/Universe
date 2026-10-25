@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.template-a-family
+  name: The owner, 2026-10-17
+  about: The owner, 2026-10-17
+statement: 'The owner, 2026-10-17: one template a family, scaled; the catalogue families (kit_catalogue.py).'
+tier: derived

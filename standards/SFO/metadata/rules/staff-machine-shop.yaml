@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.staff-machine-shop
+  name: Machinists and operators
+  about: Machinists and operators
+statement: 'Machinists and operators. Coarse: by the kind of plant, not this one; to be reviewed.'
+tier: invented
+review: true

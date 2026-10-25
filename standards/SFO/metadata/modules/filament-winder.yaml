@@ -136,5 +136,5 @@ recipes:
 life: 788940000
 basis:
   - { of: [physical, recipes], tier: invented, review: true, note: "Winds 72 kg an hour at 2 MW. Its inputs follow the composites works' route (fibre from polyethylene through carbonising, methane given off), so that the chain closes with what the registry has; a real tube is carbon tow and epoxy." }
-  - { of: [staff], tier: invented, review: true, note: "Machinists and operators. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [staff], rule: rule.staff-machine-shop }
   - { of: [life], rule: rule.life-plant }

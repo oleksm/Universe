@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.pipe-fitting-lengths
+  name: A long-radius elbow (1.5 bores) is its arc of straight
+  about: A long-radius elbow (1.5 bores) is its arc of straight
+statement: A long-radius elbow (1.5 bores) is its arc of straight; a tee is its branch stub over the straight it sits in,
+  from the main's outside to 1.5 bores off its axis (checked on blender's DN 200 kit).
+tier: derived

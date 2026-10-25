@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.feature-ladder-derived
+  name: from size.across_m by the eight-band ladder (planet_catalogu
+  about: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)
+statement: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)
+tier: derived

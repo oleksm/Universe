@@ -19,5 +19,5 @@ fit:
   count: 18
 basis:
   - { of: [physical.mass, fit], rule: rule.plant-weights-from-memory, note: "research_plant_weights.json: 14_bar_mill" }
-  - { of: [made_from], tier: invented, review: true, note: "A guess, to be reviewed: taken as all forged steel, with half as much again machined away. Real ones are of many materials." }
+  - { of: [made_from], rule: rule.forged-steel-guess }
   - { of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }

@@ -110,8 +110,6 @@ basis:
   tier: derived
   note: 'The water the plant loses: the green balls hold 9%, dried off on the grate; the rest of the grinding water comes back from the filters.'
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
+  rule: rule.port-duties-power
 - of: [life]
   rule: rule.life-plant

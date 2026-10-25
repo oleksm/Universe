@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.cable-insulation-from-memory
+  name: Insulation from memory of medium-voltage aerospace and tract
+  about: Insulation from memory of medium-voltage aerospace and traction cable
+statement: Insulation from memory of medium-voltage aerospace and traction cable; least bend 8 outsides; From memory of makers'
+  catalogues; to be sourced.
+tier: invented
+review: true

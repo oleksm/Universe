@@ -144,8 +144,6 @@ basis:
   tier: derived
   note: The mill's 2.15 MW (18 kWh a tonne) and the presses' own power, all of it warm water by the time it reaches the cooler.
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at 30 deg C in and 40 out; water at the pumps'' 4 bar.'
+  rule: rule.port-duties-power-water-2
 - of: [life]
   rule: rule.life-plant

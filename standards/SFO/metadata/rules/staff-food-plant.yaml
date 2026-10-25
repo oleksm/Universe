@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.staff-food-plant
+  name: Six food workers and an operator
+  about: Six food workers and an operator
+statement: 'Six food workers and an operator. Coarse: by the kind of plant, not this one; to be reviewed.'
+tier: invented
+review: true

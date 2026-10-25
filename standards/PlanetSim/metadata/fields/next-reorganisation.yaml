@@ -22,5 +22,4 @@ basis:
   - identity
   - unit
   - producer
-  tier: derived
-  note: 'planets, 17 Oct 2026: forge''s plates port (branch plates-foundation) and the Python sim (stages/plates.py), read from the code.'
+  rule: rule.plates-foundation-port

@@ -94,8 +94,6 @@ basis:
   review: true
   note: Losses 0.5% of its rating, drawn on top of the arc's power and carried off by the cooling loop; from memory.
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at 30 deg C in and 40 out; water at the pumps'' 4 bar.'
+  rule: rule.port-duties-power-water-2
 - of: [life]
   rule: rule.life-plant

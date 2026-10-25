@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.stored-temperature
+  name: The temperature it is stored at
+  about: The temperature it is stored at
+statement: The temperature it is stored at; kept at or below it.
+tier: sourced
+source: https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf

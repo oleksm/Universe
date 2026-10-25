@@ -27,5 +27,5 @@ basis:
   - { of: [recipes.inputs, recipes.outputs], tier: derived, note: "From the chemistry: 100 parts of calcium carbonate give 56 of lime and 44 of carbon dioxide." }
   - { of: [recipes.power], tier: sourced, source: "standards/sources/research_machines.json", note: "3.7 GJ a tonne of lime: the best kilns take 3.2 to 4.2, of which 3.2 is what the reaction itself takes. Taken as electric." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Chosen. To be reviewed." }
-  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [staff], rule: rule.staff-furnace-works }
   - { of: [life], rule: rule.life-plant }

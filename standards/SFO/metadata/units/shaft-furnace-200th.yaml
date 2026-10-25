@@ -153,8 +153,6 @@ basis:
   review: true
   note: The burden sinks by its own weight against the gas's drag; at low g the gas must be slowed or the bed lifts. Not checked below 1 m/s2.
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
+  rule: rule.port-duties-power
 - of: [life]
   rule: rule.life-plant

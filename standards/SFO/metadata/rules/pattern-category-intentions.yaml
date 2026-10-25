@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.pattern-category-intentions
+  name: Reviewed directed categorical intentions, with prerequisites
+  about: Reviewed directed categorical intentions, with prerequisites separated from modifiers
+statement: Reviewed directed categorical intentions, with prerequisites separated from modifiers. Missing/proxy class evidence
+  is not a verified physical classification; unresolved classes remain unknown.
+tier: derived
+source: planet-forge 18ef137 docs/research/category-intentions-2026-10-24.json

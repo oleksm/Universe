@@ -14,6 +14,4 @@ status: draft
 basis:
 - of:
   - scorecard
-  tier: sourced
-  source: Earth values as the Python sim cites them (scorecard.py TARGETS and legends)
-  review: true
+  rule: rule.earth-targets-python-sim

@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.plates-foundation-port
+  name: planets, 17 Oct 2026
+  about: planets, 17 Oct 2026
+statement: 'planets, 17 Oct 2026: forge''s plates port (branch plates-foundation) and the Python sim (stages/plates.py), read
+  from the code.'
+tier: derived

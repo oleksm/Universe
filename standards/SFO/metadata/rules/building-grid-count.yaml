@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.building-grid-count
+  name: Counted from the grid (tools/standards/building_layouts.py)
+  about: Counted from the grid (tools/standards/building_layouts.py)
+statement: Counted from the grid (tools/standards/building_layouts.py); sections by the loads in frame.sized; masses from
+  the strut, node and panel records.
+tier: derived
+review: true

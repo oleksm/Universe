@@ -185,3 +185,35 @@ def top_block(text, key):
         return None
     n = re.search(r"^[A-Za-z_]", text[m.end():], re.M)
     return m.start(), m.end() + n.start() if n else len(text)
+
+
+_rules = None
+
+
+def rules():
+    """{(tier, source, note, review): rule key} for every rule a basis entry can name instead of repeating its text."""
+    global _rules
+    if _rules is None:
+        import glob, yaml
+        _rules = {}
+        for p in sorted(glob.glob(os.path.join(TREE, "SFO", "metadata", "rules", "*.yaml"))):
+            r_ = yaml.safe_load(open(p, encoding="utf-8"))
+            st = r_.get("statement")
+            _rules[(r_.get("tier"), r_.get("source"), None if st == r_.get("source") else st, bool(r_.get("review")))] = r_["identity"]["key"]
+    return _rules
+
+
+def ruled(d):
+    """`d` with every basis entry (at any depth) whose text is a rule's put as {of, rule}."""
+    if isinstance(d, dict):
+        return {k: ([_rule(e) for e in v] if k == "basis" and isinstance(v, list) else ruled(v)) for k, v in d.items()}
+    if isinstance(d, list):
+        return [ruled(x) for x in d]
+    return d
+
+
+def _rule(e):
+    if not isinstance(e, dict) or "rule" in e or not set(e) <= {"of", "tier", "source", "note", "review"}:
+        return e
+    k = rules().get((e.get("tier"), e.get("source"), e.get("note"), bool(e.get("review"))))
+    return {"of": e["of"], "rule": k} if k else e

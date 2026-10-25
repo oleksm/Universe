@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.cable-rating-vacuum
+  name: 2.5 A/mm2 in copper, radiation only (plant_kit.J_VACUUM), al
+  about: '2.5 A/mm2 in copper, radiation only (plant_kit.J_VACUUM), aluminium at sqrt of the resistivities'' ratio of it (the
+    same '
+statement: '2.5 A/mm2 in copper, radiation only (plant_kit.J_VACUUM), aluminium at sqrt of the resistivities'' ratio of it
+  (the same heat a metre): one core alone; a pair laid together runs warmer.'
+tier: derived

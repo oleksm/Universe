@@ -612,6 +612,7 @@ def write(folder, slug, d, schema):
     if os.path.exists(path):
         old = yaml.safe_load(open(path, encoding="utf-8")) or {}
         d = dict(d, **{k: old[k] for k in KEEP if k in old and k not in d})
+    d = lib.ruled(d)
     text = f"# yaml-language-server: $schema=../../schema/{schema}.schema.yaml\n" + yaml.safe_dump(d, sort_keys=False, allow_unicode=True, width=230)
     lib.own(path, "tools/standards/kit_catalogue.py")
     if not os.path.exists(path) or open(path).read() != text:

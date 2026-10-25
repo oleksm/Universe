@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.pattern-no-hard-conditions
+  name: No hard conditions yet
+  about: No hard conditions yet
+statement: 'No hard conditions yet: planets to add them where a factor is a must (ice, sea, a volcano).'
+tier: invented
+review: true

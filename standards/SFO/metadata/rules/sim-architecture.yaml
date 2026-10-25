@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.sim-architecture
+  name: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17
+  about: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+statement: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+tier: derived

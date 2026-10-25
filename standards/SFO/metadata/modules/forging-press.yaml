@@ -305,5 +305,5 @@ life: 788940000
 basis:
   - { of: [recipes.inputs, recipes.outputs], tier: invented, review: true, note: "Approximate, from memory." }
   - { of: [physical, recipes.makes, recipes.rate, recipes.power], tier: invented, review: true, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
-  - { of: [staff], tier: invented, review: true, note: "Machinists and operators. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [staff], rule: rule.staff-machine-shop }
   - { of: [life], rule: rule.life-plant }

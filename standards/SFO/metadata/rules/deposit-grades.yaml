@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.deposit-grades
+  name: As the simulation has it
+  about: As the simulation has it
+statement: As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths
+  and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal;
+  the rare earths as cerium where there is no split).
+tier: sourced
+source: 'the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)'
+review: true

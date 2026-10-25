@@ -11,5 +11,4 @@ face: {length: 1.366, width: 1.366, height: 0.11}
 size: 1.2
 basis:
 - of: [envelope, face]
-  tier: derived
-  note: The most the connection products built to it are rated for, and their joint's outside (SFO 25's connectors).
+  rule: rule.interface-rating-connectors

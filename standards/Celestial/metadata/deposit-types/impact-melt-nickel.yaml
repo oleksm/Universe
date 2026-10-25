@@ -71,11 +71,7 @@ basis:
   - forms_at
   - cluster
   - seen_by
-  tier: sourced
-  review: true
-  source: 'the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)'
-  note: As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as
-    83% metal; the rare earths as cerium where there is no split).
+  rule: rule.deposit-grades
 impact:
   min_diameter: 100000.0
   chance: 0.15

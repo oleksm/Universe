@@ -22,5 +22,4 @@ basis:
   - scales_by
   - pieces
   - model_of
-  tier: derived
-  note: 'The owner, 2026-10-17: one template a family, scaled, instead of a model a size; model_of is an installed size''s model, the middle one of those installed, until the template has its own.'
+  rule: rule.template-a-family-installed

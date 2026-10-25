@@ -65,14 +65,12 @@ basis:
   - clock
   - reads
   - writes
-  tier: derived
-  note: 'planets, 17 Oct 2026: inventory of the Python sim (planet-forge docs/registry-migration/relief_run_views.json), read from the code at planet-sim-landform 9747f0d-c437724.'
+  rule: rule.inventory-relief-run-views
 - of:
   - reads
   - writes
   - params
-  tier: derived
-  note: 'planets, 17 Oct 2026: planet-forge relief-tectonic port (models/tectonic, src/ride.rs), read from planet-sim-landform 9747f0d-c437724.'
+  rule: rule.relief-tectonic-port-2
 cautions:
 - 'the Python''s reads were its line store''s internals: hotspot positions (spots, unit vectors); w.x, w.xcont; S.plume_last, S._rows; gap = sphere.spacing(n) of the current lattice, radians on the unit sphere (x R = metres); refined
   as the present nears; cell (area per sample, m2; unused here)'

@@ -36,5 +36,4 @@ basis:
   - dynamics
   - persistence
   - code
-  tier: derived
-  note: 'planets, 19 Oct 2026: read from planet-forge''s types (docs/data-model.md)'
+  rule: rule.forge-types

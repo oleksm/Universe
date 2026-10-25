@@ -20,7 +20,4 @@ basis:
   - identity
   - made_from
   - physical
-  tier: derived
-  review: true
-  source: standards/sources/production-chains.yaml
-  note: A stocked feedstock, or one empty handling unit. Empty-unit mass is the existing package's tare; its contents are separate.
+  rule: rule.stocked-feedstock

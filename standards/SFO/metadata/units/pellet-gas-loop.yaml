@@ -136,8 +136,6 @@ basis:
   tier: derived
   note: The top gas cooled 120 to 65 deg C and its 1.6 kg/s of water condensed (2.35 MJ/kg); the vapour left at 65 deg C from its 25 kPa vapour pressure; the fan at 75%.
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at 30 deg C in and 40 out; water at the pumps'' 4 bar.'
+  rule: rule.port-duties-power-water-2
 - of: [life]
   rule: rule.life-plant

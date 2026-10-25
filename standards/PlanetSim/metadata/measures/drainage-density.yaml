@@ -15,8 +15,7 @@ levels:
 basis:
 - of:
   - identity
-  tier: derived
-  note: From planet-trees-pgs2 docs/sim-architecture.md (planets, 17 Oct 2026).
+  rule: rule.sim-architecture
 - of:
   - reference
   tier: invented

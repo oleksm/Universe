@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.earth-targets-python-sim
+  name: Earth values as the Python sim cites them (scorecard.py TARG
+  about: Earth values as the Python sim cites them (scorecard.py TARGETS and legends)
+statement: Earth values as the Python sim cites them (scorecard.py TARGETS and legends)
+tier: sourced
+source: Earth values as the Python sim cites them (scorecard.py TARGETS and legends)
+review: true

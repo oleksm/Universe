@@ -6,6 +6,4 @@ options:
 units: [unit.eaf-vessel-80t, unit.eaf-vessel-80t-sealed]
 basis:
 - of: [kind, params, pieces, options]
-  tier: invented
-  review: true
-  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).
+  rule: rule.products-grouped-from-units

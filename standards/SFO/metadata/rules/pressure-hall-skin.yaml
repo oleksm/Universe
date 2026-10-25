@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.pressure-hall-skin
+  name: Holds 101.3 kPa against vacuum
+  about: Holds 101.3 kPa against vacuum
+statement: 'Holds 101.3 kPa against vacuum: 6061 welded at 110 MPa, the skin between stiffeners 0.23 m apart as a clamped
+  strip (p b^2 / 2 t^2), each stiffener a fixed-ended T over the cell''s short side (w L^2 / 12) with the skin its other flange,
+  as the cargo cabins (equipment/cargo-cabin-s1.yaml). Edge channel, seals, door hardware and the insulation from memory;
+  to be sourced.'
+tier: derived
+review: true

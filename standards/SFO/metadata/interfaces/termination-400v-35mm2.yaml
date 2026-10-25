@@ -12,5 +12,4 @@ area: 3.5e-05
 standard: IEC 60038 voltages
 basis:
 - of: [envelope, face]
-  tier: derived
-  note: The most the connection products built to it are rated for, and their joint's outside (SFO 25's connectors).
+  rule: rule.interface-rating-connectors

@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.stocked-feedstock
+  name: A stocked feedstock, or one empty handling unit
+  about: A stocked feedstock, or one empty handling unit
+statement: A stocked feedstock, or one empty handling unit. Empty-unit mass is the existing package's tare; its contents are
+  separate.
+tier: derived
+source: standards/sources/production-chains.yaml
+review: true

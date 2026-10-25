@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.furniture-room-layout
+  name: Laid out by hand on the 6 m room (tools/standards/furniture.
+  about: Laid out by hand on the 6 m room (tools/standards/furniture.py)
+statement: Laid out by hand on the 6 m room (tools/standards/furniture.py); each piece is modelled once and placed here.
+tier: invented
+review: true

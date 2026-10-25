@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.products-grouped-from-units
+  name: Grouped from the units the layouts use (docs/proposals/plant
+  about: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).
+statement: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).
+tier: invented
+review: true

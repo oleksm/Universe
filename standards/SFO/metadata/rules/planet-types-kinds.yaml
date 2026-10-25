@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.planet-types-kinds
+  name: planet-sim, 24 Oct 2026
+  about: planet-sim, 24 Oct 2026
+statement: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+tier: derived

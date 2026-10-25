@@ -10,6 +10,4 @@ pieces:
 units: [unit.cooling-tower, unit.cooling-tower-1cell, unit.cooling-tower-h2, unit.cooling-tower-pellet, unit.cooling-tower-shaft]
 basis:
 - of: [kind, params, pieces, options]
-  tier: invented
-  review: true
-  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).
+  rule: rule.products-grouped-from-units

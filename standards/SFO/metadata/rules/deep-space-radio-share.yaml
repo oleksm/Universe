@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.deep-space-radio-share
+  name: Its share of a deep-space radio, as on the Mars Reconnaissan
+  about: Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight.
+statement: Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight.
+tier: derived
+source: standards/sources/research_ship_equipment.json
+review: true

@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.feature-detector-proposal
+  name: Owner-authorized detector proposal
+  about: Owner-authorized detector proposal
+statement: Owner-authorized detector proposal. Qualitative source definitions and provisional screening constants are distinguished
+  in the source; not a built generator or calibrated occurrence rate. Missing support and subcell geometry remain unresolved.
+tier: invented
+source: docs/planet-feature-trigger-rules-2026-10-22.md
+review: true

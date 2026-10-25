@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.pattern-deciding-factors
+  name: planet-trees-pgs2 docs/landforms/deciding_factors.json
+  about: planet-trees-pgs2 docs/landforms/deciding_factors.json
+statement: 'planet-trees-pgs2 docs/landforms/deciding_factors.json: its factors in its words, its top three weighted 3.'
+tier: derived

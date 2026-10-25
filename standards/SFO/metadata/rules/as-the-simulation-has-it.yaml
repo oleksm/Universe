@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.as-the-simulation-has-it
+  name: As the simulation has it.
+  about: As the simulation has it.
+statement: As the simulation has it.
+tier: sourced
+source: 'the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)'
+review: true

@@ -19,4 +19,4 @@ physical:
 basis:
   - { of: [size.length, size.width], tier: invented, review: true, note: "Sold in sheets of 6.0 by 2.0 m: 6 by 2 m for metal plate, 2.5 by 1.25 m for sheet, 3 by 1.5 m for composite and sandwich panel (an autoclave's bed); chosen. A deck is laid out on whole sheets (tools/standards/frames.py)." }
   - { of: [size], tier: derived, note: "The gauge the pressurised parts need: see the structure report. Other parts use it by choice." }
-  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }
+  - { of: [physical.shock_limit], rule: rule.jolt-limit-guess }

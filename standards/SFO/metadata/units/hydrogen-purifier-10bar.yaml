@@ -115,8 +115,6 @@ basis:
   review: true
   note: 'From the plant''s 260 mol/s of hydrogen: the dryers'' diameter at 0.27 m/s at 10 bar, their walls for 14 bar in 304 at 138 MPa (85% joints, 1.5 mm allowance), the sieve from the water left at 5 deg C over 8 hours, regeneration warming sieve and shell 230 K and driving the water off in 4 hours (74 kW), the chiller 1113 kW at a COP of 2; oxygen content, capacities and the catalyst''s space velocity from memory.'
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
+  rule: rule.port-duties-power-water
 - of: [life]
   rule: rule.life-plant

@@ -15,6 +15,4 @@ options:
 units: [unit.furnace-transformer-14mva, unit.furnace-transformer-90mva, unit.heater-transformer-131mva, unit.plant-transformer-35mva, unit.rectifier-transformer-21mva]
 basis:
 - of: [kind, params, pieces, options]
-  tier: invented
-  review: true
-  note: Grouped from the units the layouts use (docs/proposals/plant-products.md, 2026-10-16).
+  rule: rule.products-grouped-from-units

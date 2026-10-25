@@ -89,8 +89,6 @@ basis:
   review: true
   note: The pan's plate from its size; its speed from the critical speed 42.3 sqrt(sin a / D); a quarter of the plant's 36.4 kg/s of moist ore each; the drive 90 kW and the screen 15 kW, the frame, gear and screen's weights from memory.
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
+  rule: rule.port-duties-power
 - of: [life]
   rule: rule.life-plant

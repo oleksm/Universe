@@ -13,4 +13,4 @@ served_by:
 unmet: "Loneliness; people keep to themselves."
 basis:
   - { of: [takes], tier: derived, review: true, source: "standards/sources/research_people_needs.json", note: "Wine: the world drank 214 million hectolitres in 2024, about 2.6 litres a head. Beer: no figure for the world was found; 29 litres a year is taken, China's, the least of five large countries (to 126 in Czechia)." }
-  - { of: [space, served_by], tier: invented, review: true, note: "A figure from memory, of the right size: no source was looked up. To be reviewed." }
+  - { of: [space, served_by], rule: rule.figure-from-memory }

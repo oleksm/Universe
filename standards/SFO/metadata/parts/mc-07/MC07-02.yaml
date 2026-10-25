@@ -27,4 +27,4 @@ basis:
   - { of: [physical.length, physical.width, physical.height, shape, fit], tier: derived, note: "Measured from the model." }
   - { of: [physical.mass], tier: derived, note: "Its surface in the stock it is cut from." }
   - { of: [made_from], tier: derived, note: "Its gauge from the cabin pressure it holds (see the structure report). The 15% lost in cutting was chosen." }
-  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }
+  - { of: [physical.shock_limit], rule: rule.jolt-limit-guess }

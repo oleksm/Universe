@@ -176,8 +176,6 @@ basis:
   review: true
   note: 'Ergun''s equation for 12 mm pellets, voids 0.4, gas at 700 deg C: drag 1607 Pa/m against the bed''s weight 3360 at 1.6 m/s2, with half again to spare. The gas flow from the heat balance: the pellets cooled from 1300 to 100 deg C by gas warmed from 50 to 1,150, and the torches'' share heated from 65 to 1,350.'
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
+  rule: rule.port-duties-power-water
 - of: [life]
   rule: rule.life-plant

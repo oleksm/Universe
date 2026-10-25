@@ -80,8 +80,6 @@ basis:
   review: true
   note: From memory; the CO from 2% carbon in the sponge iron (from memory) burnt to CO by the melt's oxygen.
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
+  rule: rule.port-duties-power
 - of: [life]
   rule: rule.life-plant

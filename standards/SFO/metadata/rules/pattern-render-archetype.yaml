@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.pattern-render-archetype
+  name: Conservative existing render archetype pending explicit cons
+  about: Conservative existing render archetype pending explicit consumer treatment
+statement: Conservative existing render archetype pending explicit consumer treatment; not a scientific class or new placement
+  rule.
+tier: invented
+review: true

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.forged-steel-guess
+  name: A guess, to be reviewed
+  about: A guess, to be reviewed
+statement: 'A guess, to be reviewed: taken as all forged steel, with half as much again machined away. Real ones are of many
+  materials.'
+tier: invented
+review: true

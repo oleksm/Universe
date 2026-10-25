@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.cable-tray-posts
+  name: Tray posts every 3 m
+  about: Tray posts every 3 m
+statement: 'Tray posts every 3 m; a tee is a joint box; the cores'' least bend radius 15 cable diameters (from memory): a
+  riser bends all three at it, an elbow in plan has its axis one core''s pitch further out so the inner core keeps it.'
+tier: invented
+review: true

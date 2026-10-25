@@ -21,4 +21,4 @@ fit:
 basis:
   - { of: [physical.mass], tier: derived, note: "Its length in the stock it is cut from." }
   - { of: [physical.length, physical.width, physical.height, made_from, fit], tier: invented, review: true, note: "A guess, to be reviewed: 16 hoop frames to a segment, each 377 m round, in 12 m lengths, and a fifth more machined away. Nothing says what loads the ring carries, so they are not sized." }
-  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }
+  - { of: [physical.shock_limit], rule: rule.jolt-limit-guess }

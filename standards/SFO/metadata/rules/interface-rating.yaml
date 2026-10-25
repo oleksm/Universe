@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.interface-rating
+  name: The most the products built to it are rated for, and their j
+  about: The most the products built to it are rated for, and their joint's outside.
+statement: The most the products built to it are rated for, and their joint's outside.
+tier: derived

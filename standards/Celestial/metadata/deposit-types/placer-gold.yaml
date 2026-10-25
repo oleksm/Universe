@@ -38,17 +38,10 @@ basis:
   - forms_at
   - cluster
   - seen_by
-  tier: sourced
-  review: true
-  source: 'the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)'
-  note: As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as
-    83% metal; the rare earths as cerium where there is no split).
+  rule: rule.deposit-grades
 - of:
   - density
-  tier: derived
-  review: true
-  note: 'Converted once (17 Oct 2026) from rate, which was per E4 sample of 17,003 km2 over E4s 4.067 Gyr of plates: density = rate / 17,003 km2 / 4.067 Gyr (planet-forge tools/registry/deposit_density.py). Counts on a grown planet
-    unchanged; to be re-judged against known deposit counts per area.'
+  rule: rule.deposit-density-from-rate
 setting: rivers from gold country
 rate: 7.59
 density: 3.479e-27

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.staff-chemical-plant
+  name: A chemical plant's watch
+  about: A chemical plant's watch
+statement: 'A chemical plant''s watch: two chemists, four operators, a technician. Coarse: by the kind of plant, not this
+  one; to be reviewed.'
+tier: invented
+review: true

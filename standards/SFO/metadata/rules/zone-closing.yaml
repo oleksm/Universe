@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.zone-closing
+  name: planet-sim-landform stages/zones.py
+  about: planet-sim-landform stages/zones.py
+statement: 'planet-sim-landform stages/zones.py: CLOSE_MYR 30, ARC_FRONT_M 150e3.'
+tier: derived

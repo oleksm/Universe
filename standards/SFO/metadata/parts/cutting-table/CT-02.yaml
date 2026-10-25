@@ -19,5 +19,5 @@ fit:
   count: 1
 basis:
   - { of: [physical.mass, fit], rule: rule.plant-weights-from-memory, note: "research_plant_weights.json: 17_laser_cutting_and_plate_rolls" }
-  - { of: [made_from], tier: invented, review: true, note: "The formed panel it is welded from, at its own weight. What is lost in cutting the panel from its stock (15%, chosen) is the cutting table's." }
+  - { of: [made_from], rule: rule.panel-welded-own-weight }
   - { of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }

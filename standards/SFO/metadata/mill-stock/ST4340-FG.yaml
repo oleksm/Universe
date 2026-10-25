@@ -13,4 +13,4 @@ made_from:
 physical:
   shock_limit: 1961.33
 basis:
-  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }
+  - { of: [physical.shock_limit], rule: rule.jolt-limit-guess }

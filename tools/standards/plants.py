@@ -460,6 +460,7 @@ def write(path, d):
     head = {"plant-mounts": "plant-mount", "units": "unit", "layouts": "layout", "connectors": "connector", "runs": "run", "products": "product", "interfaces": "interface"}[path.split("/")[-2]]
     dump = lambda x: yaml.safe_dump(x, sort_keys=False, width=1000, allow_unicode=True, default_flow_style=None) if x else ""
     lib.own(path, "tools/standards/plants.py")
+    d = lib.ruled(d)
     with open(path, "w", encoding="utf-8") as f:
         f.write(f"# yaml-language-server: $schema=../../schema/{head}.schema.yaml\n")
         if vis:

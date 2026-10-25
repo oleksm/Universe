@@ -8,4 +8,4 @@ served_by:
   - { profession: profession.artist, serves: 1000 }
 unmet: "A place where nobody would choose to live."
 basis:
-  - { of: [served_by], tier: invented, review: true, note: "A figure from memory, of the right size: no source was looked up. To be reviewed." }
+  - { of: [served_by], rule: rule.figure-from-memory }

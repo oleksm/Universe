@@ -16,8 +16,6 @@ basis:
   - identity
   - producer
   - unit
-  tier: derived
-  note: 'planets, 17 Oct 2026: from the Python sim''s inventory (planet-forge docs/registry-migration/surface.json), read
-    from the code.'
+  rule: rule.inventory-surface-python
 cautions:
 - 'One global record for five counts (misfit, dry valley, captured, reversed, reborn): forge keeps them as scalars <key>/<state>.'

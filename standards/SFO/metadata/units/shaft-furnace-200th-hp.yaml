@@ -126,8 +126,6 @@ basis:
   review: true
   note: 'At 1.6 m/s2 the burden weighs about 3 kPa a metre of bed against the gas''s drag of about 1 (from memory): it still sinks; at 8 bar the gas is slower.'
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
+  rule: rule.port-duties-power
 - of: [life]
   rule: rule.life-plant

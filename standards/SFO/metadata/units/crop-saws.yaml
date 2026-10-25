@@ -42,8 +42,6 @@ basis:
   review: true
   note: The count from the casting bay's rate and a cut of 300 cm2 a minute (a large band saw in carbon steel, from memory); saw mass and power from memory.
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage.'
+  rule: rule.port-duties-power
 - of: [life]
   rule: rule.life-plant

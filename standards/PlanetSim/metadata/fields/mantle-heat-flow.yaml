@@ -14,5 +14,4 @@ basis:
   - identity
   - unit
   - producer
-  tier: derived
-  note: 'planets, 17 Oct 2026: what the forge interior port writes (interior branch, merged as forge 3019766).'
+  rule: rule.interior-port-writes

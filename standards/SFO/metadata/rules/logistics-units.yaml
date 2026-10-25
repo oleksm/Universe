@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.logistics-units
+  name: 'A standard unit as logistics uses them (pallet 1.2 x 1.0 m, '
+  about: A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry
+    (20
+statement: A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry
+  (2026-10-10); not sourced figure by figure.
+tier: invented
+review: true

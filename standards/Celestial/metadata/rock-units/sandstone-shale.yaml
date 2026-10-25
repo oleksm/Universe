@@ -28,7 +28,4 @@ basis:
   - sim
   - physical
   - yields
-  tier: sourced
-  review: true
-  source: 'the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)'
-  note: As the simulation has it.
+  rule: rule.as-the-simulation-has-it

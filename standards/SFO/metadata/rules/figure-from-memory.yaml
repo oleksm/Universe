@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.figure-from-memory
+  name: A figure from memory, of the right size
+  about: A figure from memory, of the right size
+statement: 'A figure from memory, of the right size: no source was looked up. To be reviewed.'
+tier: invented
+review: true

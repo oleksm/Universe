@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.package-opening-policy
+  name: Draft opening policy
+  about: Draft opening policy
+statement: 'Draft opening policy: a complete binding/wrapping unit is spent; an intact returnable container goes back to stock.
+  Damage overrides return; material recovery is separate (rule.packing-stock).'
+tier: invented
+review: true

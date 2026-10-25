@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.catalogue-alias-control-vector
+  name: Explicit current catalogue alias to the existing canonical c
+  about: Explicit current catalogue alias to the existing canonical control vector.
+statement: Explicit current catalogue alias to the existing canonical control vector.
+tier: derived
+source: planet-forge a1f0a57 docs/research/remaining-22-kinds-map-2026-10-24.json

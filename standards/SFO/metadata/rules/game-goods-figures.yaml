@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.game-goods-figures
+  name: 'The game''s figures (content/base/goods.ron), with no source '
+  about: The game's figures (content/base/goods.ron), with no source looked up
+statement: 'The game''s figures (content/base/goods.ron), with no source looked up: to be reviewed.'
+tier: invented
+review: true

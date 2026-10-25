@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.sheet-sizes
+  name: Sold in sheets of 3.0 by 1.5 m
+  about: Sold in sheets of 3.0 by 1.5 m
+statement: 'Sold in sheets of 3.0 by 1.5 m: 6 by 2 m for metal plate, 2.5 by 1.25 m for sheet, 3 by 1.5 m for composite and
+  sandwich panel (an autoclave''s bed); chosen. A deck is laid out on whole sheets (tools/standards/frames.py).'
+tier: invented
+review: true

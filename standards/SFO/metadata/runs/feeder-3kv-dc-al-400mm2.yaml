@@ -38,19 +38,14 @@ basis:
 - of:
   - per_m
   - outside
-  tier: invented
-  review: true
-  note: Insulation from memory of medium-voltage aerospace and traction cable; least bend 8 outsides; From memory of makers' catalogues; to be sourced.
+  rule: rule.cable-insulation-from-memory
 - of:
   - rating.current
-  tier: derived
-  note: '2.5 A/mm2 in copper, radiation only (plant_kit.J_VACUUM), aluminium at sqrt of the resistivities'' ratio of it (the same heat a metre): one core alone; a pair laid together runs warmer.'
+  rule: rule.cable-rating-vacuum
 - of:
   - rating.current_air
   - rating.current_air_bundle
-  tier: invented
-  review: true
-  note: 800 A for 240 mm2 copper alone in free air at 40 deg C, others by area^0.625, aluminium as above; a bundle of up to six at 0.7; From memory of makers' catalogues; to be sourced.
+  rule: rule.cable-rating-air
 hold:
   clip: connector.run-clip-d40
   ship: 0.6

@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.buildings-as-layouts
+  name: The owner, 2026-10-17
+  about: The owner, 2026-10-17
+statement: 'The owner, 2026-10-17: buildings as layouts; one template a panel family (building_kit.py).'
+tier: derived

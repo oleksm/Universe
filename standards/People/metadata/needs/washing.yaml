@@ -12,4 +12,4 @@ lasts: 1209600
 unmet: "Sickness spreads."
 basis:
   - { of: [takes, gives], tier: sourced, source: "standards/sources/research_people_needs.json", note: "50 litres a day in all with drinking: what a household uses with a tap in the yard (WHO's 'intermediate access'; 20 with a walk to fetch it, 100 and more piped indoors; Germany uses 121)." }
-  - { of: [lasts], tier: invented, review: true, note: "A figure from memory, of the right size: no source was looked up. To be reviewed." }
+  - { of: [lasts], rule: rule.figure-from-memory }

@@ -24,10 +24,6 @@ hold: {clip: connector.run-clip-d400, ship: 0.6, plant: 3.0, by: its stands (sup
 visual: {format: freefall-model/1, path: models/cable-400v-500mm2/v1, manifest_sha256: 127e505e2c788413125dc9a219e0447f850d07ba9f70d88009e3356d36a75263, version: 1, triangles: 9226}
 basis:
 - of: [per_m]
-  tier: derived
-  review: true
-  note: Copper from its area; insulation by the voltage's usual thickness (from memory); the rating at 2.5 A/mm2, radiation only.
+  rule: rule.cable-copper-and-insulation
 - of: [support, tee, elbow, riser, pitch]
-  tier: invented
-  review: true
-  note: 'Tray posts every 3 m; a tee is a joint box; the cores'' least bend radius 15 cable diameters (from memory): a riser bends all three at it, an elbow in plan has its axis one core''s pitch further out so the inner core keeps it.'
+  rule: rule.cable-tray-posts

@@ -19,5 +19,4 @@ basis:
 - of:
   - draws
   - scales_by
-  tier: derived
-  note: 'The owner, 2026-10-17: buildings as layouts; one template a panel family (building_kit.py).'
+  rule: rule.buildings-as-layouts

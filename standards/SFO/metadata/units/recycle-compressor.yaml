@@ -103,8 +103,6 @@ basis:
   tier: derived
   note: Isentropic head 1119 kJ/kg at 80%, a motor at 96%; all the work leaves by the intercoolers and aftercooler to the tower.
 - of: [ports]
-  tier: invented
-  review: true
-  note: 'Duties by rule where the design gives none (SFO 26): power ports'' current from their power and voltage; water at the pumps'' 4 bar.'
+  rule: rule.port-duties-power-water
 - of: [life]
   rule: rule.life-plant

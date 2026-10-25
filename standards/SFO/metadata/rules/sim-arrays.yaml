@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.sim-arrays
+  name: planet-trees-pgs2 docs/sim-arrays.md (planets, 17 Oct 2026
+  about: planet-trees-pgs2 docs/sim-arrays.md (planets, 17 Oct 2026
+statement: 'planet-trees-pgs2 docs/sim-arrays.md (planets, 17 Oct 2026: checked against the code at aab9f6a, run earth_s25).'
+tier: derived
