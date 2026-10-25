@@ -2981,6 +2981,7 @@
 - { record: planet-view.delivery-surface, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "a40b6df060e11b73" }
 - { record: planet-view.delivery-water, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "623af7a4edebc19f" }
 - { record: planet-view.film, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "480e4da1d6c75b94" }
+- { record: planet-view.fine-landscape, at: "2026-10-25T01:39:20Z", status: "", summary: "first tracked", sha: "77bfaf1ddb5fe142" }
 - { record: planet-view.fromanchors, at: "2026-10-18T02:40:07Z", status: "", summary: "changed: identity, title, draws, legend, basis", sha: "51fa3b3752b1c916" }
 - { record: planet-view.fromcontours, at: "2026-10-18T02:17:46Z", status: "", summary: "changed: identity, draws, implementations, legend, basis", sha: "e3a4eb3748ceb1ba" }
 - { record: planet-view.graph-l0, at: "2026-10-17T19:23:39Z", status: "", summary: "first tracked", sha: "3cceac0a2a3f2db9" }

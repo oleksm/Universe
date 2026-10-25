@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+identity:
+  key: planet-view.fine-landscape
+  name: Fine landscape
+  about: the fine landscape (forge fine; docs/fine-landscape-format.md) - each continent's 1 km surface shaded, its rivers by discharge, divides, peaks, cirques, fans and closed lakes from the checkpoint's trail/fine record
+title: Fine landscape
+row: line rings
+file_suffix: _fine.png (+ .legend.json)
+draws:
+  words: the fine surface (CK/fine/c<k>/height_cm.npy) shaded onto the map; from trail/fine/features.jsonl rivers (width by discharge), wadis, drainage divides, peaks, cirques, alluvial fans, closed lakes and playas; the coast
+legend:
+  title: Fine landscape
+  rows:
+  - kind: head
+    label: 'Fine record: {n_fine} features of {n_kinds} kinds on {land_mkm2} M km2 of land ({per_10k} per 10,000 km2), {n_replaced} of the run''s replaced'
+  - kind: head
+    label: 'By size: {n_1_10} of 1-10 km, {n_10_100} of 10-100 km, {n_100_1000} of 100-1,000 km, {n_over_1000} over 1,000 km'
+  - key: land
+    kind: fill
+    colour: [205, 200, 180]
+    label: land, shaded by the fine surface
+  - key: sea
+    kind: fill
+    colour: [205, 220, 235]
+    label: sea
+  - key: coastline
+    kind: line
+    colour: [60, 60, 60]
+    label: coast
+  - key: mark:planet-feature.river
+    kind: line
+    colour: [30, 90, 200]
+    label: 'rivers: {river} stretches (width by discharge)'
+  - key: mark:planet-feature.wadi
+    kind: line
+    colour: [190, 140, 70]
+    label: 'wadis: {wadi}'
+  - key: mark:planet-feature.drainage-divide
+    kind: line
+    colour: [150, 30, 30]
+    label: 'drainage divides: {drainage-divide}'
+  - key: mark:planet-feature.peak
+    kind: dot
+    colour: [40, 30, 30]
+    label: 'peaks (prominence >= 300 m): {peak}'
+  - key: mark:planet-feature.cirque
+    kind: dot
+    colour: [0, 150, 170]
+    label: 'cirques: {cirque}'
+  - key: mark:planet-feature.alluvial-fan
+    kind: dot
+    colour: [220, 160, 40]
+    label: 'alluvial fans: {alluvial-fan}'
+  - key: mark:planet-feature.lake
+    kind: dot
+    colour: [20, 60, 160]
+    label: 'closed lakes: {lake}, playas: {playa-salt-pan}'
