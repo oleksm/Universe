@@ -34,6 +34,29 @@ properties:
       regime: { enum: [plates, stagnant_lid], description: "Plate tectonics or a stagnant lid" }
       radiogenic: { type: number, minimum: 0, x-unit: "1", description: "Its K, Th and U as a multiple of Earth's" }
       core_stratified: { type: boolean, description: "A stably stratified core (no thermal convection at its top)" }
+      atmosphere:
+        type: object
+        additionalProperties: false
+        required: [surface_pressure_pa]
+        description: "Its air at the surface (absent: as the sim's preset)."
+        properties:
+          surface_pressure_pa: { type: number, minimum: 0, x-unit: Pa, description: "Earth 101,325 Pa; Mars about 610 Pa; airless 0" }
+          main_gas: { type: string, description: "Its main gas by its formula (N2, CO2)." }
+      ground_ice:
+        type: object
+        additionalProperties: false
+        required: [from_latitude_deg]
+        description: "Ice in the ground (absent: none)."
+        properties:
+          from_latitude_deg: { type: number, minimum: 0, maximum: 90, x-unit: deg, description: "Poleward of this latitude, both hemispheres." }
+          depth_m: { type: number, minimum: 0, x-unit: m, description: "Its top below the surface." }
+      history:
+        type: object
+        additionalProperties: false
+        description: "Its epochs (absent: wet all along if it has water, never if not; volcanism to the present)."
+        properties:
+          wet_until_s: { type: number, minimum: 0, x-unit: s, description: "Liquid water at the surface until this long after formation (absent: all along if water, never if not)." }
+          volcanism_until_s: { type: number, minimum: 0, x-unit: s, description: "Volcanism until this long after formation (absent: to the present)." }
       note: { type: string }
   start: { type: number, x-unit: s, description: "Before present." }
   end: { type: number, x-unit: s, description: "Before present (0: today)." }

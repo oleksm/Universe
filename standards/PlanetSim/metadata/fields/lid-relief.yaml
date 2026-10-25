@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.lid-relief
+  name: Lid relief
+  about: 'The relief a stagnant lid''s landforms add over its crust''s isostatic surface (dichotomy, volcanic rise and shields,
+    troughs, graben, scarps): planet-field.height is that surface plus this.'
+unit: m
+per: sample
+producer:
+  where: planet-forge crates/forge-core/src/models/lid_landforms.rs
+  key: planet-field.lid-relief
+amount: snapshot
+derived_from:
+- planet-field.crust-thickness
+levels:
+- planet-level.10000-km
+- planet-level.1000-km
+- planet-level.100-km
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: request R5 (docs/registry-requests/planet-types-2026-10-24.md) and the module'

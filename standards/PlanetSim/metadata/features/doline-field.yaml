@@ -18,6 +18,8 @@ built: false
 levels:
 - planet-level.10-km
 - planet-level.1-km
+applies_to:
+- liquid_water_now
 status: draft
 basis:
 - of:

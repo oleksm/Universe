@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.outflow-channel
+  name: Outflow channel
+  about: A broad channel scoured by megafloods from chaos or troughs, with streamlined islands and grooved floors.
+register: feature
+family: fluvial
+applies_to:
+- wet_epoch
+geometry: polygon
+trigger: catastrophic release of ground water
+built: false
+status: draft
+size:
+  across_m:
+  - 10000.0
+  - 400000.0
+  length_m:
+  - 100000.0
+  - 3000000.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: 'planet-forge docs/research/airless-mars-landforms-2026-10-24.md s3: Kasei ~2,400-3,000 km x 400 km; peak 1e7-1e9
+      m3/s; streamlined islands 3-4:1'
+ladder:
+- planet-level.10000-km
+- planet-level.10-km
+description: A broad channel scoured by megafloods from chaos or troughs, with streamlined islands and grooved floors.
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

@@ -16,6 +16,8 @@ built: false
 levels:
 - planet-level.10-km
 - planet-level.1-km
+applies_to:
+- any_air
 status: draft
 basis:
 - of:

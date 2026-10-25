@@ -151,6 +151,8 @@ implementations:
 - where: planet-forge crates/forge-core/src/models/surface/discharge.rs
   state: current
   note: planet-forge port (surface line, merged in forge main 370ab83)
+applies_to:
+- liquid_water_now
 status: draft
 basis:
 - of:

@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.dune-field
+  name: Dune field
+  about: A patch of dunes (barchans, transverse) on a crater floor or in a basin, to an erg around a pole.
+register: feature
+family: aeolian
+applies_to:
+- any_air
+geometry: polygon
+trigger: wind-blown sand in a basin or crater
+built: false
+status: draft
+size:
+  across_m:
+  - 1000.0
+  - 1000000.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: 'planet-forge docs/research/airless-mars-landforms-2026-10-24.md s3: barchans 0.1-1 km, ~550 Mars fields ~70,000
+      km2; north polar erg ~1e6 km2'
+    review: true
+ladder:
+- planet-level.10000-km
+- planet-level.1-km
+description: A patch of dunes (barchans, transverse) on a crater floor or in a basin, to an erg around a pole.
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

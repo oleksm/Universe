@@ -130,6 +130,8 @@ implementations:
 - where: 'planet-sim-landform stages/water_optics.py: wet (68-72), iops (75-82), refract_cos (85-88), fresnel (91-97), reflectance
     (100-119), constituents (122-152), k_diffuse (155-158)'
   state: reference
+applies_to:
+- oceans
 status: draft
 basis:
 - of:

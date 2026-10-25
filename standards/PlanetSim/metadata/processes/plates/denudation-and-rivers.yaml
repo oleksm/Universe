@@ -265,6 +265,9 @@ backends:
 implementations:
 - where: planet-sim-landform stages/plates.py:run (lines 1307-1372, 1403-1405), drain (1490-1511), fill_depressions (1477-1487)
   state: reference
+applies_to:
+- plates
+- liquid_water_now
 status: draft
 basis:
 - of:

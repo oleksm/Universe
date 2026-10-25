@@ -1,0 +1,235 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.lid-landforms
+  name: Stagnant-lid landforms
+  about: 'The landforms of a stagnant-lid planet with long-lived volcanism (Mars as the reference): the dichotomy, volcanic
+    provinces (rise, shields, calderas), ridged plains, a trough system, graben and lobate scarps, drawn once from the run''s
+    seed and grown with the planet''s clock; and each sample''s surface age.'
+area: surface
+clock:
+  when: every step of a stagnant-lid run, after the crust
+applies_to:
+- stagnant_lid
+reads:
+- name: planet-field.crust-thickness
+  field: planet-field.crust-thickness
+  unit: m
+  meaning: the crust's thin side places the dichotomy's lowland
+- name: planet-field.height
+  field: planet-field.height
+  unit: m
+  meaning: the lid's isostatic surface the crust model wrote
+writes:
+- name: planet-field.height
+  field: planet-field.height
+  unit: m
+  meaning: the isostatic surface plus the lid relief
+- name: planet-field.lid-relief
+  field: planet-field.lid-relief
+  unit: m
+  meaning: the relief the landforms add
+- name: planet-field.surface-age
+  field: planet-field.surface-age
+  unit: s
+  meaning: when the ground was last made or resurfaced
+params:
+- name: DICHOTOMY_DEG
+  value: 66.0
+  unit: deg
+  meaning: 'angular radius of the lowland cap (Mars'' northern plains ~1/3 of the surface: a 66 deg cap is 30 %)'
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: DICHOTOMY_DEG'
+- name: DICHOTOMY_M
+  value: 3000.0
+  unit: m
+  meaning: the lowland's depth below the highlands, beside the crust's own isostatic asymmetry (Mars' dichotomy ~5 km in all,
+    Smith et al. 1999, MOLA)
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: DICHOTOMY_M'
+- name: TANH_KM
+  value: 400000.0
+  unit: m
+  meaning: width of the dichotomy's edge slope (Mars' boundary scarp)
+  said_as: &id001
+    unit: km
+    factor: 1000.0
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: TANH_KM'
+- name: RISE_M
+  value: 10000.0
+  unit: m
+  meaning: the Tharsis-type rise's height (Tharsis ~10 km; Phillips et al. 2001)
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: RISE_M'
+- name: RISE_KM
+  value: 2000000.0
+  unit: m
+  meaning: the rise's radius (~5,000 km across)
+  said_as: *id001
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: RISE_KM'
+- name: RISE_FROM_GA
+  value: 1.262304e+17
+  unit: s
+  meaning: the rise grows from (Ga before present)
+  said_as: &id002
+    unit: Ga before present
+    factor: 3.15576e+16
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: RISE_FROM_GA'
+- name: RISE_TO_GA
+  value: 9.46728e+16
+  unit: s
+  meaning: the rise grows to (Ga before present)
+  said_as: *id002
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: RISE_TO_GA'
+- name: SHIELD_M
+  value: 22000.0
+  unit: m
+  meaning: the giant shield's height at Mars' gravity, scaled g_Mars/g (Olympus Mons ~22 km, Plescia 2004)
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: SHIELD_M'
+- name: SHIELD_ROW
+  value: 3.0
+  unit: '1'
+  meaning: shields in a row across the rise's summit (the Tharsis Montes)
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: SHIELD_ROW'
+- name: SHIELD_ROW_M
+  value: 16000.0
+  unit: m
+  meaning: each row shield's height at Mars' gravity (Tharsis Montes 14-18 km)
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: SHIELD_ROW_M'
+- name: SHIELD_SPACING_KM
+  value: 700000.0
+  unit: m
+  meaning: the row shields' spacing (Tharsis Montes ~700 km apart)
+  said_as: *id001
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: SHIELD_SPACING_KM'
+- name: SHIELD_SLOPE
+  value: 0.075
+  unit: '1'
+  meaning: shield flank slope, rise over run (~4-5 deg)
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: SHIELD_SLOPE'
+- name: SHIELD_FROM_GA
+  value: 1.1676312e+17
+  unit: s
+  meaning: shields grow from (Ga before present) to the volcanism's end
+  said_as: *id002
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: SHIELD_FROM_GA'
+- name: CALDERA_SHARE
+  value: 0.12
+  unit: '1'
+  meaning: 'caldera width as a share of its shield''s (research: 10-25 %)'
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: CALDERA_SHARE'
+- name: SHIELD_YOUNG_MYR
+  value: 4733640000000000.0
+  unit: s
+  meaning: a shield's surface is as old as its flows of this long before its volcanism's end (Olympus Mons' ~100-200 Myr)
+  said_as:
+    unit: Myr
+    factor: 31557600000000.0
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: SHIELD_YOUNG_MYR'
+- name: CALDERA_M
+  value: 3000.0
+  unit: m
+  meaning: caldera depth (Olympus Mons ~3 km)
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: CALDERA_M'
+- name: SMALL_SHIELDS
+  value: 16.0
+  unit: '1'
+  meaning: small shields (2-6 km) on the provinces and plains
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: SMALL_SHIELDS'
+- name: ELYSIUM_M
+  value: 12000.0
+  unit: m
+  meaning: the lowland (Elysium-type) province's height
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: ELYSIUM_M'
+- name: PLAINS_FROM_GA
+  value: 1.1360736e+17
+  unit: s
+  meaning: ridged plains resurfaced from (Hesperian; Werner & Tanaka 2011)
+  said_as: *id002
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: PLAINS_FROM_GA'
+- name: PLAINS_TO_GA
+  value: 9.46728e+16
+  unit: s
+  meaning: ridged plains resurfaced to
+  said_as: *id002
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: PLAINS_TO_GA'
+- name: WRINKLE_KM
+  value: 40000.0
+  unit: m
+  meaning: wrinkle-ridge spacing (30-50 km, Watters 1991)
+  said_as: *id001
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: WRINKLE_KM'
+- name: TROUGH_KM
+  value: 4000000.0
+  unit: m
+  meaning: the Valles-type trough system's length (~4,000 km)
+  said_as: *id001
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: TROUGH_KM'
+- name: TROUGH_W_KM
+  value: 200000.0
+  unit: m
+  meaning: its width (to 200 km)
+  said_as: *id001
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: TROUGH_W_KM'
+- name: TROUGH_M
+  value: 8000.0
+  unit: m
+  meaning: its depth (7-11 km)
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: TROUGH_M'
+- name: TROUGH_GA
+  value: 1.104516e+17
+  unit: s
+  meaning: the troughs open (Ga before present)
+  said_as: *id002
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: TROUGH_GA'
+- name: RADIAL_GRABEN
+  value: 48.0
+  unit: '1'
+  meaning: graben radial to the rise
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: RADIAL_GRABEN'
+- name: GRABEN_MAX_KM
+  value: 4000000.0
+  unit: m
+  meaning: the longest radial graben (Tharsis-radial swarms to ~4,000 km)
+  said_as: *id001
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: GRABEN_MAX_KM'
+- name: CONCENTRIC_GRABEN
+  value: 8.0
+  unit: '1'
+  meaning: graben arcs around the rise
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: CONCENTRIC_GRABEN'
+- name: LOBATE_SCARPS
+  value: 40.0
+  unit: '1'
+  meaning: lobate scarps on the highlands from global contraction
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: LOBATE_SCARPS'
+- name: SCARP_FROM_GA
+  value: 1.104516e+17
+  unit: s
+  meaning: lobate scarps from (Ga before present)
+  said_as: *id002
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: SCARP_FROM_GA'
+depends_on:
+- planet-process.stagnant-lid-crust
+random_draws:
+- 'placement and orientation of the rise, shields, troughs, graben and scarps: drawn once at init from the run''s seed'
+implementations:
+- where: planet-forge crates/forge-core/src/models/lid_landforms.rs
+  state: current
+status: draft
+basis:
+- of:
+  - identity
+  - area
+  - clock
+  - reads
+  - writes
+  - applies_to
+  - depends_on
+  - random_draws
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: the module and its doc (request R5)'
+- of:
+  - params
+  tier: sourced
+  review: true
+  source: planet-forge docs/research/airless-mars-landforms-2026-10-24.md s3 (MOLA Smith et al. 1999; Phillips et al. 2001;
+    Plescia 2004; Watters 1991; Werner & Tanaka 2011)
+  note: Mars figures as the module's constants; counts (SMALL_SHIELDS, RADIAL_GRABEN, CONCENTRIC_GRABEN, LOBATE_SCARPS), ELYSIUM_M,
+    TANH_KM, DICHOTOMY_DEG and the windows are modelling choices (invented, review)

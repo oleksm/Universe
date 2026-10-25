@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.pit-crater-chain
+  name: Pit crater chain
+  about: Rimless pits in a row along a graben or over a dike, from collapse into voids
+register: feature
+family: volcanic
+geometry: polyline
+trigger: collapse along a graben or dike
+built: false
+status: draft
+size:
+  across_m:
+  - 500.0
+  - 5000.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: 'planet-forge docs/research/airless-mars-landforms-2026-10-24.md s3: pit chains 0.5-5 km along graben'
+ladder:
+- planet-level.100-km
+- planet-level.1-km
+description: Rimless pits in a row along a graben or over a dike, from collapse into voids; no ejecta.
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

@@ -214,6 +214,8 @@ backends:
 implementations:
 - where: 'planet-sim-landform stages/biosphere.py: _interp (79-83), run (86-170)'
   state: reference
+applies_to:
+- liquid_water_now
 status: draft
 basis:
 - of:

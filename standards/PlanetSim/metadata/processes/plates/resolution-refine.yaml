@@ -196,6 +196,8 @@ backends:
 implementations:
 - where: planet-sim-landform stages/plates.py:progressive (716-724), _refine (727-744), run (929-937, 793-797)
   state: reference
+applies_to:
+- plates
 status: draft
 basis:
 - of:

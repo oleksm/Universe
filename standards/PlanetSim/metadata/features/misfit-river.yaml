@@ -17,6 +17,8 @@ landmark: planet-landmark.misfit-river
 levels:
 - planet-level.10000-km
 - planet-level.1000-km
+applies_to:
+- wet_epoch
 status: draft
 basis:
 - of:

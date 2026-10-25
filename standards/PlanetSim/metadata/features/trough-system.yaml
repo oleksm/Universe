@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.trough-system
+  name: Trough system
+  about: A system of linked troughs radial to a volcanic rise, kilometres deep, with landslides, layered mounds and chaos.
+register: feature
+family: tectonic
+applies_to:
+- stagnant_lid
+geometry: polygon
+trigger: rifting and collapse on a rise's flank
+built: false
+status: draft
+size:
+  across_m:
+  - 50000.0
+  - 600000.0
+  length_m:
+  - 1000000.0
+  - 4000000.0
+  relief_m:
+  - 2000.0
+  - 11000.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: 'planet-forge docs/research/airless-mars-landforms-2026-10-24.md s3: Valles Marineris ~4,000 km x up to 200 (600)
+      km x 7-11 km'
+ladder:
+- planet-level.10000-km
+- planet-level.100-km
+description: A system of linked troughs radial to a volcanic rise, kilometres deep, with landslides, layered mounds and chaos.
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

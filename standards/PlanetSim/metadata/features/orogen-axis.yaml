@@ -21,6 +21,8 @@ built: true
 levels:
 - planet-level.10000-km
 - planet-level.1000-km
+applies_to:
+- plates
 status: draft
 basis:
 - of:

@@ -55,3 +55,16 @@ legend:
     kind: dot
     colour: [20, 60, 160]
     label: 'closed lakes: {lake}, playas: {playa-salt-pan}'
+shown: true
+implementations:
+- where: planet-forge crates/viewer/src/layers/fine.rs
+  state: current
+  note: the viewer layer
+status: draft
+styles:
+- key: coast
+  colour: [0, 0, 0]
+- key: base-land
+  colour: [200, 196, 186]
+- key: base-sea
+  colour: [205, 220, 232]

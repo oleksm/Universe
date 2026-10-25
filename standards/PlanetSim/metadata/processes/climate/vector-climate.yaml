@@ -37,3 +37,5 @@ writes:
 depends_on:
 - planet-process.coupled-climate
 - planet-process.ice-sheets
+applies_to:
+- liquid_water_now

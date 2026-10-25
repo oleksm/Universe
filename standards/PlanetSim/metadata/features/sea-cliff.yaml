@@ -18,6 +18,8 @@ wave: 2
 built: false
 levels:
 - planet-level.100-km
+applies_to:
+- oceans
 status: draft
 basis:
 - of:

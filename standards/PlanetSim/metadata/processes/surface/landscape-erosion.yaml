@@ -178,6 +178,8 @@ implementations:
     _blur (238-252), sea_level (262-264), marine_k (267-271), diffuse_steps (274-275), diffuse (278-296), slump (299-317),
     _diffuse (320-321), orographic_rain (324-337), run (340-394), gpu_available (397-406), run_best (409-415)'
   state: reference
+applies_to:
+- liquid_water_now
 status: draft
 basis:
 - of:

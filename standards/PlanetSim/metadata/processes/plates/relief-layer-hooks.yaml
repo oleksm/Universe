@@ -52,6 +52,8 @@ implementations:
 - where: planet-sim-landform stages/plates.py:run (833-836, 985-997, 1040, 1107, 1189, 1351, 1407-1409, 947-955), World.keep
     (342-347), _rift (456-458)
   state: reference
+applies_to:
+- plates
 status: draft
 basis:
 - of:

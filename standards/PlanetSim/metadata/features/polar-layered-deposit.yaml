@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.polar-layered-deposit
+  name: Polar layered deposit
+  about: A dome of ice and dust in thin layers at a pole, cut by spiral troughs and chasmata.
+register: feature
+family: glacial
+applies_to:
+- any_air
+- ground_ice
+geometry: polygon
+trigger: seasonal ice and dust layering at a pole
+built: false
+status: draft
+size:
+  across_m:
+  - 800000.0
+  - 1200000.0
+  relief_m:
+  - 1000.0
+  - 3000.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: 'planet-forge docs/research/airless-mars-landforms-2026-10-24.md s3: ~1,000 km x ~3 km (north 1.1-1.3e6 km3, south
+      1.6e6 km3)'
+ladder:
+- planet-level.10000-km
+- planet-level.1000-km
+description: A dome of ice and dust in thin layers at a pole, cut by spiral troughs and chasmata.
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

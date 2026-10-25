@@ -62,6 +62,8 @@ backends:
 implementations:
 - where: 'planet-sim-landform stages/orographic.py: lt_precip (29-46), downscale (49-56)'
   state: reference
+applies_to:
+- liquid_water_now
 status: draft
 basis:
 - of:

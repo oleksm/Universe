@@ -15,6 +15,9 @@ wave: 2
 built: false
 levels:
 - planet-level.100-km
+applies_to:
+- any_air
+- wet_epoch
 status: draft
 basis:
 - of:

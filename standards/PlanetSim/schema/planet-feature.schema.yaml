@@ -63,6 +63,11 @@ properties:
     - biotic
     description: Its family (the relief features map colours by family, on the Relief
       model page).
+  applies_to:
+    type: array
+    items:
+      $ref: ../../dictionary.schema.yaml#/definitions/planet_condition
+    description: "The planet environments it applies to: every condition listed must hold (dictionary planet_condition). Absent: everywhere."
   geometry:
     type: string
     description: polyline, polygon, point, ring, network, or a set of them.
@@ -190,19 +195,19 @@ properties:
           type: number
           exclusiveMinimum: 0
           x-unit: m
-        description: Earth minimum and maximum, metres; minimum must not exceed maximum.
+        description: Minimum and maximum, metres, on Earth or, for a kind Earth lacks, on the bodies its basis names; minimum must not exceed maximum.
       length_m:
         type: array
         minItems: 2
         maxItems: 2
         items: *id001
-        description: Earth minimum and maximum, metres; minimum must not exceed maximum.
+        description: Minimum and maximum, metres, on Earth or, for a kind Earth lacks, on the bodies its basis names; minimum must not exceed maximum.
       relief_m:
         type: array
         minItems: 2
         maxItems: 2
         items: *id001
-        description: Earth minimum and maximum, metres; minimum must not exceed maximum.
+        description: Minimum and maximum, metres, on Earth or, for a kind Earth lacks, on the bodies its basis names; minimum must not exceed maximum.
       basis:
         $ref: ../../common.schema.yaml#/definitions/basis
   ladder:

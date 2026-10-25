@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.valley
+  name: Valley
+  about: One valley of a network, made by a stagnant-lid run's fine stage
+register: feature
+family: fluvial
+applies_to:
+- wet_epoch
+geometry: polyline
+trigger: incision by running water
+built: false
+status: draft
+size:
+  across_m:
+  - 1000.0
+  - 5000.0
+  relief_m:
+  - 50.0
+  - 300.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: 'Hynek et al. 2010: Mars valleys 1-5 km wide, 50-300 m deep'
+    review: true
+ladder:
+- planet-level.100-km
+- planet-level.1-km
+description: 'One valley of a network, made by a stagnant-lid run''s fine stage: a channel cut by water, dry today on a Mars-like
+  planet.'
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

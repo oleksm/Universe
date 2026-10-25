@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.surface-age
+  name: Surface age
+  about: 'When each sample''s ground was last made or resurfaced, on the planet''s clock: the crust''s age, else its plains''
+    or shields'' (the fine stage''s crater density).'
+unit: s
+per: sample
+time_base: planet-age
+producer:
+  where: planet-forge crates/forge-core/src/models/lid_landforms.rs
+  key: planet-field.surface-age
+amount: snapshot
+levels:
+- planet-level.10000-km
+- planet-level.1000-km
+- planet-level.100-km
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  - time_base
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: request R5 and the module'

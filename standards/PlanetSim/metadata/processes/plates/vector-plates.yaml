@@ -205,3 +205,5 @@ params:
 reads:
 - name: mantle temperature
   field: planet-field.mantle-temperature
+applies_to:
+- plates

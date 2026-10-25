@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.boulder-field
+  name: Boulder field
+  about: Blocks strewn around a young crater, the largest ~0.25 D^(2/3) m
+register: feature
+family: impact
+geometry: polygon
+trigger: a young crater's ejecta blocks
+built: false
+status: draft
+size:
+  across_m:
+  - 10.0
+  - 5000.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: Basilevsky et al. 2013 (boulders > 2 m survive ~50-150 Myr); Golombek & Rapp 1997 (Mars rock abundance); largest
+      block ~0.25 D^(2/3) m
+    review: true
+ladder:
+- planet-level.100-km
+- planet-level.10-m
+description: Blocks strewn around a young crater, the largest ~0.25 D^(2/3) m; broken down over ~50-150 Myr (airless); rock
+  abundance falls ~age^-0.5.
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

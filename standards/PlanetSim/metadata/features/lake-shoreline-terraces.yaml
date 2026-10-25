@@ -17,6 +17,8 @@ wave: 2
 built: false
 levels:
 - planet-level.100-km
+applies_to:
+- liquid_water_now
 status: draft
 basis:
 - of:

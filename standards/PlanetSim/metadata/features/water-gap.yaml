@@ -17,6 +17,8 @@ landmark: planet-landmark.water-gap
 levels:
 - planet-level.10000-km
 - planet-level.1000-km
+applies_to:
+- liquid_water_now
 status: draft
 basis:
 - of:

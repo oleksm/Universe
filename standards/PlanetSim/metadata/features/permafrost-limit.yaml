@@ -20,6 +20,8 @@ trigger_params:
   note: Verified naming/definition convention; not sufficient alone for recognition. Requires full trigger evidence
     and declared area/relief/ground-temperature convention. SI duration uses a Julian year of31557600s.
 built: false
+applies_to:
+- any_air
 status: draft
 description: The edge of ground frozen all year.
 size:

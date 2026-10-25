@@ -208,6 +208,8 @@ implementations:
     (110-131), sea_surface (134-147), regimes (150-224), _dewpoint (227-230), total (233-235), equator_basin (238-260), enso_index
     (263-286), enso_pattern (289-302), run (305-376)'
   state: reference
+applies_to:
+- any_air
 status: draft
 basis:
 - of:

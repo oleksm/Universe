@@ -1,0 +1,350 @@
+# yaml-language-server: $schema=../../schema/planet-run-profile.schema.yaml
+identity:
+  key: planet-run-profile.mars-like
+  name: Mars-like
+  about: 'A Mars-like planet: stagnant lid, thin CO2 air, ground ice poleward of 45 deg, a wet first ~0.9 Gyr, volcanism to
+    the present.'
+start: 1.420092e+17
+end: 0.0
+times_said:
+  unit: Myr
+  factor: 31557600000000.0
+checkpoints:
+- at: 1.262304e+17
+  label: 4000 Myr ago
+- at: 7.8894e+16
+  label: 2500 Myr ago
+- at: 4.73364e+16
+  label: 1500 Myr ago
+- at: 3.15576e+16
+  label: 1000 Myr ago
+- at: 2.209032e+16
+  label: 700 Myr ago
+- at: 1.57788e+16
+  label: 500 Myr ago
+- at: 1.104516e+16
+  label: 350 Myr ago
+- at: 7889400000000000.0
+  label: 250 Myr ago
+- at: 5680368000000000.0
+  label: 180 Myr ago
+- at: 4102488000000000.0
+  label: 130 Myr ago
+- at: 2997972000000000.0
+  label: 95 Myr ago
+- at: 2209032000000000.0
+  label: 70 Myr ago
+- at: 1577880000000000.0
+  label: 50 Myr ago
+- at: 1104516000000000.0
+  label: 35 Myr ago
+- at: 788940000000000.0
+  label: 25 Myr ago
+- at: 568036800000000.0
+  label: 18 Myr ago
+- at: 378691200000000.0
+  label: 12 Myr ago
+- at: 252460800000000.0
+  label: 8 Myr ago
+- at: 157788000000000.0
+  label: 5 Myr ago
+- at: 0.0
+  label: 0.0 Myr ago
+settings:
+- name: AGO_MYR
+  values:
+  - 4000.0
+  - 2500.0
+  - 1500.0
+  - 1000.0
+  - 700.0
+  - 500.0
+  - 350.0
+  - 250.0
+  - 180.0
+  - 130.0
+  - 95.0
+  - 70.0
+  - 50.0
+  - 35.0
+  - 25.0
+  - 18.0
+  - 12.0
+  - 8.0
+  - 5.0
+  - 0.0
+  unit: '1'
+  meaning: checkpoint ages, Myr ago, ~0.6x each; no two closer than the 5 Myr plate step
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:41
+- name: checkpoint tolerance
+  value: 2.5
+  unit: '1'
+  meaning: a checkpoint is saved when ago <= AGO_MYR[k] + 2.5 Myr (history hook every 5 Myr)
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:309
+- name: history_myr
+  value: 5.0
+  unit: '1'
+  meaning: plates.run calls Formation.on_history every 5 Myr (also the step_myr default 5.0)
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:370
+- name: START_GYR
+  value: 0.5
+  unit: '1'
+  meaning: plates start 0.5 Gyr after formation (Gyr)
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/plates.py:206
+- name: planet spec
+  setting: presets.earth()
+  meaning: radius, water mass fraction, star age (run end) from the Earth preset
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:85
+- name: GROW_STAGES
+  setting: '["the story: big rivers", "middle sub-basins", "fine network", "divides", "valley sections", "the look"]'
+  meaning: 'part 2 tree-growth stages (run_growth; not called by main any more: unverified/retired)'
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:42
+- name: MAP_W
+  value: 1024.0
+  unit: '1'
+  meaning: lat-lon direction grid width for the formation's maps (px)
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:43
+- name: SAMPLES
+  setting: '20000'
+  meaning: sample count n (env SAMPLES)
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:550
+- name: SEED
+  setting: '1'
+  meaning: world seed (env SEED)
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:550
+- name: run name
+  setting: earth_s1
+  meaning: argv[1] default; output out/planet/<name>/
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:549
+- name: PLANET_SIM_SRC
+  setting: /home/alexm/git/planet-sim/src
+  meaning: which planet-sim source tree is imported (the landform line's worktree is set here)
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:35
+- name: SIM_WATER_SCALE
+  setting: '0.975'
+  meaning: ocean water volume factor on the preset's water mass / 1025 kg/m3
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:87
+- name: SIM_SNAPSHOT_LOAD
+  setting: none
+  meaning: pickle of the whole run state to resume from (plates.py:901-916); planet_form then skips checkpoints older than
+    the resume time
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:92; ~/git/planet-sim-landform/src/planet_sim/stages/plates.py:901
+- name: SIM_SNAPSHOT_SAVE
+  setting: none
+  meaning: write the run state when the coupled era starts (needs SIM_COUPLED=1, at SIM_COUPLE_FROM_MYR before the end)
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/plates.py:901,918-926
+- name: RESUME_FROM_RUN
+  setting: none
+  meaning: on resume, copy earlier checkpoints' files and records from this run dir
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:299
+- name: SIM_COUPLE_FROM_MYR
+  setting: '700'
+  meaning: coupled surface (weathering, rivers, climate) from this many Myr ago
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/plates.py:139
+- name: SIM_COUPLED
+  setting: '0'
+  meaning: coupled surface step on (stages/coupled.py); also the default of SIM_RECENT
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/plates.py:136; ~/git/planet-trees-pgs2/tools/planet_form.py:561
+- name: SIM_COUPLE_EVERY
+  setting: '1'
+  meaning: plate steps between coupled steps
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/coupled.py:22
+- name: SIM_OFF
+  setting: ''
+  meaning: 'ablation: comma list of processes off (flow, cap, roots, crustwear, climate, shelf)'
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/plates.py:143
+- name: SIM_LINES
+  setting: '1'
+  meaning: line store / relief layer on
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/plates.py:836
+- name: SIM_RECENT
+  setting: = SIM_COUPLED
+  meaning: re-run the last 2.6 Myr under glacial cycles (stages/recent.py), r_* fields appended to the last _ctx.npz
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:561-574
+- name: CONTEXT
+  setting: '0'
+  meaning: write <ck>_ctx.npz (age, thick, floor, grain, sunk_at, plate axes, events, hotspots, h_* hydro, river_events, c_*
+    causes, v_* volc, hotspot_xyz); at the end run landform_graph.py on the last 3 checkpoints and context_view.py --page-only
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:201,616
+- name: FAST
+  setting: '0'
+  meaning: 'experiments: skip vector/anchor sheets and stop after the history (no finalize, no film)'
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:218,554
+- name: SHEETS_INLINE
+  setting: '0'
+  meaning: 'build planet_vectors / planet_anchors sheets inside the run (default: beside it by context_watch.py)'
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:237
+- name: VECTORS
+  setting: '0'
+  meaning: bring back the globe-from-vectors and planet-as-vectors products for old runs
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:240,578
+- name: TARGETS_GATE
+  setting: '1'
+  meaning: stop the run (exit 4) after two consecutive failing target checkpoints from 50 Ma; 0 = measure only
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:278
+- name: STOP_ON_FAIL
+  setting: '0'
+  meaning: stop (exit 3) when each of the last three checkpoints has >= 2 failing scorecard measures and k >= 5
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:285-288
+- name: STOP_AT_MYR
+  setting: none
+  meaning: end (exit 0) after the checkpoint at or below this age, e.g. 700
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:312-314
+- name: LAKE_FILL
+  setting: none
+  meaning: fill water bodies not connected to the ocean and smaller than this share of samples to 1 m above sea
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:101-119
+- name: FRACTAL_EDGES
+  setting: '1'
+  meaning: replace plates._bumps with a 4-octave field (n*4^k centres, width/2^k, amplitude 0.5^k, /3, reach 3w) plus a fixed
+    seeded rift fabric (12000 Fibonacci points, octaves k=1..3 of 40*4^k bumps, width 0.25/2^k)
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:318-368
+- name: INVERT_AT_END
+  setting: '0'
+  meaning: 'historical experiment: invert z after the last checkpoint (record 22, planet_carve); else planet_finalize.finalize'
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:580-614
+- name: LANDSCAPE
+  setting: '0'
+  meaning: regional generation after the coarse stage; refused together with INVERT_AT_END=1
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:545
+- name: LANDSCAPE_SEED / LANDSCAPE_SPACING
+  setting: seed / 40 m
+  meaning: named in the docstring only; not read in planet_form.py (unverified where)
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:19
+- name: STORY_KM2, SP1, HEAD1, J1, SPACING, HEAD, JITTER
+  setting: '{"STORY_KM2": "4000", "SP1": "10*px", "HEAD1": "STORY_KM2/8", "J1": "60", "SPACING": "2*px", "HEAD": "STORY_KM2/50",
+    "JITTER": "8"}'
+  meaning: part 2 tree-growth knobs (run_growth, px 2000 m, window 400 km); run_growth is not called from main (retired, unverified)
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:411-455
+- name: PEAK_GAIN
+  setting: '1.1'
+  meaning: summits = z + inner relief x (1.03..1.69) x PEAK_GAIN (views, peaks pins)
+  source: ~/git/planet-trees-pgs2/tools/formations.py:57
+- name: TILE_WORKERS
+  setting: '10'
+  meaning: slideshow server tile worker processes
+  source: ~/git/planet-trees-pgs2/tools/planet_slideshow.py:268
+- name: PORT
+  value: 8081.0
+  unit: '1'
+  meaning: slideshow server port
+  source: ~/git/planet-trees-pgs2/tools/planet_slideshow.py:17
+- name: relief timed generators
+  value: 25.0
+  unit: '1'
+  meaning: relief.at_checkpoint every 25 Myr in the history hook
+  source: ~/git/planet-sim-landform/src/planet_sim/stages/relief.py:53
+- name: STOP_ON_FAIL
+  env: STOP_ON_FAIL=1
+  setting: last three checkpoints each >= 2 scorecard 'fail' and k >= 5 -> exit 3
+  meaning: a stop or check of the run tool (not an owner target)
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:285-288
+- name: STOP_AT_MYR
+  env: STOP_AT_MYR
+  setting: after the checkpoint with AGO_MYR <= value -> exit 0
+  meaning: a stop or check of the run tool (not an owner target)
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:312-314
+- name: LANDSCAPE vs INVERT_AT_END
+  env: LANDSCAPE, INVERT_AT_END
+  setting: both 1 -> ValueError
+  meaning: a stop or check of the run tool (not an owner target)
+  source: ~/git/planet-trees-pgs2/tools/planet_form.py:545-546
+gates:
+- planet-gate.owner-targets
+targets: []
+status: draft
+implementations:
+- where: planet-trees-pgs2 tools/planet_form.py
+  state: reference
+planet:
+  radius: 3389500.0
+  mass: 6.417e+23
+  water_mass_fraction: 1.0e-05
+  star_age: 1.44218232e+17
+  note: 'Mars-like: Mars'' radius, mass and core; 610 Pa of CO2; ground ice poleward of 45 deg; wet until ~3.7 Ga ago'
+  core_mass_fraction: 0.24
+  core_radius: 1830000.0
+  core_light: 0.08
+  surface_temp: 210.0
+  regime: stagnant_lid
+  radiogenic: 1.0
+  core_stratified: false
+  atmosphere:
+    surface_pressure_pa: 610.0
+    main_gas: CO2
+  ground_ice:
+    from_latitude_deg: 45.0
+    depth_m: 1.0
+  history:
+    wet_until_s: 2.84e+16
+basis:
+- of:
+  - planet.radius
+  tier: sourced
+  source: 'Archinal et al. 2018 (IAU WGCCRE 2015): Mars'' mean radius 3,389.5 km'
+- of:
+  - planet.mass
+  tier: sourced
+  source: 'NASA Mars Fact Sheet (Williams, NSSDCA): 6.4171e23 kg'
+- of:
+  - planet.star_age
+  tier: sourced
+  source: 'the Sun''s age, 4.57 Gyr (Bouvier & Wadhwa 2010: 4.568 Gyr), as the standard profile'
+- of:
+  - planet.water_mass_fraction
+  tier: invented
+  review: true
+  note: 'approx.: a few tens of metres of global water layer today (planet-sim R3)'
+- of:
+  - planet.core_mass_fraction
+  - planet.core_radius
+  tier: sourced
+  source: 'Stahler et al. 2021, Science 373: InSight core radius 1,830 +/- 40 km; core mass fraction ~0.24'
+- of:
+  - planet.core_light
+  tier: invented
+  review: true
+  note: kept at the Earth's 0.08; Stahler et al. 2021 put Mars' light elements higher (S, O, C, H), not set here
+- of:
+  - planet.surface_temp
+  tier: sourced
+  source: 'NASA Mars Fact Sheet: mean surface temperature about 210 K'
+- of:
+  - planet.regime
+  tier: sourced
+  source: Mars is a stagnant-lid (one-plate) planet (e.g. Breuer & Moore 2015, Treatise on Geophysics 10.08)
+- of:
+  - planet.radiogenic
+  - planet.core_stratified
+  tier: invented
+  review: true
+  note: 'Earth''s K, Th, U kept (Mars Odyssey GRS: K/Th ~5,300, near Earth''s, Taylor et al. 2006); core not stratified'
+- of:
+  - planet.atmosphere
+  tier: sourced
+  source: 'NASA Mars Fact Sheet: surface pressure ~6.36 mb (varies 4.0-8.7); 610 Pa at the datum (Smith & Zuber 1998); CO2
+    95 %'
+- of:
+  - planet.ground_ice
+  tier: sourced
+  review: true
+  source: 'Boynton et al. 2002 (Mars Odyssey GRS): ice-rich ground within ~1 m poleward of ~60 deg; Dundas et al. 2018 / Morgan
+    et al. 2021 (SWIM): shallow ice to ~40-45 deg'
+  note: 45 deg and 1 m as the request (approx.)
+- of:
+  - planet.history
+  tier: sourced
+  review: true
+  source: 'Hartmann & Neukum 2001; Werner & Tanaka 2011: the Noachian ends ~3.7 Ga ago (wet_until 0.9 Gyr after formation
+    at 4.57 Ga); Hauber et al. 2011: volcanism to the last few Myr (so no volcanism_until)'
+- of:
+  - settings
+  - checkpoints
+  - start
+  - end
+  - times_said
+  - gates
+  - implementations
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: the standard run''s tool settings, taken for this planet (docs/registry-requests/planet-types-2026-10-24.md
+    R3)'

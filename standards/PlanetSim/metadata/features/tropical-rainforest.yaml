@@ -45,6 +45,8 @@ trigger_params:
     Read by planet-forge c20fe5f relief-landscape; consulted does not mean calibrated, sole effective threshold
     or full trigger implementation.
 built: false
+applies_to:
+- liquid_water_now
 status: draft
 description: Tall evergreen forest, hot and wet all year.
 size:

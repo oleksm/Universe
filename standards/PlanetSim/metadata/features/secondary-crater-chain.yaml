@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.secondary-crater-chain
+  name: Secondary crater chain
+  about: Chains and clusters of small craters made by a primary's ejecta, radial to it
+register: feature
+family: impact
+geometry: polyline
+trigger: ejecta blocks of a large primary
+built: false
+status: draft
+size:
+  across_m:
+  - 10.0
+  - 5000.0
+  length_m:
+  - 1000.0
+  - 1600000.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: 'McEwen et al. 2005 (Zunil: ~1e7 secondaries 10-100 m to ~1,600 km); largest ~4-5 % of the primary'
+    review: true
+ladder:
+- planet-level.100-km
+- planet-level.10-m
+description: Chains and clusters of small craters made by a primary's ejecta, radial to it; they dominate the crater count
+  below ~1 km on Mars.
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

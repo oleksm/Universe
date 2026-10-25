@@ -112,6 +112,8 @@ backends:
 implementations:
 - where: 'planet-sim-landform stages/optics.py: air (45-72)'
   state: reference
+applies_to:
+- any_air
 status: draft
 basis:
 - of:

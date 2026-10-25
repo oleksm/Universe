@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.peak-ring-basin
+  name: Peak-ring basin
+  about: A basin with an inner ring of peaks about half its rim's diameter in place of a central peak
+register: landmark
+family: impact
+geometry: rings
+trigger: large impact above the peak-ring onset
+built: false
+status: draft
+size:
+  across_m:
+  - 50000.0
+  - 500000.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: 'planet-forge docs/research/airless-mars-landforms-2026-10-24.md s3: onset ~206 km (Moon), 126 km (Mercury, Baker
+      et al. 2011), ~50-60 km (Mars, approx.)'
+    review: true
+ladder:
+- planet-level.10000-km
+- planet-level.100-km
+description: A basin with an inner ring of peaks about half its rim's diameter in place of a central peak; onset scales ~1/g.
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

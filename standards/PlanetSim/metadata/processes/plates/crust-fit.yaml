@@ -31,6 +31,8 @@ backends:
 implementations:
 - where: planet-sim-landform stages/plates.py:_scale_continents (543-551), _set_continents (554-580)
   state: reference
+applies_to:
+- plates
 status: draft
 basis:
 - of:

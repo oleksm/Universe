@@ -54,6 +54,8 @@ implementations:
 - where: planet-forge crates/forge-core/src/models/tectonic/rift_scarps.rs
   state: current
   note: planet-forge port (relief-tectonic line, merged in forge main fc8f460)
+applies_to:
+- plates
 status: draft
 basis:
 - of:

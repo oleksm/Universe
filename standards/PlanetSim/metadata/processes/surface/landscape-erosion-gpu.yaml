@@ -38,6 +38,8 @@ implementations:
 - where: 'planet-sim-landform stages/erosion_gpu.py: _k (207-211), _launch (214-215), _blocks (218-225), _until_still (228-240),
     run (303-404)'
   state: reference
+applies_to:
+- liquid_water_now
 status: draft
 basis:
 - of:

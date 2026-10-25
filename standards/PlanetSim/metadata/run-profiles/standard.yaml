@@ -273,6 +273,9 @@ planet:
   regime: plates
   radiogenic: 1.0
   core_stratified: false
+  atmosphere:
+    surface_pressure_pa: 101325.0
+    main_gas: N2
 basis:
 - of:
   - planet.radius
@@ -306,3 +309,8 @@ basis:
   tier: derived
   note: 'planets, 17 Oct 2026: planet-sim-landform presets.earth() (core mass fraction 0.325 and radius 3,480 km as PREM gives
     them; core light elements 8 % by mass; surface 288 K; Earth''s K, Th, U)'
+- of:
+  - planet.atmosphere
+  tier: sourced
+  source: 'ISO 2533 standard atmosphere: 101,325 Pa at sea level; N2 78 % of dry air by volume'
+  note: 'no ground_ice and no history: the Earth is wet all along with volcanism to today (planet-sim, 24 Oct 2026)'

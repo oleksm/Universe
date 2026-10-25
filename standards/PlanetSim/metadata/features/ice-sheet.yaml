@@ -34,6 +34,8 @@ trigger_params:
     Read by planet-forge c20fe5f relief-landscape; consulted does not mean calibrated, sole effective threshold
     or full trigger implementation.
 built: false
+applies_to:
+- any_air
 status: draft
 description: A continental dome of ice over 50,000 km2 (Antarctica).
 size:

@@ -176,6 +176,8 @@ implementations:
 - where: 'planet-sim-landform stages/climate.py: insolation (85-96), _laplacian (99-122), hadley_edge (125-135), winds (138-147),
     rising (150-157), qsat (160-163), month_air (166-210), co2_forcing (213-219), run (222-320), summary (323-338)'
   state: reference
+applies_to:
+- liquid_water_now
 status: draft
 basis:
 - of:

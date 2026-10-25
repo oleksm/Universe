@@ -142,6 +142,8 @@ implementations:
 - where: 'planet-sim-landform stages/landcover.py: srgb_to_linear (64-66), linear_to_srgb (69-71), thornthwaite_pet (74-89),
     miami_npp (92-96), smooth (99-101), cover (123-249), colour (258-281)'
   state: reference
+applies_to:
+- liquid_water_now
 status: draft
 basis:
 - of:

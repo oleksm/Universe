@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.lobate-debris-apron
+  name: Lobate debris apron
+  about: A lobe of ice-cored debris spreading 10-30 km from a scarp or mesa, a buried glacier.
+register: feature
+family: glacial
+applies_to:
+- any_air
+- ground_ice
+geometry: polygon
+trigger: ice-cored debris creeping off a scarp
+built: false
+status: draft
+size:
+  across_m:
+  - 10000.0
+  - 30000.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: 'planet-forge docs/research/airless-mars-landforms-2026-10-24.md s3: lobate debris aprons 10-30 km, ice-cored'
+ladder:
+- planet-level.1000-km
+- planet-level.10-km
+description: A lobe of ice-cored debris spreading 10-30 km from a scarp or mesa, a buried glacier.
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

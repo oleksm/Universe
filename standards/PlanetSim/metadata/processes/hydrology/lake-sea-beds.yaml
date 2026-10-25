@@ -163,6 +163,8 @@ backends:
 implementations:
 - where: 'planet-sim-landform stages/bed.py: deltas (49-60), shape (63-160)'
   state: reference
+applies_to:
+- liquid_water_now
 status: draft
 basis:
 - of:

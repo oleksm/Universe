@@ -38,6 +38,8 @@ depends_on:
 - planet-process.crust-read
 backends:
 - cpu
+applies_to:
+- oceans
 status: draft
 basis:
 - of:

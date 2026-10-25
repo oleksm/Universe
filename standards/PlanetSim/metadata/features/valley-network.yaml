@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.valley-network
+  name: Valley network
+  about: Branching valleys 1-5 km wide cut by rain or snowmelt runoff in a wet epoch
+register: feature
+family: fluvial
+applies_to:
+- wet_epoch
+geometry: network
+trigger: runoff in a wet epoch
+built: false
+status: draft
+size:
+  across_m:
+  - 20000.0
+  - 2000000.0
+  length_m:
+  - 10000.0
+  - 2000000.0
+  relief_m:
+  - 50.0
+  - 300.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: 'Hynek et al. 2010: > 40,000 valleys, 1-5 km wide, 50-300 m deep, to > 2,000 km; drainage density ~0.1-0.3 km-1'
+    review: true
+ladder:
+- planet-level.10000-km
+- planet-level.100-km
+description: Branching valleys 1-5 km wide cut by rain or snowmelt runoff in a wet epoch; drainage density ~0.1-0.3 per km.
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

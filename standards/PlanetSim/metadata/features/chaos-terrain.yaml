@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.chaos-terrain
+  name: Chaos terrain
+  about: Jumbled blocks and mesas (1-10 km) in a collapsed depression, the source of outflow channels.
+register: feature
+family: fluvial
+applies_to:
+- wet_epoch
+geometry: polygon
+trigger: collapse as ground water or ice is released
+built: false
+status: draft
+size:
+  across_m:
+  - 100000.0
+  - 1000000.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: 'planet-forge docs/research/airless-mars-landforms-2026-10-24.md s3: chaos 100-1,000 km of 1-10 km mesas'
+ladder:
+- planet-level.10000-km
+- planet-level.100-km
+description: Jumbled blocks and mesas (1-10 km) in a collapsed depression, the source of outflow channels.
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

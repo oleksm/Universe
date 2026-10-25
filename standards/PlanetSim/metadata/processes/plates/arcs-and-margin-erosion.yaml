@@ -138,6 +138,8 @@ backends:
 implementations:
 - where: planet-sim-landform stages/plates.py:run (lines 1125-1170), volc() (lines 879-887)
   state: reference
+applies_to:
+- plates
 status: draft
 basis:
 - of:

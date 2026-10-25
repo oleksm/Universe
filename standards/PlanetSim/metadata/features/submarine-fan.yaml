@@ -21,6 +21,8 @@ trigger_params:
   note: Proposed recognition setting, not a physical simulation retune; unused until a detector explicitly consumes
     this feature-local value. Values chosen for review unless the meaning identifies a definitional convention.
 built: false
+applies_to:
+- oceans
 status: draft
 description: A fan of sediment spread on the deep floor from a canyon (Bengal fan).
 size:

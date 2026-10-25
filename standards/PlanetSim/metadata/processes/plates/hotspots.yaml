@@ -111,6 +111,8 @@ backends:
 implementations:
 - where: planet-sim-landform stages/plates.py:run (lines 1171-1190)
   state: reference
+applies_to:
+- plates
 status: draft
 basis:
 - of:

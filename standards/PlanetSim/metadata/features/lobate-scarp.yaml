@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.lobate-scarp
+  name: Lobate scarp
+  about: A lobe-fronted cliff over a thrust fault from the whole lid shrinking as it cools
+register: feature
+family: tectonic
+applies_to:
+- stagnant_lid
+geometry: polyline
+trigger: global contraction of a cooling lid
+built: false
+status: draft
+size:
+  across_m:
+  - 100.0
+  - 20000.0
+  length_m:
+  - 1000.0
+  - 1000000.0
+  relief_m:
+  - 10.0
+  - 3000.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: 'planet-forge docs/research/airless-mars-landforms-2026-10-24.md s3: Enterprise Rupes ~1,000 km, 3 km relief (Mercury);
+      Moon > 3,000 small scarps (< 10 km, tens of m); Amenthes Rupes ~400 km'
+    review: true
+ladder:
+- planet-level.1000-km
+- planet-level.100-m
+description: A lobe-fronted cliff over a thrust fault from the whole lid shrinking as it cools; it cuts across craters.
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

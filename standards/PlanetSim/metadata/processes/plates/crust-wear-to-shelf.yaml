@@ -203,6 +203,9 @@ backends:
 implementations:
 - where: planet-sim-landform stages/plates.py:run (lines 1285-1305), _wear (631-645), _exhume (704-713), _to_shelf (593-628), _bury (696-701)
   state: reference
+applies_to:
+- plates
+- oceans
 status: draft
 basis:
 - of:

@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.impact-crater-central-pit
+  name: Impact crater, central pit
+  about: A complex crater with a pit in place of (or atop) its central peak, from volatiles in the target
+register: landmark
+family: impact
+applies_to:
+- ground_ice
+geometry: rings
+trigger: complex impact into icy ground
+built: false
+status: draft
+size:
+  across_m:
+  - 5000.0
+  - 60000.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: planet-forge docs/research/airless-mars-landforms-2026-10-24.md s3 (Mars central pits in 5-60 km craters)
+ladder:
+- planet-level.1000-km
+- planet-level.10-km
+description: A complex crater with a pit in place of (or atop) its central peak, from volatiles in the target; Mars craters
+  5-60 km.
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

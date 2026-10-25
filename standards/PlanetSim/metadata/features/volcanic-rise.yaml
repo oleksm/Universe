@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.volcanic-rise
+  name: Volcanic rise
+  about: A continent-sized bulge of volcanic load carrying giant shields, with graben radial to it and around it.
+register: province
+family: volcanic
+applies_to:
+- stagnant_lid
+geometry: polygon
+trigger: long-lived volcanism over a fixed source
+built: false
+status: draft
+size:
+  across_m:
+  - 2000000.0
+  - 5000000.0
+  relief_m:
+  - 3000.0
+  - 10000.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: 'planet-forge docs/research/airless-mars-landforms-2026-10-24.md s3: the Tharsis rise ~5,000 km, ~10 km (Phillips
+      et al. 2001)'
+    review: true
+ladder:
+- planet-level.10000-km
+- planet-level.10000-km
+description: A continent-sized bulge of volcanic load carrying giant shields, with graben radial to it and around it.
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

@@ -41,6 +41,9 @@ trigger_params:
     Read by planet-forge c20fe5f relief-landscape; consulted does not mean calibrated, sole effective threshold
     or full trigger implementation.
 built: false
+applies_to:
+- oceans
+- plates
 status: draft
 description: Ridges a few hundred metres high parallel to the ridge that made them; the commonest landform
   on Earth.

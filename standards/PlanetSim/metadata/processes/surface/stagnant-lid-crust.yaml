@@ -7,7 +7,7 @@ identity:
     plates.py nor coupled.py imports lid.py (directly or through another module); it is used by tools/lid_world.py.'
 area: surface
 clock:
-  when: not part of the coupled planet run (offline tools / bakes)
+  when: every step of a stagnant-lid run
 params:
 - name: T0_M
   value: 40000.0
@@ -100,6 +100,8 @@ implementations:
 - where: 'planet-sim-landform stages/lid.py: thinning (36-37), basin_ages (41-47), basins (50-64), unit (67-69), thickness
     (72-75), thin (78-85), isostatic (88-90)'
   state: reference
+applies_to:
+- stagnant_lid
 status: draft
 basis:
 - of:

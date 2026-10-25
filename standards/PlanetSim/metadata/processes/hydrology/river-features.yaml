@@ -62,6 +62,8 @@ backends:
 - cpu
 cautions:
 - 'the Python sim''s transmission losses (planet-process.river-discharge) use a channel width of 2.7 Q^0.5; the feature kind uses 7.2 Q^0.5 (Moody and Troutman 2002, at mean discharge): the two should agree once the losses are ported'
+applies_to:
+- liquid_water_now
 status: draft
 basis:
 - of:

@@ -81,6 +81,9 @@ backends:
 implementations:
 - where: planet-sim-landform stages/plates.py:sea_level (1537-1557), run (896)
   state: reference
+applies_to:
+- plates
+- oceans
 status: draft
 basis:
 - of:

@@ -113,6 +113,8 @@ implementations:
 - where: 'planet-sim-landform stages/snow.py: sheltering (33-47), year (50-75), cover (78-83), holding_potential (86-96),
     place (99-113)'
   state: reference
+applies_to:
+- any_air
 status: draft
 basis:
 - of:

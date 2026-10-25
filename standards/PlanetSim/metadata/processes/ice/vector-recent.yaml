@@ -57,3 +57,5 @@ depends_on:
 - planet-process.ice-sheets
 - planet-process.glacial-erosion
 - planet-process.recent-shorelines
+applies_to:
+- any_air

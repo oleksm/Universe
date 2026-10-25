@@ -26,6 +26,7 @@ properties:
       step: { type: number, exclusiveMinimum: 0, x-unit: s, description: "Its step, when it has its own." }
       step_said: { $ref: "../../common.schema.yaml#/definitions/said_as" }
       note: { type: string }
+  applies_to: { type: array, items: { $ref: "../../dictionary.schema.yaml#/definitions/planet_condition" }, description: "The planet environments it applies to: every condition listed must hold (dictionary planet_condition). Absent: everywhere." }
   reads: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/sim_io" } }
   writes: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/sim_io" } }
   events_emitted:

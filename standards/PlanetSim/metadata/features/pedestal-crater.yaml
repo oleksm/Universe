@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.pedestal-crater
+  name: Pedestal crater
+  about: A crater perched on a plateau of its armoured ejecta, left standing when wind stripped the icy mantle around it.
+register: landmark
+family: impact
+applies_to:
+- any_air
+- ground_ice
+geometry: rings
+trigger: deflation of an icy mantle around a crater
+built: false
+status: draft
+size:
+  across_m:
+  - 700.0
+  - 22000.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: 'Kadish et al. 2009 (JGR 114): Mars pedestal craters, mostly under ~20 km'
+    review: true
+ladder:
+- planet-level.1000-km
+- planet-level.1-km
+description: A crater perched on a plateau of its armoured ejecta, left standing when wind stripped the icy mantle around
+  it.
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

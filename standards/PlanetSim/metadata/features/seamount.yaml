@@ -21,6 +21,8 @@ trigger_params:
   note: Verified naming/definition convention; not sufficient alone for recognition. Requires full trigger evidence
     and declared area/relief/ground-temperature convention. SI duration uses a Julian year of31557600s.
 built: false
+applies_to:
+- oceans
 status: draft
 description: An undersea volcano rising 1 km or more from the floor.
 size:

@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../schema/planet-feature.schema.yaml
+identity:
+  key: planet-feature.crustal-dichotomy
+  name: Crustal dichotomy
+  about: The boundary between high cratered highlands and low smooth lowlands, a scarp or slope circling the planet.
+register: realm
+family: tectonic
+applies_to:
+- stagnant_lid
+geometry: polyline
+trigger: a hemispheric crust asymmetry
+built: false
+status: draft
+size:
+  across_m:
+  - 100000.0
+  - 800000.0
+  length_m:
+  - 5000000.0
+  - 15000000.0
+  relief_m:
+  - 1000.0
+  - 5000.0
+  basis:
+  - of:
+    - size
+    tier: sourced
+    source: 'Smith et al. 1999 (MOLA): the southern highlands ~5 km above the northern lowlands; boundary scarp'
+    review: true
+ladder:
+- planet-level.10000-km
+- planet-level.100-km
+description: The boundary between high cratered highlands and low smooth lowlands, a scarp or slope circling the planet.
+basis:
+- of:
+  - identity
+  - register
+  - family
+  - geometry
+  - trigger
+  - applies_to
+  - description
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: docs/registry-requests/planet-types-2026-10-24.md R4/R5 from planet-forge docs/research/airless-mars-landforms-2026-10-24.md'
+- of:
+  - ladder
+  tier: derived
+  note: from size.across_m by the eight-band ladder (planet_catalogue.derived_ladder)

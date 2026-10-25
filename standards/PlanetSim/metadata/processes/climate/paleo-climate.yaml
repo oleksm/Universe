@@ -42,6 +42,8 @@ implementations:
 - where: 'planet-sim-landform stages/paleo.py: luminosity (39-41), _weathering (44-48), _mean_t (51-53), methane_forcing (56-63),
     thermostat (66-84), productivity (87-106)'
   state: reference
+applies_to:
+- liquid_water_now
 status: draft
 basis:
 - of:

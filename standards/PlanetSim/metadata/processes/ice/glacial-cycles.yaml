@@ -180,6 +180,8 @@ implementations:
 - where: planet-forge crates/forge-core/src/models/ice/cycles.rs
   state: current
   note: planet-forge port (climate line, merged in forge main 736031c)
+applies_to:
+- any_air
 status: draft
 basis:
 - of:

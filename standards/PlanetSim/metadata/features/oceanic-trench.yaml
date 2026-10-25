@@ -32,6 +32,9 @@ trigger_params:
     Read by planet-forge c20fe5f relief-landscape; consulted does not mean calibrated, sole effective threshold
     or full trigger implementation.
 built: false
+applies_to:
+- oceans
+- plates
 status: draft
 description: The deep narrow trough where an ocean plate dives, to 11 km deep.
 size:

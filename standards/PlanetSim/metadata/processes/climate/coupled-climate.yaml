@@ -537,6 +537,8 @@ implementations:
 - where: planet-forge crates/vfields/src/climate.rs
   state: current
   note: the climate as Fields at any point (vector planet step 5), branch v-climate
+applies_to:
+- liquid_water_now
 status: draft
 basis:
 - of:

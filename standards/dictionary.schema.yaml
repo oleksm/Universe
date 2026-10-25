@@ -87,6 +87,20 @@ definitions:
       coast: "Waves on a low coast, sorting sand by its weight."
       salt flat: "A dry, high, closed basin beside volcanoes, where water only leaves by drying."
       ocean floor: "Old, deep ocean floor far from land."
+  planet_condition:
+    description: "A condition on a planet's environment (its run profile's planet): what a process runs on or a ground kind forms on. A list of them must all hold."
+    enum: [air, thin_air, airless, any_air, oceans, liquid_water_now, wet_epoch, ground_ice, plates, stagnant_lid]
+    x-values:
+      air: "Surface pressure at least 10 kPa."
+      thin_air: "Surface pressure from 1 Pa to under 10 kPa (Mars: 610 Pa)."
+      airless: "Surface pressure under 1 Pa (the Moon, Mercury)."
+      any_air: "Surface pressure at least 1 Pa."
+      oceans: "Water mass fraction above 1e-5 and liquid water at the surface."
+      liquid_water_now: "Liquid water at the surface today."
+      wet_epoch: "The planet had a wet epoch (history.wet_until_s, or water all along)."
+      ground_ice: "Ground ice (planet.ground_ice)."
+      plates: "Plate tectonics (planet.regime plates)."
+      stagnant_lid: "One rigid shell (planet.regime stagnant_lid)."
   survey_method:
     description: "A way of looking for ore without digging."
     enum: [geochemistry, radiometrics, electromagnetics, induced polarisation, magnetics, gravity, sonar]
