@@ -7,7 +7,7 @@ at: body.treistun.treistun-e
 # Owner-requested move to the installed Shasta plain, 2026-10-21; measured against
 # forge_e104-land-c4-600-shasta-4ad675930cb1. Site evidence:
 # docs/diagnostics/hoar-port-shasta-20261021.yaml (port relief 2.26 m at source vertices).
-position: { latitude: -13.3355066, longitude: 0.9432780 }
+position: { latitude: -13.2735067, longitude: 0.9328005 }
 structure: structure.spaceport
 population: 60000
 # Supplied from Port Eikir: 98.5 t a day of what its people take; 8.2 days each way at a torchship's cruise (1 m/s2) over the two orbits' typical separation; 13 hauler(s) on the run, so a delivery every 1.4 days (tools/standards/census.py).

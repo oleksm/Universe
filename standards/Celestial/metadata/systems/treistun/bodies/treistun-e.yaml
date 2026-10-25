@@ -49,10 +49,10 @@ survey:
 # The existing TRE3 survey remains installed until e104 has its own survey.
 ground:
   format: "planet-land-pyramid/1"
-  path: "worlds/TRE3/ground/forge_e124s43-v8f"
-  manifest_sha256: "1f0b33fee78629ba40a41f9fb3a89145502555c319867b92fc79343c6cb26d4a"
+  path: "worlds/TRE3/ground/forge_e124s43-mesh-v8f-104b-b388e04b7e30"
+  manifest_sha256: "5b2ce021f37481fdf6f96f5def42c9038a2eeab859f90d9a3d5fbce149dee86c"
   radius: 6371000.0
-  note: "forge_e124s43-v8f-install: planet LOD anchor and live land pyramid: 78 files, 25662752869 bytes; comparison pyramids excluded; survey TRE3 retained."
+  note: "forge_e124s43-mesh-v8f-104b: planet LOD anchor and live land pyramid: 78 files, 25662752869 bytes; comparison pyramids excluded; survey TRE3 retained."
 identity:
   key: body.treistun.treistun-e
   name: Hoar E
