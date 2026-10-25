@@ -26,7 +26,7 @@ blocks:
 - {need: sensors, kinds: [sensors], required: true, note: A camera or an altimeter suffices}
 - {need: comm, kinds: [comm], required: true}
 - {need: life support, kinds: [life_support], required: true, note: 'Uncrewed is not a mode today'}
-- {need: lift, kinds: [lift], required: false, note: Hover and landing on a world; an engine pushing up serves too}
+- {need: lift, kinds: [lift], also_by: lift_engine, required: false, note: Hover and landing on a world; an engine pushing up serves too}
 - {need: thermal, kinds: [thermal], required: false, note: 'Heat is not simulated yet; physically needed'}
 - {need: avionics, kinds: [avionics], required: false, note: Autopilots and the hyperdrive interlock}
 - {need: command, kinds: [command], required: false, note: 'No command station is required to fly'}

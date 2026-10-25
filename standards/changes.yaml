@@ -3446,7 +3446,7 @@
 - { record: ship-decision.silhouette, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "befb2bfd33cd756b" }
 - { record: ship-rule.attachment-qualification, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "71041605bf07ecf0" }
 - { record: ship-rule.authority, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "c4aadcbc0baeb1d9" }
-- { record: ship-rule.base-blocks, at: "2026-10-24T23:49:26Z", status: "", summary: "first tracked", sha: "0c91b63ae68d796a" }
+- { record: ship-rule.base-blocks, at: "2026-10-25T00:47:20Z", status: "", summary: "changed: blocks", sha: "5cf086757530401a" }
 - { record: ship-rule.capability-boundaries, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "a55e750bf4d003cd" }
 - { record: ship-rule.claim-boundaries, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "27dcc0468a11733a" }
 - { record: ship-rule.construction-and-detail, at: "2026-10-23T16:51:43Z", status: "", summary: "changed: sources, statement, verification", sha: "ab3902c08e3f4978" }

@@ -20,6 +20,11 @@ class ShipCli(unittest.TestCase):
         self.assertEqual(len(kinds), len(set(kinds)))
 
 
+    def test_an_engine_slot_stands_in_by_its_role(self):
+        lift = next(b for b in ship.blocks() if b["need"] == "lift")
+        self.assertTrue(ship.offered([{"name": "l", "kind": "engine", "role": "lift"}], lift))
+        self.assertFalse(ship.offered([{"name": "m", "kind": "engine", "role": "main"}], lift))
+
 
 class ServiceCommands(unittest.TestCase):
     def test_modules_for_a_mount_use_the_games_fit_rule(self):

@@ -141,8 +141,10 @@ properties:
           enum:
           - main_engine
           - cold_gas_engine
-          description: 'An engine-kind slot whose fitted engine stands in: main_engine (not pressure-fed) for the
-            drive, cold_gas_engine (pressure-fed) for the thrusters.'
+          - lift_engine
+          description: 'An engine-kind slot that stands in, by its role: main_engine (role main; not pressure-fed) for
+            the drive, cold_gas_engine (role attitude; pressure-fed) for the thrusters, lift_engine (role lift) for
+            lift.'
         required:
           type: boolean
           description: 'true: every ship must carry it to be commissioned (fly); false: optional.'

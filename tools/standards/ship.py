@@ -51,6 +51,31 @@ def blocks():
     return yaml.safe_load(open(RULE))["blocks"]
 
 
+ROLE = {"main_engine": "main", "cold_gas_engine": "attitude", "lift_engine": "lift"}
+
+
+def stands_in(slot, b, q=None):
+    """An engine slot standing in for block b: by its role; a slot with no role (old hulls) by the fitted engine's cycle."""
+    if slot["kind"] != "engine" or not b.get("also_by"):
+        return False
+    if slot.get("role"):
+        return slot["role"] == ROLE[b["also_by"]]
+    if b["also_by"] == "lift_engine":
+        return False
+    if q is None:
+        return True
+    cold = (q.get("function") or {}).get("cycle") == "cold_gas"
+    return cold == (b["also_by"] == "cold_gas_engine")
+
+
+def offered(slots, b):
+    return any(s["kind"] in b["kinds"] or stands_in(s, b) for s in slots)
+
+
+def filled(pairs, b):
+    return any(s["kind"] in b["kinds"] or stands_in(s, b, q) for s, q in pairs)
+
+
 def need_of(kind):
     for b in blocks():
         if kind in b["kinds"]:
@@ -66,7 +91,7 @@ def requirements(opt):
         print("REQUIRED (a ship must carry each to fly)" if req else "OPTIONAL")
         for b in bl:
             if b["required"] == req:
-                alt = {"main_engine": " or an engine pushing along the nose", "cold_gas_engine": " or a cold-gas engine"}.get(b.get("also_by"), "")
+                alt = {"main_engine": " or an engine slot of role main", "cold_gas_engine": " or an engine slot of role attitude (cold gas)", "lift_engine": " or an engine slot of role lift"}.get(b.get("also_by"), "")
                 print(f"  {b['need']:16} socket kind {', '.join(b['kinds'])}{alt}" + (f"  - {b['note']}" if b.get("note") else ""))
 
 
@@ -111,26 +136,18 @@ def validate(key, opt):
     model = os.path.abspath(opt["--model"]) if opt.get("--model") else None
     faults, unchecked = qualify(h, mounts, eq, model=model)
     slots = {s["name"]: s for s in h.get("slots") or []}
-    kinds = {s["kind"] for s in slots.values()}
-    fitted = {}
+    pairs = []
     for f in h.get("fit") or []:
         q, s = eq.get(f["item"]), slots.get(f["slot"])
         if q and s and (q.get("function") or {}).get("kind") != "inert":
-            fitted.setdefault(s["kind"], []).append(q)
+            pairs.append((s, q))
     for b in blocks():
         if not b["required"]:
             continue
-        offered = any(k in kinds for k in b["kinds"]) or (b.get("also_by") and "engine" in kinds)
-        if not offered:
+        if not offered(slots.values(), b):
             faults.append(("R1", f"no socket for {b['need']} ({', '.join(b['kinds'])})"))
-        if h.get("fit"):
-            have = any(k in fitted for k in b["kinds"])
-            if not have and b.get("also_by"):
-                fed = b["also_by"] == "cold_gas_engine"
-                have = any((q.get("function") or {}).get("cycle") == "cold_gas" if fed else (q.get("function") or {}).get("cycle") != "cold_gas"
-                           for q in fitted.get("engine", []))
-            if not have:
-                faults.append(("R2", f"{b['need']} not fitted: the ship cannot be commissioned"))
+        if h.get("fit") and not filled(pairs, b):
+            faults.append(("R2", f"{b['need']} not fitted: the ship cannot be commissioned"))
     if opt.get("--quiet"):
         return faults
     if opt.get("--json"):
@@ -222,7 +239,7 @@ def modules(opt):
                      "function": f.get("kind"), "thrust_N": f.get("thrust"), "fits": q.get("fits"),
                      "revision": q["identity"].get("revision"), "model": _model(q)["installed"]})
     if opt.get("--json"):
-        return print(json.dumps(rows, indent=1))
+        return print(json.dumps({"fit": rows, "rejected": [{"key": k, "why": bad} for k, bad in rejected]} if opt.get("--all") else rows, indent=1))
     print(f"{'product':44}{'mass kg':>9}{'power W':>9}  {'function':16}{'mount':26}{'rev':10}model")
     for r in rows:
         print(f"{r['key']:44}{r['mass_kg'] or 0:>9g}{r['power_W'] or 0:>9g}  {str(r['function']):16}{str(r['fits']):26}{str(r['revision']):10}{'yes' if r['model'] else 'NO'}")
@@ -268,20 +285,13 @@ def shipyard(key, opt):
                 faults.append(("Y1", f"{f['slot']} <- {f['item']}: {L['of']} {why} [{L['from']}]"))
             elif ok is None:
                 notes.append(f"{f['slot']}: {L['of']} unchecked ({why})")
-    kinds = {}
+    pairs = []
     for f in fit:
         q, s = eq.get(f["item"]), slots.get(f["slot"])
         if q and s and (q.get("function") or {}).get("kind") != "inert":
-            kinds.setdefault(s["kind"], []).append((s, q))
+            pairs.append((s, q))
     for b in blocks():
-        if not b["required"]:
-            continue
-        have = any(k in kinds for k in b["kinds"])
-        if not have and b.get("also_by"):
-            role = "attitude" if b["also_by"] == "cold_gas_engine" else "main"
-            have = any(s.get("role") == role or (s.get("role") is None and ((q.get("function") or {}).get("cycle") == "cold_gas") == (role == "attitude"))
-                       for s, q in kinds.get("engine", []))
-        if not have:
+        if b["required"] and not filled(pairs, b):
             faults.append(("Y2", f"{b['need']} not fitted"))
     vals = slot_spec.ship_values(h, slots, fit, eq, hf)
     for L, v, ok, why in slot_spec.judge_ship(h, vals):
@@ -363,13 +373,12 @@ def classify(key, opt):
         h.update(json.load(open(opt["--candidate"])))
     slots = h.get("slots") or []
     faults = validate(key, dict(opt, **{"--quiet": True}))
-    kinds = {s["kind"] for s in slots}
-    fitted = {next((s["kind"] for s in slots if s["name"] == f["slot"]), None) for f in h.get("fit") or []}
+    by = {s["name"]: s for s in slots}
+    pairs = [(by[f["slot"]], eq[f["item"]]) for f in h.get("fit") or [] if f["slot"] in by and f["item"] in eq]
     out = {"hull": key, "role_class": h["identity"].get("class"), "revision": h["identity"].get("revision"),
            "socket_size_classes": sorted({s["size"] for s in slots}), "mounts": sorted({s.get("mount") for s in slots if s.get("mount")}),
            "blocks": [{"need": b["need"], "required": b["required"],
-                       "offered": any(k in kinds for k in b["kinds"]) or bool(b.get("also_by") and "engine" in kinds),
-                       "filled": any(k in fitted for k in b["kinds"])} for b in blocks()],
+                       "offered": offered(slots, b), "filled": filled(pairs, b)} for b in blocks()],
            "faults": [{"criterion": c, "message": m} for c, m in faults]}
     req = [b for b in out["blocks"] if b["required"]]
     out["deliverable"] = ("hull and sockets ready" if all(b["offered"] for b in req) and not faults and not h.get("fit")
