@@ -174,19 +174,19 @@ properties:
           type: string
   cases:
     type: array
-    description: 'Conformance cases: a hull record as fitted and the values the rule gives for it. Every implementation
+    description: 'Conformance cases: a ship record (a hull and its fit) and the values the rule gives for it. Every implementation
       (the game, tools/standards) must reproduce each within its tolerance; a test on each side reads these.'
     items:
       type: object
       additionalProperties: false
       required:
-      - hull
+      - ship
       - expect
       properties:
-        hull:
+        ship:
           type: string
           x-ref:
-          - hull
+          - ship
         note:
           type: string
         expect:

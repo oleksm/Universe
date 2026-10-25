@@ -1,0 +1,32 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Ship
+x-kind: [ship]
+description: "standards/SFO/metadata/ships/<name>.yaml: one ship - a hull and what is fitted in its slots. A hull is only a hull (its slots are specs); a ship is a hull with a fit, judged by ship-check.shipyard-fit from its fitted products."
+type: object
+additionalProperties: false
+required: [identity, hull, fit]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      description: { type: string }
+  hull: { type: string, x-ref: [hull], description: "The hull it is built on, by key: its slots are the specs this fit is judged against." }
+  fit:
+    description: "What is fitted in the hull's slots, one product a slot."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [slot, item]
+      properties:
+        slot: { type: string, description: "The hull's slot, by its name." }
+        item: { type: string, x-ref: [equipment], description: "The product fitted there (SFO 16), by its key." }
+        pose: { type: string, enum: [rest], description: "Draw this fitted instance at its motion package's default-scene rest pose, motion held (as a hull fit's pose)." }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: draft, owner: registry, on_conflict: propose, because: "A fit as proposed, unless its record says otherwise.", ask: docs/registry-ssot-request.md }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

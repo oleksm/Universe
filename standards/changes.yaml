@@ -1043,7 +1043,7 @@
 - { record: ground-vocabulary.pattern, at: "2026-10-17T15:44:28Z", status: "", summary: "changed", sha: "45bab9119969759f" }
 - { record: ground-vocabulary.rock, at: "2026-10-10T22:11:43Z", status: "", summary: "first tracked", sha: "7d3835cbcfa04d13" }
 - { record: hull.drover, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "43e4088fcb8c1351" }
-- { record: hull.explorer-study, at: "2026-10-25T02:49:34Z", status: draft, summary: "changed: spec", sha: "7883823f3e313723" }
+- { record: hull.explorer-study, at: "2026-10-25T03:00:18Z", status: draft, summary: "changed: fit", sha: "8a61fa52d6c8efbb" }
 - { record: hull.hauler, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "bb65478e558da977" }
 - { record: hull.interceptor, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "51cc059564d57a1f" }
 - { record: hull.mc-07, at: "2026-10-11T02:11:58Z", status: draft, summary: "changed: revision", sha: "30f561cfaeeb31c5" }
@@ -3461,7 +3461,7 @@
 - { record: ship-rule.implementation-phases, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "74ea8c62778537d5" }
 - { record: ship-rule.lifecycle, at: "2026-10-22T03:59:24Z", status: "", summary: "changed", sha: "9f680c876218cb0b" }
 - { record: ship-rule.local-regeneration, at: "2026-10-23T17:47:48Z", status: "", summary: "changed: sources, verification", sha: "458eaa848c318ced" }
-- { record: ship-rule.mass-properties, at: "2026-10-25T02:56:54Z", status: "", summary: "first tracked", sha: "b7cea8be5f0b9be5" }
+- { record: ship-rule.mass-properties, at: "2026-10-25T03:00:18Z", status: "", summary: "changed: cases", sha: "7b6f24e0e5f29c78" }
 - { record: ship-rule.materials-and-surfaces, at: "2026-10-22T04:04:05Z", status: "", summary: "changed", sha: "edd0de5cf4aa68ee" }
 - { record: ship-rule.module-reuse, at: "2026-10-24T22:57:47Z", status: "", summary: "changed: sources, statement, verification", sha: "79719b3cd031eac3" }
 - { record: ship-rule.pilot-scope, at: "2026-10-21T03:29:09Z", status: "", summary: "first tracked", sha: "cafd22baad8b7614" }
@@ -3482,6 +3482,7 @@
 - { record: ship-stage.references, at: "2026-10-21T05:03:40Z", status: "", summary: "changed: exit, outputs, checks, rules", sha: "891a706fbc53537f" }
 - { record: ship-stage.release, at: "2026-10-23T01:10:10Z", status: "", summary: "changed: sources, exit, rules", sha: "8137d89198b7010a" }
 - { record: ship-stage.silhouette, at: "2026-10-23T01:03:22Z", status: "", summary: "changed: sources, exit", sha: "dcdd156f0793f0ba" }
+- { record: ship.explorer, at: "2026-10-25T03:00:18Z", status: draft, summary: "first tracked", sha: "7d1965c7500081e6" }
 - { record: sight.cinder-great-basin, at: "2026-10-06T19:44:49Z", status: draft, summary: "first tracked", sha: "ced295b3ce1e6fcd" }
 - { record: sight.drum-rings, at: "2026-10-06T19:44:49Z", status: draft, summary: "first tracked", sha: "11166c53e865086e" }
 - { record: sight.heath-spire, at: "2026-10-06T19:48:07Z", status: draft, summary: "changed: identity, height, basis", sha: "a8256b0db7284a52" }

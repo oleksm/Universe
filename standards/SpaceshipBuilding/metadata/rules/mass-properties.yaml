@@ -27,8 +27,8 @@ verification:
 figures:
 - {name: straight, value: 0.03, unit: '1', note: 'The share of the weakest turn authority a held course may leave unbalanced (the game''s thrusters::STRAIGHT).'}
 cases:
-- hull: hull.explorer-study
-  note: 'The owner-ordered functional fit (fso 98b0fba51), tanks full. Values from tools/standards/slot_spec.py, the reference.'
+- ship: ship.explorer
+  note: 'The owner-ordered functional fit, tanks full. Values from tools/standards/slot_spec.py, the reference.'
   expect:
   - {of: ship.mass, value: 8935.9, tolerance: 0.5}
   - {of: ship.centre_of_mass.x, value: 0.0109, tolerance: 0.01}

@@ -54,14 +54,14 @@ class Conformance(unittest.TestCase):
         rule = yaml.safe_load(open(slot_spec.RULE))
         hulls, eq = load("hulls"), load("equipment")
         for case in rule.get("cases") or []:
-            h = hulls[case["hull"]]
+            h = ship.record(case["ship"], hulls)
             if slot_spec.hull_model(h) is None:
                 self.skipTest("no model matching model_sha256")
             v = slot_spec.ship_values(h, {s["name"]: s for s in h["slots"]}, h.get("fit") or [], eq, slot_spec.hull_frames(h))
             for e in case["expect"]:
                 name, _, ax = e["of"].rpartition(".") if e["of"].count(".") > 1 else (e["of"], "", "")
                 got = v[name] if not ax else (v[name]["xyz".index(ax[0])])
-                self.assertLessEqual(abs(got - e["value"]), e["tolerance"], f"{case['hull']} {e['of']}: {got} vs {e['value']}")
+                self.assertLessEqual(abs(got - e["value"]), e["tolerance"], f"{case['ship']} {e['of']}: {got} vs {e['value']}")
 
 
 if __name__ == "__main__":

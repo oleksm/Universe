@@ -5,7 +5,7 @@
     python3 tools/standards/ship.py sockets [--class=1..4] [--kind=engine] [--hull=<key> | --dims=L,W,H] [--json]
         The mounts a socket may offer up to that size class (compact ones included), each with its envelope, what it
         bears, its holder and how many products fit it; with a hull or dims, whether its envelope fits the hull.
-    python3 tools/standards/ship.py validate <hull-key> [--candidate=fit.json] [--model=export.glb] [--json]
+    python3 tools/standards/ship.py validate <hull-key|ship-key> [--candidate=fit.json] [--model=export.glb] [--json]
         Runs ship-check.socket-qualification (S1-S5, F1-F4, T1-T3, H1) and the requirements: R1 every required block
         has a socket; R2 (only when the fit is not empty) every required block is filled. Exit 1 on any fault.
         --candidate replaces the record's slots/fit/thrusters; --model reads markers and nozzles from an export
@@ -19,7 +19,7 @@
         --socket judges each against the slot's whole spec; --all also lists the rejected ones and why.
         --installed: only products with an installed model; --models: each product's model.glb path (to open
         and review its look); --json rows carry it as glb.
-    python3 tools/standards/ship.py shipyard <hull> [--candidate=fit.json] [--json]
+    python3 tools/standards/ship.py shipyard <ship|hull> [--candidate=fit.json] [--json]
         The ship as fitted, from its fitted products only: each fitted product against its slot's spec, every
         required block filled, and the hull's spec (ship.lift_to_weight, power_margin, attitude_axes, ...). Exit 1
         on any fault.
@@ -29,7 +29,7 @@
     python3 tools/standards/ship.py get <any-key> [--json]       any record: a material, cable/wire run, connector,
         interface, mount, rule, stock... (prints the record and its file)
     python3 tools/standards/ship.py find <words...>             keys and names containing all the words
-    python3 tools/standards/ship.py classify <hull-key> [--candidate=json] [--json]
+    python3 tools/standards/ship.py classify <hull-key|ship-key> [--candidate=json] [--json]
         Role class, socket size classes and mounts, each required block offered/filled, commissioned or not, and why.
     python3 tools/standards/ship.py decisions [<words...>]      the registry's design decisions (docs/ships/*.yaml):
         file, status line; read the file for the choice
@@ -76,6 +76,23 @@ def offered(slots, b):
 
 def filled(pairs, b):
     return any(s["kind"] in b["kinds"] or stands_in(s, b, q) for s, q in pairs)
+
+
+def record(key, hulls):
+    """A hull, or a ship (ship.<name>): its hull with the ship's fit. What validate, shipyard and classify judge."""
+    if key.startswith("ship."):
+        ships = load("ships")
+        if key not in ships:
+            sys.exit(f"ship.py: no ship {key}")
+        sh = ships[key]
+        if sh["hull"] not in hulls:
+            sys.exit(f"ship.py: {key} names no hull {sh['hull']}")
+        h = dict(hulls[sh["hull"]])
+        h["fit"] = sh.get("fit") or []
+        return h
+    if key not in hulls:
+        sys.exit(f"ship.py: no hull {key}")
+    return dict(hulls[key])
 
 
 def need_of(kind):
@@ -130,9 +147,7 @@ def sockets(opt):
 
 def validate(key, opt):
     hulls, mounts, eq = load("hulls"), load("mounts"), load("equipment")
-    if key not in hulls:
-        sys.exit(f"ship.py: no hull {key}")
-    h = dict(hulls[key])
+    h = record(key, hulls)
     if opt.get("--candidate"):
         h.update(json.load(open(opt["--candidate"])))
     model = os.path.abspath(opt["--model"]) if opt.get("--model") else None
@@ -277,9 +292,7 @@ def spec(ref, opt):
 
 def shipyard(key, opt):
     hulls, mounts, eq = load("hulls"), load("mounts"), load("equipment")
-    if key not in hulls:
-        sys.exit(f"ship.py: no hull {key}")
-    h = dict(hulls[key])
+    h = record(key, hulls)
     if opt.get("--candidate"):
         h.update(json.load(open(opt["--candidate"])))
     slots = {x["name"]: x for x in h.get("slots") or []}
@@ -378,7 +391,7 @@ def find(words):
 
 def classify(key, opt):
     hulls, mounts, eq = load("hulls"), load("mounts"), load("equipment")
-    h = dict(hulls[key])
+    h = record(key, hulls)
     if opt.get("--candidate"):
         h.update(json.load(open(opt["--candidate"])))
     slots = h.get("slots") or []

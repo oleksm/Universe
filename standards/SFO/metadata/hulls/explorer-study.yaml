@@ -171,32 +171,7 @@ slots:
 - {name: comm, kind: comm, size: 1, mount: mount.comm-s1}
 - {name: tank_1, kind: tank, size: 1, mount: mount.tank-s1c}
 - {name: tank_2, kind: tank, size: 1, mount: mount.tank-s1c}
-fit:
-  - { slot: main_port, item: equipment.engine.ch.s1 }
-  - { slot: main_starboard, item: equipment.engine.ch.s1 }
-  - { slot: lift_port, item: equipment.engine.ch.s1 }
-  - { slot: lift_starboard, item: equipment.engine.ch.s1 }
-  - { slot: rcs_fore_port, item: equipment.engine.cg.s2 }
-  - { slot: rcs_fore_starboard, item: equipment.engine.cg.s2 }
-  - { slot: rcs_aft_port, item: equipment.engine.cg.s2 }
-  - { slot: rcs_aft_starboard, item: equipment.engine.cg.s2 }
-  - { slot: tank_1, item: equipment.tank.hydrolox.0p5t }
-  - { slot: tank_2, item: equipment.tank.nitrogen.100kg }
-  - { slot: power_1, item: equipment.power.fuelcell.s1 }
-  - { slot: power_2, item: equipment.power.battery.s0 }
-  - { slot: computer, item: equipment.computer.fbw.s1 }
-  - { slot: avionics, item: equipment.avionics.nav-basic.s1 }
-  - { slot: transponder, item: equipment.transponder.s1 }
-  - { slot: comm, item: equipment.comm.basic.s1 }
-  - { slot: sensor_belly_1, item: equipment.sensors.altimeter.s1 }
-  - { slot: sensor_belly_2, item: equipment.sensors.camera.s1 }
-  - { slot: life_support, item: equipment.life-support.cartridge }
-  - { slot: thermal_ext_1, item: equipment.thermal.radiator.s0 }
-  - { slot: thermal_ext_2, item: equipment.thermal.radiator.s0 }
-  - { slot: thermal_ext_3, item: equipment.thermal.radiator.s0 }
-  - { slot: thermal_ext_4, item: equipment.thermal.radiator.s0 }
-  - { slot: thermal_int_1, item: equipment.thermal.air-cooler.s0 }
-  - { slot: thermal_int_2, item: equipment.thermal.air-cooler.s0 }
+fit: []
 thrusters: []
 spec:
 - {of: ship.lift_balanced_to_weight, min: 1.0, gravity: 1.281, note: 'lifts off at Port Sirnendis (body.treistun.treistun-d-i, 1.281 m/s2), tanks full, held straight by its attitude nozzles; 1.0 is rising at all, any margin above it is the owner''s'}

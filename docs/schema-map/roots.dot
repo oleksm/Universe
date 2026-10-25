@@ -87,6 +87,7 @@ digraph registry {
     "product" [label="product", color="#9c755f", penwidth=1, tooltip="SFO/schema/product.schema.yaml"];
     "rule" [label="rule", color="#9c755f", penwidth=1, tooltip="SFO/schema/rule.schema.yaml"];
     "run" [label="run", color="#9c755f", penwidth=1, tooltip="SFO/schema/run.schema.yaml"];
+    "ship" [label="ship", color="#9c755f", penwidth=1, tooltip="SFO/schema/ship.schema.yaml"];
     "standard" [label="standard", color="#9c755f", penwidth=1, tooltip="SFO/schema/standard.schema.yaml"];
     "stock" [label="stock", color="#9c755f", penwidth=1, tooltip="SFO/schema/mill-stock.schema.yaml"];
     "structure" [label="structure", color="#9c755f", penwidth=1, tooltip="SFO/schema/structure.schema.yaml"];
