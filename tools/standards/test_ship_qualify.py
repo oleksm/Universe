@@ -1,5 +1,6 @@
 """ship-check.socket-qualification: what passes and what each criterion catches."""
-import unittest
+import hashlib, json, os, struct, tempfile, unittest
+import ship_qualify
 from ship_qualify import qualify
 
 MOUNTS = {
@@ -52,6 +53,26 @@ class SocketQualification(unittest.TestCase):
         self.assertIn("H1", crit(hull(physical={"length": 4, "width": 2, "height": 2})))
         s = {"name": "rcs_1", "kind": "engine", "size": 1, "mount": "mount.small"}
         self.assertIn("S1", crit(hull(slots=[s, s])))
+
+    def test_the_model_read_is_the_copy_the_record_pins(self):
+        def glb(d, names):
+            j = json.dumps({"nodes": [{"name": n} for n in names]}).encode()
+            os.makedirs(os.path.join(d, "m"), exist_ok=True)
+            b = b"glTF" + struct.pack("<II", 2, 20 + len(j)) + struct.pack("<I", len(j)) + b"JSON" + j
+            open(os.path.join(d, "m/h.glb"), "wb").write(b)
+            return hashlib.sha256(b).hexdigest()
+        with tempfile.TemporaryDirectory() as old, tempfile.TemporaryDirectory() as new:
+            glb(old, [])
+            pin = glb(new, ["mount_rcs_1", "n1", "n2"])
+            saved = ship_qualify.ROOT, ship_qualify.GAME
+            ship_qualify.ROOT, ship_qualify.GAME = old, new     # stale copy first, as fso before a sync
+            try:
+                self.assertNotIn("S5", crit(hull(model="m/h.glb", model_sha256=pin)))
+                faults, unchecked = qualify(hull(model="m/h.glb", model_sha256="0" * 64), MOUNTS, EQ)
+                self.assertNotIn("S5", {c for c, _ in faults})
+                self.assertTrue(unchecked)
+            finally:
+                ship_qualify.ROOT, ship_qualify.GAME = saved
 
 
 if __name__ == "__main__":

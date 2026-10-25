@@ -9,7 +9,7 @@ The fit rules (F3) are the game's (crates/core/world/src/ship.rs mount_fit) so t
 the hull rules (S3, S4, S5, F4, T2) are what the game does not check yet. A criterion that cannot be judged (no model
 to read) is reported as unchecked, never as a pass.
 """
-import glob, json, os, struct, sys
+import glob, hashlib, json, os, struct, sys
 import yaml
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -25,18 +25,20 @@ def load(folder):
     return out
 
 
-def glb_nodes(rel):
-    if os.path.isabs(rel) and os.path.isfile(rel):
-        b = open(rel, "rb").read()
-        n = struct.unpack("<I", b[12:16])[0]
-        return {x.get("name", "") for x in json.loads(b[20:20 + n]).get("nodes", [])}
-    for base in (ROOT, GAME):
-        p = os.path.join(base, rel)
-        if os.path.isfile(p):
-            b = open(p, "rb").read()
-            n = struct.unpack("<I", b[12:16])[0]
-            return {x.get("name", "") for x in json.loads(b[20:20 + n]).get("nodes", [])}
-    return None
+def _nodes(p):
+    b = open(p, "rb").read()
+    n = struct.unpack("<I", b[12:16])[0]
+    return {x.get("name", "") for x in json.loads(b[20:20 + n]).get("nodes", [])}
+
+
+def glb_nodes(rel, sha=None):
+    """Node names of a model: an absolute path, or the copy under fso/main whose sha256 is the record's pin."""
+    if os.path.isabs(rel):
+        return _nodes(rel) if os.path.isfile(rel) else None
+    found = [p for p in (os.path.join(b, rel) for b in (ROOT, GAME)) if os.path.isfile(p)]
+    if sha:
+        found = [p for p in found if hashlib.sha256(open(p, "rb").read()).hexdigest() == sha]
+    return _nodes(found[0]) if found else None
 
 
 def dims(phys):
@@ -58,9 +60,10 @@ def qualify(hull, mounts, equipment, model=None):
         if s["name"] in slots:
             f("S1", f"slot {s['name']} declared twice")
         slots[s["name"]] = s
-    nodes = glb_nodes(model) if model else (glb_nodes(hull["model"]) if hull.get("model") else None)
+    nodes = glb_nodes(model) if model else (glb_nodes(hull["model"], hull.get("model_sha256")) if hull.get("model") else None)
     if nodes is None and (slots or hull.get("thrusters")):
-        unchecked.append(("S5/T2", "no model to read: markers and nozzles not checked"))
+        why = "no copy of the model matches model_sha256" if hull.get("model_sha256") and not model else "no model to read"
+        unchecked.append(("S5/T2", f"{why}: markers and nozzles not checked"))
     room = 0.0
     for s in slots.values():
         mk = s.get("mount")
