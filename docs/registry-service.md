@@ -4,6 +4,8 @@
 The registry (Freefall Facts, `~/git/universe-fso`) answers through one CLI. Run it; don't ask the registry agent
 what the CLI can tell you. Add `--json` for machine-readable output.
 
+Full guide (slot specs, frames and nozzles, hull and sockets workflow, criteria): `~/git/universe-fso/tools/standards/README.md`.
+
     S=~/git/universe-fso/tools/standards/ship.py
 
 | You need | Command |
