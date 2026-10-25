@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.mount-mating
+  name: Mount mating from its pattern
+  about: How a mount's clocking and approach follow from its attachment pattern and holder.
+statement: 'Clocking from the attachment pattern: a ring every 2 pi / points, square corners every pi/2, other corners and
+  saddles every pi (end for end), a trunnion fixed. Approach: a deck holder''s equipment slides along its track (x), clear
+  its envelope''s length; an adapter''s is lowered along the normal, clear its envelope''s height. Rigid (no motion allowance)
+  until a product that moves declares how.'
+tier: derived
+review: true

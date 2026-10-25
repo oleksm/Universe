@@ -50,6 +50,7 @@ properties:
         kind: { $ref: "../../common.schema.yaml#/definitions/slot_kind" }
         size: { type: integer, minimum: 1, maximum: 4, description: "Its size class: it takes equipment of this class or smaller." }
         mount: { type: string, x-ref: [mount], description: "The mount the slot offers (SFO 19), by its key: what fits it, fits here." }
+        clocking: { type: array, items: { type: number, x-unit: rad }, description: "The turns of its mount's clocking this slot allows, about its mount_<slot> node's z (absent: all of them)." }
         role: { enum: [main, lift, attitude], description: "For an engine slot: what the engine fitted here does for the ship. Its spec says how it must point." }
         spec: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/spec_limit" }, description: "This slot's limits beyond its mount's: what a product fitted here, at this place on this hull, must meet." }
   thrusters:

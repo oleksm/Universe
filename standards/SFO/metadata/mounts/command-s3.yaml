@@ -18,6 +18,9 @@ attachment:
     tension: 8270.0
     compression: 8270.0
     shear: 4140.0
+mating:
+  clocking: {kind: steps, step: 3.141593}
+  approach: {along: normal, clear: 2.42}
 holder: adapter
 sockets:
 - id: s1
@@ -43,4 +46,5 @@ sockets:
 feeds:
   power: 7500.0
 basis:
+  - { of: [mating], rule: rule.mount-mating }
   - { of: [envelope, bears, attachment, feeds], rule: rule.mounts-margin }

@@ -28,7 +28,8 @@ properties:
     properties:
       slot: { $ref: "../../common.schema.yaml#/definitions/slot_kind" }
   size_class: { type: integer, minimum: 1, maximum: 4, description: "Its size class, 1 to 4: it fits a slot at least as big." }
-  fits: { type: string, x-ref: [mount], description: "The mount it is built to (SFO 19), by its key: any hull that offers it takes this." }
+  fits: { type: string, x-ref: [mount], description: "The mount it is built to (SFO 19), by its key: any hull that offers it takes this. Its model's root is the mount's mating plane, its body on +z." }
+  clocking: { type: array, items: { type: number, x-unit: rad }, description: "The turns of its mount's clocking it may be installed at (absent: all of them)." }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
   needs:
     type: object
@@ -613,7 +614,7 @@ properties:
         share: { type: number, exclusiveMinimum: 0, maximum: 1, x-unit: "1", description: "Its share of the product's thrust" }
   ports: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/port" }, description: "Its ins and outs and where it bears, each built to an interface (SFO 26): what it takes and gives, at what duty, through which mating face." }
   internal: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/internal" }, description: "How its ports are joined inside it (a bus bar, breakers, a converter's input to its output); ports not listed are joined to nothing." }
-  motion: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/motion" }, description: "How it, or a part of it, moves in service." }
+  motion: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/motion" }, description: "How it, or a part of it, moves in service, within its mount's mating motion." }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   model_requests: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/model_request" }, description: "Work asked of its installed model, open until a later version answers it." }
   life: { type: number, x-unit: "s", description: "s in service before it is worn out and replaced; what it is made of comes back as scrap. Everything made has a life (the user's rule): this is what makes demand steady." }

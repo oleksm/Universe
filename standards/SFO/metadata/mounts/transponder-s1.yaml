@@ -18,6 +18,9 @@ attachment:
     tension: 27.6
     compression: 27.6
     shear: 13.8
+mating:
+  clocking: {kind: steps, step: 3.141593}
+  approach: {along: x, clear: 0.22}
 holder: deck
 sockets:
 - id: s1
@@ -39,4 +42,5 @@ sockets:
 feeds:
   power: 25.0
 basis:
+  - { of: [mating], rule: rule.mount-mating }
   - { of: [envelope, bears, attachment, feeds], rule: rule.mounts-margin }

@@ -1462,80 +1462,80 @@
 - { record: module.winery, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "6b5add6704ce0354" }
 - { record: module.wire-mill, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "f33938e611965e5e" }
 - { record: module.zinc-works, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "68cee0c7ff14143b" }
-- { record: mount.access-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "1c2dfeec0e0e39de" }
-- { record: mount.access-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "c5054ef89f27952e" }
-- { record: mount.access-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "b8edbaf56cd82dd3" }
-- { record: mount.access-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "cb33dbc544eda46c" }
-- { record: mount.avionics-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "1220caa228fd8b3a" }
-- { record: mount.avionics-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "1fb43afbf9d890d4" }
-- { record: mount.capacitor-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "8e219d642209b5ff" }
-- { record: mount.capacitor-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "c4a353454210533d" }
-- { record: mount.capacitor-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "df84ab09c78b41b8" }
-- { record: mount.cargo-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "c4d7a3d19a51a816" }
-- { record: mount.cargo-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "3cf4750d2fa87c7c" }
-- { record: mount.cargo-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "a7b21de05fd86b41" }
-- { record: mount.cargo-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "dadad93c9ead53b3" }
-- { record: mount.cargo-s4, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "3a7bae16b5b20cd9" }
-- { record: mount.comm-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "79e3676f43aa3a60" }
-- { record: mount.command-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "c378ac886fa8e3d0" }
-- { record: mount.command-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "0a9523d299b5556c" }
-- { record: mount.command-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "61ce6d42fe628c03" }
-- { record: mount.command-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "fb584e014a803221" }
-- { record: mount.computer-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "c9a6834b32747a36" }
-- { record: mount.computer-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "d66c32d265ef066d" }
-- { record: mount.drive-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "5d24226eb5362d70" }
-- { record: mount.drive-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "7500c2edab138215" }
-- { record: mount.drive-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "d5fd8527c7e93627" }
-- { record: mount.engine-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "d9b17c31cd851106" }
-- { record: mount.engine-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "64ef2841ce03d4f8" }
-- { record: mount.engine-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "973076ef0de5fe65" }
-- { record: mount.engine-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "aab7dff28f94ea56" }
-- { record: mount.engine-s4, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "3b039361adf32435" }
-- { record: mount.gate-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "63ef49f18dfa722f" }
-- { record: mount.gate-s4, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "66c1607c3ff3a035" }
-- { record: mount.gear-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "a21c97392b3d0df9" }
-- { record: mount.gear-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "347d68c10f0270de" }
-- { record: mount.gear-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "0d0fe31545452856" }
-- { record: mount.gear-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "4723f4cafcecaf22" }
-- { record: mount.handling-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "01bde102063f29a0" }
-- { record: mount.handling-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "4a7a9dd4f23555ba" }
-- { record: mount.hardpoint-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "718fbac6b0b7ec8d" }
-- { record: mount.hardpoint-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "f320d4c8f1b47749" }
-- { record: mount.hardpoint-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "50ed1393722f2e70" }
-- { record: mount.hyperdrive-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "67625cc65557f71b" }
-- { record: mount.hyperdrive-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "40354f298beecdb9" }
-- { record: mount.hyperdrive-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "299963d12aac9798" }
-- { record: mount.life-support-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "7723ad9c4089ebac" }
-- { record: mount.life-support-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "711d7deabe7f38d6" }
-- { record: mount.life-support-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "6ed6b5a5b9001e70" }
-- { record: mount.lift-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "719feb1a1e8da47a" }
-- { record: mount.lift-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "7f5668f00c6f55d4" }
-- { record: mount.lift-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "e31502429c8e1144" }
-- { record: mount.power-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "b7c96896520aaa2e" }
-- { record: mount.power-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "3d69dcba3ed9c675" }
-- { record: mount.power-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "ef0606c5406e9a4a" }
-- { record: mount.power-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "4a34b9ede9bf17ec" }
-- { record: mount.radiator-hot-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "b4defe0bd905a5e2" }
-- { record: mount.radiator-hot-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "ce605dd5f004c3aa" }
-- { record: mount.sensors-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "fcf9292af44eb148" }
-- { record: mount.sensors-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "dc91a281d7bf5ed3" }
-- { record: mount.tank-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "307bacf8dbfe9d96" }
-- { record: mount.tank-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "836db494cf67c241" }
-- { record: mount.tank-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "592dbfe5d44a9f60" }
-- { record: mount.tank-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "4570cc8140023895" }
-- { record: mount.tank-s4, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "76367399da20fff3" }
-- { record: mount.thermal-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "099659c0f200bb41" }
-- { record: mount.thermal-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "2b443c8e60538829" }
-- { record: mount.thermal-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "b07e47a78e8ad0f4" }
-- { record: mount.thermal-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "7b6f61d17bb12154" }
-- { record: mount.thrusters-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "7e84b3a05a98af64" }
-- { record: mount.thrusters-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "237f0551358bd4f2" }
-- { record: mount.thrusters-s3, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "c7c14b26f0ed8cf3" }
-- { record: mount.transponder-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "172d25697251ad32" }
-- { record: mount.transponder-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "d1246f37d15ab618" }
-- { record: mount.utility-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "cd45ef94700218e3" }
-- { record: mount.utility-s1c, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "a7e5c7488c27f5c2" }
-- { record: mount.utility-s2, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "a00a91877ab29b07" }
+- { record: mount.access-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "8e6179136f73a976" }
+- { record: mount.access-s1c, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "3a000a110a2bcff4" }
+- { record: mount.access-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "7d60c5461ea46f7c" }
+- { record: mount.access-s3, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "b5d8d2174d3635ed" }
+- { record: mount.avionics-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "2550a3df83d92582" }
+- { record: mount.avionics-s1c, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "90cbfb3c70f83c43" }
+- { record: mount.capacitor-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "f055d132cd04c643" }
+- { record: mount.capacitor-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "b8d24057511561a3" }
+- { record: mount.capacitor-s3, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "be8e1e415c585609" }
+- { record: mount.cargo-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "7954e04a030d7d8d" }
+- { record: mount.cargo-s1c, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "e44aa46a69d3a5ed" }
+- { record: mount.cargo-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "7c3939db688aab5b" }
+- { record: mount.cargo-s3, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "8f0c923feb7256e3" }
+- { record: mount.cargo-s4, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "e6ad33e7f881b33e" }
+- { record: mount.comm-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "2bdccf9b8abe178b" }
+- { record: mount.command-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "7f53fdac29837550" }
+- { record: mount.command-s1c, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "849c3561c37b85ae" }
+- { record: mount.command-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "a03048ccc4ae364b" }
+- { record: mount.command-s3, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "0336495b1f0a537c" }
+- { record: mount.computer-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "73b7e9dc4c9e121c" }
+- { record: mount.computer-s1c, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "7937d5587288ade5" }
+- { record: mount.drive-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "3653b2c021767dcd" }
+- { record: mount.drive-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "7e4fbe370ffd3f58" }
+- { record: mount.drive-s3, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "9c20752b47f9687f" }
+- { record: mount.engine-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "5179dec87ed6a161" }
+- { record: mount.engine-s1c, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "aeb9f9b0d1fda0fe" }
+- { record: mount.engine-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "7fb5d116458c2495" }
+- { record: mount.engine-s3, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "d970a61e8ed843fd" }
+- { record: mount.engine-s4, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "a61324fec265bf57" }
+- { record: mount.gate-s3, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "020c7a8fdcaa592b" }
+- { record: mount.gate-s4, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "03f7c6b5df223de4" }
+- { record: mount.gear-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "09230a795dc02ff7" }
+- { record: mount.gear-s1c, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "bc8d0c9df736f6bd" }
+- { record: mount.gear-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "ae5e7276b401fa41" }
+- { record: mount.gear-s3, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "460e0ad9fe89c4ea" }
+- { record: mount.handling-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "c27923e7f180af3c" }
+- { record: mount.handling-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "f8cb527c95323899" }
+- { record: mount.hardpoint-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "304b4be0ef8b0328" }
+- { record: mount.hardpoint-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "8cfedd57675014bf" }
+- { record: mount.hardpoint-s3, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "cb8614d8e72b5259" }
+- { record: mount.hyperdrive-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "466416e7c21d9e87" }
+- { record: mount.hyperdrive-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "99716889c67d79d1" }
+- { record: mount.hyperdrive-s3, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "ee0113a0fe29a9b3" }
+- { record: mount.life-support-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "05432d758af52ff6" }
+- { record: mount.life-support-s1c, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "b1eb8254f868ad8b" }
+- { record: mount.life-support-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "00ce7183c40001e5" }
+- { record: mount.lift-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "1372ab9b4ae0178e" }
+- { record: mount.lift-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "162ffa43acd69d17" }
+- { record: mount.lift-s3, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "531f662659e9cdc2" }
+- { record: mount.power-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "37e1b72c13f08aa0" }
+- { record: mount.power-s1c, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "65909835e9855ced" }
+- { record: mount.power-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "904cfaa795eeec05" }
+- { record: mount.power-s3, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "8e3b18aeafe3b8bd" }
+- { record: mount.radiator-hot-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "ec3bc4d78ab016cf" }
+- { record: mount.radiator-hot-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "914b9868c1eece41" }
+- { record: mount.sensors-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "3a08900790c97415" }
+- { record: mount.sensors-s1c, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "e08f2f793ddc09bf" }
+- { record: mount.tank-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "092947fb32167358" }
+- { record: mount.tank-s1c, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "c2efa066a8c9c3c2" }
+- { record: mount.tank-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "903567363b40f5be" }
+- { record: mount.tank-s3, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "2246cae36fe06335" }
+- { record: mount.tank-s4, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "5eef2b26f55d7521" }
+- { record: mount.thermal-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "3e51dadbde34baa3" }
+- { record: mount.thermal-s1c, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "9a685cd485a10920" }
+- { record: mount.thermal-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "236658af77d25970" }
+- { record: mount.thermal-s3, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "1ab191566b49c2b3" }
+- { record: mount.thrusters-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "7c7b609b1678bad0" }
+- { record: mount.thrusters-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "601ddc1041d6459c" }
+- { record: mount.thrusters-s3, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "17098d074b8bf8f6" }
+- { record: mount.transponder-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "5edaccd401bd8071" }
+- { record: mount.transponder-s1c, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "66dae76a09ca62cc" }
+- { record: mount.utility-s1, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "6507d0ad7a7bf6fc" }
+- { record: mount.utility-s1c, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "2ae1f0d65428d6ff" }
+- { record: mount.utility-s2, at: "2026-10-25T13:48:00Z", status: draft, summary: "changed: mating, basis", sha: "302257e39b7be55f" }
 - { record: need.air, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "9702da822b638b10" }
 - { record: need.art, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "83a52bf305e7b982" }
 - { record: need.clothes, at: "2026-10-25T04:55:39Z", status: review, summary: "changed: basis", sha: "022bd7a6e4b80e34" }
@@ -3295,6 +3295,7 @@
 - { record: rule.logistics-units, at: "2026-10-25T04:55:39Z", status: review, summary: "first tracked", sha: "f4a3f86ce7d66af0" }
 - { record: rule.mill-lengths, at: "2026-10-25T04:55:39Z", status: review, summary: "first tracked", sha: "ce2de63b9080f7aa" }
 - { record: rule.module-size-chosen, at: "2026-10-25T04:55:39Z", status: review, summary: "first tracked", sha: "42fbc872f692b5b4" }
+- { record: rule.mount-mating, at: "2026-10-25T13:48:00Z", status: review, summary: "first tracked", sha: "9cc8a2552891559d" }
 - { record: rule.mounts-margin, at: "2026-10-24T23:37:09Z", status: review, summary: "changed", sha: "ec3a53275744a306" }
 - { record: rule.package-opening-policy, at: "2026-10-25T04:55:39Z", status: review, summary: "first tracked", sha: "e07f0e61fa45185c" }
 - { record: rule.packing-stock, at: "2026-10-21T02:16:03Z", status: review, summary: "changed: statement", sha: "ab2daed972d26559" }
@@ -3516,7 +3517,7 @@
 - { record: standard.sfo.16, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "9577624686904cfd" }
 - { record: standard.sfo.17, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "d5515015ce481594" }
 - { record: standard.sfo.18, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "e42e9e4812b9120b" }
-- { record: standard.sfo.19, at: "2026-10-06T02:13:55Z", status: "", summary: "changed: details", sha: "4f2eaf652c1e8331" }
+- { record: standard.sfo.19, at: "2026-10-25T13:48:00Z", status: "", summary: "changed: details", sha: "827274d53e85fbbd" }
 - { record: standard.sfo.2, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "9b755040fb6e59af" }
 - { record: standard.sfo.20, at: "2026-10-25T04:43:06Z", status: "", summary: "changed", sha: "a6df5aeedef46c56" }
 - { record: standard.sfo.21, at: "2026-10-06T23:31:03Z", status: "", summary: "first tracked", sha: "ca2ee50ba2ef1b3e" }

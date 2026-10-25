@@ -24,7 +24,7 @@ properties:
     properties:
       length: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m, along the ship" }
       width: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m, across" }
-      height: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m, up" }
+      height: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m, up from the mating plane" }
   bears:
     description: "The most the hull's structure takes at it."
     type: object
@@ -70,6 +70,29 @@ properties:
         interface: { type: string, x-ref: [interface] }
         connector: { type: string, x-ref: [stock, connector], description: "The fastener the registry joins it with (a bolt), by key" }
         key: { enum: [index], description: "The index socket: the equipment's index foot lands here, so only poses that keep it so are allowed." }
+  mating:
+    description: "How a mountable meets it. The mating plane is z = 0 of the mount frame (on a hull its mount_<slot> node, z out of the hull; on a product its model's root): the mountable lies on +z within the envelope, nothing of it below the plane."
+    type: object
+    additionalProperties: false
+    required: [clocking, approach]
+    properties:
+      clocking:
+        description: "The turns about the plane's normal a mountable may be installed at."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { enum: [fixed, steps, free], description: "fixed: one way only; steps: every `step`; free: any turn." }
+          step: { type: number, exclusiveMinimum: 0, x-unit: rad, description: "rad between allowed turns (kind steps)." }
+      approach:
+        description: "How a mountable goes on and comes off."
+        type: object
+        additionalProperties: false
+        required: [along, clear]
+        properties:
+          along: { enum: [normal, x, y], description: "normal: lowered onto the plane; x or y: slid along the plane (a track)." }
+          clear: { type: number, exclusiveMinimum: 0, x-unit: m, description: "m of that path the holder keeps free." }
+      motion: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/motion" }, description: "The most a mounted product may move against the holder in service, in the mount frame (absent: none, it is held rigid). A product's own motion lies within it." }
   feeds:
     description: "What the hull can bring near it, at most: a capacity for the ship's wiring and piping to plan by, never a connection. Fastening equipment to a mount joins nothing; power, data and fluids reach it only through its ports, joined by laid runs (SFO 26)."
     type: object

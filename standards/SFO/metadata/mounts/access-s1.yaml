@@ -19,6 +19,9 @@ attachment:
     tension: 319000.0
     compression: 319000.0
     shear: 160000.0
+mating:
+  clocking: {kind: steps, step: 0.785398}
+  approach: {along: normal, clear: 2.42}
 holder: adapter
 sockets:
 - id: s1
@@ -62,4 +65,5 @@ sockets:
   interface: interface.insert-m42
   connector: stock.st4340-bolt-m42
 basis:
+  - { of: [mating], rule: rule.mount-mating }
   - { of: [envelope, bears, attachment], rule: rule.mounts-margin }
