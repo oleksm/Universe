@@ -12,7 +12,7 @@ definitions:
       exhaust: { type: number, x-unit: "m/s", description: "m/s, how fast the jet leaves; propellant flow is thrust / exhaust, jet power half their product" }
       efficiency: { type: number, x-unit: "1", description: "the share of the energy released (the fuel's) that goes into the jet; the rest leaves as heat and radiation" }
       burns: { type: string, x-ref: [material], description: "What releases the energy, by its key: the fusion fuel, the fission fuel's stand-in, the chemical propellant blend, or the gas itself." }
-      heat_to_hull: { type: number, x-unit: "1", description: "the share of the jet's power that comes aboard as heat and must be radiated (tools/standards/lib.py jet_heat, one rule for mounts, budgets and the studio). An engine record derives it from its isotropic loss, the hull's share of the sphere and its shadow shield (SFO 22); the old drive, lift and thruster records carry a first guess of 1e-6, a product figure to be replaced." }
+      heat_to_hull: { type: number, x-unit: "1", description: "Share of the jet's power that comes aboard as heat (lib.jet_heat): an engine derives it from its isotropic loss, the hull's share of the sphere and its shadow shield (SFO 22); older records carry 1e-6, to be replaced." }
 type: object
 additionalProperties: false
 required: [identity, function, physical]

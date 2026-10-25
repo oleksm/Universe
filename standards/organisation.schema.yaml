@@ -167,7 +167,7 @@ properties:
           mining_licence: { type: boolean, description: "whether digging in its jurisdiction needs its licence" }
           insurance_to_dock: { type: boolean, description: "whether a ship must be insured to use its ports" }
   compulsory_stock:
-    description: "Its law on reserves: for each need people die without, how long the whole administration's people must be able to live on what is held in store, and where that reserve lies. Like zoning, it can be broken; the record of a breach is the administration's. Beside it, the registry's convention for the other two layers: a works keeps three days of its inputs, a store a week, a farm a season; a settlement's warehouse keeps `warehouse_cover` resupply cycles of what its people take."
+    description: "Its reserve law: for each vital need, how long all its people must live on what is held, and where. Breakable; a breach is recorded. Convention elsewhere: a works keeps 3 days of inputs, a store a week, a farm a season, a warehouse warehouse_cover resupply cycles."
     type: object
     additionalProperties: false
     required: [reserves]

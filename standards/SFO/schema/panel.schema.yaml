@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Building panel
 x-kind: [panel]
-description: "standards/SFO/metadata/panels/<name>.yaml: a building's kit panel (the owner, 2026-10-17: a building is a layout laid of a frame, panels, fit-out units and service kit, not one model). Each panel fills one cell face (or half) of the kit's strut frame on its 3 m grid: a wall, a floor, a roof, a door or window in its wall, a partition, a stair. Sold and hauled as stock (its `KIT-PANEL-` record); drawn by its family template, scaled to its figures."
+description: "standards/SFO/metadata/panels/<name>.yaml: a building kit panel filling one cell face (or half) of the 3 m strut frame: wall, floor, roof, door, window, partition, stair. Sold as its KIT-PANEL- stock, drawn by its template."
 type: object
 additionalProperties: false
 required: [identity, kind, site, cell, physical, built_of, template]

@@ -39,14 +39,6 @@ basis:
   rule: rule.relief-tectonic-port
 layout:
 - name: frame
-  unit: '1'
-  meaning: '1: its pins sit in its plate''s frame (integer cm) and ride the crust, placed by planet-field.plate-rotation;
-    0: a body-frame snapshot, remade from the present state each pass'
-  rule: it rides its crust (the Python's line store anchored it to crust particles)
   params:
   - name: rides
     value: 1.0
-    unit: '1'
-    meaning: 1 rides, 0 snapshot
-    source: 'planet-forge src/ride.rs (from the Python: stages/lines.py Store vs its rivers and coast)'
-    open: true

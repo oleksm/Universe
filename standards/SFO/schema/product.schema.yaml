@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Plant product
 x-kind: [product]
-description: "standards/SFO/metadata/products/<name>.yaml: a made thing a vendor sells (a cooling tower, a transformer, an arc furnace vessel), with the parameters it is made to (cells, rating, capacity, span, pressure class) and the option kits it takes (sealing, gantry legs, tongs). A plant unit is a product as fitted in a layout, at its params and with its options; the product, or a family's generator and its pieces, is modelled once and every unit of it drawn from that. Written by tools/standards/plants.py."
+description: "standards/SFO/metadata/products/<name>.yaml: a vendor's made thing with the parameters it is made to and the option kits it takes. A plant unit is a product fitted in a layout at its params; it is modelled once and every unit drawn from that."
 type: object
 additionalProperties: false
 required: [identity, kind, units]

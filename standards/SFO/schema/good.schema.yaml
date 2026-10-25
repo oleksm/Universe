@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Good
 x-kind: [good]
-description: A good is not sold. What is sold is stock, an item made from it (SFO/metadata/stock), which names its market category; a good that names one does not fit. Something that moves in bulk through industry and is neither an element nor a finished material. Rock as it is dug, raw matter won from it, what is used up, what one step hands to the next, what comes out besides the product.
+description: "Matter that moves in bulk through industry, neither an element nor a finished material: rock as dug, raw matter, consumables, intermediates, by-products. A good is never sold (stock made from it is) and names no market."
 type: object
 additionalProperties: false
 required: [identity]

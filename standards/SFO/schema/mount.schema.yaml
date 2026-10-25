@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Mount
 x-kind: [mount]
-description: "standards/SFO/metadata/mounts/<slot>-s<class>.yaml: one mount, a standard between a hull and what is fitted to it (SFO 19). A hull's slot offers a mount; a piece of equipment fits one. The mount says the most the hull gives and bears there: the room, the weight, the thrust, the power and the cooling, the fuel, a nozzle's opening. Any equipment within those figures fits any hull that offers the mount: a maker builds to the mount, not to a hull."
+description: "standards/SFO/metadata/mounts/<slot>-s<class>.yaml: a hardpoint standard (SFO 19). A hull's slot offers it, equipment fits it; it states the most the hull gives there (room, weight, thrust, power, cooling, fuel, nozzle opening). Makers build to the mount, not the hull."
 type: object
 additionalProperties: false
 required: [identity, envelope, bears, attachment]

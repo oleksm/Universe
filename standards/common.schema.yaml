@@ -11,7 +11,7 @@ definitions:
     properties:
       of:
         type: string
-        description: "The parameter. In a slot's spec: a path into the fitted product's record (physical.mass, function.thrust, function.cycle, function.range, needs.power, nozzles), or push: each of its nozzles' push direction in the hull's frame (the product's model root at the slot's mount_<slot> node; a nozzle node's local -Z is its exhaust, push the opposite). In a hull's spec, the ship as fitted: ship.mass (kg, hull and fit), ship.main_thrust and ship.lift_thrust (N, of the engines in main and lift slots), ship.main_to_weight and ship.lift_to_weight (at gravity), ship.main_balanced and ship.lift_balanced (N: what of that thrust it can give while its attitude nozzles keep the turn it leaves under 0.03 of its weakest turn rate, the game's thrusters::balanced), ship.main_balanced_to_weight and ship.lift_balanced_to_weight (at gravity), ship.attitude_authority (rad/s2, the least turn acceleration its attitude nozzles give about any axis either way), ship.power_margin (W, plants and battery rate less every draw), ship.attitude_axes (how many of the six turning senses its attitude nozzles give), ship.unfed_engines (fitted engines no fitted tank holds the propellant of). Mass, centre of mass and inertia are the loaded ship's: tanks full, the hull's mass at its model's centroid, each product at its slot's frame."
+        description: "The parameter: in a slot's spec, a path into the fitted product (physical.mass, function.thrust, needs.power, nozzles) or push (each nozzle's push in the hull frame); in a hull's spec, a ship.* figure of the loaded ship (ship-rule.mass-properties)."
       min: { type: number, x-unit-from: of, description: "The least it may be, in the unit of the parameter it limits (of); of a list, how few it may hold" }
       max: { type: number, x-unit-from: of, description: "The most it may be, in the unit of the parameter it limits (of); of a list, how many it may hold" }
       one_of: { type: array, minItems: 1, items: { type: string }, description: "The values it may take (keys, kinds, cycles)" }
@@ -38,7 +38,7 @@ definitions:
     type: object
     additionalProperties: false
     properties:
-      module: { type: string, x-ref: [module], description: "The industrial module that makes it, by its key. This is a recipe of that module's: what goes in is what the thing is made from, as the works has prepared it (a plate part's stock cut on the cutting table and formed on the panel former, each step's output lying in the works' store until the next takes it), and what is cut away comes out as scrap of its material." }
+      module: { type: string, x-ref: [module], description: "The module that makes it: one of its recipes, inputs as the works prepared them, cuttings out as scrap." }
       fitting_out: { type: string, x-ref: [module], description: "The module that fits it with its equipment, by its key." }
       facility: { type: string, description: The kind of facility that makes it. }
       time: { type: number, x-unit: "s", description: "s to make one" }
@@ -200,7 +200,7 @@ definitions:
     description: "One parameter of the planet sim (Planet Simulator): its name in the code, the old environment setting that set it, its value in SI with how the code says it, its range, what it means, where it is set (file:line), and whether it is still open."
     type: object
     additionalProperties: false
-    required: [name, meaning]
+    required: [name]
     properties:
       name: { type: string, description: "Its name in the code (EARTH_SPEED)." }
       env: { type: string, description: "The old environment setting (SIM_*), when one set it." }
@@ -219,11 +219,11 @@ definitions:
     description: "A figure every instance of a relief feature kind carries (a dimension, or a layout parameter): its name, its SI unit, what it means, the law that sets it in words, its formula and its parameters."
     type: object
     additionalProperties: false
-    required: [name, meaning]
+    required: [name]
     properties:
       name: { type: string }
       unit: { type: string, description: "SI, 1, or deg." }
-      meaning: { type: string }
+      meaning: { type: string, description: "What it is; a quantity its schema defines (a feature's layout frame) leaves it out." }
       rule: { type: string, description: "The scaling law in words, with its source (width grows as the square root of discharge, Leopold and Maddock 1953)." }
       formula: { type: string, description: "The law as a formula in the names of its parameters (a * Q^b)." }
       params: { type: array, items: { $ref: "#/definitions/sim_param" } }
@@ -272,7 +272,7 @@ definitions:
       factor: { type: number, x-unit: "1", description: "SI value = their value x this (an offset unit like degC says its offset in a note)." }
       note: { type: string }
   model_request:
-    description: "Work the registry asks of a record's model (tools/standards/model_spec.py, docs/asset-contract.md): rebuild (its body changed: a part moved, was added or turned out wrong), rig (its moving parts want pivots, nodes or a motion file), measure (its envelope boxes are to be measured from the installed model), optimise (over its triangle budget). Asked of one installed version: a later version answers it. A port moving is never a request (the game draws the joint at the port)."
+    description: "Work asked of one installed model version (model_spec.py): rebuild, rig, measure or optimise. A later version answers it; a moved port never needs one."
     type: object
     additionalProperties: false
     required: [work, because, asked, of_version]
@@ -283,7 +283,7 @@ definitions:
       of_version: { type: integer, minimum: 0, description: "The installed version it is asked of; a version above it answers it." }
       by: { type: string, description: "Who asks: the session or agent." }
   visual:
-    description: "A made thing's model (the asset contract, docs/asset-contract.md): a package in the assets store (UNIVERSE_ASSETS, else ~/git/freefall-assets) written once per version by tools/standards/install_model.py, which checks the model against this record (its size, its required nodes, its budget) and the package's files against their hashes. Without one the game draws the record as a translucent box of its size with its name on the edges."
+    description: "A made thing's model package in the assets store, installed once per version by install_model.py, which checks it against the record. Without one the game draws a translucent box of its size, named on the edges."
     type: object
     additionalProperties: false
     required: [format, path, manifest_sha256, version]
@@ -298,7 +298,7 @@ definitions:
     type: object
     additionalProperties: false
     required: [id, flow, medium, interface, at, facing]
-    description: "One place where something goes in or comes out of a made thing (SFO 25, SFO 26): a unit, a piece of equipment, a module or a layout. It is built to an interface (a standard's mating face) and carries one half of it; it states the duty it needs, so any maker's connection product built to that interface and rated for that duty fits it. The game draws the joint at the port, and the thing's own model ends at the mating plane."
+    description: "Where something goes in or out of a made thing (SFO 25, 26): built to an interface, one half of it, with the duty it needs; a product of that interface rated for the duty fits. The game draws the joint at the port."
     properties:
       id: { type: string, description: "Its name on the thing, unique there (gas-in, water-out, hv, base)." }
       flow: { enum: [in, out, both], description: "Which way what it carries goes at full rate: in, out, or both (a power port feeding and fed). For a load port: out, the thing's weight going down into what bears it." }
@@ -363,7 +363,7 @@ definitions:
         type: object
         additionalProperties: false
         required: [axis, when_abs_below, angle]
-        description: "Conditional angular limit on this motion. While abs(the named axis angle) is strictly below when_abs_below, this motion must stay within angle (inclusive). Before crossing into that region, move this motion into the allowed interval; hold it there while crossing. Equality is outside the restricted region. Applies throughout trajectories, not only at endpoints."
+        description: "While abs(the named axis) is strictly below when_abs_below, this motion stays within angle (inclusive), along the whole trajectory."
         properties:
           axis: { type: string, description: "Id of another angular motion in this same record." }
           when_abs_below: { type: number, exclusiveMinimum: 0, x-unit: "rad" }

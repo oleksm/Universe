@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Celestial body
 x-kind: [body]
-description: 'One natural body of a system: its star, a planet, a moon, an asteroid, a dwarf planet, a comet, a centaur, a crossing asteroid, a captured moon. Filed in standards/Celestial/metadata/systems/<system>/bodies/<name>.yaml where the game''s seed makes it, and in small-bodies/ where the registry seeds it and the game does not make it yet (in_game: not made). What people have built there is in Local Administration. A body uses the properties that apply to it.'
+description: "A natural body: star, planet, moon, asteroid, dwarf planet, comet, centaur. Filed under systems/<system>/bodies/ where the game's seed makes it, else under small-bodies/ (in_game: not made). It uses the properties that apply to it."
 type: object
 additionalProperties: false
 required: [identity, provenance]
@@ -169,7 +169,7 @@ properties:
       gas_in_place: { type: number, x-unit: "m3", description: "m3 of gas at standard conditions (the package's billion cubic feet, at 28.317 million m3 a Bcf)" }
       coal_in_place: { type: number, x-unit: "kg", description: "kg of coal within 1,800 m" }
   bake:
-    description: "For a baked body: the flyable surface package (planet-sim-surface/1): a render bake of the world, versioned and written once; latest.json names the current one. It is large (hundreds of MB) and is not kept in the registry: only its pointer and manifest are. The game fetches the files by hash from a worlds store (a folder the game is configured with, holding worlds/<world_id>/surface/v<N>/)."
+    description: "A baked body's flyable surface package (planet-sim-surface/1), written once per version; only its pointer and manifest are kept here, the game fetches the files by hash from its worlds store."
     type: object
     additionalProperties: false
     required: [format, version, path, manifest_sha256]
@@ -182,7 +182,7 @@ properties:
       bytes: { type: number, x-unit: "1", description: "bytes, all its files" }
       note: { type: string, description: "The bake's own note." }
   ground:
-    description: "For a body with a ground package: planet-unfold-tiles/1 (PTL2 vector tiles) or planet-land-pyramid/1 (the planet LOD anchor package and live land pyramid), written once per snapshot in the worlds store. It takes the place of a `bake`: a body has one or the other. The game scales the package to the body's own radius (physical.radius / the manifest's radius_m) and keeps the body's gravity, climate and lore."
+    description: "A body's ground package (planet-unfold-tiles/1 or planet-land-pyramid/1) in the worlds store, in place of a bake. The game scales it to physical.radius and keeps the body's gravity, climate and lore."
     type: object
     additionalProperties: false
     required: [format, path, manifest_sha256]

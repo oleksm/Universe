@@ -121,8 +121,7 @@ properties:
     type: array
     items:
       $ref: ../../common.schema.yaml#/definitions/feature_quantity
-    description: How its parts sit (a meander's wavelength as a multiple of the width),
-      each with its law.
+    description: "How its parts sit, each with its law. frame (rides 1): its pins sit in its plate's frame and ride the crust (planet-field.plate-rotation); rides 0: a body-frame snapshot remade each pass (planet-forge src/ride.rs)."
   parent_kinds:
     type: array
     items:

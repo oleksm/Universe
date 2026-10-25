@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Assembly
 x-kind: [assembly]
-description: 'standards/SFO/metadata/assemblies/<name>.yaml: one built frame (SFO 14), the members, nodes and decks a design''s structure is cut and joined from, in the design''s own frame (metres, as the studio saves it). Every piece names its mill stock, and the stock''s form and size give its shape (SFO 13), so the game draws the frame from this record and needs no model. What the designer places is members, nodes and decks; the fittings, the bill of stock and the physical figures are derived from them by tools/standards/frames.py (one rule, which the studio follows when it saves): a member end at a node of its own material is welded, any other end (a pinned one, or one into a node of another material) is bolted through a forged end fitting sized to its tube; a member longer than its stock''s mill length is spliced; a deck is held by a clip every half metre along each member it rests on. No model: its stock''s shapes.'
+description: "standards/SFO/metadata/assemblies/<name>.yaml: one built frame (SFO 14): members, nodes and decks in the design's frame, each naming its mill stock, whose form and size give its shape (no model). Fittings, bill of stock and physical figures are derived by frames.py: same-material node ends welded, others bolted through a forged end fitting; members over mill length spliced; decks clipped every 0.5 m."
 type: object
 additionalProperties: false
 required: [identity, members, physical]

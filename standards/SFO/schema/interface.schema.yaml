@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Interface
 x-kind: [interface]
-description: "standards/SFO/metadata/interfaces/<name>.yaml: a mating face as a standard (SFO 26), the building code of connection. A port on a made thing says which interface it is built to and the duty it needs; a connection product (a flange pair, a plug, a hose's coupling, a cable's termination, a coupler) says which interface it is built to and what it is rated for. A product fits a port when both name the same interface, it brings the other half, and its rating covers the port's duty. Any maker may build to it."
+description: "standards/SFO/metadata/interfaces/<name>.yaml: a mating face as a standard (SFO 26). A port names the interface and its duty; a connection product names it and its rating. A product fits a port of the same interface that it brings the other half of, when its rating covers the duty."
 type: object
 additionalProperties: false
 required: [identity, domain, kind, halves, make]

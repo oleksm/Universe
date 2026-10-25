@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Kit template
 x-kind: [template]
-description: "standards/SFO/metadata/templates/<name>.yaml: one look for a whole kit family (the owner, 2026-10-17: never one model per size). Every run or connector of the family names it (`template`) and carries the figures that scale it; the game draws the template at each record's size, sweeping a run's straight along its path. A template's model is built once; an installed size's model may serve as it (`model_of`)."
+description: "standards/SFO/metadata/templates/<name>.yaml: one look for a whole kit family, never a model per size. Each member names it and carries its scaling figures; the game draws it at each size. An installed size's model may serve (`model_of`)."
 type: object
 additionalProperties: false
 required: [identity, family, draws, scales_by]

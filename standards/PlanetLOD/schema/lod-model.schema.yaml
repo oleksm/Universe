@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Planet LOD model
 x-kind: [lod-model]
-description: "standards/PlanetLOD/metadata/models/<name>.yaml: how a Planet Simulator model is meshed (the owner, 17 Oct 2026): the model it meshes (its anchors and rings are on that page), the rule every vertex height comes from, the lines kept as mesh edges, the vertex pattern by zone, the triangulation and its face rules, its parameters, what it guarantees, the owner's rules for it, its results and its implementation. Its words are the Planet Simulator's."
+description: "standards/PlanetLOD/metadata/models/<name>.yaml: how a Planet Simulator model is meshed: the model, the height rule, the lines kept as edges, vertex pattern by zone, triangulation and face rules, parameters, guarantees, the owner's rules, results and implementation."
 type: object
 additionalProperties: false
 required: [identity, model, height_rule]

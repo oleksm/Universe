@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Rule
 x-kind: [rule]
-description: "standards/SFO/metadata/rules/<name>.yaml: a rule of the registry stated once, that many records' figures rest on: a service life, a cutting allowance, how a generated part is fitted, a margin. A record's basis entry names it (`rule:`) instead of repeating its text; the rule carries the tier, the source and the review flag for all of them. Change the rule and every record that rests on it has changed."
+description: "standards/SFO/metadata/rules/<name>.yaml: a rule stated once that many records rest on. A basis entry names it (`rule:`) instead of repeating it; the rule carries tier, source and review for all of them."
 type: object
 additionalProperties: false
 required: [identity, statement, tier]

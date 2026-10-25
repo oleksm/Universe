@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Ground vocabulary
 x-kind: [ground-vocabulary]
-description: "standards/Celestial/metadata/ground-vocabularies/<name>.yaml: the u16 ids a world's ground (PGS1, planet-unfold docs/format-v4.md) writes for a category of each face, frozen here before any install. 0 is none (not unknown: unknown is a capability bit off). Append-only: a new version keeps every earlier id and only adds; an id is never reused. The ground's header names the vocabulary as <key>@<version>."
+description: "standards/Celestial/metadata/ground-vocabularies/<name>.yaml: the u16 ids a world's ground writes for one face category (0 none). Append-only: a version only adds ids, never reuses one; the ground names it as <key>@<version>."
 type: object
 additionalProperties: false
 required: [identity, version, entries]

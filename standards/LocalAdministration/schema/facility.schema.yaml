@@ -21,7 +21,7 @@ properties:
   modules: { $ref: "installation.schema.yaml#/definitions/modules" }
   stock: { $ref: "installation.schema.yaml#/definitions/stock" }
   claim:
-    description: "For a mine or a well: the deposit it works, by the planet simulation's permanent id in the body's survey (deposits.geojson) or energy package (fields, coalfields), and under whose licence. The id is checked against the survey of the body the settlement is at. Mining under an administration's jurisdiction needs its licence (law.policies.mining_licence); without one, the breach is recorded (offence: unlicensed mining), never blocked."
+    description: "A mine's or well's deposit, by the planet simulation's permanent id in its body's survey or energy package (checked), and its licence. Mining under a jurisdiction without its licence (law.policies.mining_licence) is recorded as a breach, never blocked."
     type: object
     additionalProperties: false
     required: [deposit, holder]

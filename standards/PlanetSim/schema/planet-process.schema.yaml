@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Planet process
 x-kind: [planet-process]
-description: "standards/PlanetSim/metadata/processes/<area>/<name>.yaml: one physical process of the planet sim (plate motion, collision, rifting, climate, routing, erosion, ice, relief generators...): when it runs, what it reads and writes, the events it emits, its parameters, its random draws, the rules that must always hold after it, what it depends on, the backends it runs on and its implementations. planet-forge reads these and refuses a parameter, field or event they do not name."
+description: "standards/PlanetSim/metadata/processes/<area>/<name>.yaml: one physical process of the planet sim: when it runs, what it reads and writes, events, parameters, random draws, invariants, dependencies, backends, implementations. planet-forge refuses a parameter, field or event not named here."
 type: object
 additionalProperties: false
 required: [identity, area, clock]

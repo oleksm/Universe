@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Plant layout
 x-kind: [layout]
-description: "standards/SFO/metadata/layouts/<name>.yaml: a works' fit (SFO 24): plant units in bays, the links between them, the frame over them where one is needed and the ground works under them, for the site it names. Written by tools/standards/plants.py; the totals are worked out from the rest. Coordinates: metres from the middle of the layout at ground level, x along its length, y across, z up."
+description: "standards/SFO/metadata/layouts/<name>.yaml: a works' fit (SFO 24): units in bays, links, the frame over them and ground works under them, for its site; totals derived. Metres from the layout's middle at ground: x along, y across, z up."
 type: object
 additionalProperties: false
 required: [identity, stands_for, site, physical, bays, totals]
@@ -85,7 +85,7 @@ properties:
           items: { type: string }
           minItems: 2
           maxItems: 2
-          description: "What its two ends join, from and to: `<bay>:<port>` (a unit's port), `edge:<port>` (one of the layout's own ports) `tee:<run name>` (it branches off that run, its end lying on that run's path) `onto:<run name>` (a belt's head dropping onto that belt or conveyor, 0.5 m over its path) or `jacket:<run name>` (a pipe ending on that jacketed duct's water jacket, its end on the duct's path). from, to and via are then where those are."
+          description: "Its two ends: `<bay>:<port>`, `edge:<port>`, `tee:<run>` (branching off that run), `onto:<run>` (a belt head 0.5 m over that run) or `jacket:<run>` (onto that duct's water jacket)."
         reversible: { type: boolean, description: "A shuttle belt that runs either way: both its ends deliver (a port it drops into, or a belt it drops onto)." }
         taps: { type: array, items: { type: string }, description: "Ports taken off it along its length by a tee (`<bay>:<port>`): each lies on its path." }
         count: { type: integer, minimum: 1, description: "Circuits laid side by side on one path (cables)" }

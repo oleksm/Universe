@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Adapter
 x-kind: [adapter]
-description: "standards/SFO/metadata/adapters/<slot>-s<class>.yaml: a structural adapter, the cradle that holds one mount's equipment on a ship's frame (docs/proposals/physical-mounts.md). Its top face offers the mount's sockets; its fixings clamp onto kit struts. Made from stock, sold as stock (its KIT-ADAPTER- record), drawn by its family template. Written by tools/standards/mounting.py."
+description: "standards/SFO/metadata/adapters/<slot>-s<class>.yaml: the cradle holding one mount's equipment on a ship's frame: the mount's sockets on top, fixings clamped onto kit struts. Sold as its KIT-ADAPTER- stock, drawn by its template."
 type: object
 additionalProperties: false
 required: [identity, offers, physical, built_of, ports, template]

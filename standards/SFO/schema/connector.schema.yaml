@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Plant connector
 x-kind: [connector]
-description: "standards/SFO/metadata/connectors/<name>.yaml: a standard joint (SFO 25) between a unit's port and a run's end, or between two runs. It fixes the mating faces, so any vendor's part fits any port built to it. A connector is a made thing: its mass is the joint's, both halves (a flange pair with its gasket and bolts, a coupling, a cable termination, a chute and skirt). Written by tools/standards/plant_kit.py."
+description: "standards/SFO/metadata/connectors/<name>.yaml: a standard joint (SFO 25) between a port and a run's end, or two runs; it fixes the mating faces so any vendor's part fits. Its mass is the whole joint's, both halves."
 type: object
 additionalProperties: false
 required: [identity, kind, size, physical, built_of]
@@ -19,7 +19,26 @@ properties:
       description: { type: string }
   kind:
     enum: [flange, lined-flange, chute, belt-transfer, termination, bus-joint, hood, clamp-coupling, quick-coupling, union, plug-socket, collector, cable-reel, valve, expansion-joint, twistlock, strut-clamp, run-clip, support-shoe]
-    description: "flange: a bolted pipe or duct flange pair; lined-flange: the same on a refractory-lined duct, the lining's joint packed; chute: a sealed bolted chute flange for bulk solids (a lock's outlet into a closed conveyor); belt-transfer: a receiving chute and skirt where a belt's head discharges into a hopper or onto another belt; termination: a power cable's end into a terminal box (lugs, stress cones, gland); clamp-coupling: a sealed clamped joint whose duct side draws back to let its outlet move; hood: a fixed water-cooled catch hood over a moving outlet, a gap between them (no contact, no pressure); bus-joint: a bus's bolted joint to a unit's terminals, both poles, with the joint's water couplings; quick-coupling: a hose coupling made and broken by hand (cam-lock, flat-face); union: a screwed hose union; plug-socket: a power plug and its receiver, made and broken by hand; collector: a moving machine's sliding shoes on a conductor rail; cable-reel: a motor-driven reel paying out a machine's cable; valve: a flanged valve set in a line between two flange joints; expansion-joint: a flanged bellows taking a line's growth; twistlock: a container corner's casting (female) or its twistlock (male); strut-clamp: a split collar clamped round a kit strut, joining a holder's fixing to the frame (docs/proposals/physical-mounts.md); run-clip: a cushioned loop holding one run, its tab bolted to a strut clamp's lug."
+    description: "What sort of joint it is."
+    x-values:
+      flange: "a bolted pipe or duct flange pair"
+      lined-flange: "the same on a refractory-lined duct, the lining's joint packed"
+      chute: "a sealed bolted chute flange for bulk solids (a lock's outlet into a closed conveyor)"
+      belt-transfer: "a receiving chute and skirt where a belt's head discharges into a hopper or onto another belt"
+      termination: "a power cable's end into a terminal box (lugs, stress cones, gland)"
+      clamp-coupling: "a sealed clamped joint whose duct side draws back to let its outlet move"
+      hood: "a fixed water-cooled catch hood over a moving outlet, a gap between them (no contact, no pressure)"
+      bus-joint: "a bus's bolted joint to a unit's terminals, both poles, with the joint's water couplings"
+      quick-coupling: "a hose coupling made and broken by hand (cam-lock, flat-face)"
+      union: "a screwed hose union"
+      plug-socket: "a power plug and its receiver, made and broken by hand"
+      collector: "a moving machine's sliding shoes on a conductor rail"
+      cable-reel: "a motor-driven reel paying out a machine's cable"
+      valve: "a flanged valve set in a line between two flange joints"
+      expansion-joint: "a flanged bellows taking a line's growth"
+      twistlock: "a container corner's casting (female) or its twistlock (male)"
+      strut-clamp: "a split collar clamped round a kit strut, joining a holder's fixing to the frame (docs/proposals/physical-mounts.md)"
+      run-clip: "a cushioned loop holding one run, its tab bolted to a strut clamp's lug."
   size: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "Its nominal size: a pipe's or duct's nominal bore (the steel's, for a lined duct), a chute's bore, a belt's width. For a termination, the conductor's cross-section in m2." }
   rating:
     type: object

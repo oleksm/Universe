@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Plant run
 x-kind: [run]
-description: "standards/SFO/metadata/runs/<name>.yaml: a class of run (SFO 25), the made parts a layout lays between ports: a pipe, a lined duct, a belt or drag conveyor, a cable on its tray. One class is one size and rating: its straight (by the metre), its elbow, its tee, its supports and the connector at its ends. The game lays a run from its path: straights along each leg, an elbow at each corner, a support every spacing. Written by tools/standards/plant_kit.py."
+description: "standards/SFO/metadata/runs/<name>.yaml: a class of run (SFO 25) laid between ports, one size and rating: its straight per metre, elbow, tee, supports and end connector. The game lays it along its path."
 type: object
 additionalProperties: false
 required: [identity, kind, size, outside, per_m, connector]
@@ -16,7 +16,18 @@ properties:
       description: { type: string }
   kind:
     enum: [pipe, lined-duct, jacketed-duct, belt, drag-conveyor, cable, busbar, hose, conductor-rail, festoon]
-    description: "pipe: steel or stainless pipe, bare or lagged; lined-duct: a steel shell lined with refractory, for hot gas; jacketed-duct: a steel duct for hot gas inside a water jacket, its water brought by pipes ending on it (`jacket:` ends); belt: an open troughed belt on idlers and a stringer; drag-conveyor: a chain drawing flights through a closed casing, for hot or sealed bulk; cable: power cables on their tray; busbar: a direct current bus of two poles, water-cooled hollow copper on insulators, where a cable would be too many circuits; hose: a flexible hose (rubber, hydraulic or corrugated metal) laid loose to things that move or are coupled by hand; conductor-rail: enclosed conductors along a moving machine's path, a collector sliding on them; festoon: a flexible cable hung in loops from trolleys on a track along a short travel."
+    description: "What sort of run it is."
+    x-values:
+      pipe: "steel or stainless pipe, bare or lagged"
+      lined-duct: "a steel shell lined with refractory, for hot gas"
+      jacketed-duct: "a steel duct for hot gas inside a water jacket, its water brought by pipes ending on it (`jacket:` ends)"
+      belt: "an open troughed belt on idlers and a stringer"
+      drag-conveyor: "a chain drawing flights through a closed casing, for hot or sealed bulk"
+      cable: "power cables on their tray"
+      busbar: "a direct current bus of two poles, water-cooled hollow copper on insulators, where a cable would be too many circuits"
+      hose: "a flexible hose (rubber, hydraulic or corrugated metal) laid loose to things that move or are coupled by hand"
+      conductor-rail: "enclosed conductors along a moving machine's path, a collector sliding on them"
+      festoon: "a flexible cable hung in loops from trolleys on a track along a short travel."
   size: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "Nominal bore (pipe: the steel's; lined duct: the steel shell's), belt width or casing width; for a cable, the conductor's cross-section in m2" }
   bore: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "The clear bore the flow has (inside the lining of a lined duct)" }
   outside: { type: array, items: { type: number, exclusiveMinimum: 0 }, minItems: 2, maxItems: 2, x-unit: "m", description: "Its outside across and up [width, height], lagging and casing included: what a fit check keeps clear (a pipe's diameter twice)." }

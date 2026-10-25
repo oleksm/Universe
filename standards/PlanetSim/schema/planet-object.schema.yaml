@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Planet object
 x-kind: [planet-object]
-description: "standards/PlanetSim/metadata/objects/<scope>/<name>.yaml: one kind of object in the Planet Simulator's data model. The core objects (scope core) are the general model every generator shares: the planet's coordinates and clock, the record a generator writes, its geometry, the surface that answers a property at any coordinate, the generator itself, how records persist, the resolution knobs. A generator's objects (scope generator) are what that generator keeps (a plate, a crust band, a suture, a river, a glacial moment), each extending a core object: their attributes, how they come to be, move, change and end, what they carry about themselves, how they are kept, which fields are evaluated from them, and the knobs that set their resolution. No object is a set of points: geometry is lines, areas and locations in planet coordinates, to a stated tolerance. planet-forge's types follow these records; a type with no record, or a record whose code does not match, is drift."
+description: "standards/PlanetSim/metadata/objects/<scope>/<name>.yaml: one object kind of the Planet Simulator's data model. Core objects are shared by every generator (coordinates, clock, record, geometry, surface, generator, persistence, resolution); a generator's objects extend one: attributes, life, what they carry, how kept, fields evaluated from them. Geometry is lines, areas and locations in planet coordinates, never point sets. planet-forge's types must match."
 type: object
 additionalProperties: false
 required: [identity, scope, about_model]

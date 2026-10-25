@@ -95,17 +95,9 @@ layout:
   rule: two to three channel widths (Leopold and Wolman 1960, River meanders, GSA Bulletin 71)
   unit: m
 - name: frame
-  unit: '1'
-  meaning: '1: its pins sit in its plate''s frame (integer cm) and ride the crust, placed by planet-field.plate-rotation;
-    0: a body-frame snapshot, remade from the present state each pass'
-  rule: it is the present state of an agent (water, sea, wind, the plates' meeting), remade each pass
   params:
   - name: rides
     value: 0.0
-    unit: '1'
-    meaning: 1 rides, 0 snapshot
-    source: 'planet-forge src/ride.rs (from the Python: stages/lines.py Store vs its rivers and coast)'
-    open: true
 parent_kinds:
 - planet-feature.floodplain
 - planet-feature.trunk-river
