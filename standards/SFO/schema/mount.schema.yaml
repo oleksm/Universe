@@ -70,8 +70,18 @@ properties:
         interface: { type: string, x-ref: [interface] }
         connector: { type: string, x-ref: [stock, connector], description: "The fastener the registry joins it with (a bolt), by key" }
         key: { enum: [index], description: "The index socket: the equipment's index foot lands here, so only poses that keep it so are allowed." }
+  face:
+    description: "The exact flat area the hull gives at the mating plane, centred on the mount frame's origin, x along: what a hull designer places, and what the holder sits on."
+    type: object
+    additionalProperties: false
+    required: [shape]
+    properties:
+      shape: { enum: [rectangle, circle] }
+      length: { type: number, exclusiveMinimum: 0, x-unit: m, description: "m along x (rectangle)." }
+      width: { type: number, exclusiveMinimum: 0, x-unit: m, description: "m along y (rectangle)." }
+      diameter: { type: number, exclusiveMinimum: 0, x-unit: m, description: "m (circle)." }
   mating:
-    description: "How a mountable meets it. The mating plane is z = 0 of the mount frame (on a hull its mount_<slot> node, z out of the hull; on a product its model's root): the mountable lies on +z within the envelope, nothing of it below the plane. In a glTF model (+Y up) that z is the node's +Y."
+    description: "How a mountable meets it. The mating plane is z = 0 of the mount frame (on a hull its mount_<slot> node, z out of the hull; on a product its model's root): the mountable lies on +z within the envelope, nothing of it below the plane. In glTF: a hull's mount_<slot> node's local +Z; a product's +Y, its root on the mating face."
     type: object
     additionalProperties: false
     required: [clocking, approach]
