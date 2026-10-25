@@ -11,7 +11,23 @@
         --candidate replaces the record's slots/fit/thrusters; --model reads markers and nozzles from an export
         before it is installed.
 
-Everything is read from the registry records; nothing here is a second copy of a rule.
+    python3 tools/standards/ship.py modules (--mount=<key> | --socket=<hull>:<slot> | --kind=<kind> [--class=N]) [--json]
+        The products that fit: key, size, mass, power, thrust, mount, revision, whether an installed model exists.
+    python3 tools/standards/ship.py product <equipment-key> [--json]
+        One product's sheet: physical, needs, function, fits mount (envelope, holder), ports (connectors and pins),
+        model package path and manifest sha, revision and confidence.
+    python3 tools/standards/ship.py get <any-key> [--json]       any record: a material, cable/wire run, connector,
+        interface, mount, rule, stock... (prints the record and its file)
+    python3 tools/standards/ship.py find <words...>             keys and names containing all the words
+    python3 tools/standards/ship.py classify <hull-key> [--candidate=json] [--json]
+        Role class, socket size classes and mounts, each required block offered/filled, commissioned or not, and why.
+    python3 tools/standards/ship.py decisions [<words...>]      the registry's design decisions (docs/ships/*.yaml):
+        file, status line; read the file for the choice
+    python3 tools/standards/ship.py missing "<what>" [--for=<key>]
+        Something is not in the registry: prints the one message to send the registry to have it made.
+
+Everything is read from the registry records; nothing here is a second copy of a rule. When a lookup finds nothing it
+says so and prints the missing command: the registry is asked only for what does not exist.
 """
 import glob, json, os, sys
 import yaml
@@ -106,6 +122,8 @@ def validate(key, opt):
                            for q in fitted.get("engine", []))
             if not have:
                 faults.append(("R2", f"{b['need']} not fitted: the ship cannot be commissioned"))
+    if opt.get("--quiet"):
+        return faults
     if opt.get("--json"):
         return print(json.dumps({"hull": key, "pass": not faults, "faults": [{"criterion": c, "message": m} for c, m in faults],
                                  "unchecked": [{"criterion": c, "message": m} for c, m in unchecked]}, indent=1)) or faults
@@ -120,6 +138,175 @@ def validate(key, opt):
     return faults
 
 
+
+def _index():
+    """Every record by key; cached, rebuilt when any record file is newer than the cache."""
+    import pickle
+    tree = os.path.join(ROOT, "standards")
+    cache = os.path.join(os.environ.get("XDG_CACHE_HOME") or os.path.expanduser("~/.cache"), "freefall-registry-index.pkl")
+    newest = max(os.path.getmtime(p) for p in glob.glob(os.path.join(tree, "**", "*.yaml"), recursive=True))
+    try:
+        stamp, idx = pickle.load(open(cache, "rb"))
+        if stamp >= newest:
+            return idx
+    except Exception:
+        pass
+    from reg import records
+    idx = {k: (f, d) for k, _, f, d in records()}
+    os.makedirs(os.path.dirname(cache), exist_ok=True)
+    pickle.dump((newest, idx), open(cache, "wb"))
+    return idx
+
+
+def _hint(what, key=None):
+    return ("not in the registry. Ask for it once:\n  env AGENTMSG_NAME=blender agentmsg send registry task --summary "
+            f"\"missing: {what}\"" + (f" --ref {key}" if key else ""))
+
+
+def _model(rec):
+    v = rec.get("visual") or {}
+    path = v.get("path")
+    store = os.environ.get("UNIVERSE_ASSETS") or os.path.expanduser("~/git/freefall-assets")
+    return {"path": path, "manifest_sha256": v.get("manifest_sha256"),
+            "installed": bool(path and os.path.isfile(os.path.join(store, path, "model.glb")))}
+
+
+def modules(opt):
+    mounts, eq, hulls = load("mounts"), load("equipment"), load("hulls")
+    target = None
+    if opt.get("--socket"):
+        hk, sn = opt["--socket"].split(":", 1)
+        s = next((x for x in hulls[hk].get("slots") or [] if x["name"] == sn), None)
+        if not s:
+            sys.exit(f"no socket {sn} on {hk}")
+        target = s.get("mount")
+        kind, cls = s["kind"], s["size"]
+    elif opt.get("--mount"):
+        target = opt["--mount"]
+        if target not in mounts:
+            sys.exit(_hint(f"mount {target}", target))
+        kind, cls = mounts[target]["identity"]["slot"], mounts[target]["identity"]["size_class"]
+    else:
+        kind, cls = opt.get("--kind"), int(opt.get("--class", 4))
+    rows = []
+    from ship_qualify import qualify
+    for k, q in sorted(eq.items()):
+        if q["identity"].get("slot") != kind or (q.get("size_class") or 1) > cls:
+            continue
+        if target:   # the game's own rule, through the qualification code
+            probe = {"identity": {"key": "probe"}, "physical": {"mass": 1, "length": 1e3, "width": 1e3, "height": 1e3},
+                     "slots": [{"name": "s", "kind": kind, "size": cls, "mount": target}], "fit": [{"slot": "s", "item": k}]}
+            if any(c == "F3" for c, _ in qualify(probe, mounts, eq)[0]):
+                continue
+        f, ph, n = q.get("function") or {}, q.get("physical") or {}, q.get("needs") or {}
+        rows.append({"key": k, "size_class": q.get("size_class"), "mass_kg": ph.get("mass"),
+                     "dims_m": [ph.get("length"), ph.get("width"), ph.get("height")], "power_W": n.get("power"),
+                     "function": f.get("kind"), "thrust_N": f.get("thrust"), "fits": q.get("fits"),
+                     "revision": q["identity"].get("revision"), "model": _model(q)["installed"]})
+    if opt.get("--json"):
+        return print(json.dumps(rows, indent=1))
+    print(f"{'product':44}{'mass kg':>9}{'power W':>9}  {'function':16}{'mount':26}{'rev':10}model")
+    for r in rows:
+        print(f"{r['key']:44}{r['mass_kg'] or 0:>9g}{r['power_W'] or 0:>9g}  {str(r['function']):16}{str(r['fits']):26}{str(r['revision']):10}{'yes' if r['model'] else 'NO'}")
+    if not rows:
+        print(_hint(f"a {kind} product of class {cls}" + (f" for {target}" if target else "")))
+
+
+def product(key, opt):
+    eq, mounts = load("equipment"), load("mounts")
+    q = eq.get(key)
+    if not q:
+        sys.exit(_hint(f"equipment {key}", key))
+    m = mounts.get(q.get("fits") or "", {})
+    sheet = {"key": key, "name": q["identity"].get("name"), "revision": q["identity"].get("revision"),
+             "slot_kind": q["identity"].get("slot"), "size_class": q.get("size_class"), "physical": q.get("physical"),
+             "needs": q.get("needs"), "function": q.get("function"),
+             "fits": {"mount": q.get("fits"), "envelope": m.get("envelope"), "bears": m.get("bears"), "holder": m.get("holder")},
+             "ports": q.get("ports") or [], "internal": q.get("internal") or [], "model": _model(q),
+             "confidence": [{"of": b.get("of"), "tier": b.get("tier") or b.get("rule"), "review": b.get("review", False)} for b in q.get("basis") or []]}
+    if opt.get("--json"):
+        return print(json.dumps(sheet, indent=1, default=str))
+    print(f"{key}  {sheet['name']}  [{sheet['revision']}]  {sheet['slot_kind']} class {sheet['size_class']}")
+    ph = sheet["physical"] or {}
+    print(f"  physical: {ph.get('mass')} kg, {ph.get('length')} x {ph.get('width')} x {ph.get('height')} m;  needs: {sheet['needs']}")
+    print(f"  function: {sheet['function']}")
+    fm = sheet["fits"]
+    print(f"  fits {fm['mount']}: envelope {fm['envelope']}, bears {fm['bears']}, holder {fm['holder']}")
+    print(f"  model: {sheet['model']}")
+    for pt in sheet["ports"]:
+        pins = ", ".join(f"{x['contact']}={x['role']}" for x in pt.get("pins") or [])
+        print(f"  port {pt['id']}: {pt.get('medium')} {pt.get('flow')} {pt.get('interface')} {pt.get('half')}"
+              + (f" {pt.get('voltage')} V {pt.get('current')} A" if pt.get("voltage") else "") + (f" pins [{pins}]" if pins else "")
+              + f" at {pt.get('at')} facing {pt.get('facing')}")
+    for c in sheet["confidence"]:
+        print(f"  basis {c['of']}: {c['tier']}" + ("  (to review)" if c["review"] else ""))
+
+
+def get(key, opt):
+    idx = _index()
+    if key not in idx:
+        sys.exit(_hint(key, key))
+    f, d = idx[key]
+    if opt.get("--json"):
+        return print(json.dumps(d, indent=1, default=str))
+    print(f"# {os.path.relpath(f, ROOT)}")
+    print(open(f, encoding="utf-8").read())
+
+
+def find(words):
+    ws = [w.lower() for w in words]
+    hits = [(k, (d.get("identity") or {}).get("name", "")) for k, (f, d) in sorted(_index().items())
+            if all(w in f"{k} {(d.get('identity') or {}).get('name', '')}".lower() for w in ws)]
+    for k, n in hits:
+        print(f"{k:<55} {n}")
+    if not hits:
+        print(_hint(" ".join(words)))
+
+
+def classify(key, opt):
+    hulls, mounts, eq = load("hulls"), load("mounts"), load("equipment")
+    h = dict(hulls[key])
+    if opt.get("--candidate"):
+        h.update(json.load(open(opt["--candidate"])))
+    slots = h.get("slots") or []
+    faults = validate(key, dict(opt, **{"--quiet": True}))
+    kinds = {s["kind"] for s in slots}
+    fitted = {next((s["kind"] for s in slots if s["name"] == f["slot"]), None) for f in h.get("fit") or []}
+    out = {"hull": key, "role_class": h["identity"].get("class"), "revision": h["identity"].get("revision"),
+           "socket_size_classes": sorted({s["size"] for s in slots}), "mounts": sorted({s.get("mount") for s in slots if s.get("mount")}),
+           "blocks": [{"need": b["need"], "required": b["required"],
+                       "offered": any(k in kinds for k in b["kinds"]) or bool(b.get("also_by") and "engine" in kinds),
+                       "filled": any(k in fitted for k in b["kinds"])} for b in blocks()],
+           "faults": [{"criterion": c, "message": m} for c, m in faults]}
+    req = [b for b in out["blocks"] if b["required"]]
+    out["deliverable"] = ("hull and sockets ready" if all(b["offered"] for b in req) and not faults and not h.get("fit")
+                          else "commissionable" if all(b["filled"] for b in req) and not faults else "not ready")
+    if opt.get("--json"):
+        return print(json.dumps(out, indent=1))
+    print(f"{key}: {out['role_class']} [{out['revision']}]  sockets {len(slots)}, size classes {out['socket_size_classes']} -> {out['deliverable']}")
+    for b in out["blocks"]:
+        if b["required"] or b["offered"]:
+            print(f"  {'REQ' if b['required'] else 'opt'} {b['need']:16} socket {'yes' if b['offered'] else 'NO '}  filled {'yes' if b['filled'] else 'no'}")
+    for f in out["faults"][:8]:
+        print(f"  fault {f['criterion']}: {f['message']}")
+
+
+def decisions(words):
+    ws = [w.lower() for w in words]
+    for f in sorted(glob.glob(os.path.join(ROOT, "docs/ships/*.yaml"))):
+        name = os.path.basename(f)
+        try:
+            d = yaml.safe_load(open(f)) or {}
+        except Exception:
+            continue
+        status = str(d.get("withdrawn") and "WITHDRAWN - " or "") + str(d.get("status", ""))
+        if all(w in (name + " " + status).lower() for w in ws):
+            print(f"{os.path.relpath(f, ROOT):70} {status[:110]}")
+
+
+def missing(what, opt):
+    print(_hint(what, opt.get("--for")))
+
 def main(argv):
     if not argv or argv[0] in ("-h", "--help"):
         sys.exit(__doc__)
@@ -133,6 +320,20 @@ def main(argv):
         print("req: yes = a required block; alt = an engine socket, which stands in for main propulsion or attitude") if not opt.get("--json") else None
     elif cmd == "validate" and args:
         sys.exit(1 if validate(args[0], opt) else 0)
+    elif cmd == "modules":
+        modules(opt)
+    elif cmd == "product" and args:
+        product(args[0], opt)
+    elif cmd == "get" and args:
+        get(args[0], opt)
+    elif cmd == "find" and args:
+        find(args)
+    elif cmd == "classify" and args:
+        classify(args[0], opt)
+    elif cmd == "decisions":
+        decisions(args)
+    elif cmd == "missing" and args:
+        missing(" ".join(args), opt)
     else:
         sys.exit(__doc__)
 

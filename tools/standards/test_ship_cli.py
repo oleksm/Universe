@@ -21,5 +21,24 @@ class ShipCli(unittest.TestCase):
         self.assertEqual(len(kinds), len(set(kinds)))
 
 
+
+class ServiceCommands(unittest.TestCase):
+    def test_modules_for_a_mount_use_the_games_fit_rule(self):
+        import io, contextlib, json
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            ship.modules({"--mount": "mount.engine-s1c", "--json": True})
+        keys = {r["key"] for r in json.loads(out.getvalue())}
+        self.assertIn("equipment.engine.cg.s1", keys)
+        self.assertNotIn("equipment.engine.ft.s1", keys)   # 30 t, 6 m: past the compact envelope
+
+    def test_missing_prints_one_request(self):
+        import io, contextlib
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            ship.missing("a thing", {"--for": "equipment.x"})
+        self.assertIn("agentmsg send registry task", out.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()
