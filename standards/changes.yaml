@@ -2346,6 +2346,7 @@
 - { record: planet-field.glaciality-previous, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "0203edac491d9e08" }
 - { record: planet-field.grain, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "11980e5037369e6e" }
 - { record: planet-field.grain-north, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "c398417bdddedbf0" }
+- { record: planet-field.ground-ice, at: "2026-10-25T05:18:04Z", status: "", summary: "first tracked", sha: "4b762316a2c29b0c" }
 - { record: planet-field.height, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "d286e95a96a7da04" }
 - { record: planet-field.height-above-ridge, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "7af95f5acd248513" }
 - { record: planet-field.hotspot-last-active, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "125d3fd8746742b6" }
@@ -2898,7 +2899,7 @@
 - { record: planet-process.landcover, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "4938572bd94be892" }
 - { record: planet-process.landscape-erosion, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "b5abf965f0546bd2" }
 - { record: planet-process.landscape-erosion-gpu, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "d1d8497995fe36fa" }
-- { record: planet-process.lid-landforms, at: "2026-10-25T04:18:24Z", status: "", summary: "first tracked", sha: "3aba7d38cc9ca9bd" }
+- { record: planet-process.lid-landforms, at: "2026-10-25T05:18:04Z", status: "", summary: "changed: params", sha: "afe1b59e05288966" }
 - { record: planet-process.line-store-finish, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "e1109ed9e4af9a17" }
 - { record: planet-process.line-store-reanchor, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "486c7dff2348e33c" }
 - { record: planet-process.line-store-record-aging, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "465403f248db3ce7" }
@@ -2957,6 +2958,7 @@
 - { record: planet-process.subduction, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "a1cb51d77d297459" }
 - { record: planet-process.surface-ore-chances, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "590905de81856848" }
 - { record: planet-process.thermal-evolution, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "c1a8acd1a71a0176" }
+- { record: planet-process.thin-air-climate, at: "2026-10-25T05:18:04Z", status: "", summary: "first tracked", sha: "ac9b4cc8a9095303" }
 - { record: planet-process.tile-hydrology, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "fea0ce918a1269aa" }
 - { record: planet-process.tile-snow, at: "2026-10-25T04:55:39Z", status: "", summary: "changed: basis", sha: "034d7e4a8ce344d7" }
 - { record: planet-process.vector-climate, at: "2026-10-25T04:18:24Z", status: "", summary: "changed: applies_to", sha: "1cac8bed3f6d97d4" }
@@ -3024,6 +3026,7 @@
 - { record: planet-view.rings-zones, at: "2026-10-25T04:43:06Z", status: "", summary: "changed", sha: "504925c614bd4180" }
 - { record: planet-view.samples, at: "2026-10-25T04:43:06Z", status: "", summary: "changed", sha: "b054e616c462a1b2" }
 - { record: planet-view.surface-ages, at: "2026-10-25T04:43:06Z", status: "", summary: "changed", sha: "92d8aa2c17fa7d1c" }
+- { record: planet-view.thin-air-climate, at: "2026-10-25T05:18:04Z", status: "", summary: "first tracked", sha: "a7a6b8e05fe0fb3a" }
 - { record: planet-view.vectors, at: "2026-10-25T04:43:06Z", status: "", summary: "changed", sha: "88f71f4467fcb979" }
 - { record: planet-view.world, at: "2026-10-18T02:40:07Z", status: "", summary: "first tracked", sha: "385e591c73f743f1" }
 - { record: plant-mount.bay-s1, at: "2026-10-25T04:43:06Z", status: draft, summary: "changed", sha: "2e8ed2d2701074d3" }

@@ -1,0 +1,135 @@
+# yaml-language-server: $schema=../../../schema/planet-process.schema.yaml
+identity:
+  key: planet-process.thin-air-climate
+  name: Thin-air climate through time
+  about: A thin-air planet's pressure (primordial, outgassed by mantle melting, lost to space) and temperature by sun, greenhouse,
+    latitude and height; its liquid water and ground ice.
+area: climate
+clock:
+  when: every step of a stagnant-lid thin-air run
+applies_to:
+- stagnant_lid
+- any_air
+reads:
+- name: planet-field.mantle-temperature
+  field: planet-field.mantle-temperature
+  unit: K
+  meaning: 'melting intensity, for outgassing (absent: outgassing off)'
+- name: planet-field.height
+  field: planet-field.height
+  unit: m
+writes:
+- name: planet-field.temperature
+  field: planet-field.temperature
+  unit: K
+- name: planet-field.ground-ice
+  field: planet-field.ground-ice
+  unit: '1'
+- name: planet-process.thin-air-climate/pressure
+  unit: Pa
+- name: planet-process.thin-air-climate/mean temperature
+  unit: K
+- name: planet-process.thin-air-climate/wet share
+  unit: '1'
+- name: planet-process.thin-air-climate/last wet myr
+  unit: Myr
+params:
+- name: P0_PA
+  value: 200000.0
+  unit: Pa
+  meaning: primordial atmosphere at formation (magma ocean degassing); fitted to Mars
+- name: OUTGAS_PA_PER_GYR
+  value: 3.168808781402895e-15
+  unit: Pa/s
+  meaning: volcanic outgassing at full mantle melting; fitted to Mars
+  said_as:
+    unit: Pa/Gyr
+    factor: 3.168808781402895e-17
+- name: TAU_EARLY_GYR
+  value: 3155760000000000.0
+  unit: s
+  meaning: escape timescale under the young sun's XUV; fitted to Mars
+  said_as: &id001
+    unit: Gyr
+    factor: 3.15576e+16
+- name: TAU_LATE_GYR
+  value: 3.15576e+16
+  unit: s
+  meaning: escape timescale today; fitted to Mars
+  said_as: *id001
+- name: XUV_GYR
+  value: 1.57788e+16
+  unit: s
+  meaning: how long the escape timescale takes to grow from early to late
+  said_as: *id001
+- name: SOLIDUS_K
+  value: 1820.0
+  unit: K
+  meaning: 'mantle solidus: melting starts above it'
+- name: MELT_SPAN_K
+  value: 240.0
+  unit: K
+  meaning: mantle temperature above the solidus that is full melting
+- name: GREEN_K
+  value: 25.0
+  unit: K
+  meaning: 'greenhouse warming scale: GREEN_K ln(1 + P / GREEN_REF_PA)'
+- name: GREEN_REF_PA
+  value: 10000.0
+  unit: Pa
+  meaning: greenhouse reference pressure
+- name: EQUATOR_K
+  value: 45.0
+  unit: K
+  meaning: 'latitude term: EQUATOR_K (cos^2 lat - 1/3)'
+- name: LAPSE_K_PER_M
+  value: 0.0025
+  unit: K/m
+  meaning: cooling with height above the planet's mean
+- name: SEASON_K
+  value: 25.0
+  unit: K
+  meaning: warm season above the mean, for liquid water
+- name: ICE_K
+  value: 205.0
+  unit: K
+  meaning: ground ice where the mean temperature is below it
+- name: WET_MIN_SHARE
+  value: 0.05
+  unit: '1'
+  meaning: the wet epoch lasts while at least this share of the surface can hold liquid water
+- name: TRIPLE_PA
+  value: 611.657
+  unit: Pa
+  meaning: 'water''s triple point: no liquid below it'
+depends_on:
+- planet-process.stagnant-lid-crust
+implementations:
+- where: planet-forge crates/forge-core/src/models/thin_air.rs
+  state: current
+status: draft
+basis:
+- of:
+  - identity
+  - area
+  - clock
+  - applies_to
+  - reads
+  - writes
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: request R6 and the module'
+- of:
+  - params.P0_PA
+  - params.OUTGAS_PA_PER_GYR
+  - params.TAU_EARLY_GYR
+  - params.TAU_LATE_GYR
+  tier: derived
+  review: true
+  note: 'fitted to Mars (610 Pa today, the wet epoch''s end ~3.7 Ga ago, with this interior): a calibration on one planet,
+    not a prediction; Mars'' loss is open science'
+- of:
+  - params
+  tier: sourced
+  review: true
+  source: Gough 1981 (the young sun); planet-forge docs/research/airless-mars-landforms-2026-10-24.md
+  note: the other constants as the module sets them

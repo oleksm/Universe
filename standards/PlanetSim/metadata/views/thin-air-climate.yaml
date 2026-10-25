@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../schema/planet-view.schema.yaml
+identity:
+  key: planet-view.thin-air-climate
+  name: Thin-air climate
+  about: a thin-air planet's surface temperature, ground ice and freezing line, with the air's pressure, the mean temperature, the liquid-water share and the wet epoch's end (planet-process.thin-air-climate)
+title: Thin-air climate
+row: line rings
+file_suffix: _airclimate.png (+ .legend.json)
+draws:
+  words: the surface temperature as a cold-warm ramp over the shaded relief, ground ice whitened, the freezing line
+legend:
+  title: Thin-air climate
+  rows:
+  - kind: head
+    label: 'Air {pressure} Pa, mean {mean_t} K; liquid water possible on {wet_pct} % of the surface; the wet epoch ended {last_wet} Ga ago'
+  - key: cold
+    kind: fill
+    colour: [60, 90, 170]
+    label: cold (150 K)
+  - key: warm
+    kind: fill
+    colour: [210, 120, 60]
+    label: warm (300 K)
+  - key: ice
+    kind: fill
+    colour: [240, 245, 250]
+    label: 'ground ice: {ice_pct} % of the surface'
+  - key: freezing
+    kind: line
+    colour: [20, 20, 20]
+    label: the freezing line (273 K)
+shown: true
+implementations:
+- where: planet-forge crates/viewer/src/layers/airclimate.rs
+  state: current
+  note: the viewer layer
+status: draft
+styles:
+- key: coast
+  colour: [0, 0, 0]
+- key: base-land
+  colour: [200, 196, 186]
+- key: base-sea
+  colour: [205, 220, 232]

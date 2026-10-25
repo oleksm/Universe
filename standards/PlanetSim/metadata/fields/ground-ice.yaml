@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/planet-field.schema.yaml
+identity:
+  key: planet-field.ground-ice
+  name: Ground ice
+  about: 1 where the ground holds ice (the mean temperature under ICE_K), else 0.
+unit: '1'
+range:
+- 0.0
+- 1.0
+per: sample
+producer:
+  where: planet-forge crates/forge-core/src/models/thin_air.rs
+  key: planet-field.ground-ice
+amount: snapshot
+derived_from:
+- planet-field.temperature
+status: draft
+basis:
+- of:
+  - identity
+  - producer
+  tier: derived
+  note: 'planet-sim, 24 Oct 2026: request R6'

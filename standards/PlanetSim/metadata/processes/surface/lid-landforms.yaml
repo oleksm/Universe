@@ -205,6 +205,14 @@ params:
   meaning: lobate scarps from (Ga before present)
   said_as: *id002
   source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: SCARP_FROM_GA'
+- name: BUILD_GYR
+  value: 31557600000000000.0
+  unit: s
+  meaning: with an interior, a volcanic landform is built whole by this long at full melting (Tharsis took ~1 Gyr)
+  said_as:
+    unit: Gyr
+    factor: 3.15576e+16
+  source: 'planet-forge crates/forge-core/src/models/lid_landforms.rs: BUILD_GYR'
 depends_on:
 - planet-process.stagnant-lid-crust
 random_draws:
